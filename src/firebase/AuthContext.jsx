@@ -1,10 +1,4 @@
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useState,
-  useMemo,
-} from 'react'
+import { createContext, useContext, useEffect, useState, useMemo } from 'react'
 import { onAuthStateChange } from './auth.js'
 import { doc, getDocFromServer, getDocFromCache } from 'firebase/firestore'
 import { getDatabase, ref, onValue } from 'firebase/database'
@@ -103,11 +97,13 @@ export function AuthProvider({ children }) {
     [loading, currentUser, superUser, gettingUser, isOffline]
   )
 
-  return !loading && (
-    <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
+  return (
+    !loading && (
+      <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
+    )
   )
 }
 
-export default function useAuth() {
+export function useAuth() {
   return useContext(AuthContext)
 }
