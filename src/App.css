@@ -1,42 +1,46 @@
-.home{
+.text-center {
+  text-align: center;
+}
+
+.home {
   --fs-small: clamp(.75rem, .75rem + 2.5vw, .95rem);
   --fs-medium: clamp(.9rem, .9rem + 2.5vw, 1.15rem);
 
-  --home-bg: #DEE3ED;
-  --home-title-fg: #2C1460;
-  --home-text-fg: #4F426A;
+  --home-bg: #dee3ed;
+  --home-title-fg: #2c1460;
+  --home-text-fg: #4f426a;
 
   background-color: var(--home-bg);
 }
 
 .home__content {
-  margin-inline: auto;
   text-align: center;
-  overflow-y: scroll;
+  overflow-y: auto;
   scroll-snap-type: y mandatory;
   scroll-behavior: smooth;
   height: 100vh;
+  width: 100%;
 }
 
-.home, 
-.home__content >*{
+.home,
+.home__content>* {
   display: flex;
   align-items: center;
   justify-content: center;
   flex-direction: column;
 }
 
-.home__content >* {
+.home__content>* {
   min-height: 100vh;
   scroll-snap-align: center;
   scroll-snap-stop: always;
 }
 
-.content__preview{
+.content__preview {
   background-color: whitesmoke;
 }
 
-.content__login{
+.content__login {
   background-color: gray;
 }
 
@@ -52,10 +56,12 @@
 }
 
 .home__text__taskflow {
-  --taskflow-gradient-left: #2599AC;
-  --taskflow-gradient-right: #5100F9;
+  --taskflow-gradient-left: #2599ac;
+  --taskflow-gradient-right: #5100f9;
 
-  background-image: linear-gradient(to right, var(--taskflow-gradient-left), var(--taskflow-gradient-right));
+  background-image: linear-gradient(to right,
+      var(--taskflow-gradient-left),
+      var(--taskflow-gradient-right));
   color: transparent;
   background-clip: text;
   letter-spacing: 0.5px;
@@ -65,4 +71,5 @@
 
 .home__text__later {
   border-bottom: 2px solid var(--home-title-fg);
+}
 }
