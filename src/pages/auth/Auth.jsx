@@ -38,7 +38,7 @@ export default function Auth({ type = 'login' }) {
     let usernameError = ''
 
     if (isSignup) {
-      const usernameRegex = /^[\p{L}\s\.'\-]+$/u
+      const usernameRegex = /^[\p{L}\s\.'0-1\-]+$/iu
       const usernameInvalidCharsRegex =
         /[<>\*\(\)\[\]\{\};:,\?_\+\\=¿¡!@#$%&\|~`"^]/g
 
