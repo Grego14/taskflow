@@ -2,7 +2,7 @@ import { createContext, useContext, useEffect, useState, useMemo } from 'react'
 import { onAuthStateChange } from './auth.js'
 import { doc, getDocFromServer, getDocFromCache } from 'firebase/firestore'
 import { getDatabase, ref, onValue } from 'firebase/database'
-import { auth } from './firebase-config.js'
+import { auth, db } from './firebase-config.js'
 
 const usersDoc = id => doc(db, 'users', id)
 
