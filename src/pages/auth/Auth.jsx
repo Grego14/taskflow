@@ -38,7 +38,7 @@ export default function Auth({ type = 'login' }) {
     let usernameError = ''
 
     if (isSignup) {
-      const usernameRegex = /^[\p{L}\s\.'0-1\-]+$/iu
+      const usernameRegex = /^[\p{L}\s\.'0-9-]+$/iu
       const usernameInvalidCharsRegex =
         /[<>\*\(\)\[\]\{\};:,\?_\+\\=¿¡!@#$%&\|~`"^]/g
 
@@ -58,7 +58,7 @@ export default function Auth({ type = 'login' }) {
         if (/[.-]{2,}/.test(username))
           return errorsTranslations.usernameMultipleChars
 
-        if (usernameRegex.test(username))
+        if (!usernameRegex.test(username))
           return errorsTranslations.invalidUsername
 
         return ''
