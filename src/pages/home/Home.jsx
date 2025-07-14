@@ -110,6 +110,8 @@ export default function Home() {
 
   // listen to actual project tasks changes and update the projectTasks
   useEffect(() => {
+    if (!currentUser?.uid) return
+
     const tasksRef = collection(
       db,
       'users',
