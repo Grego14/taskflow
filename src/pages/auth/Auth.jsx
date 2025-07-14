@@ -1,16 +1,20 @@
+import { useUser } from '@/App'
 import IconButton from '@components/reusable/buttons/IconButton'
+import useTranslations from '@hooks/useTranslations'
 import GithubIcon from '@mui/icons-material/GitHub'
 import GoogleIcon from '@mui/icons-material/Google'
 import Button from '@mui/material/Button'
+import createUserDoc from '@utils/createUserDoc'
+import { getDoc } from 'firebase/firestore'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { Link, useNavigate } from 'react-router-dom'
-import useTranslations from '@hooks/useTranslations'
 import { authHandlers } from './authHandlers.js'
 
 // TODO - Split all this code to differents files. And refactorize
 
 export default function Auth({ type = 'login' }) {
+  const { user, updateActualProject } = useUser()
   const navigate = useNavigate()
   const t = useTranslations()
   const typeTranslations = t.auth[type]
@@ -31,6 +35,11 @@ export default function Auth({ type = 'login' }) {
   function navigateToRute(rute) {
     navigate(rute)
     setIsSignup(rute === '/signup')
+  }
+
+  function clearFormAndInputError(input) {
+    setFormError('')
+    clearErrors(input)
   }
 
   const onSubmit = handleSubmit(async data => {
@@ -109,15 +118,30 @@ export default function Auth({ type = 'login' }) {
     const emailError = validatePassword()
     const passwordError = validatePassword()
 
-    if (!isSignup && !emailError && !passwordError) {
-      console.log('Attempt to login with data:', { email, password })
-      authHandlers.login(email, password)
-    }
+    if (emailError || passwordError || (isSignup && usernameError)) return
 
-    if (isSignup && !usernameError && !emailError && !passwordError) {
-      console.log('Attempt to signup with data:', { username, email, password })
-      authHandlers.signup(username, email, password)
-    }
+    const authHandler = isSignup ? authHandlers.signup : authHandlers.login
+    const credentials = isSignup
+      ? { username, email, password }
+      : { email, password }
+
+    authHandler(credentials)
+      .then(async userData => {
+        let projectTemplateId = null
+        // Create the user profile and make a project template
+
+        if (isSignup && userData) {
+          projectTemplateId = await createUserDoc(userData, {
+            ...user.preferences
+          })
+        }
+
+        updateActualProject(projectTemplateId)
+      })
+      .catch(err => {
+        console.log(err)
+        setFormError(err.message)
+      })
   })
 
   const usernameInputProps = {
@@ -135,7 +159,7 @@ export default function Auth({ type = 'login' }) {
         value: 30,
         message: errorsTranslations.longUsername
       },
-      onChange: () => clearErrors('username')
+      onChange: () => clearFormAndInputError('username')
     },
     isInvalid: Boolean(errors.username),
     describedById: 'username-help username-error'
@@ -148,7 +172,7 @@ export default function Auth({ type = 'login' }) {
     register,
     registerProps: {
       required: errorsTranslations.emptyEmail,
-      onChange: () => clearErrors('email')
+      onChange: () => clearFormAndInputError('email')
     },
     isInvalid: Boolean(errors.email),
     describedById: 'email-help email-error'
@@ -165,7 +189,7 @@ export default function Auth({ type = 'login' }) {
         value: 8,
         message: errorsTranslations.shortPassword
       },
-      onChange: () => clearErrors('password')
+      onChange: () => clearFormAndInputError('password')
     },
     isInvalid: Boolean(errors.password),
     describedById: 'password-help password-error'
