@@ -52,7 +52,7 @@ export default function Home() {
 
   // listen to actual project changes and update the projectData
   useEffect(() => {
-    if (!currentUser?.uid) return
+    if (!currentUser?.uid || !actualProject) return
 
     const projectRef = doc(
       db,
@@ -110,7 +110,7 @@ export default function Home() {
 
   // listen to actual project tasks changes and update the projectTasks
   useEffect(() => {
-    if (!currentUser?.uid) return
+    if (!currentUser?.uid || !actualProject) return
 
     const tasksRef = collection(
       db,
