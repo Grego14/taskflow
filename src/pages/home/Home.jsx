@@ -52,6 +52,8 @@ export default function Home() {
 
   // listen to actual project changes and update the projectData
   useEffect(() => {
+    if (!currentUser?.uid) return
+
     const projectRef = doc(
       db,
       'users',
