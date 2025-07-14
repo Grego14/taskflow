@@ -1,3 +1,5 @@
+[![Netlify Status](https://api.netlify.com/api/v1/badges/ed3df4d9-fd25-48e4-8579-c4c2b423e4d0/deploy-status)](https://app.netlify.com/projects/apptaskflow/deploys)
+
 ## Contributing Guide
 - Clone the repo and install dependencies.
 
