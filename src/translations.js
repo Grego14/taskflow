@@ -47,6 +47,15 @@ const translations = {
         accountText: "Don't have an account?"
       }
     },
+    home: {
+      title: [
+        'Tired of notes lost in the sea of forgetfulness? With ',
+        ', your ideas stay safe, searchable, and ready for action. Say goodbye to ',
+        'I’ll do it later!'
+      ],
+      login:
+        'Don’t let your best ideas slip away. Capture instantly, organize effortlessly, and delete with ease. Your productivity will thank you!'
+    },
     common: {
       login: 'Log In',
       signup: 'Sign up'
@@ -102,10 +111,19 @@ const translations = {
         accountText: '¿No tienes cuenta?'
       }
     },
-    common: {
-      login: 'Iniciar sesión',
-      signup: 'Crear cuenta'
-    }
+    home: {
+      title: [
+        '¿Notas perdidas en el mar del olvido? Con ',
+        ', tus ideas siempre estarán seguras, accesibles y listas para convertirse en acción. Di adiós al ',
+        'lo haré después'
+      ]
+    },
+    login:
+      'No dejes que tus mejores ideas se pierdan. Anota al instante, organiza sin esfuerzo y borra fácilmente. ¡Tu productividad te lo agradecerá!'
+  },
+  common: {
+    login: 'Iniciar sesión',
+    signup: 'Crear cuenta'
   }
 }
 
