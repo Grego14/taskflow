@@ -2,7 +2,7 @@ import { useUser } from '@/App.jsx'
 import translations from '@/translations.js'
 
 export default function useTranslations() {
-  const { lang } = useUser()
+  const { user } = useUser()
 
-  return translations[lang]
+  return translations[user.preferences.lang]
 }
