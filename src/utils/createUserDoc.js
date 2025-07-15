@@ -104,7 +104,8 @@ export default async function createUserDoc(user, preferences) {
         ...task,
         projectId: projectRef.id,
         createdAt: serverTimestamp(),
-        updatedAt: serverTimestamp()
+        updatedAt: serverTimestamp(),
+        id: taskRef.id
       })
 
       if (task.status === 'cancelled') {
