@@ -50,11 +50,7 @@ export default function App() {
       localStorage.setItem('lang', appState.user.preferences.lang)
       localStorage.setItem('theme', appState.user.preferences.theme)
     }
-
-    if (appState.actualProject) {
-      localStorage.setItem('lastEditedProject', appState.actualProject)
-    }
-  }, [appState.user?.preferences, appState.actualProject])
+  }, [appState.user?.preferences])
 
   useEffect(() => {
     async function getUserProjects() {
@@ -114,6 +110,8 @@ export default function App() {
       ...prev,
       actualProject: newProject || null
     }))
+
+    localStorage.setItem('lastEditedProject', newProject)
   }, [])
 
   const setUser = useCallback(userData => {
