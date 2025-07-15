@@ -17,10 +17,11 @@ import getProject from './getProject'
  * @throws A getFriendlyAuthError object if the data is not found: {code: string, message: string}
  */
 export default async function createProject(userId, data) {
-  if (!userId) throw Error('Invalid userId', userId)
-  if (!data) throw Error('Invalid project data', data)
+  if (!userId || typeof userId !== 'string')
+    throw Error('createProject error: Invalid userId!')
 
-  // TODO - Verify data fields
+  if (!data || typeof data !== 'object' || Object.keys(data).length === 0)
+    throw Error('createProject error: No project data provided!')
 
   try {
     const projectCol = collection(db, 'users', userId, 'projects')
@@ -42,7 +43,7 @@ export default async function createProject(userId, data) {
 
     return projectDoc.exists() ? { id: projectRef.id, data: projectData } : null
   } catch (err) {
-    console.error('createProject:', err)
+    console.error('createProject error:', err)
     throw getFriendlyAuthError(err.message).message
   }
 }
