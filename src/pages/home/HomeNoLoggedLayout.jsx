@@ -1,4 +1,4 @@
-import { useUser } from '@/App'
+import { useAppState } from '@/context/AppContex'
 import LoginButton from '@components/reusable/buttons/LoginButton'
 import SignUpButton from '@components/reusable/buttons/SignUpButton'
 import useTranslations from '@hooks/useTranslations'
@@ -6,12 +6,11 @@ import Button from '@mui/material/Button'
 import { useRef } from 'react'
 
 export default function HomeNoLoggedLayout() {
-  const { user } = useUser()
+  const { user } = useAppState()
   const homeContent = useRef(null)
 
   const t = useTranslations()
   const homeTexts = t.home
-  const lang = user.preferences.lang
 
   return (
     <div className='home'>
