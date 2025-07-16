@@ -10,6 +10,7 @@ const RestrictedRoute = lazy(
   () => import('@components/reusable/RestrictedRute')
 )
 const ProtectedRoute = lazy(() => import('@components/reusable/ProtectedRute'))
+const Profile = lazy(() => import('@pages/profile/Profile'))
 
 export default function AppRoutes() {
   const { currentUser } = useAuth()
@@ -36,6 +37,7 @@ export default function AppRoutes() {
       <Route
         element={<ProtectedRoute isAuthenticated={Boolean(currentUser)} />}>
         <Route path='/project/:projectId' element={null} />
+        <Route path='/profile' element={<Profile />} />
       </Route>
       {/* <-------------------------------------------------> */}
 
