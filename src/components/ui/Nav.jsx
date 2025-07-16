@@ -1,7 +1,5 @@
 import ProfileIcon from '@mui/icons-material/Person'
 import SettingsIcon from '@mui/icons-material/Settings'
-import ProfileButton from './ProfileButton'
-import ProjectConfigButton from './ProjectConfigButton'
 import { Button, Box, Menu, MenuItem } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
 import DropdownMenu from '@components/reusable/DropdownMenu'
