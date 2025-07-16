@@ -1,8 +1,8 @@
-import { useUser } from '@/App.jsx'
+import { useAppState } from '@/context/AppContext'
 import translations from '@/translations.js'
 
 export default function useTranslations() {
-  const { user } = useUser()
+  const { user } = useAppState()
 
   return translations[user.preferences.lang]
 }
