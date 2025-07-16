@@ -12,7 +12,7 @@ export default function useProject(projectId) {
 
   // Get the project data and the tasks. Add snapshots to listen for changes.
   useEffect(() => {
-    if (!currentUser?.uid) return
+    if (!currentUser?.uid || !projectId) return
 
     setLoading(true)
 
@@ -25,10 +25,7 @@ export default function useProject(projectId) {
       projectRef,
       snap => {
         if (snap.exists()) {
-          setProject({
-            id: snap.id,
-            data: { ...snap.data() }
-          })
+          setProject(snap.data())
         } else {
           setError('Project not found')
         }
