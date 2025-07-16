@@ -1,4 +1,4 @@
-import { useAppState } from '@/context/AppContex'
+import { useAppState } from '@/context/AppContext'
 import LoginButton from '@components/reusable/buttons/LoginButton'
 import SignUpButton from '@components/reusable/buttons/SignUpButton'
 import useTranslations from '@hooks/useTranslations'
