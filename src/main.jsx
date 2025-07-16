@@ -4,15 +4,18 @@ import './main.css'
 import { AuthProvider } from './firebase/AuthContext'
 import App from './App'
 import { BrowserRouter as Router } from 'react-router-dom'
+import AppProvider from './context/AppContext'
 
 history.scrollRestoration = 'manual'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <AuthProvider>
-      <Router>
-        <App />
-      </Router>
+      <AppProvider>
+        <Router>
+          <App />
+        </Router>
+      </AppProvider>
     </AuthProvider>
   </StrictMode>
 )
