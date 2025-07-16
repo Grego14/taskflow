@@ -56,9 +56,21 @@ const translations = {
       login:
         'Don’t let your best ideas slip away. Capture instantly, organize effortlessly, and delete with ease. Your productivity will thank you!'
     },
+    dialogs: {
+      projectSettings: {
+        title: 'Project config',
+
+        labels: {
+          name: 'Project name:',
+          description: 'Project description:'
+        }
+      }
+    },
     common: {
       login: 'Log In',
-      signup: 'Sign up'
+      signup: 'Sign up',
+      close: 'Close',
+      accept: 'Accept'
     }
   },
   es: {
@@ -121,9 +133,21 @@ const translations = {
     login:
       'No dejes que tus mejores ideas se pierdan. Anota al instante, organiza sin esfuerzo y borra fácilmente. ¡Tu productividad te lo agradecerá!'
   },
+  dialogs: {
+    projectSettings: {
+      title: 'Configuración del proyecto',
+
+      labels: {
+        name: 'Nombre del proyecto:',
+        description: 'Descripción del proyecto:'
+      }
+    }
+  },
   common: {
     login: 'Iniciar sesión',
-    signup: 'Crear cuenta'
+    signup: 'Crear cuenta',
+    close: 'Cerrar',
+    accept: 'Aceptar'
   }
 }
 
