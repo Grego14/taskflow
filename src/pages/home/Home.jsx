@@ -33,11 +33,6 @@ export default function Home() {
     error: projectError
   } = useProject(actualProject)
 
-  // TODO - Improve this by using spinners/ui skeletons
-  if (loading) return <div>Checking if the user is logged...</div>
-
-  if (!currentUser?.uid) return
-
   useEffect(() => {
     if (actualProject && project)
       updateActualProject({ id: actualProject, data: project })
@@ -72,6 +67,9 @@ export default function Home() {
 
     await createTask(currentUser.uid, actualProject, taskData)
   }
+
+  // TODO - Improve this by using spinners/ui skeletons
+  if (loading) return <div>Checking if the user is logged...</div>
 
   return currentUser?.uid ? (
     <div>
