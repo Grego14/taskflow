@@ -1,4 +1,4 @@
-import { useUser } from '@/App'
+import { useAppState } from '@/context/AppContext'
 import IconButton from '@components/reusable/buttons/IconButton'
 import useTranslations from '@hooks/useTranslations'
 import GithubIcon from '@mui/icons-material/GitHub'
@@ -14,7 +14,7 @@ import { authHandlers } from './authHandlers.js'
 // TODO - Split all this code to differents files. And refactorize
 
 export default function Auth({ type = 'login' }) {
-  const { user, updateActualProject } = useUser()
+  const { user, updateActualProject } = useAppState()
   const navigate = useNavigate()
   const t = useTranslations()
   const typeTranslations = t.auth[type]
@@ -127,14 +127,12 @@ export default function Auth({ type = 'login' }) {
 
     authHandler(credentials)
       .then(async userData => {
-        let projectTemplateId = null
-        // Create the user profile and make a project template
+        if (!isSignup || !userData) return
 
-        if (isSignup && userData) {
-          projectTemplateId = await createUserDoc(userData, {
-            ...user.preferences
-          })
-        }
+        // Create the user profile and make a project template
+        const projectTemplateId = await createUserDoc(userData, {
+          ...user.preferences
+        })
 
         updateActualProject(projectTemplateId)
       })
