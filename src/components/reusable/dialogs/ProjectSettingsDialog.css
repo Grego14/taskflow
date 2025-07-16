@@ -1,0 +1,21 @@
+.project-settings-dialog__content {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.project-settings-dialog__input-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.project-settings-dialog__label {
+  font-weight: 600;
+}
+
+/* TODO - See why the dialog is no using the :root styles */
+
+.project-settings-dialog__input,
+.project-settings-dialog__textarea {
+  color: var(--light-gray);
+}
