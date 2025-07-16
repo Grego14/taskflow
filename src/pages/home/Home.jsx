@@ -1,8 +1,9 @@
-import { useUser } from '@/App.jsx'
+import { useAppState } from '@/context/AppContext'
 import { useAuth } from '@/firebase/AuthContext'
 import useProject from '@hooks/useProject'
 import Button from '@mui/material/Button'
-import { lazy } from 'react'
+import { lazy, useEffect } from 'react'
+import Nav from '@components/ui/Nav'
 
 const HomeNoLoggedLayout = lazy(() => import('./HomeNoLoggedLayout'))
 const LogOutButton = lazy(
@@ -21,10 +22,9 @@ export default function Home() {
     user,
     loading: loadingUser,
     error,
-    setUser,
     actualProject,
     updateActualProject
-  } = useUser()
+  } = useAppState()
 
   const {
     project,
@@ -36,9 +36,12 @@ export default function Home() {
   // TODO - Improve this by using spinners/ui skeletons
   if (loading) return <div>Checking if the user is logged...</div>
 
-  if (!currentUser?.uid) return <HomeNoLoggedLayout />
+  if (!currentUser?.uid) return
 
-  if (loadingUser) return <div>Fetching user document...</div>
+  useEffect(() => {
+    if (actualProject && project)
+      updateActualProject({ id: actualProject, data: project })
+  }, [actualProject, updateActualProject, project])
 
   // TODO - Show the user a dialog with the project creation fields
   // Note - This function should be on its own file with the dialog.
@@ -70,27 +73,17 @@ export default function Home() {
     await createTask(currentUser.uid, actualProject, taskData)
   }
 
-  return (
+  return currentUser?.uid ? (
     <div>
+      <Nav />
       LogOut: <LogOutButton />
       {loadingUser ? (
         <div>Getting user data from db...</div>
       ) : (
         <>
-          {user.profile && user.preferences && (
-            <ul>
-              <li>Username: {user.profile?.username}</li>
-              <li>Email: {user.profile?.email}</li>
-              <ul>
-                Preferences:
-                <li>Language: {user.preferences?.lang}</li>
-                <li>Theme: {user.preferences?.theme}</li>
-              </ul>
-            </ul>
-          )}
           {project && (
             <ul>
-              <li>Actual Project: {project.data.name}</li>
+              <li>Actual Project: {project.name}</li>
               <li>
                 <Button onClick={handleProjectCreation}>Create project</Button>
               </li>
@@ -111,5 +104,7 @@ export default function Home() {
         </>
       )}
     </div>
+  ) : (
+    <HomeNoLoggedLayout />
   )
 }
