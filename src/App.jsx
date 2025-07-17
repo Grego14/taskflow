@@ -19,16 +19,25 @@ export default function App() {
         if (!currentUser?.uid) return
 
         const projectsRef = collection(db, 'users', currentUser.uid, 'projects')
-        const projectsData = await getDocs(projectsRef)
 
-        if (!projectsData.empty)
-          updateProjects(projectsData.docs.map(data => data.data()))
+        // Listen changes in the user projects
+        const unsubscribe = onSnapshot(
+          projectsRef,
+          snap => {
+            const exists = !snap.empty
+
+            if (exists) {
+              updateProjects(snap.docs.map(data => data.data()))
+            }
+          },
+          err => updateError(err)
+        )
       } catch (err) {
         console.error(err)
         throw getFriendlyAuthError(err.message).message
       }
     })()
-  }, [currentUser?.uid, updateProjects])
+  }, [currentUser?.uid, updateProjects, updateError])
 
   useEffect(() => {
     if (!currentUser?.uid) return
