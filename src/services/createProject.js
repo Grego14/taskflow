@@ -41,7 +41,7 @@ export default async function createProject(userId, data) {
 
     const projectData = await getProject(userId, projectRef.id)
 
-    return projectDoc.exists() ? { id: projectRef.id, data: projectData } : null
+    return projectData
   } catch (err) {
     console.error('createProject error:', err)
     throw getFriendlyAuthError(err.message).message
