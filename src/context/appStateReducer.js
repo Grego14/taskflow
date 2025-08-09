@@ -9,49 +9,68 @@ export const ACTION_TYPES = {
 
 export function appStateReducer(state, action) {
   // check against undefined to be able to pass "false"
-  if (!action.type || !action.payload === undefined) return state
+  if (
+    !Object.values(ACTION_TYPES).some(type => type === action.type) ||
+    !action.payload === undefined
+  )
+    return state
+
+  const payload = action.payload
+  const user = state.user
 
   switch (action.type) {
     case ACTION_TYPES.UPDATE_USER:
-      return { ...state, user: { ...state.user, ...action.payload } }
+      return { ...state, user: { ...user, ...payload } }
 
     case ACTION_TYPES.UPDATE_LOADING:
-      return { ...state, loading: action.payload }
+      return { ...state, loading: payload }
 
     case ACTION_TYPES.UPDATE_ERROR:
-      return { ...state, error: action.payload }
+      return { ...state, error: payload }
 
     // Update appState preferences and localStorage items
     case ACTION_TYPES.UPDATE_PREFERENCES: {
-      const theme = action.payload?.theme || state.preferences.theme
-      const lang = action.payload?.lang || state.preferences.lang
+      const theme = payload?.theme || user.preferences.theme
+      const lang = payload?.lang || user.preferences.lang
+      const uiPrefs = payload?.ui
+
+      const newUIPrefs = { ...user.preferences.ui, ...uiPrefs }
 
       localStorage.setItem('theme', theme)
       localStorage.setItem('lang', lang)
+      localStorage.setItem('ui', JSON.stringify(newUIPrefs))
 
       return {
         ...state,
-        user: { ...state.user, preferences: { theme, lang } }
+        user: {
+          ...user,
+          preferences: {
+            theme,
+            lang,
+            ui: newUIPrefs
+          }
+        }
       }
     }
 
     // Update appState actualProject, actualProjectData and localStorage item
     case ACTION_TYPES.UPDATE_ACTUAL_PROJECT: {
-      const { id, data } = action.payload
+      const { id, data } = payload
+      const newData = { ...state.actualProjectData, ...data }
 
       localStorage.setItem('actualProject', id)
 
       return {
         ...state,
         actualProject: id,
-        actualProjectData: data || null
+        actualProjectData: newData
       }
     }
 
     case ACTION_TYPES.UPDATE_PROJECTS: {
       return {
         ...state,
-        user: { ...state.user, projects: action.payload }
+        user: { ...state, projects: payload }
       }
     }
 
@@ -61,17 +80,26 @@ export function appStateReducer(state, action) {
 }
 
 export function initAppState() {
+  const uiPrefs = JSON.parse(localStorage.getItem('ui'))
+
   return {
     user: {
       preferences: {
         lang: localStorage.getItem('lang') || 'en',
-        theme: localStorage.getItem('theme') || 'light'
+        theme: localStorage.getItem('theme') || 'light',
+        ui: {
+          drawerOpen: uiPrefs.drawerOpen || false,
+          lastUsedPreviewer:
+            uiPrefs.lastUsedPreviewer && uiPrefs.lastUsedPreviewer === 'kanban'
+              ? 'kanban'
+              : 'list'
+        }
       },
       projects: null
     },
     actualProject: localStorage.getItem('lastEditedProject') || null,
     actualProjectData: null,
-    loading: 'holi2',
+    loading: true,
     error: null
   }
 }

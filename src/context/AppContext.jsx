@@ -11,6 +11,8 @@ import {
   ACTION_TYPES
 } from './appStateReducer.js'
 
+const uiPrefs = JSON.parse(localStorage.getItem('ui'))
+
 const AppContext = createContext({
   updatePreferences: () => console.warn('No provider found'),
   updateActualProject: () => console.warn('No provider found'),
@@ -18,7 +20,14 @@ const AppContext = createContext({
   user: {
     preferences: {
       lang: localStorage.getItem('lang') || 'en',
-      theme: localStorage.getItem('theme') || 'light'
+      theme: localStorage.getItem('theme') || 'light',
+      ui: {
+        drawerOpen: uiPrefs.drawerOpen || false,
+        lastUsedPreviewer:
+          uiPrefs.lastUsedPreviewer && uiPrefs.lastUsedPreviewer === 'kanban'
+            ? 'kanban'
+            : 'list'
+      }
     }
   },
   actualProject: localStorage.getItem('lastEditedProject') || null,
