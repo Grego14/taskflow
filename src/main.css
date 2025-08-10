@@ -1,25 +1,25 @@
 @font-face {
-  font-family: "Rubik";
-  src: url("/fonts/Rubik-Regular.woff2") format("woff2"),
-    url("/fonts/Rubik-Regular.ttf") format("truetype");
+  font-family: 'Rubik';
+  src: url('/fonts/Rubik-Regular.woff2') format('woff2'),
+    url('/fonts/Rubik-Regular.ttf') format('truetype');
   font-style: normal;
   font-weight: 400;
   font-display: swap;
 }
 
 @font-face {
-  font-family: "Rubik";
-  src: url("/fonts/Rubik-Medium.woff2") format("woff2"),
-    url("/fonts/Rubik-Medium.ttf") format("truetype");
+  font-family: 'Rubik';
+  src: url('/fonts/Rubik-Medium.woff2') format('woff2'),
+    url('/fonts/Rubik-Medium.ttf') format('truetype');
   font-style: normal;
   font-weight: 500;
   font-display: swap;
 }
 
 @font-face {
-  font-family: "Rubik";
-  src: url("/fonts/Rubik-Bold.woff2") format("woff2"),
-    url("/fonts/Rubik-Bold.ttf") format("truetype");
+  font-family: 'Rubik';
+  src: url('/fonts/Rubik-Bold.woff2') format('woff2'),
+    url('/fonts/Rubik-Bold.ttf') format('truetype');
   font-style: normal;
   font-weight: 700;
   font-display: swap;
@@ -29,26 +29,26 @@ body {
   min-height: 100vh;
 }
 
-#root {
+:root {
   --primary-color: #54448a;
   --error-color: #833646;
 
   --ghost-white: #f7f9ff;
   --light-gray: #a6abbd;
   --dark-gray: #727787;
-  --cornflower-blue: #1c87ae;
-
-  /* shades */
   --police-blue-500: #3f4f74;
   --police-blue-400: #606f96;
   --police-blue-300: #8291ba;
   --police-blue-200: #a6b4df;
   --police-blue-100: #cad8ff;
 
-  color-scheme: light dark;
+  --fs-tiny: clamp(.6rem, .6rem + 1vw, .8rem);
+  --fs-small: clamp(.75rem, .75rem + 2.5vw, .95rem);
+  --fs-medium: clamp(.9rem, .9rem + 2.5vw, 1.15rem);
 
-  font-family: "Rubik", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-    Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+  /* TODO - Add support for dark mode */
+  color-scheme: light;
+
   height: 100vh;
   color: var(--primary-color);
 }
