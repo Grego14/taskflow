@@ -11,6 +11,7 @@
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
     "@vitejs/plugin-react": "^4.5.2",
+    "react-scan": "^0.4.3",
     "vite": "^6.3.5"
   },
   "dependencies": {
