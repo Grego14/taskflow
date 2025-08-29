@@ -12,6 +12,10 @@
   flex-wrap: wrap;
 }
 
+.text-balance {
+  text-wrap: balance;
+}
+
 /* UTILITY CLASSES END */
 
 .home {
@@ -80,5 +84,4 @@
 
 .home__text__later {
   border-bottom: 2px solid var(--home-title-fg);
-}
 }
