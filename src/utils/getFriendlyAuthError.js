@@ -66,3 +66,10 @@ export default function getFriendlyAuthError(errorCode, language = 'en') {
 
   return { code: 'default', message: errorMap[lang].default }
 }
+
+export const getFriendlyErrorFormatted = (service, error) => {
+  const friendlyError = getFriendlyAuthError(error)
+  return new Error(
+    `${service} error: [${friendlyError.code}] ${friendlyError.message}`
+  )
+}
