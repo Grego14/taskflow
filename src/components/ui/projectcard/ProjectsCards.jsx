@@ -33,7 +33,7 @@ export default function ProjectsCards({ data }) {
         </Box>
       )}
 
-      {!lastProjectData && data?.length > 0 && (
+      {!lastProjectData || data?.length > 0 && (
         <div>
           <Typography variant='h2' sx={[theme => ({ ...theme.typography.h5 })]}>
             {t('projects.lastProjects')}
