@@ -1,2 +1,3 @@
 user-agent: *
+allow: *
 sitemap: https://apptaskflow.netlify.app/sitemap.xml
