@@ -14,6 +14,7 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom'
 export default function DrawerActions({ open, toggleDrawer }) {
   const { t } = useTranslation('ui')
   const { projectId } = useParams()
+  const navigate = useNavigate()
   const location = useLocation()
 
   const rutes = location.pathname?.split('/')
