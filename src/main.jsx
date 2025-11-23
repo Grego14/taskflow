@@ -1,79 +1,189 @@
 import { scan } from 'react-scan'
 scan({ enabled: true })
 
-import { StrictMode } from 'react'
+import { StrictMode, forwardRef } from 'react'
 import { createRoot } from 'react-dom/client'
+
 import './main.css'
-import GlobalStyles from '@mui/material/GlobalStyles'
+
 import CssBaseline from '@mui/material/CssBaseline'
+import Slide from '@mui/material/Slide'
+import Zoom from '@mui/material/Zoom'
+
+import AppProvider from '@context/AppContext/index'
+import {
+  ThemeProvider,
+  createTheme,
+  responsiveFontSizes
+} from '@mui/material/styles'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import { I18nextProvider } from 'react-i18next'
 import { BrowserRouter as Router } from 'react-router-dom'
 import App from './App'
-import AppProvider from './context/AppContext'
 import { AuthProvider } from './firebase/AuthContext'
-import { ThemeProvider, createTheme } from '@mui/material/styles'
+import i18n from './i18n.js'
+
+import RubikBold from '/fonts/Rubik-Bold.woff2'
+import RubikMedium from '/fonts/Rubik-Medium.woff2'
+import RubikRegular from '/fonts/Rubik-Regular.woff2'
 
 history.scrollRestoration = 'manual'
 
-const appGlobalStyles = (
-  <GlobalStyles
-    styles={{
-      body: {
-        fontFamily:
-          '"Rubik", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif'
-      }
-    }}
-  />
-)
+const DialogTransition = forwardRef(function DialogTransition(props, ref) {
+  return <Slide direction='right' ref={ref} {...props} />
+})
 
-const theme = createTheme({
-  components: {
-    MuiButton: {
-      styleOverrides: {
-        root: {
-          fontSize: 'var(--fs-small)',
-          textTransform: 'none',
-          minWidth: 'auto',
-          color: 'var(--dark-gray)'
-        },
-        contained: {
-          backgroundColor: 'var(--police-blue-500)',
-          color: 'var(--ghost-white)'
+const theme = responsiveFontSizes(
+  createTheme({
+    colorSchemes: {
+      light: {
+        palette: {
+          primary: {
+            main: '#54448A'
+          },
+          secondary: {
+            main: '#B97BD8'
+          }
+        }
+      },
+      dark: {
+        palette: {
+          primary: {
+            main: '#A592E8'
+          },
+          secondary: {
+            main: '#D29AEE'
+          }
         }
       }
-    }
-  },
-  palette: {
-    mode: 'light',
-    primary: {
-      main: '#54448a'
     },
-    secondary: {
-      main: '#d06ba7'
+    components: {
+      MuiButton: {
+        styleOverrides: {
+          root: ({ theme, ...props }) => {
+            const defaultTransition = theme.transitions.create(
+              ['background-color', 'box-shadow', 'border-color', 'color'],
+              {
+                duration: theme.transitions.duration.short
+              }
+            )
+            const scaleTransition = 'scale .25s ease-out'
+
+            return {
+              fontSize: 'var(--fs-small)',
+              textTransform: 'none',
+              minWidth: 'auto',
+              transition: `${defaultTransition}, ${scaleTransition}`,
+              '& .MuiButton-icon': { transition: 'inherit' },
+              // add a cool press effect
+              '&:active, &:active .MuiButton-icon': {
+                scale: 0.95
+              }
+            }
+          }
+        }
+      },
+      MuiTooltip: {
+        defaultProps: {
+          slots: { transition: Zoom },
+          arrow: true,
+          enterDelay: 350
+        }
+      },
+      MuiFormHelperText: {
+        styleOverrides: {
+          root: {
+            // remove the margin at the sides so the helper text can be
+            // aligned with the input
+            marginInline: 0
+          }
+        }
+      },
+      MuiSvgIcon: {
+        styleOverrides: {
+          root: ({ theme, ...props }) => {
+            const { color, ownerState } = props
+            const providedColor = color || ownerState.color
+
+            return {
+              color: providedColor || theme.palette.primary.main
+            }
+          }
+        }
+      },
+      MuiCssBaseline: {
+        styleOverrides: `
+        @font-face {
+          font-family: 'Rubik';
+          src: local(Rubik), local(Rubik-Regular), url(${RubikRegular}) format('woff2');
+          font-style: normal;
+          font-weight: 400;
+          font-display: swap;
+        }
+        @font-face {
+          font-family: 'Rubik';
+          src: local(Rubik-Medium), url(${RubikMedium}) format('woff2');
+          font-style: normal;
+          font-weight: 500;
+          font-display: swap;
+        }
+        @font-face {
+          font-family: 'Rubik';
+          src: local(Rubik-Bold), url(${RubikBold}) format('woff2');
+          font-style: normal;
+          font-weight: 700;
+          font-display: swap;
+        }
+        body{
+          font-size: inherit;
+        }
+      `
+      },
+      MuiDialog: {
+        defaultProps: {
+          slots: {
+            transition: DialogTransition
+          }
+        }
+      },
+      typography: {
+        fontFamily: 'Rubik, Arial'
+      }
+    },
+    breakpoints: {
+      values: {
+        mobile: 420,
+        tablet: 640,
+        laptop: 1024,
+        desktop: 1200
+      }
     }
-  },
-  breakpoints: {
-    values: {
-      mobile: 320,
-      tablet: 640,
-      laptop: 1024,
-      desktop: 1200
-    }
+  }),
+  {
+    breakpoints: ['mobile', 'tablet', 'laptop', 'desktop']
   }
-})
+)
+
+const queryClient = new QueryClient()
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <CssBaseline />
-    {appGlobalStyles}
+    <ThemeProvider noSsr theme={theme} /*forceThemeRerender*/>
+      <CssBaseline />
 
-    <ThemeProvider noSsr theme={theme}>
-      <AuthProvider>
-        <AppProvider>
-          <Router>
-            <App />
-          </Router>
-        </AppProvider>
-      </AuthProvider>
+      <I18nextProvider i18n={i18n}>
+        <AuthProvider>
+          <QueryClientProvider client={queryClient}>
+            <ReactQueryDevtools initialIsOpen={false} />
+            <AppProvider>
+              <Router>
+                <App />
+              </Router>
+            </AppProvider>
+          </QueryClientProvider>
+        </AuthProvider>
+      </I18nextProvider>
     </ThemeProvider>
   </StrictMode>
 )

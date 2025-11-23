@@ -1,4 +1,4 @@
-export default function getFriendlyAuthError(errorCode, language = 'en') {
+export const getFriendlyAuthError = (errorCode, language = 'en') => {
   const errorMap = {
     en: {
       'auth/invalid-email': 'The email address is invalid',
@@ -56,7 +56,7 @@ export default function getFriendlyAuthError(errorCode, language = 'en') {
   const lang = errorMap[language] ? language : 'en'
 
   // Remove the text "Firebase: Error"
-  const normalizedErrorCode = errorCode.match(/\(.+\)/)?.[0]
+  const normalizedErrorCode = errorCode?.match(/\(.+\)/)?.[0]
 
   for (const [key, value] of Object.entries(errorMap[lang])) {
     if (normalizedErrorCode && key.match(normalizedErrorCode)) {
@@ -67,8 +67,8 @@ export default function getFriendlyAuthError(errorCode, language = 'en') {
   return { code: 'default', message: errorMap[lang].default }
 }
 
-export const getFriendlyErrorFormatted = (service, error) => {
-  const friendlyError = getFriendlyAuthError(error)
+export const getFriendlyErrorFormatted = (service, error, lang) => {
+  const friendlyError = getFriendlyAuthError(error, lang)
   return new Error(
     `${service} error: [${friendlyError.code}] ${friendlyError.message}`
   )

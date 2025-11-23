@@ -1,6 +1,6 @@
-import getFriendlyAuthError from '../utils/getFriendlyAuthError'
-import { doc, updateDoc } from 'firebase/firestore'
 import { db } from '@/firebase/firebase-config.js'
+import { doc, updateDoc, writeBatch } from 'firebase/firestore'
+import { getFriendlyAuthError } from '../utils/getFriendlyAuthError'
 
 export default async function updateProject(uid, projectId, data = {}) {
   if (!uid || typeof uid !== 'string')
@@ -19,9 +19,24 @@ export default async function updateProject(uid, projectId, data = {}) {
     throw Error("updateProject error: Project creation date can't be changed!")
 
   try {
-    const projectRef = doc(db, 'users', uid, 'projects', projectId)
+    const projectDoc = doc(db, 'users', uid, 'projects', projectId)
+    const batch = writeBatch(db)
 
-    await updateDoc(projectRef, data)
+    // projectDrawer and project members should be the same
+    if (data.members) {
+      const projectDrawerDoc = doc(
+        db,
+        'users',
+        uid,
+        'projects',
+        `${projectId}_drawer`
+      )
+      batch.update(projectDrawerDoc, { members: data.members })
+    }
+
+    batch.update(projectDoc, data)
+
+    await batch.commit()
   } catch (e) {
     console.error(e)
     throw getFriendlyAuthError(e.message).message

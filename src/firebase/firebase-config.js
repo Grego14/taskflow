@@ -1,15 +1,14 @@
 import { initializeApp } from 'firebase/app'
 import { getFirestore } from 'firebase/firestore'
-import { getAnalytics } from 'firebase/analytics'
 import { initializeFirestore, persistentLocalCache } from 'firebase/firestore'
 
 import {
-  getAuth,
-  GoogleAuthProvider,
   GithubAuthProvider,
-  signInWithPopup,
+  GoogleAuthProvider,
+  createUserWithEmailAndPassword,
+  getAuth,
   signInWithEmailAndPassword,
-  createUserWithEmailAndPassword
+  signInWithPopup
 } from 'firebase/auth'
 
 const firebaseConfig = {
@@ -27,9 +26,6 @@ const app = initializeApp(firebaseConfig)
 const db = initializeFirestore(app, { localCache: persistentLocalCache })
 const auth = getAuth(app)
 
-// TODO - See what can we do with the analytics...
-const analytics = getAnalytics(app)
-
 export const googleProvider = new GoogleAuthProvider()
 googleProvider.addScope('email')
 
@@ -39,7 +35,6 @@ githubProvider.addScope('email')
 export {
   auth,
   db,
-  analytics,
   signInWithPopup,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword

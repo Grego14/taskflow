@@ -1,108 +1,82 @@
-import { useAppState } from '@/context/AppContext'
-import { useAuth } from '@/firebase/AuthContext'
-import useProject from '@hooks/useProject'
-import Button from '@mui/material/Button'
-import { lazy, useEffect } from 'react'
-import Nav from '@components/ui/Nav'
+import { Suspense, lazy, memo, useCallback, useEffect, useState } from 'react'
 
-const HomeNoLoggedLayout = lazy(() => import('./HomeNoLoggedLayout'))
-const LogOutButton = lazy(
-  () => import('@components/reusable/buttons/LogOutButton')
-)
+// components
+import Link from '@components/reusable/Link'
+import Box from '@mui/material/Box'
+import Typography from '@mui/material/Typography'
 
-// This modules will be removed when the dialogs are ready to use
-const createProject = lazy(() => import('@services/createProject'))
-const createTask = lazy(() => import('@services/createTask'))
-const createDueDate = lazy(() => import('@utils/createDueDate'))
+// hooks
+import { useGSAP } from '@gsap/react'
+import useUser from '@hooks/useUser'
+import { useTranslation } from 'react-i18next'
+import { useLocation } from 'react-router-dom'
 
-export default function Home() {
-  const { currentUser, loading } = useAuth()
+// utils
+import { getItem } from '@utils/storage.js'
+import gsap from 'gsap'
+import { ScrambleTextPlugin } from 'gsap/ScrambleTextPlugin'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
-  const {
-    user,
-    loading: loadingUser,
-    error,
-    actualProject,
-    updateActualProject
-  } = useAppState()
+gsap.registerPlugin(useGSAP, ScrambleTextPlugin, ScrollTrigger)
 
-  const {
-    project,
-    tasks,
-    loading: loadingProjectAndTasks,
-    error: projectError
-  } = useProject(actualProject)
-
-  useEffect(() => {
-    if (actualProject && project)
-      updateActualProject({ id: actualProject, data: project })
-  }, [actualProject, updateActualProject, project])
-
-  // TODO - Show the user a dialog with the project creation fields
-  // Note - This function should be on its own file with the dialog.
-  async function handleProjectCreation() {
-    // testing data
-    const projectData = {
-      name: 'My Project',
-      description: 'Project test...'
-    }
-
-    const project = await createProject(currentUser.uid, projectData)
-
-    if (project) {
-      console.log(project)
-    }
+const linkHoverStyles = {
+  '&:hover': {
+    opacity: 0.8
   }
-
-  // TODO - Show the user a dialog with the task creation fields
-  // Note - This function should be on its own file with the dialog.
-  async function handleTaskCreation() {
-    const taskData = {
-      title: 'Learn new skill',
-      status: 'todo',
-      priority: 'medium',
-      dueDate: createDueDate(3),
-      labels: ['learning', 'development']
-    }
-
-    await createTask(currentUser.uid, actualProject, taskData)
-  }
-
-  // TODO - Improve this by using spinners/ui skeletons
-  if (loading) return <div>Checking if the user is logged...</div>
-
-  return currentUser?.uid ? (
-    <div>
-      <Nav />
-      LogOut: <LogOutButton />
-      {loadingUser ? (
-        <div>Getting user data from db...</div>
-      ) : (
-        <>
-          {project && (
-            <ul>
-              <li>Actual Project: {project.name}</li>
-              <li>
-                <Button onClick={handleProjectCreation}>Create project</Button>
-              </li>
-              <li>
-                <Button onClick={handleTaskCreation}>Create Task</Button>
-              </li>
-            </ul>
-          )}
-          {tasks && (
-            <ul>
-              {tasks.map(task => (
-                <li key={`${task.id}-li`}>
-                  <Button key={task.id}>{task.title}</Button>
-                </li>
-              ))}
-            </ul>
-          )}
-        </>
-      )}
-    </div>
-  ) : (
-    <HomeNoLoggedLayout />
-  )
 }
+
+export default memo(function Home() {
+  const { t } = useTranslation(['common', 'ui'])
+  const [open, setOpen] = useState(getItem('drawerOpen', false))
+
+  const { profile, metadata } = useUser()
+  const lastEditedProject = metadata?.lastEditedProject
+  const lastEditedProjectOwner = metadata?.lastEditedProjectOwner
+  const username = profile?.username
+
+  useGSAP(() => {
+    document.fonts.ready.then(() => {
+      gsap.set('#username', { opacity: 1 })
+
+      gsap.to('#username', {
+        duration: 1,
+        scrambleText: {
+          text: username,
+          chars: 'User',
+          speed: 0.5,
+          revealDelay: 0.5
+        }
+      })
+    })
+  }, [username])
+
+  return (
+    <Box className='flex flex-column flex-center text-center' m='auto'>
+      <Typography variant='h4'>
+        {t('welcome', { ns: 'common' })}{' '}
+        <Typography variant='span' sx={{ opacity: 0 }} id='username'>
+          {username}
+        </Typography>
+      </Typography>
+
+      <Link to='/projects' marginTop={4} sx={linkHoverStyles}>
+        <Typography>{t('projects.goToProjects', { ns: 'ui' })}</Typography>
+      </Link>
+
+      {lastEditedProject && (
+        <Link
+          to={`/projects/${lastEditedProject}?o=${lastEditedProjectOwner}`}
+          marginTop={2}
+          sx={linkHoverStyles}>
+          <Typography>
+            {t('projects.lastEditedProject', { ns: 'ui' })}
+          </Typography>
+        </Link>
+      )}
+
+      <Link to='/projects/new' marginTop={2} sx={linkHoverStyles}>
+        <Typography>{t('projects.createProject', { ns: 'ui' })}</Typography>
+      </Link>
+    </Box>
+  )
+})

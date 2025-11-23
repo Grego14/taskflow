@@ -1,6 +1,7 @@
-import { createContext, useContext, useEffect, useState, useMemo } from 'react'
+import useDebounce from '@hooks/useDebounce.js'
+import { getDatabase, onValue, ref } from 'firebase/database'
+import { createContext, useContext, useEffect, useMemo, useState } from 'react'
 import { onAuthStateChange } from './auth.js'
-import { getDatabase, ref, onValue } from 'firebase/database'
 import { auth, db } from './firebase-config.js'
 
 const AuthContext = createContext({
@@ -12,7 +13,13 @@ const AuthContext = createContext({
 export function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState(auth.currentUser)
   const [loading, setLoading] = useState(true)
+  // set the offline state as true to avoid showing the offline notification
+  // on the initial update
   const [isOffline, setIsOffline] = useState(false)
+  const [debounceOffline] = useDebounce(val => {
+    setIsOffline(val)
+    console.log('Connection state -> ', val ? 'offline' : 'online')
+  }, 1000)
 
   useEffect(() => {
     const unsubscribe = onAuthStateChange(user => {
@@ -28,12 +35,13 @@ export function AuthProvider({ children }) {
     const rtdb = getDatabase()
     const connectedRef = ref(rtdb, '.info/connected')
 
-    onValue(connectedRef, snap => {
-      // if this is true mean the user is offline...
-      setIsOffline(!snap.val())
-      console.log('Connection state -> ', snap.val() ? 'online' : 'offline')
+    const unsubscribe = onValue(connectedRef, snap => {
+      // if snap.val() is true mean the user is online...
+      debounceOffline(!snap.val())
     })
-  })
+
+    return unsubscribe
+  }, [debounceOffline])
 
   const value = useMemo(
     () => ({

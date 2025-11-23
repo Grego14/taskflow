@@ -1,5 +1,5 @@
 export default function formatTimestamp({ seconds, nanoseconds }, locale) {
-  if (!seconds || !nanoseconds) return { date: '', time: '' }
+  if (!seconds || !nanoseconds) return null
 
   const date = new Date(seconds * 1000 + nanoseconds / 1000000)
 
@@ -13,6 +13,9 @@ export default function formatTimestamp({ seconds, nanoseconds }, locale) {
 
   return {
     date: dateFormatter.format(date),
+    shortDate: new Intl.DateTimeFormat(locale, {
+      dateStyle: 'medium'
+    }).format(date),
     time: timeFormatter.format(date),
     complete: new Intl.DateTimeFormat(locale, {
       dateStyle: 'full',

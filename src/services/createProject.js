@@ -1,13 +1,13 @@
+import { db } from '@/firebase/firebase-config.js'
+import { getFriendlyAuthError } from '@utils/getFriendlyAuthError'
 import {
   addDoc,
-  doc,
-  getDoc,
-  serverTimestamp,
   collection,
-  updateDoc
+  doc,
+  serverTimestamp,
+  setDoc,
+  writeBatch
 } from 'firebase/firestore'
-import { db } from '@/firebase/firebase-config.js'
-import getFriendlyAuthError from '@utils/getFriendlyAuthError'
 import getProject from './getProject'
 
 /**
@@ -24,24 +24,38 @@ export default async function createProject(userId, data) {
     throw Error('createProject error: No project data provided!')
 
   try {
+    const batch = writeBatch(db)
     const projectCol = collection(db, 'users', userId, 'projects')
+    const members = [userId, ...(data?.members || [])]
 
     const projectRef = await addDoc(projectCol, {
       ...data,
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp(),
       createdBy: userId,
-      members: [userId],
-      isTemplate: false
+      members,
+      isTemplate: data?.isTemplate,
+      isArchived: false,
+      // allow us to reuse the same firebase index used when querying the
+      // ${projectId}_drawer data
+      drawerData: false
     })
 
-    await updateDoc(projectRef, {
+    batch.update(projectRef, {
       id: projectRef.id
     })
 
-    const projectData = await getProject(userId, projectRef.id)
+    batch.set(doc(projectCol, `${projectRef.id}_drawer`), {
+      id: projectRef.id,
+      name: data.name,
+      drawerData: true,
+      members,
+      owner: userId
+    })
 
-    return projectData
+    await batch.commit()
+
+    return projectRef.id
   } catch (err) {
     console.error('createProject error:', err)
     throw getFriendlyAuthError(err.message).message

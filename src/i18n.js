@@ -1,7 +1,11 @@
-import i18n from 'i18next'
-import { initReactI18next } from 'react-i18next'
-import LanguageDetector from 'i18next-browser-languagedetector'
 import { loadResources } from '@utils/resources.js'
+import i18n from 'i18next'
+import LanguageDetector from 'i18next-browser-languagedetector'
+import { initReactI18next } from 'react-i18next'
+
+// preload the RESOURCES before calling loadResources to avoid the lexical
+// declaration error
+import { RESOURCES } from './constants'
 
 i18n
   .use(LanguageDetector)
@@ -9,20 +13,19 @@ i18n
   .init(
     {
       defaultNS: ['common', 'ui'],
-      resources: {},
       fallbackLng: 'en',
       interpolation: {
         escapeValue: false
       },
-      supportedLngs: ['en', 'es'],
-      nonExplicitSupportedLngs: true
+      lowerCaseLng: true,
+      supportedLngs: ['en', 'es']
     },
     async (error, t) => {
       try {
         const lang = i18n.language
-        await loadResources(lang) // load common translations
+        await loadResources(lang)
       } catch (error) {
-        console.log('Error when loading translations resources ->', error)
+        console.error('Error when loading translations resources ->', error)
       }
     }
   )

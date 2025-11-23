@@ -1,6 +1,6 @@
 import { signIn, signUp } from '@/firebase/auth.js'
+import { getFriendlyAuthError } from '@utils/getFriendlyAuthError'
 import { updateProfile } from 'firebase/auth'
-import getFriendlyAuthError from '@utils/getFriendlyAuthError'
 
 async function login({ email, password }) {
   try {
@@ -21,12 +21,8 @@ async function signup({ username, email, password }) {
       return user
     }
   } catch (err) {
-    console.error(err)
     throw getFriendlyAuthError(err.message)
   }
 }
 
-export const authHandlers = {
-  login,
-  signup
-}
+export default { login, signup }

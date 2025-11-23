@@ -1,6 +1,6 @@
-import { getDoc, doc } from 'firebase/firestore'
 import { db } from '@/firebase/firebase-config.js'
-import getFriendlyAuthError from '@utils/getFriendlyAuthError'
+import { getFriendlyAuthError } from '@utils/getFriendlyAuthError'
+import { doc, getDoc } from 'firebase/firestore'
 
 /**
  * gets and return the firestore user project

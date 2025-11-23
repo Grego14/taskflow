@@ -1,15 +1,9 @@
+import { RESOURCES } from '@/constants'
 import i18n from '../i18n.js'
 
-export async function loadResources(lng, resources = ['common']) {
-  const validResources = [
-    'common',
-    'ui',
-    'profile',
-    'validations',
-    'dialogs',
-    'tooltips'
-  ]
+const resourcesMap = import.meta.glob('/src/locales/(en|es)/**.json')
 
+export async function loadResources(lng, resources = ['common', 'ui']) {
   try {
     if (!resources) return
 
@@ -17,22 +11,25 @@ export async function loadResources(lng, resources = ['common']) {
     const resourceList = multipleResources ? resources : [resources]
 
     for (const resource of Object.values(resourceList)) {
-      if (!validResources.includes(resource)) return
+      if (!RESOURCES.includes(resource)) {
+        console.warn('Trying to load invalid resource: "%s"', resource)
+        return
+      }
     }
 
     const resourcesConverted = resourceList.map(resource => ({
-      path: `/locales/${lng}/${resource}.json`,
+      module: resourcesMap[`/src/locales/${lng}/${resource}.json`],
       key: resource
     }))
 
     const loadedResources = await Promise.allSettled(
       resourcesConverted.map(resource =>
-        fetch(resource.path)
-          .then(res => res.json())
+        resource
+          .module()
           .catch(err =>
             console.error(
               'Error loading resource %s ->',
-              `${resource.key}`,
+              `${resource.key}, (${resource.module})`,
               err
             )
           )

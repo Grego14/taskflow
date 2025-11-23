@@ -1,5 +1,5 @@
 export default function getProjectData(projects, target) {
-  let projectData = null
+  let projectData = {}
 
   for (const project of Object.values(projects)) {
     if (project.id === target) {

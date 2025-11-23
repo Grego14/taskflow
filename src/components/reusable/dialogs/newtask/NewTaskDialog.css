@@ -1,0 +1,77 @@
+.newtask-form {
+  --newtask-dialog-gap: .75rem;
+
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.newtask-form .MuiFormControl-root:not(.MuiTextField-root) {
+  margin-top: .5rem;
+}
+
+.task-priority-n-date {
+  justify-content: space-between;
+}
+
+/* TaskTitle START */
+
+.task-title {
+  flex-direction: column;
+}
+
+/* TaskTitle END */
+
+/* TaskPriority START */
+
+.task-priority.task-priority {
+  min-width: 7.5rem;
+}
+
+/* TaskPriority END */
+
+/* TaskDate START */
+
+.task-date.task-date {
+  min-width: 7.5rem;
+}
+
+/* TaskDate END */
+
+/* TaskLabels START */
+
+/* TaskLabels END */
+
+/* TaskMembers START */
+
+.task-members {
+  gap: var(--newtask-dialog-gap);
+  align-items: center;
+  justify-content: space-between;
+}
+
+.task-members-select .MuiSelect-select,
+.task-priority-select .MuiSelect-select,
+.task-date .MuiSelect-select {
+  display: flex;
+  font-size: var(--fs-tiny);
+  gap: var(--newtask-dialog-gap);
+  padding-block: .75rem;
+  align-items: center;
+}
+
+.task-members-select__member {
+  display: flex;
+  gap: .75rem;
+}
+
+.task-members__assigned {
+  display: flex;
+  gap: var(--newtask-dialog-gap);
+}
+
+.assigned__member.assigned__member {
+  gap: .5rem;
+  padding-left: .5rem;
+}
+
+/* TaskMembers END */
