@@ -47,9 +47,9 @@ export default function LoginSection({ userTheme }) {
       id='login'
       sx={{ mt: 4, position: 'relative', overflow: 'hidden' }}>
       <Typography
-        variant='h4'
+        variant='h2'
         className='text-balance text-center'
-        sx={{ mx: 4, opacity: 0 }}
+        sx={[theme => ({ ...theme.typography.h4, mx: 4, opacity: 0 })]}
         id='login-text'>
         {t('login')}
       </Typography>

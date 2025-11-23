@@ -43,6 +43,7 @@ export default function LayoutManager() {
         minHeight='100dvh'
         marginLeft={`${uid ? drawerWidth?.closed : 0}px`}
         className='flex flex-column'
+        component='main'
         pb={isMobile ? appBarHeight : 0}>
         <Outlet />
       </Box>

@@ -83,7 +83,7 @@ export default function Landing() {
           sx={{ textDecoration: 'none' }}>
           <img
             src='/images/taskflow_icon.png'
-            alt='TaskFlow'
+            alt='App logotype'
             width={30}
             height={30}
           />
