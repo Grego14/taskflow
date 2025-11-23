@@ -1,0 +1,16 @@
+{
+  "updateBtn": "Actualizar perfil",
+  "deleteAccount": "Eliminar mi cuenta",
+  "avatarAlt_user": "Foto de perfil de {{user}}",
+  "labels": {
+    "theme": "Tema",
+    "lang": "Idioma",
+    "avatar": "Foto de perfil",
+    "username": "Nombre de usuario",
+    "uploadPicture": "Subir una imagen"
+  },
+  "profileUpdated": "Perfil actualizado con éxito",
+  "loading": "Cargando perfil",
+  "accountCreated_date": "Fecha de creación: {{date}}",
+  "lastLogin_date": "Último inicio de sesión: {{date}}"
+}

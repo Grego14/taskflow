@@ -1,0 +1,48 @@
+{
+  "newtask": {
+    "title": "Crear una nueva tarea",
+    "taskTitlePlaceholder": "Planificar proyecto x...",
+    "taskLabels": "Etiquetas",
+    "taskLabelsPlaceholder": "Etiqueta... rutina/matutina",
+    "taskStatus": "Estado",
+    "taskPriority": "Prioridad",
+    "taskMembersSelectLabel": "Asignar a",
+    "taskDateLabel": "Fecha",
+    "noMembers": "Tarea asignada a nadie",
+    "dates": {
+      "nodate": "No establecida",
+      "today": "Hoy",
+      "tomorrow": "Mañana",
+      "twodays": "En dos días",
+      "oneweek": "En una semana",
+      "twoweeks": "En dos semanas",
+      "onemonth": "En un mes"
+    },
+    "errors": {
+      "label": "La etiqueta contiene caracteres invalidos!",
+      "title": "El titulo contiene caracteres invalidos!"
+    }
+  },
+  "deleteTask": {
+    "title": "Esta tarea contiene subtareas sin completar, ¿desea eliminarlas o mantenerlas?",
+    "schedule": "Eliminar tarea y programar subtareas para hoy",
+    "deleteAll": "Eliminar tarea y subtareas"
+  },
+  "projects": {
+    "delete": "¿Estás seguro de que quieres eliminar este proyecto?",
+    "archive": "¿Estás seguro de que quieres archivar este proyecto?",
+    "archive2": "Si archivas el proyecto, ya no podrás realizar cambios en él",
+    "abandone": "¿Estás seguro de que quieres abandonar este proyecto?",
+    "abandone2": "Si abandonas el proyecto, ya no tendrás acceso hasta que te vuelvan a invitar"
+  },
+  "assignMembers": {
+    "title": "Asignar miembros",
+    "actualMembers": "Miembros actuales ({{count}})",
+    "noOwner": "Solo el propietario del proyecto puede agregar nuevos miembros"
+  },
+  "kickMember": {
+    "title": "Expulsar miembro",
+    "text1": "¿Estas seguro/a que deseas expulsar a ",
+    "text2": " del proyecto? Esta acción es irreversible."
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "updateBtn": "Update profile",
+  "deleteAccount": "Delete account",
+  "avatarAlt_user": "{{user}} profile picture",
+  "labels": {
+    "theme": "Theme",
+    "lang": "Language",
+    "avatar": "Profile Avatar",
+    "username": "Username",
+    "uploadPicture": "Upload picture"
+  },
+  "profileUpdated": "Profile updated successfully",
+  "loading": "Loading profile",
+  "accountCreated_date": "Account creation date: {{date}}",
+  "lastLogin_date": "Last login: {{date}}"
+}

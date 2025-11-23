@@ -1,0 +1,199 @@
+{
+  "projectActions": {
+    "metrics": "Metrics",
+    "settings": "Settings",
+    "dashboard": "Dashboard"
+  },
+  "drawer": {
+    "templates": "Templates",
+    "toolbar": {
+      "collapse": "Collapse menu",
+      "expand": "Expand menu",
+      "actualProject": "Actual project",
+      "lastProject": "Last project",
+      "newProject": "New project"
+    },
+    "notifications": "Notifications"
+  },
+  "tasks": {
+    "createTask": "Create a new task",
+    "listPreview": "List",
+    "kanbanPreview": "Kanban",
+    "previewSwitcher": "Change the task preview",
+    "noTasksWithFilter_filter": "There are no tasks with the filter ($t(buttons.filterOptions.{{filter}}))",
+    "errors": {
+      "query": "Failed to get tasks for this project",
+      "empty": "No tasks found for this project",
+      "connection": "Failed to get the tasks. Check your internet connection"
+    },
+    "loading": "Getting tasks",
+    "retryQuery": "Couldn't get the tasks",
+    "actions": {
+      "deleteTask": "$t(common:delete) task",
+      "createSubtask": "$t(common:create) subtask",
+      "assignMembers": "Assign members"
+    },
+    "priorities": {
+      "low": "low",
+      "medium": "medium",
+      "high": "high",
+      "urgent": "urgent",
+      "none": "none",
+      "priority_p": "{{p}} Priority",
+      "noPriority": "Set priority"
+    },
+    "statuses": {
+      "todo": "todo",
+      "doing": "in progress",
+      "done": "done",
+      "cancelled": "cancelled",
+      "overdue": "overdue"
+    },
+    "changePriority": "Change priority",
+    "changeStatus": "Change status",
+    "overdueTasks_quantity": "Overdue tasks ({{quantity}})",
+    "todayTasks_zero": "No tasks for today",
+    "todayTasks_one": "Today task",
+    "todayTasks_other": "Today tasks ({{count}})",
+    "filterTasks_filter_one": "$t(buttons.filterOptions.{{filter}}) task",
+    "filterTasks_filter_other": "$t(buttons.filterOptions.{{filter}}) tasks ({{count}})",
+    "filterTasks_assignedToMe_one": "Task assigned to me",
+    "filterTasks_assignedToMe_other": "Tasks assigned to me ({{count}})",
+    "noTodayTasks": "No tasks scheduled for today. Plan your day by creating new tasks or dragging overdue ones here",
+    "subtasks_one": "Sub task",
+    "subtasks_other": "Sub tasks ({{count}})",
+    "created_date": "Created {{date}}",
+    "completed_date": "Completed {{date}}",
+    "cancelled_date": "Cancelled {{date}}",
+    "taskActionsLabel": "task actions",
+    "archiveTask": "Archive task",
+    "changeDate": "Reschedule date"
+  },
+  "buttons": {
+    "filter": "filter menu",
+    "filterHelpText": "Filter tasks by:",
+    "filterOptions": {
+      "todo": "Todo",
+      "doing": "Doing",
+      "done": "Done",
+      "cancelled": "Cancelled",
+      "overdue": "Overdue",
+      "default": "Default",
+      "assignedToMe": "Assigned to me"
+    },
+    "add": "Add task or sub task",
+    "addMembers": "Add members",
+    "previewLabel": "previews menu",
+    "previewTooltip": "Change tasks preview",
+    "actionsTooltip": "Project actions",
+    "profileButtonLabel": "Navigate to my profile",
+    "changeTheme_theme": "Change to $t(modes.{{theme}}) mode"
+  },
+  "projects": {
+    "text": "Projects",
+    "errors": {
+      "notFound": "We couldn't find the project",
+      "noAccess": "Sorry. You don't have access to this project",
+      "members": "Failed to get project members",
+      "empty": "No projects were found",
+      "noConnection": "Sorry. We couldn't check if you have access to this project, check your internet connection."
+    },
+    "inputs": {
+      "nameLabel": "Project name",
+      "namePlaceholder": "Enter a name for your project",
+      "descriptionLabel": "Project description",
+      "descriptionPlaceholder": "Provide a brief summary of the project",
+      "errors": {
+        "nameIsEmpty": "Project name is required",
+        "nameIsInvalid": "Project name contains invalid characters",
+        "descriptionIsInvalid": "Project description contains invalid characters"
+      }
+    },
+    "new": {
+      "makeTemplate": "Make this project a template",
+      "makeTemplateHelpText": "Templates can be reused for new projects",
+      "makeTemplatePublic": "Public template",
+      "makeTemplatePublicHelpText": "Public templates can be used by any user",
+      "create": "Create project"
+    },
+    "goToProjects": "Go to my projects",
+    "recentProject": "Recently edited",
+    "lastProjects": "Last projects",
+    "lastEditedProject": "Go to my last edited project",
+    "createProject": "$t(common:create) a new project",
+    "loading": "Getting projects",
+    "loadingProject": "Getting project data",
+    "validating": "Validating access",
+    "goToProject": "Go to project",
+    "title_quantity": "Projects ({{quantity}})",
+    "template": "Template",
+    "archived": "Archived",
+    "created_date": "Created {{date}}",
+    "delete": "$t(common:delete) project",
+    "members": "{{count}} members",
+    "projectCardMenuLabel": "project actions",
+    "myProjects": "My Projects",
+    "goBack": "Go back to project",
+    "deleteProject": "Delete project",
+    "archiveProject": "Archive project",
+    "settings": {
+      "labelsLabel": "Labels",
+      "labelsInfo": "The tags shown here are being used by current tasks or sub-tasks",
+      "membersLabel": "Members",
+      "goToMembers": "Manage project members",
+      "createdBy": "Created by",
+      "createdAt": "Creation date",
+      "archivedAt": "Archived date",
+      "isTemplate": "Is a template",
+      "dangerTitle": "Danger zone",
+      "dangerSubtitle": "Manage irreversible actions for this project",
+      "saveProject": "Save changes",
+      "onlyOwnerCanChange": "Only the project creator can make changes",
+      "removeMember": "Kick member"
+    },
+    "cantUpdateArchived": "The project is archived, it can't longer receive changes",
+    "abandoneProject": "Leave project",
+    "projectPercentageActual": "Project Progress",
+    "projectPercentageLeft": "Remaining Percentage",
+    "addMembers": {
+      "sameUser": "You can't add yourself as a member as you'll be the owner of the project",
+      "userNotFound": "User not found",
+      "label": "Add members",
+      "placeholder": "Search by email...",
+      "search": "Search member"
+    },
+    "loadingMetrics": "Loading metrics"
+  },
+  "notifications": {
+    "projectDeleted": "Project successfully deleted",
+    "projectArchived": "Project successfully archived",
+    "projectAbandoned": "Project successfully abandoned",
+    "taskDeleted": "Task successfully deleted",
+    "savedProject": "Project successfully saved",
+    "memberKicked": "Member kicked sucessfully",
+    "invitation_user": "{{user}} invited you to join his project",
+    "empty": "There's nothing around here",
+    "invitationDeclined": "Invitation declined",
+    "welcome": "Welcome to TaskFlow",
+    "kicked": "You have been expelled from project",
+    "kicked2": "by"
+  },
+  "loadingUser": "Getting user data",
+  "ruteNotFound": "Sorry. We couldn't find that route",
+  "menuLabel_state": "$t(common:{{state}}) actions menu",
+  "dates": {
+    "today": "Today",
+    "tomorrow": "Tomorrow",
+    "overdue": "Overdue"
+  },
+  "routes": {
+    "home": "Boost Your Productivity",
+    "login": "$t(common:login)",
+    "signup": "$t(common:signup)",
+    "profile": "My Profile",
+    "projects": "My Projects",
+    "templates": "Community templates",
+    "new": "New Project",
+    "not_found": "Route Not Found"
+  }
+}

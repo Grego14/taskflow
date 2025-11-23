@@ -1,0 +1,32 @@
+{
+  "username": {
+    "usernameRequired": "Username is required",
+    "too-big": "Username is too big. Max 20 characters",
+    "shortUsername": "Username must be at least 2 characters long",
+    "usernameInvalidChars": "Username contains disallowed characters:",
+    "usernameStartsOrEnds": "Username can't start or end with a dot or hyphen",
+    "usernameMultipleChars": "Username cannot contain consecutive dots or hyphens"
+  },
+  "email": {
+    "emailRequired": "Email is required",
+    "shortEmail": "Email username (before the @) must be at least 6 characters",
+    "emailStructure": "Email must follow this format: username@domain.tld",
+    "shortTLD": "Domain extension must be at least 2 characters long",
+    "atSigns": "Email can only have one @"
+  },
+  "password": {
+    "passwordRequired": "Password is required",
+    "shortPassword": "Password must be at least 8 characters long",
+    "weakPassword": "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character",
+    "passwordMismatch": "Passwords do not match"
+  },
+  "form": {
+    "fieldsRequired": "All fields are required",
+    "serverError": "Server error. Try again",
+    "submit": "Error submitting the form. Try again"
+  },
+  "avatar": {
+    "too-big": "The image provided is very large. Max 250kb",
+    "invalid": "The image provided is invalid. Supported types: jpeg, png or webp"
+  }
+}

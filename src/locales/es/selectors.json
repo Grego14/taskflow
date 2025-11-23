@@ -1,0 +1,12 @@
+{
+  "members": {
+    "text": "Miembros"
+  },
+  "themes": {
+    "dark": "oscuro",
+    "light": "claro"
+  },
+  "langs": {
+    "menuLabel": "Cambiar idioma"
+  }
+}

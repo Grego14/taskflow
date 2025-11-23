@@ -1,0 +1,36 @@
+{
+  "selectorText": "Showing metrics for:",
+  "filters": {
+    "today": "Today",
+    "yesterday": "Yesterday",
+    "thisWeek": "This week",
+    "thisMonth": "This month",
+    "thisQuarterly": "This quarterly",
+    "thisYear": "This year"
+  },
+  "tabs": {
+    "project": "Project metrics",
+    "members": "Members metrics"
+  },
+  "averageCompletedOnTime": "Average tasks completed on time",
+  "projectMetrics": {
+    "totalCompleted": "Total completed tasks",
+    "totalCompletedOnTime": "Total completed tasks on time",
+    "totalCancelled": "Total cancelled tasks",
+    "totalPending": "Total pending tasks",
+    "totalOverdue": "Total overdue tasks",
+    "distributionPerStatus": "Task distribution by status"
+  },
+  "labels": {
+    "done": "Done ({{amount}})",
+    "cancelled": "Cancelled ({{amount}})",
+    "pending": "Pending ({{amount}})",
+    "overdue": "Overdue ({{amount}})"
+  },
+  "loadingMembers": "Loading members",
+  "assignedTasks": "Assigned tasks",
+  "completedTasks": "Completed tasks",
+  "completedOnTimeTasks": "Tasks completed on time",
+  "cancelledTasks": "Cancelled tasks",
+  "overdueTasks": "Overdue tasks"
+}

@@ -1,0 +1,204 @@
+{
+  "projectActions": {
+    "metrics": "Métricas",
+    "settings": "Configuración",
+    "dashboard": "Tablero"
+  },
+  "drawer": {
+    "templates": "Plantillas",
+    "toolbar": {
+      "collapse": "Contraer menú",
+      "expand": "Expandir menú",
+      "actualProject": "Proyecto actual",
+      "lastProject": "Proyecto anterior",
+      "newProject": "Crear proyecto"
+    },
+    "notifications": "Notificaciones"
+  },
+  "tasks": {
+    "createTask": "Crear nueva tarea",
+    "listPreview": "Lista",
+    "kanbanPreview": "Tabla kanban",
+    "previewSwitcher": "Cambiar la vista previa de la tarea",
+    "noTasksWithFilter_filter": "No hay tareas con el filtro ($t(buttons.filterOptions.{{filter}}))",
+    "errors": {
+      "query": "Error al obtener las tareas de este proyecto",
+      "empty": "No se encontraron tareas para este proyecto",
+      "connection": "No se pudo obtener las tareas. Revise su conexión a internet"
+    },
+    "loading": "Obteniendo tareas",
+    "retryQuery": "No se pudo obtener las tareas",
+    "actions": {
+      "deleteTask": "$t(common:delete) tarea",
+      "createSubtask": "$t(common:create) subtarea",
+      "assignMembers": "Asignar miembros"
+    },
+    "priorities": {
+      "low": "baja",
+      "medium": "media",
+      "high": "alta",
+      "urgent": "urgente",
+      "none": "ninguna",
+      "priority_p": "Prioridad {{p}}",
+      "noPriority": "Asignar prioridad"
+    },
+    "statuses": {
+      "todo": "para hacer",
+      "doing": "en progreso",
+      "done": "completada",
+      "cancelled": "cancelada",
+      "overdue": "vencida"
+    },
+    "changePriority": "Actualizar prioridad",
+    "changeStatus": "Actualizar estado",
+    "overdueTasks_quantity": "Tareas vencidas ({{quantity}})",
+    "todayTasks_zero": "No hay tareas para hoy",
+    "todayTasks_one": "Tarea para hoy",
+    "todayTasks_other": "Tareas para hoy ({{count}})",
+    "filterTasks_filter_one": "Tarea $t(buttons.filterOptions.{{filter}})",
+    "filterTasks_filter_other": "Tareas $t(buttons.filterOptions.{{filter}}) ({{count}})",
+    "filterTasks_assignedToMe_one": "$t(tasks.filterTasks_filter_one)",
+    "filterTasks_assignedToMe_other": "$t(tasks.filterTasks_filter_other)",
+    "noTodayTasks": "No hay tareas programadas para hoy. Organiza tu día creando nuevas tareas o arrastrando las vencidas aquí",
+    "subtasks_one": "Sub tarea",
+    "subtasks_other": "Sub tareas ({{count}})",
+    "created_date": "Creada {{date}}",
+    "completed_date": "Completada {{date}}",
+    "cancelled_date": "Cancelada {{date}}",
+    "taskActionsLabel": "acciones de la tarea",
+    "archiveTask": "Archivar tarea",
+    "changeDate": "Reasignar fecha"
+  },
+  "buttons": {
+    "filter": "menu de filtrado",
+    "filterHelpText": "Filtrar tareas por:",
+    "filterOptions": {
+      "todo": "para hacer",
+      "doing": "en progreso",
+      "done_one": "completada",
+      "done_other": "completadas",
+      "cancelled_zero": "canceladas",
+      "cancelled_one": "cancelada",
+      "cancelled_other": "canceladas",
+      "overdue_one": "vencida",
+      "overdue_other": "vencidas",
+      "default": "por defecto",
+      "assignedToMe_one": "asignada para mi",
+      "assignedToMe_other": "asignadas para mi"
+    },
+    "add": "Crear una tarea o sub tarea",
+    "addMembers": "Añadir miembros",
+    "previewLabel": "menu de vistas",
+    "previewTooltip": "Cambiar la vista de las tareas",
+    "actionsTooltip": "Acciones del proyecto",
+    "profileButtonLabel": "Ir a mi perfil",
+    "changeTheme_theme": "Cambiar a modo $t(modes.{{theme}})"
+  },
+  "projects": {
+    "errors": {
+      "notFound": "No pudimos encontrar el proyecto.",
+      "noAccess": "Lo sentimos. No tienes acceso a este proyecto",
+      "members": "Error al obtener los miembros del proyecto",
+      "empty": "No se encontraron proyectos",
+      "noConnection": "Lo sentimos. No pudimos comprobar si tienes acceso a este proyecto, comprueba tu conexión a internet."
+    },
+    "inputs": {
+      "nameLabel": "Nombre del proyecto",
+      "namePlaceholder": "Introduce un nombre para tu proyecto",
+      "descriptionLabel": "Descripción del proyecto",
+      "descriptionPlaceholder": "Proporcione un breve resumen del proyecto",
+      "errors": {
+        "nameIsEmpty": "El nombre del proyecto es requerido",
+        "nameIsInvalid": "El nombre del proyecto contiene caracteres invalidos",
+        "descriptionIsInvalid": "La descripción del proyecto contiene caracteres invalidos"
+      }
+    },
+    "new": {
+      "makeTemplate": "Hacer que este proyecto sea una plantilla",
+      "makeTemplateHelpText": "Las plantillas se pueden reutilizar para nuevos proyectos",
+      "makeTemplatePublic": "Plantilla publica",
+      "makeTemplatePublicHelpText": "Las plantillas publicas podrán ser usadas por cualquier usuario",
+      "create": "Crear proyecto"
+    },
+    "text": "Proyectos",
+    "goToProjects": "Ir a mis proyectos",
+    "recentProject": "Editados recientemente",
+    "lastProjects": "Proyectos anteriores",
+    "lastEditedProject": "Ir al último proyecto editado",
+    "createProject": "$t(common:create) un nuevo proyecto",
+    "loading": "Obteniendo proyectos",
+    "loadingProject": "Obteniendo datos del proyecto",
+    "validating": "Validando acceso",
+    "goToProject": "Ir al proyecto",
+    "title_quantity": "Proyectos ({{quantity}})",
+    "template": "Plantilla",
+    "archived": "Archivado",
+    "created_date": "Creado {{date}}",
+    "delete": "$t(common:delete) proyecto",
+    "members": "{{count}} miembros",
+    "projectCardMenuLabel": "acciones del proyecto",
+    "myProjects": "Mis proyectos",
+    "goBack": "Regresar al proyecto",
+    "deleteProject": "Eliminar proyecto",
+    "archiveProject": "Archivar proyecto",
+    "settings": {
+      "labelsLabel": "Etiquetas",
+      "labelsInfo": "Las etiquetas mostradas aquí están siendo usadas por tareas o sub-tareas actuales",
+      "membersLabel": "Miembros",
+      "goToMembers": "Configurar miembros del proyecto",
+      "createdBy": "Creado por",
+      "createdAt": "Fecha de creación",
+      "archivedAt": "Fecha de archivado",
+      "isTemplate": "Es una plantilla",
+      "dangerTitle": "Zona de peligro",
+      "dangerSubtitle": "Gestionar acciones irreversibles para este proyecto",
+      "saveProject": "Guardar cambios",
+      "onlyOwnerCanChange": "Solo el creador del proyecto puede hacer cambios",
+      "removeMember": "Expulsar miembro"
+    },
+    "cantUpdateArchived": "El proyecto esta archivado, ya no puede recibir cambios",
+    "abandoneProject": "Abandonar proyecto",
+    "projectPercentageActual": "Progreso del proyecto",
+    "projectPercentageLeft": "Porcentaje restante",
+    "addMembers": {
+      "sameUser": "No puedes agregarte como miembro ya que serás el propietario del proyecto",
+      "userNotFound": "Usuario no encontrado",
+      "label": "Agregar miembros",
+      "placeholder": "Buscar por correo electrónico...",
+      "search": "Buscar miembro"
+    },
+    "loadingMetrics": "Cargando métricas"
+  },
+  "notifications": {
+    "projectDeleted": "Proyecto borrado exitosamente",
+    "projectArchived": "Proyecto archivado exitosamente",
+    "projectAbandoned": "Proyecto abandonado exitosamente",
+    "taskDeleted": "Tarea eliminada exitosamente",
+    "savedProject": "Proyecto guardado exitosamente",
+    "memberKicked": "Miembro expulsado con éxito",
+    "invitation_user": "{{user}} te ha invitado a unirse a su proyecto",
+    "empty": "No hay nada por aquí",
+    "invitationDeclined": "Invitación rechazada",
+    "welcome": "Bienvenido/a a TaskFlow",
+    "kicked": "Haz sido expulsado del proyecto",
+    "kicked2": "por"
+  },
+  "loadingUser": "Obteniendo datos del usuario",
+  "ruteNotFound": "Lo sentimos. No pudimos encontrar esa ruta",
+  "menuLabel_state": "$t(common:{{state}}) menú de acciones",
+  "dates": {
+    "today": "Hoy",
+    "tomorrow": "Mañana",
+    "overdue": "Vencida"
+  },
+  "routes": {
+    "home": "Impulsa tu Productividad",
+    "login": "$t(common:login)",
+    "signup": "$t(common:signup)",
+    "profile": "Mi perfil",
+    "projects": "Mis proyectos",
+    "templates": "Plantillas de la comunidad",
+    "new": "Nuevo proyecto",
+    "not_found": "Ruta no encontrada"
+  }
+}

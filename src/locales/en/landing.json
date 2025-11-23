@@ -1,0 +1,19 @@
+{
+  "title0": "Tired of ideas lost in the sea of forgetfulness? With ",
+  "title1": " they will be safe, searchable, and ready for action",
+  "login": "Capture instantly, organize effortlessly, and delete with ease. Your productivity will thank you!",
+  "cards": {
+    "cloud": {
+      "title": "Cloud Sync",
+      "text": "All your projects and tasks are securely saved on the cloud, allowing you to access them from anywhere, at any time."
+    },
+    "management": {
+      "title": "Task Management",
+      "text": "Effortlessly organize and prioritize your tasks, and stay on top of your projects with our intuitive and user-friendly interface."
+    },
+    "collaborate": {
+      "title": "Collaboration",
+      "text": "Invite team members to collaborate on projects, assign tasks, and track progress in real-time."
+    }
+  }
+}

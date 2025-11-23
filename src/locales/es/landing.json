@@ -1,0 +1,19 @@
+{
+  "title0": "¿Ideas perdidas en el mar del olvido? Con ",
+  "title1": " siempre estarán seguras, accesibles y listas para convertirse en acción",
+  "login": "Anota al instante, organiza sin esfuerzo y borra fácilmente. ¡Tu productividad te lo agradecerá!",
+  "cards": {
+    "cloud": {
+      "title": "Sincronización en la nube",
+      "text": "Todos tus proyectos y tareas se guardan de forma segura en la nube, lo que te permite acceder a ellos desde cualquier lugar y en cualquier momento."
+    },
+    "management": {
+      "title": "Gestión de tareas",
+      "text": "Organiza y prioriza tus tareas con facilidad, y mantén el control de tus proyectos con nuestra interfaz intuitiva y fácil de usar."
+    },
+    "collaborate": {
+      "title": "Colaboración",
+      "text": "Invita a miembros del equipo a colaborar en proyectos, asignar tareas y seguir el progreso en tiempo real."
+    }
+  }
+}
