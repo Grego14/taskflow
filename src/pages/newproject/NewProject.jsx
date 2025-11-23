@@ -54,7 +54,7 @@ export default function NewProject() {
 
         <Divider sx={{ borderBottomWidth: '2px' }} />
 
-        <AddMembers members={members} setMembers={setMembers} />
+        <AddMembers members={members} setMembers={setMembers} isOwner />
       </Paper>
 
       <CreateProject

@@ -18,8 +18,6 @@ export default function ProjectsCards({ data }) {
   const lastProjectData = data?.find(p => p.id === lastProject)
   const cardWidth = isMobile ? '20rem' : '25rem'
 
-  console.log(data)
-
   return (
     <Box
       className={`flex flex-column${isMobile ? ' flex-center' : ''}`}
