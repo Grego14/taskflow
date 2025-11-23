@@ -29,7 +29,7 @@ export default function AppProvider({ children }) {
       isMobile,
       isOnlyMobile,
       drawerWidth: {
-        open: 235,
+        open: 260,
         // the drawer is replaced with an AppBar on mobile so we set width to 0
         closed: isMobile ? 0 : 64
       },
