@@ -58,6 +58,9 @@ const theme = responsiveFontSizes(
         }
       }
     },
+    typography: {
+      fontFamily: 'Rubik, Arial, sans-serif'
+    },
     components: {
       MuiButton: {
         styleOverrides: {
@@ -147,8 +150,12 @@ const theme = responsiveFontSizes(
           }
         }
       },
-      typography: {
-        fontFamily: 'Rubik, Arial'
+      MUITypography: {
+        styleOverrides: {
+          root: {
+            fontFamily: 'Rubik, Arial, sans-serif'
+          }
+        }
       }
     },
     breakpoints: {
