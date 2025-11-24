@@ -28,16 +28,13 @@ export default function LoginSection({ userTheme }) {
       })
 
       tl.from(loginText.words, {
-        x: 'random(-50, 50)',
         rotate: 'random(-50, 50)',
-        scale: 'random(0.3, 0.5)',
+        scale: 'random(0.75, 0.9)',
         autoAlpha: 0,
-        stagger: 0.05,
-        duration: 0.75
+        stagger: 0.05
       }).to(['#login-btn', '#signup-btn'], {
         scale: 1,
-        autoAlpha: 1,
-        duration: 0.25
+        autoAlpha: 1
       })
     })
   })

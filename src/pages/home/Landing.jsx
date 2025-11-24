@@ -1,9 +1,5 @@
-import Link from '@components/reusable/Link'
-import CircleLoader from '@components/reusable/loaders/CircleLoader'
-import AppBar from '@components/ui/appbar/AppBar'
-import LangUpdater from '@components/ui/buttons/LangUpdater'
-import ThemeUpdater from '@components/ui/buttons/ThemeUpdater'
 // components
+import CircleLoader from '@components/reusable/loaders/CircleLoader'
 import ChevronIcon from '@mui/icons-material/ChevronLeft'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
@@ -11,6 +7,7 @@ import Cards from './components/Cards'
 import LoginSection from './components/LoginSection'
 import MainText from './components/MainText'
 import Section from './components/Section'
+import LandingAppBar from './components/LandingAppBar'
 
 // hooks
 import useApp from '@hooks/useApp'
@@ -19,6 +16,13 @@ import useUser from '@hooks/useUser'
 import { styled, useTheme } from '@mui/material/styles'
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+
+import gsap from 'gsap'
+import { useGSAP } from '@gsap/react'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { SplitText } from 'gsap/SplitText'
+
+gsap.registerPlugin(useGSAP, SplitText, ScrollTrigger)
 
 export default function Landing() {
   const { preferences } = useUser()
@@ -37,6 +41,8 @@ export default function Landing() {
   const [mainTextHeight, setMainTextHeight] = useState(
     mainTextRef.current?.clientHeight || 0
   )
+
+  const [showAppBar, setShowAppBar] = useState(false)
 
   useEffect(() => {
     const handleResize = () => {
@@ -62,7 +68,8 @@ export default function Landing() {
 
   const mainTextProps = {
     userTheme,
-    section1
+    section1,
+    setShowAppBar
   }
 
   if (loadingResources) return <CircleLoader height='100dvh' />
@@ -74,28 +81,9 @@ export default function Landing() {
         scrollSnapType: 'y mandatory',
         minHeight: '100dvh'
       }}>
-      <AppBar sx={{ justifyContent: 'space-between', px: 2 }} top>
-        <Link
-          to='/'
-          className='flex flex-center'
-          gap={1}
-          color='textPrimary'
-          sx={{ textDecoration: 'none' }}>
-          <img
-            src='/images/taskflow_icon.png'
-            alt='App logotype'
-            width={30}
-            height={30}
-          />
-          <Typography sx={{ ...theme.typography.h6 }}>TaskFlow</Typography>
-        </Link>
-        <Box className='flex flex-center' gap={2}>
-          <ThemeUpdater />
-          <LangUpdater reloadOnChange />
-        </Box>
-      </AppBar>
+      <LandingAppBar show={showAppBar} />
 
-      <Section ref={section1} id='main-text' pb={appBarHeight}>
+      <Section ref={section1} id='main-text'>
         <MainText ref={mainTextRef} {...mainTextProps} />
       </Section>
 

@@ -8,6 +8,7 @@ import Typography from '@mui/material/Typography'
 
 import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
+import { SplitText } from 'gsap/SplitText'
 import { useTranslation } from 'react-i18next'
 
 const getText = (cardType, title = true) =>
@@ -33,13 +34,14 @@ export default function Cards({ mainTextHeight, userTheme }) {
 
   useGSAP(
     () => {
-      if (mainTextHeight) {
+      document.fonts.ready.then(() => {
+        if (mainTextHeight) return
         gsap.set('.card', { opacity: 0, scale: 0.5 })
 
         gsap.to('.card', {
           scale: 1,
           autoAlpha: 1,
-          stagger: 0.2,
+          stagger: 0.5,
           ease: 'back.out(2)',
           scrollTrigger: {
             trigger: '#section-cards',
@@ -49,12 +51,36 @@ export default function Cards({ mainTextHeight, userTheme }) {
             once: true
           }
         })
-      }
+
+        const cardsTitles = cards.map(card => `#${card.type}`)
+        const splittedTitles = cardsTitles.map(title => {
+          const splittedTitle = SplitText.create(title, {
+            type: 'chars'
+          }).chars
+          gsap.set(splittedTitle, { x: 'random(-30, -50)', opacity: 0 })
+          return splittedTitle
+        })
+
+        gsap.to(splittedTitles, {
+          autoAlpha: 1,
+          stagger: 0.3,
+          ease: 'bounce.out',
+          x: 0,
+          duration: 1.5,
+          scrollTrigger: {
+            scrub: 0.5,
+            trigger: '#section-cards',
+            start: `top-=25% bottom-=${mainTextHeight}`,
+            end: 'top+=20% top',
+            once: true
+          }
+        })
+      })
     },
     { dependencies: [mainTextHeight], revertOnUpdate: true }
   )
 
-  return cards.map((card, i) => (
+  return cards.map(card => (
     <Card
       key={card.type}
       sx={[
@@ -72,7 +98,8 @@ export default function Cards({ mainTextHeight, userTheme }) {
         slotProps={{
           title: {
             sx: [theme => ({ ...theme.typography.h6 })],
-            color: 'primary'
+            color: 'primary',
+            id: card.type
           }
         }}
       />

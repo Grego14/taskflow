@@ -2,17 +2,16 @@ import { useGSAP } from '@gsap/react'
 import useApp from '@hooks/useApp'
 import Typography from '@mui/material/Typography'
 import gsap from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { SplitText } from 'gsap/SplitText'
 import { forwardRef } from 'react'
 import { useTranslation } from 'react-i18next'
 
-gsap.registerPlugin(useGSAP, SplitText, ScrollTrigger)
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { SplitText } from 'gsap/SplitText'
 
 const MainText = forwardRef(function MainText(props, ref) {
   const { t } = useTranslation('landing')
   const { isMobile } = useApp()
-  const { userTheme } = props
+  const { userTheme, setShowAppBar } = props
   const taskflowColor = userTheme === 'light' ? '#7E60E0' : '#CFC0FF'
 
   useGSAP(() => {
@@ -63,6 +62,8 @@ const MainText = forwardRef(function MainText(props, ref) {
               gsap.set('.taskflow', {
                 textShadow: `0 0 5px ${taskflowColor}aa, 0 0 10px ${taskflowColor}80`
               })
+
+              setShowAppBar(true)
             }
           })
         }
@@ -76,7 +77,10 @@ const MainText = forwardRef(function MainText(props, ref) {
       className='mainTitle text-center'
       variant='h1'
       sx={[
-        theme => ({ ...theme.typography.h2, mx: isMobile ? 2 : 5, opacity: 0 })
+        theme => {
+          console.log(theme.typography)
+          return { ...theme.typography.h2, mx: isMobile ? 2 : 5, opacity: 0 }
+        }
       ]}
       color='primary'>
       {t('title0')}
