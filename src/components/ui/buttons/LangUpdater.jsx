@@ -4,6 +4,7 @@ import useUser from '@hooks/useUser'
 import { useColorScheme } from '@mui/material/styles'
 import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
+import useLoadResources from '@hooks/useLoadResources'
 
 const langs = {
   en: 'English',
@@ -19,6 +20,7 @@ export default function LangUpdater({
   const { update, uid } = useUser()
 
   const lang = i18n.language
+  const loadingResource = useLoadResources('selectors')
 
   const updateLang = useCallback(() => {
     ;(async () => {
@@ -31,6 +33,8 @@ export default function LangUpdater({
       if (reloadOnChange) window.location.reload()
     })()
   }, [update, uid, i18n, reloadOnChange, lang])
+
+  if (loadingResource) return
 
   return (
     <Button onClick={updateLang} aria-label={t('langs.menuLabel')}>
