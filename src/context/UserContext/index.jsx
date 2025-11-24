@@ -139,12 +139,13 @@ export default function UserProvider() {
     ]
   )
 
-  if (!userLoaded)
-    return <CircleLoader height='100dvh' text={t('loadingUser')} />
-
   return (
     <UserContext.Provider value={value}>
-      <Outlet />
+      {!userLoaded && currentUser ? (
+        <CircleLoader height='100dvh' text={t('loadingUser')} />
+      ) : (
+        <Outlet />
+      )}
     </UserContext.Provider>
   )
 }
