@@ -47,51 +47,62 @@ export default function AppRoutes() {
   const { currentUser } = useAuth()
   const restrictedPaths = ['/login', '/signup']
 
-  const loadingResources = useLoadResources(['common', 'ui', 'selectors'])
+  const loadingResources = useLoadResources(['common', 'ui'])
 
   if (loadingResources) return null
 
   return (
     <Routes>
-      <Route element={<RoutesHandler />}>
-        <Route element={<UserProvider />}>
-          {/* User must not be logged to be able to access this rutes */}
-          <Route
-            element={
-              <RestrictedRoute
-                isAuthenticated={!!currentUser}
-                restrictedPaths={restrictedPaths}
-              />
-            }>
-            <Route path='/login' element={<Auth type='login' />} />
-            <Route path='/signup' element={<Auth type='signup' />} />
-          </Route>
-          {/* <-----------------------------------------------------> */}
+      <Route element={<UserProvider />}>
+        {/* User must not be logged to be able to access this rutes */}
+        {/* We wrap this components inside the UserProvider because if the
+           user is creating an account the component gets the preferences from
+           that context */}
+        <Route
+          element={
+            <RestrictedRoute
+              isAuthenticated={!!currentUser}
+              restrictedPaths={restrictedPaths}
+            />
+          }>
+          <Route path='/login' element={<Auth type='login' />} />
+          <Route path='/signup' element={<Auth type='signup' />} />
+        </Route>
+        {/* <-----------------------------------------------------> */}
 
-          <Route path='/profile' element={<Profile />} />
+        {!currentUser ? (
+          <Route path='/' element={<Landing />} />
+        ) : (
+          <Route element={<RoutesHandler />}>
+            <Route path='/profile' element={<Profile />} />
 
-          <Route element={<NotificationsProvider />}>
-            <Route element={<LayoutManager />}>
-              <Route path='/' element={currentUser ? <Home /> : <Landing />} />
+            <Route element={<NotificationsProvider />}>
+              <Route element={<LayoutManager />}>
+                <Route
+                  path='/'
+                  element={currentUser ? <Home /> : <Landing />}
+                />
 
-              <Route path='/templates' element={<Templates />} />
+                <Route path='/templates' element={<Templates />} />
 
-              <Route path='/projects'>
-                <Route index element={<Projects />} />
-                <Route path='new' element={<NewProject />} />
+                <Route path='/projects'>
+                  <Route index element={<Projects />} />
+                  <Route path='new' element={<NewProject />} />
 
-                <Route path=':projectId' element={<Project />}>
-                  <Route index element={<ProjectDashBoard />} />
-                  <Route path='settings' element={<ProjectSettings />} />
+                  <Route path=':projectId' element={<Project />}>
+                    <Route index element={<ProjectDashBoard />} />
+                    <Route path='settings' element={<ProjectSettings />} />
 
-                  <Route element={<ProjectMetricsProvider />}>
-                    <Route path='metrics' element={<ProjectMetrics />} />
+                    <Route element={<ProjectMetricsProvider />}>
+                      <Route path='metrics' element={<ProjectMetrics />} />
+                    </Route>
                   </Route>
                 </Route>
               </Route>
             </Route>
           </Route>
-        </Route>
+        )}
+
         <Route path='*' element={<NotFound />} />
       </Route>
     </Routes>
