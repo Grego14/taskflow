@@ -35,13 +35,14 @@ export default function Cards({ mainTextHeight, userTheme }) {
   useGSAP(
     () => {
       document.fonts.ready.then(() => {
-        if (mainTextHeight) return
+        if (!mainTextHeight) return
+
         gsap.set('.card', { opacity: 0, scale: 0.5 })
 
         gsap.to('.card', {
           scale: 1,
           autoAlpha: 1,
-          stagger: 0.5,
+          stagger: 0.2,
           ease: 'back.out(2)',
           scrollTrigger: {
             trigger: '#section-cards',
@@ -57,21 +58,21 @@ export default function Cards({ mainTextHeight, userTheme }) {
           const splittedTitle = SplitText.create(title, {
             type: 'chars'
           }).chars
-          gsap.set(splittedTitle, { x: 'random(-30, -50)', opacity: 0 })
+          gsap.set(splittedTitle, { x: -30, opacity: 0 })
           return splittedTitle
         })
 
         gsap.to(splittedTitles, {
           autoAlpha: 1,
-          stagger: 0.3,
+          stagger: 0.2,
           ease: 'bounce.out',
           x: 0,
-          duration: 1.5,
           scrollTrigger: {
-            scrub: 0.5,
+            scrub: 0.8,
             trigger: '#section-cards',
             start: `top-=25% bottom-=${mainTextHeight}`,
-            end: 'top+=20% top',
+            end: 'top+=5% top',
+            markers: true,
             once: true
           }
         })

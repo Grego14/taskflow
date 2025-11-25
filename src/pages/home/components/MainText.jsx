@@ -77,10 +77,11 @@ const MainText = forwardRef(function MainText(props, ref) {
       className='mainTitle text-center'
       variant='h1'
       sx={[
-        theme => {
-          console.log(theme.typography)
-          return { ...theme.typography.h2, mx: isMobile ? 2 : 5, opacity: 0 }
-        }
+        theme => ({
+          ...theme.typography.h2,
+          mx: isMobile ? 2 : 5,
+          opacity: 0
+        })
       ]}
       color='primary'>
       {t('title0')}
