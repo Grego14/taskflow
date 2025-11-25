@@ -83,7 +83,7 @@ export default function Landing() {
       }}>
       <LandingAppBar show={showAppBar} />
 
-      <Section ref={section1} id='main-text'>
+      <Section ref={section1} id='main-text' sx={{height: `calc(100dvh - ${appBarHeight})`}}>
         <MainText ref={mainTextRef} {...mainTextProps} />
       </Section>
 
