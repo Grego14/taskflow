@@ -2,13 +2,12 @@ import { Suspense, lazy, useEffect, useRef } from 'react'
 
 // components
 import AppRoutes from './AppRoutes.jsx'
-
 import Notification from '@components/ui/notification/Notification'
 import CloudOffIcon from '@mui/icons-material/CloudOff'
 import CloudSyncIcon from '@mui/icons-material/CloudSync'
 
-import useApp from '@hooks/useApp'
 // hooks
+import useApp from '@hooks/useApp'
 import useDebounce from '@hooks/useDebounce'
 import { useColorScheme } from '@mui/material/styles'
 import { useAuth } from './firebase/AuthContext'
