@@ -48,6 +48,12 @@ export default function Cards({ userTheme }) {
     document.fonts.ready.then(() => {
       gsap.set('.card', { opacity: 0, scale: 0.5 })
 
+      const cardStart = `${isBigDevice ? 'top-=25%' : 'top-=10%'} bottom-=50%`
+
+      // if the device is not mobile/tablet the animation should end faster
+      // (the cards are next to each other in a row direction)
+      const cardEnd = `${isBigDevice ? 'top+=50%' : 'top-=20%'} top`
+
       gsap.to('.card', {
         scale: 1,
         autoAlpha: 1,
@@ -56,10 +62,8 @@ export default function Cards({ userTheme }) {
         scrollTrigger: {
           trigger: '#cards',
           scrub: 0.8,
-          start: `${isBigDevice ? 'top-=25%' : 'top-=10%'} bottom-=50%`,
-          // if the device is not mobile/tablet the animation should end faster
-          // (the cards are next to each other in a row direction)
-          end: `${isBigDevice ? 'top+=50%' : 'top-=20%'} top`,
+          start: cardStart,
+          end: cardEnd,
           once: true
         }
       })
@@ -75,14 +79,14 @@ export default function Cards({ userTheme }) {
 
       gsap.to(splittedTitles, {
         autoAlpha: 1,
-        stagger: 0.2,
+        stagger: 0.03,
         ease: 'bounce.out',
         x: 0,
         scrollTrigger: {
-          scrub: 0.8,
+          scrub: 0.5,
           trigger: '#cards',
-          start: 'top-=25% bottom-=50%',
-          end: 'top+=5% top',
+          start: cardStart,
+          end: cardEnd,
           once: true
         }
       })
@@ -122,17 +126,11 @@ export default function Cards({ userTheme }) {
               <Typography
                 color='primary'
                 variant='h2'
-                sx={[theme => ({ ...theme.typography.h6, fontWeight: 300 })]}>
+                sx={[theme => ({ ...theme.typography.h6, fontWeight: 300 })]}
+                id={card.type}>
                 {t(getText(card.type))}
               </Typography>
             }
-            slotProps={{
-              title: {
-                sx: [theme => ({ ...theme.typography.h6 })],
-                color: 'primary',
-                id: card.type
-              }
-            }}
           />
           <CardContent
             sx={{
