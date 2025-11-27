@@ -1,8 +1,7 @@
 import useDebounce from '@hooks/useDebounce.js'
-import { getDatabase, onValue, ref } from 'firebase/database'
 import { createContext, useContext, useEffect, useMemo, useState } from 'react'
 import { onAuthStateChange } from './auth.js'
-import { auth, db } from './firebase-config.js'
+import { auth } from './firebase-config.js'
 
 const AuthContext = createContext({
   currentUser: null,
@@ -30,26 +29,14 @@ export function AuthProvider({ children }) {
     return unsubscribe
   }, [])
 
-  // Manage the offline/online state
-  useEffect(() => {
-    const rtdb = getDatabase()
-    const connectedRef = ref(rtdb, '.info/connected')
-
-    const unsubscribe = onValue(connectedRef, snap => {
-      // if snap.val() is true mean the user is online...
-      debounceOffline(!snap.val())
-    })
-
-    return unsubscribe
-  }, [debounceOffline])
-
   const value = useMemo(
     () => ({
       currentUser,
       loading,
-      isOffline
+      isOffline,
+      setIsOffline: debounceOffline
     }),
-    [loading, currentUser, isOffline]
+    [loading, currentUser, isOffline, debounceOffline]
   )
 
   return (

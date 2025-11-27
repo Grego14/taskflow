@@ -1,7 +1,4 @@
 import { initializeApp } from 'firebase/app'
-import { getFirestore } from 'firebase/firestore'
-import { initializeFirestore, persistentLocalCache } from 'firebase/firestore'
-
 import {
   GithubAuthProvider,
   GoogleAuthProvider,
@@ -23,7 +20,6 @@ const firebaseConfig = {
 }
 
 const app = initializeApp(firebaseConfig)
-const db = initializeFirestore(app, { localCache: persistentLocalCache })
 const auth = getAuth(app)
 
 export const googleProvider = new GoogleAuthProvider()
@@ -33,8 +29,8 @@ export const githubProvider = new GithubAuthProvider()
 githubProvider.addScope('email')
 
 export {
+  app,
   auth,
-  db,
   signInWithPopup,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword
