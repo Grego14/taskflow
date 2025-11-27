@@ -1,7 +1,7 @@
-import { db } from '@/firebase/firebase-config'
 import i18n from '@/i18n'
 import { getFriendlyErrorFormatted } from '@utils/getFriendlyAuthError'
 import { addDoc, collection, serverTimestamp } from 'firebase/firestore'
+import db from '@/db'
 
 export default async function sendKickedNotification(
   user,

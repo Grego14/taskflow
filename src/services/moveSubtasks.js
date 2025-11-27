@@ -1,7 +1,7 @@
-import { db } from '@/firebase/firebase-config.js'
 import i18n from '@/i18n.js'
 import { getFriendlyErrorFormatted } from '@utils/getFriendlyAuthError'
 import { collection, doc, writeBatch } from 'firebase/firestore'
+import db from '@/db'
 
 const getNewDate = () => {
   const dueDate = new Date()

@@ -1,6 +1,6 @@
-import { db } from '@/firebase/firebase-config.js'
 import { getFriendlyAuthError } from '@utils/getFriendlyAuthError'
 import { collection, doc, serverTimestamp, setDoc } from 'firebase/firestore'
+import db from '@/db'
 
 /**
  * Creates a project task.

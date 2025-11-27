@@ -1,6 +1,6 @@
-import { db } from '@/firebase/firebase-config.js'
 import { doc, updateDoc, writeBatch } from 'firebase/firestore'
 import { getFriendlyAuthError } from '../utils/getFriendlyAuthError'
+import db from '@/db'
 
 export default async function updateProject(uid, projectId, data = {}) {
   if (!uid || typeof uid !== 'string')

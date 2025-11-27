@@ -1,4 +1,3 @@
-import { db } from '@/firebase/firebase-config'
 import i18n from '@/i18n'
 import { getFriendlyErrorFormatted } from '@utils/getFriendlyAuthError'
 import {
@@ -10,6 +9,7 @@ import {
   where,
   writeBatch
 } from 'firebase/firestore'
+import db from '@/db'
 
 export default async function removeAssignedTasksToUser(user, project, owner) {
   try {

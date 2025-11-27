@@ -1,4 +1,3 @@
-import { db } from '@/firebase/firebase-config.js'
 import i18n from '@/i18n.js'
 import createDueDate from '@utils/createDueDate'
 import {
@@ -7,6 +6,7 @@ import {
   serverTimestamp,
   writeBatch
 } from 'firebase/firestore'
+import db from '@/db'
 
 export default async function createUserDoc(user, preferences = []) {
   if (!user || !user.uid || preferences?.length < 1) return

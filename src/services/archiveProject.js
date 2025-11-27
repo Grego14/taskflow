@@ -1,7 +1,7 @@
-import { db } from '@/firebase/firebase-config'
 import i18n from '@/i18n'
 import { getFriendlyAuthError } from '@utils/getFriendlyAuthError'
 import { doc, updateDoc } from 'firebase/firestore'
+import db from '@/db'
 
 export default async function archiveProject({ user, project }) {
   if (

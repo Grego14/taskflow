@@ -1,6 +1,6 @@
-import { db } from '@/firebase/firebase-config.js'
 import { getFriendlyErrorFormatted } from '@utils/getFriendlyAuthError.js'
 import { doc, updateDoc } from 'firebase/firestore'
+import db from '@/db'
 
 /**
  * Updates a user's document in Firestore with the provided fields.
@@ -16,8 +16,6 @@ import { doc, updateDoc } from 'firebase/firestore'
  * @param {string} [data.lastEditedProjectOwner] The ID of the last edited project owner.
  * @param {string} [data.lastUsedFilter] The last used tasks filter.
  * @param {string} [data.previewer] The last used previewer.
- * @param {string} [data.lastActive] The last time the user make an interaction
- * or log ins.
  * @returns {Error<{error: boolean, message: string}>} An object with the status and a message.
  * @throws {Error} If the `uid` is not valid.
  */
@@ -26,7 +24,7 @@ export default async function updateUser(uid, data) {
     throw Error('updateUser: uid must be a valid user id string!')
 
   if (!data || typeof data !== 'object' || Object.keys(data).length === 0)
-    throw Error('updateUser: No data to update')
+    return
 
   try {
     const userRef = doc(db, 'users', uid)
@@ -63,10 +61,6 @@ export default async function updateUser(uid, data) {
 
     if (data.lastUsedFilter) {
       updatePayload['metadata.lastUsedFilter'] = data.lastUsedFilter
-    }
-
-    if (data.lastActive) {
-      updatePayload['metadata.lastActive'] = data?.lastActive
     }
 
     if (data.lastUsedMetricFilter) {

@@ -1,4 +1,3 @@
-import { db } from '@/firebase/firebase-config'
 import {
   collection,
   doc,
@@ -7,6 +6,7 @@ import {
   query,
   writeBatch
 } from 'firebase/firestore'
+import db from '@/db'
 
 /**
  * Deletes all documents in a collection in batches.

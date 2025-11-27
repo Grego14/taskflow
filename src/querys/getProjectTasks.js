@@ -1,6 +1,6 @@
-import { db } from '@/firebase/firebase-config.js'
 import orderSubtasks from '@utils/tasks/orderSubtasks'
 import { collectionGroup, onSnapshot, query, where } from 'firebase/firestore'
+import db from '@/db'
 
 export default function getProjectTasks({
   user,
