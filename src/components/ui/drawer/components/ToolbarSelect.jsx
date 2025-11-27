@@ -11,7 +11,6 @@ import { useParams } from 'react-router-dom'
 import useUser from '@hooks/useUser'
 import { useEffect, useState } from 'react'
 
-import { db } from '@/firebase/firebase-config'
 import i18n from '@/i18n'
 import useNavigateToProject from '@hooks/useNavigateToProject'
 import { getFriendlyAuthError } from '@utils/getFriendlyAuthError'
@@ -24,6 +23,7 @@ import {
   query,
   where
 } from 'firebase/firestore'
+import db from '@/db'
 
 export default function ToolbarSelect({ open, toggleDrawer }) {
   const { uid, metadata } = useUser()
