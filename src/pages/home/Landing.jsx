@@ -22,6 +22,8 @@ import { useGSAP } from '@gsap/react'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { SplitText } from 'gsap/SplitText'
 
+import setPageTitle from '@utils/setPageTitle'
+
 gsap.registerPlugin(useGSAP, SplitText, ScrollTrigger)
 
 export default function Landing() {
@@ -53,6 +55,8 @@ export default function Landing() {
       setMainTextHeight(newHeight)
     }
 
+    setPageTitle(t('routes.home', { ns: 'common' }))
+
     // wait until the landing resource loads... otherwise the cards aren't going
     // to be animated
     if (!loadingResources) {
@@ -64,11 +68,10 @@ export default function Landing() {
     return () => {
       window.removeEventListener('resize', handleResize)
     }
-  }, [loadingResources])
+  }, [loadingResources, t])
 
   const mainTextProps = {
     userTheme,
-    section1,
     setShowAppBar
   }
 
@@ -83,13 +86,11 @@ export default function Landing() {
       }}>
       <LandingAppBar show={showAppBar} />
 
-      <Section ref={section1} id='main-text' sx={{height: `calc(100dvh - ${appBarHeight})`}}>
+      <Section ref={section1} id='main-text'>
         <MainText ref={mainTextRef} {...mainTextProps} />
       </Section>
 
-      <Section id='cards' sx={{ gap: 5, justifyContent: 'start' }}>
-        <Cards mainTextHeight={mainTextHeight} userTheme={userTheme} />
-      </Section>
+      <Cards mainTextHeight={mainTextHeight} userTheme={userTheme} />
 
       <LoginSection userTheme={userTheme} />
     </Box>

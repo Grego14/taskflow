@@ -42,21 +42,23 @@ export default function LoginSection({ userTheme }) {
   return (
     <Section
       id='login'
-      sx={{ mt: 4, position: 'relative', overflow: 'hidden' }}>
-      <Typography
-        variant='h2'
-        className='text-balance text-center'
-        sx={[theme => ({ ...theme.typography.h4, mx: 4, opacity: 0 })]}
-        id='login-text'>
-        {t('login')}
-      </Typography>
-      <Box sx={{ mt: 4, display: 'flex', gap: 4 }}>
-        <LoginButton variant='outlined' id='login-btn' />
-        <SignUpButton id='signup-btn' />
-      </Box>
+      sx={{ position: 'relative', overflow: 'hidden', height: '75dvh' }}>
+      <div className='flex flex-column flex-center'>
+        <Typography
+          variant='h2'
+          className='text-balance text-center'
+          sx={[theme => ({ ...theme.typography.h4, mx: 4, opacity: 0 })]}
+          id='login-text'>
+          {t('login')}
+        </Typography>
+        <Box sx={{ mt: 4, display: 'flex', gap: 4 }}>
+          <LoginButton variant='outlined' id='login-btn' />
+          <SignUpButton id='signup-btn' />
+        </Box>
+      </div>
 
       <BlurredCircle
-        positions={{ top: 150, left: -75 }}
+        positions={{ bottom: 0, left: -75 }}
         color={blurredCircleColor}
         blur={100}
       />

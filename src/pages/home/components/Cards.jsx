@@ -5,6 +5,7 @@ import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
 import CardHeader from '@mui/material/CardHeader'
 import Typography from '@mui/material/Typography'
+import Section from './Section'
 
 import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
@@ -48,7 +49,7 @@ export default function Cards({ mainTextHeight, userTheme }) {
             trigger: '#section-cards',
             scrub: 0.8,
             start: `top-=25% bottom-=${mainTextHeight}`,
-            end: `bottom-=${mainTextHeight} top`,
+            end: 'bottom-=50% top',
             once: true
           }
         })
@@ -72,7 +73,6 @@ export default function Cards({ mainTextHeight, userTheme }) {
             trigger: '#section-cards',
             start: `top-=25% bottom-=${mainTextHeight}`,
             end: 'top+=5% top',
-            markers: true,
             once: true
           }
         })
@@ -81,32 +81,38 @@ export default function Cards({ mainTextHeight, userTheme }) {
     { dependencies: [mainTextHeight], revertOnUpdate: true }
   )
 
-  return cards.map(card => (
-    <Card
-      key={card.type}
-      sx={[
-        theme => ({
-          mx: 2,
-          width: '75%',
-          border: `1px solid ${theme.palette.secondary[userTheme]}`
-        })
-      ]}
-      elevation={3}
-      className='card'>
-      <CardHeader
-        avatar={card.icon}
-        title={t(getText(card.type))}
-        slotProps={{
-          title: {
-            sx: [theme => ({ ...theme.typography.h6 })],
-            color: 'primary',
-            id: card.type
-          }
-        }}
-      />
-      <CardContent sx={{ overflowX: 'hidden', '&:last-child': { pb: 4 } }}>
-        <Typography>{t(getText(card.type, false))}</Typography>
-      </CardContent>
-    </Card>
-  ))
+  return (
+    <Section
+      id='cards'
+      sx={{ gap: 5, justifyContent: 'start', height: 'auto' }}>
+      {cards.map(card => (
+        <Card
+          key={card.type}
+          sx={[
+            theme => ({
+              mx: 2,
+              width: '75%',
+              border: `1px solid ${theme.palette.secondary[userTheme]}`
+            })
+          ]}
+          elevation={3}
+          className='card'>
+          <CardHeader
+            avatar={card.icon}
+            title={t(getText(card.type))}
+            slotProps={{
+              title: {
+                sx: [theme => ({ ...theme.typography.h6 })],
+                color: 'primary',
+                id: card.type
+              }
+            }}
+          />
+          <CardContent sx={{ overflowX: 'hidden', '&:last-child': { pb: 4 } }}>
+            <Typography>{t(getText(card.type, false))}</Typography>
+          </CardContent>
+        </Card>
+      ))}
+    </Section>
+  )
 }
