@@ -4,7 +4,7 @@ import Box from '@mui/material/Box'
 import Divider from '@mui/material/Divider'
 import Slide from '@mui/material/Slide'
 
-import { lazy, Suspense } from 'react'
+import { Suspense, lazy } from 'react'
 
 const AppBar = lazy(() => import('@components/ui/appbar/AppBar'))
 const Link = lazy(() => import('@components/reusable/Link'))

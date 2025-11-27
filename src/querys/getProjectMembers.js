@@ -1,3 +1,4 @@
+import db from '@/db'
 import i18n from '@/i18n'
 import { getFriendlyAuthError } from '@utils/getFriendlyAuthError.js'
 import {
@@ -7,7 +8,6 @@ import {
   query,
   where
 } from 'firebase/firestore'
-import db from '@/db'
 
 export default async function getProjectMembers({ queryKey }) {
   const [_, { members = [] }] = queryKey

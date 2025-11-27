@@ -4,10 +4,10 @@ import ChevronIcon from '@mui/icons-material/ChevronLeft'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import Cards from './components/Cards'
+import LandingAppBar from './components/LandingAppBar'
 import LoginSection from './components/LoginSection'
 import MainText from './components/MainText'
 import Section from './components/Section'
-import LandingAppBar from './components/LandingAppBar'
 
 // hooks
 import useApp from '@hooks/useApp'
@@ -17,8 +17,8 @@ import { styled, useTheme } from '@mui/material/styles'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
+import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { SplitText } from 'gsap/SplitText'
 

@@ -1,6 +1,6 @@
+import db from '@/db'
 import { getFriendlyAuthError } from '@utils/getFriendlyAuthError'
 import { doc, updateDoc } from 'firebase/firestore'
-import db from '@/db'
 
 export default async function updateTask({
   user,

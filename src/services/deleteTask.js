@@ -1,3 +1,4 @@
+import db from '@/db'
 import { getFriendlyErrorFormatted } from '@utils/getFriendlyAuthError.js'
 import {
   collection,
@@ -6,7 +7,6 @@ import {
   getDocs,
   writeBatch
 } from 'firebase/firestore'
-import db from '@/db'
 
 export default async function deleteTask(
   { user, project, task, subtask, deleteSubtasks } = {

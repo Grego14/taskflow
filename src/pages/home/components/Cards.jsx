@@ -7,12 +7,12 @@ import CardHeader from '@mui/material/CardHeader'
 import Typography from '@mui/material/Typography'
 import Section from './Section'
 
-import useApp from '@hooks/useApp'
 import { useGSAP } from '@gsap/react'
+import useApp from '@hooks/useApp'
+import useMediaQuery from '@mui/material/useMediaQuery'
 import gsap from 'gsap'
 import { SplitText } from 'gsap/SplitText'
 import { useTranslation } from 'react-i18next'
-import useMediaQuery from '@mui/material/useMediaQuery'
 
 import { alpha } from '@mui/material/styles'
 
@@ -60,7 +60,7 @@ export default function Cards({ userTheme }) {
           // if the device is not mobile/tablet the animation should end faster
           // (the cards are next to each other in a row direction)
           end: `${isBigDevice ? 'top+=50%' : 'top-=20%'} top`,
-          once: true,
+          once: true
         }
       })
 

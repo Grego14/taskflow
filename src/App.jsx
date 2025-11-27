@@ -1,10 +1,10 @@
 import { Suspense, lazy, useEffect, useRef } from 'react'
 
-// components
-import AppRoutes from './AppRoutes.jsx'
 import Notification from '@components/ui/notification/Notification'
 import CloudOffIcon from '@mui/icons-material/CloudOff'
 import CloudSyncIcon from '@mui/icons-material/CloudSync'
+// components
+import AppRoutes from './AppRoutes.jsx'
 
 // hooks
 import useApp from '@hooks/useApp'

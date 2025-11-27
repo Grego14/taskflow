@@ -1,7 +1,7 @@
+import db from '@/db'
 import i18n from '@/i18n'
 import { arrayRemove, doc, updateDoc, writeBatch } from 'firebase/firestore'
 import { getFriendlyErrorFormatted } from '../utils/getFriendlyAuthError'
-import db from '@/db'
 
 // only non-members can abandone a project... the owner needs to delete it
 export default async function abandoneProject(userId, projectId, ownerId) {

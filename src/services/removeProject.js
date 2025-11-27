@@ -1,8 +1,8 @@
+import db from '@/db'
 import i18n from '@/i18n'
 import deleteCollection from '@utils/deleteCollection'
 import { getFriendlyAuthError } from '@utils/getFriendlyAuthError'
 import { collection, deleteDoc, doc, getDocs } from 'firebase/firestore'
-import db from '@/db'
 
 export default async function removeProject({ user, project }) {
   if (

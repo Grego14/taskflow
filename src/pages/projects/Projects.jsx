@@ -1,9 +1,9 @@
+import CircleLoader from '@components/reusable/loaders/CircleLoader'
 // components
 import CreateProject from '@components/ui/buttons/CreateProject'
 import ProjectsCards from '@components/ui/projectcard/ProjectsCards'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
-import CircleLoader from '@components/reusable/loaders/CircleLoader'
 
 // hooks
 import useApp from '@hooks/useApp'
@@ -11,6 +11,7 @@ import useUser from '@hooks/useUser'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import db from '@/db'
 // utils
 import i18n from '@/i18n'
 import { getFriendlyAuthError } from '@utils/getFriendlyAuthError.js'
@@ -21,7 +22,6 @@ import {
   query,
   where
 } from 'firebase/firestore'
-import db from '@/db'
 import useProjectAccess from '../../context/ProjectsContext/useProjectAccess'
 
 export default function Projects() {

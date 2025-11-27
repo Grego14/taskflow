@@ -1,7 +1,7 @@
+import db from '@/db'
 import i18n from '@/i18n'
 import { getFriendlyAuthError } from '@utils/getFriendlyAuthError'
 import { collection, getDocs, limit, query, where } from 'firebase/firestore'
-import db from '@/db'
 
 export default async function getUserByEmail(email) {
   if (!email) return []

@@ -1,6 +1,6 @@
+import db from '@/db'
 import { getFriendlyErrorFormatted } from '@utils/getFriendlyAuthError.js'
 import { doc, updateDoc } from 'firebase/firestore'
-import db from '@/db'
 
 /**
  * Updates a user's document in Firestore with the provided fields.

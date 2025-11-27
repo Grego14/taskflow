@@ -104,7 +104,7 @@ export default memo(function TasksProvider({ children }) {
         subtask
       })
     },
-    onError: err => console.error(err),
+    onError: err => console.error(err)
   })
 
   // actions are the functions used on the Task menu

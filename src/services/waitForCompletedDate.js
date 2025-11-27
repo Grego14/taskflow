@@ -1,5 +1,5 @@
-import { doc, onSnapshot, updateDoc } from 'firebase/firestore'
 import db from '@/db'
+import { doc, onSnapshot, updateDoc } from 'firebase/firestore'
 
 export default function waitForCompletedDate({
   taskId,

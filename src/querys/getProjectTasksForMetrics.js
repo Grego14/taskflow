@@ -1,8 +1,8 @@
+import db from '@/db'
 import i18n from '@/i18n'
 import { getFriendlyErrorFormatted } from '@utils/getFriendlyAuthError'
 import orderSubtasks from '@utils/tasks/orderSubtasks'
 import { collectionGroup, getDocs, query, where } from 'firebase/firestore'
-import db from '@/db'
 
 export default async function getProjectTasksForMetrics({
   owner,

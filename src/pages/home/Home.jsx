@@ -2,9 +2,9 @@ import { useState } from 'react'
 
 // components
 import Link from '@components/reusable/Link'
+import CircleLoader from '@components/reusable/loaders/CircleLoader'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
-import CircleLoader from '@components/reusable/loaders/CircleLoader'
 
 // hooks
 import { useGSAP } from '@gsap/react'

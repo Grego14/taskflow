@@ -1,6 +1,6 @@
+import db from '@/db'
 import i18n from '@/i18n'
 import { getFriendlyErrorFormatted } from '@utils/getFriendlyAuthError'
-import db from '@/db'
 
 export default async function dbManipulationWrapper(
   service,

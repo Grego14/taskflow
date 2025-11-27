@@ -1,7 +1,7 @@
+import useDebounce from '@hooks/useDebounce'
+import useUser from '@hooks/useUser'
 import { useMutation } from '@tanstack/react-query'
 import { useEffect, useMemo } from 'react'
-import useUser from '@hooks/useUser'
-import useDebounce from '@hooks/useDebounce'
 
 import { Outlet } from 'react-router-dom'
 import RouteHandler from './RoutesHandler'
@@ -9,11 +9,11 @@ import RouteHandler from './RoutesHandler'
 import { useAuth } from '@/firebase/AuthContext'
 import useGetUserFromDb from '@hooks/useGetUserFromDb'
 
-import { getDatabase, onValue, ref } from 'firebase/database'
-import updater from '@services/updateUser'
-import lazyImport from '@utils/lazyImport'
 import i18n from '@/i18n'
+import updater from '@services/updateUser'
 import getLocale from '@utils/getLocale'
+import lazyImport from '@utils/lazyImport'
+import { getDatabase, onValue, ref } from 'firebase/database'
 
 export default function UserLogged() {
   const { uid, setFilter, setUpdaters } = useUser()

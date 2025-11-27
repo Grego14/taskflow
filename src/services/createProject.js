@@ -1,3 +1,4 @@
+import db from '@/db'
 import { getFriendlyAuthError } from '@utils/getFriendlyAuthError'
 import {
   addDoc,
@@ -8,7 +9,6 @@ import {
   writeBatch
 } from 'firebase/firestore'
 import getProject from './getProject'
-import db from '@/db'
 
 /**
  * creates a project and returns its data

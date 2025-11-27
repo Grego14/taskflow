@@ -1,6 +1,6 @@
+import db from '@/db'
 import { getFriendlyAuthError } from '@utils/getFriendlyAuthError'
 import { doc, getDoc } from 'firebase/firestore'
-import db from '@/db'
 
 /**
  * gets and return the firestore user project
