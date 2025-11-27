@@ -8,7 +8,6 @@ import Typography from '@mui/material/Typography'
 
 // hooks
 import useApp from '@hooks/useApp'
-import useLoadResources from '@hooks/useLoadResources'
 import useProject from '@hooks/useProject'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -21,8 +20,7 @@ export default function MembersSelector({
   setMembers,
   noMargin = false
 }) {
-  const { t } = useTranslation('selectors')
-  const loadingResources = useLoadResources('selectors')
+  const { t } = useTranslation('ui')
   const { isMobile } = useApp()
   const { projectMembers } = useProject()
 
@@ -35,11 +33,11 @@ export default function MembersSelector({
 
   return (
     <FormControl sx={{ minWidth: '10rem', mt: noMargin ? 0 : 2 }}>
-      <InputLabel id='select-members'>{t('members.text')}</InputLabel>
+      <InputLabel id='select-members'>{t('selectors.members.text')}</InputLabel>
       <Select
         labelId='select-members'
         value={members.at(-1) || ''}
-        label={t('members.text')}
+        label={t('selectors.members.text')}
         onChange={handleMembersChange}
         sx={{
           '& .MuiSelect-select': {

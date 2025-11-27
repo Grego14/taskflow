@@ -22,7 +22,9 @@ export default function ThemeUpdater() {
   return (
     <IconButton
       onClick={updateTheme}
-      aria-label={t('buttons.changeTheme_theme', { theme: userTheme })}>
+      aria-label={t('buttons.changeTheme_theme', {
+        theme: userTheme === 'light' ? 'dark' : 'light'
+      })}>
       {userTheme === 'dark' ? (
         <LightModeIcon fontSize='small' />
       ) : (
