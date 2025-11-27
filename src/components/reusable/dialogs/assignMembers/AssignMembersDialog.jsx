@@ -23,7 +23,7 @@ export default function AssignMembersDialog(props) {
     ...other
   } = props
   const { t } = useTranslation('dialogs')
-  const loadingResources = useLoadResources(['dialogs', 'selectors'])
+  const loadingResources = useLoadResources('dialogs')
   const [members, setMembers] = useState(taskMembers || [])
   const { actions } = useTasks()
   const { data: projectData, projectMembers } = useProject()

@@ -6,10 +6,7 @@ import ProfileButtons from './components/ProfileButtons'
 import ProfileForm from './components/ProfileForm'
 import ProfileMetadata from './components/ProfileMetadata'
 
-import { useAuth } from '@/firebase/AuthContext'
 // hooks
-import useApp from '@hooks/useApp'
-import useUser from '@hooks/useUser'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
@@ -20,7 +17,6 @@ export default function Profile() {
   const navigate = useNavigate()
   const { t } = useTranslation('common')
 
-  const { currentUser } = useAuth()
   const [params, setParams] = useSearchParams()
   const location = useLocation()
 
@@ -35,14 +31,7 @@ export default function Profile() {
     }
   }, [location, setParams])
 
-  const { lastRute } = useApp()
-  const { preferences } = useUser()
-
-  const loadingResources = useLoadResources([
-    'profile',
-    'validations',
-    'selectors'
-  ])
+  const loadingResources = useLoadResources(['profile', 'validations', 'ui'])
   const [saveBtnDisabled, setSaveBtnDisabled] = useState(true)
 
   if (loadingResources)
@@ -63,7 +52,6 @@ export default function Profile() {
               // the LayoutAppBar uses the "projectAction" to check which layout
               // it should render
               state: {
-                lastRute: '/profile',
                 fromProject,
                 projectAction: fromAction
               }

@@ -9,7 +9,7 @@ import { useTranslation } from 'react-i18next'
 const themes = ['dark', 'light']
 
 export default function ThemeSelector({ error, field }) {
-  const { t } = useTranslation(['profile', 'selectors'])
+  const { t } = useTranslation(['profile', 'ui'])
 
   return (
     <FormControl>
@@ -22,7 +22,7 @@ export default function ThemeSelector({ error, field }) {
         {...field}>
         {themes.map(theme => (
           <MenuItem key={theme} value={theme}>
-            {upperCaseInitialLetter(t(`themes.${theme}`, { ns: 'selectors' }))}
+            {upperCaseInitialLetter(t(`selectors.themes.${theme}`, { ns: 'ui' }))}
           </MenuItem>
         ))}
       </Select>
