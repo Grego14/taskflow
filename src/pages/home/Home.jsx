@@ -1,15 +1,15 @@
-import { Suspense, lazy, memo, useCallback, useEffect, useState } from 'react'
+import { useState } from 'react'
 
 // components
 import Link from '@components/reusable/Link'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
+import CircleLoader from '@components/reusable/loaders/CircleLoader'
 
 // hooks
 import { useGSAP } from '@gsap/react'
 import useUser from '@hooks/useUser'
 import { useTranslation } from 'react-i18next'
-import { useLocation } from 'react-router-dom'
 
 // utils
 import { getItem } from '@utils/storage.js'
@@ -25,30 +25,41 @@ const linkHoverStyles = {
   }
 }
 
-export default memo(function Home() {
+export default function Home() {
   const { t } = useTranslation(['common', 'ui'])
   const [open, setOpen] = useState(getItem('drawerOpen', false))
 
-  const { profile, metadata } = useUser()
+  const { profile, metadata, userLoaded } = useUser()
+
   const lastEditedProject = metadata?.lastEditedProject
   const lastEditedProjectOwner = metadata?.lastEditedProjectOwner
   const username = profile?.username
 
-  useGSAP(() => {
-    document.fonts.ready.then(() => {
-      gsap.set('#username', { opacity: 1 })
+  useGSAP(
+    () => {
+      document.fonts.ready.then(() => {
+        if (username) {
+          gsap.set('#username', { opacity: 1 })
 
-      gsap.to('#username', {
-        duration: 1,
-        scrambleText: {
-          text: username,
-          chars: 'User',
-          speed: 0.5,
-          revealDelay: 0.5
+          gsap.to('#username', {
+            duration: 1,
+            scrambleText: {
+              text: username,
+              chars: 'User',
+              speed: 0.5,
+              revealDelay: 0.5
+            }
+          })
         }
       })
-    })
-  }, [username])
+    },
+    { dependencies: [username] }
+  )
+
+  if (!userLoaded)
+    return (
+      <CircleLoader height='100dvh' text={t('loadingUser', { ns: 'ui' })} />
+    )
 
   return (
     <Box className='flex flex-column flex-center text-center' m='auto'>
@@ -79,4 +90,4 @@ export default memo(function Home() {
       </Link>
     </Box>
   )
-})
+}
