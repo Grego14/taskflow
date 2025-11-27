@@ -164,7 +164,7 @@ const theme = responsiveFontSizes(
         mobile: 420,
         tablet: 640,
         laptop: 1024,
-        desktop: 1200
+        desktop: 1360
       }
     }
   }),
