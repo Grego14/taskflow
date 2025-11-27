@@ -16,5 +16,6 @@ export default defineConfig({
       '@querys': path.resolve(__dirname, './src/querys'),
       '@context': path.resolve(__dirname, './src/context')
     }
-  }
+  },
+  build: { target: 'esnext' }
 })
