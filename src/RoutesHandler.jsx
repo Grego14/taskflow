@@ -22,7 +22,7 @@ const getTitleKeyFromPath = pathname =>
 export default function RoutesHandler() {
   const location = useLocation()
   const { projectId } = useParams()
-  const { t } = useTranslation('ui')
+  const { t } = useTranslation('common')
   const { setLastRute, lastRute } = useApp()
 
   useEffect(() => {
