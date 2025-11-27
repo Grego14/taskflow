@@ -130,7 +130,8 @@
     "archived": "Archived",
     "created_date": "Created {{date}}",
     "delete": "$t(common:delete) project",
-    "members": "{{count}} members",
+    "members_one": "{{count}} member",
+    "members_other": "{{count}} members",
     "projectCardMenuLabel": "project actions",
     "myProjects": "My Projects",
     "goBack": "Go back to project",
@@ -185,15 +186,5 @@
     "today": "Today",
     "tomorrow": "Tomorrow",
     "overdue": "Overdue"
-  },
-  "routes": {
-    "home": "Boost Your Productivity",
-    "login": "$t(common:login)",
-    "signup": "$t(common:signup)",
-    "profile": "My Profile",
-    "projects": "My Projects",
-    "templates": "Community templates",
-    "new": "New Project",
-    "not_found": "Route Not Found"
   }
 }

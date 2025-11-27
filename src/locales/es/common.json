@@ -20,5 +20,13 @@
   "goBack": "Regresar",
   "decline": "Rechazar",
   "welcome": "Bienvenido/a",
-  "new": "Nuevo"
+  "new": "Nuevo",
+  "routes": {
+    "home": "Impulsa tu Productividad",
+    "profile": "Mi perfil",
+    "projects": "Mis proyectos",
+    "templates": "Plantillas de la comunidad",
+    "new": "Nuevo proyecto",
+    "not_found": "Ruta no encontrada"
+  }
 }

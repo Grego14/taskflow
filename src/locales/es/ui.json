@@ -135,6 +135,7 @@
     "archived": "Archivado",
     "created_date": "Creado {{date}}",
     "delete": "$t(common:delete) proyecto",
+    "members_one": "{{count}} miembro",
     "members": "{{count}} miembros",
     "projectCardMenuLabel": "acciones del proyecto",
     "myProjects": "Mis proyectos",
@@ -190,15 +191,5 @@
     "today": "Hoy",
     "tomorrow": "Mañana",
     "overdue": "Vencida"
-  },
-  "routes": {
-    "home": "Impulsa tu Productividad",
-    "login": "$t(common:login)",
-    "signup": "$t(common:signup)",
-    "profile": "Mi perfil",
-    "projects": "Mis proyectos",
-    "templates": "Plantillas de la comunidad",
-    "new": "Nuevo proyecto",
-    "not_found": "Ruta no encontrada"
   }
 }

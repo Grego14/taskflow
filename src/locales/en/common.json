@@ -20,5 +20,13 @@
   "goBack": "Go back",
   "welcome": "Welcome",
   "decline": "Decline",
-  "new": "New"
+  "new": "New",
+  "routes": {
+    "home": "Boost Your Productivity",
+    "profile": "My Profile",
+    "projects": "My Projects",
+    "templates": "Community templates",
+    "new": "New Project",
+    "not_found": "Route Not Found"
+  }
 }
