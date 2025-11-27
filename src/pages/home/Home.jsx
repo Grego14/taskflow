@@ -15,9 +15,8 @@ import { useTranslation } from 'react-i18next'
 import { getItem } from '@utils/storage.js'
 import gsap from 'gsap'
 import { ScrambleTextPlugin } from 'gsap/ScrambleTextPlugin'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
-gsap.registerPlugin(useGSAP, ScrambleTextPlugin, ScrollTrigger)
+gsap.registerPlugin(useGSAP, ScrambleTextPlugin)
 
 const linkHoverStyles = {
   '&:hover': {
