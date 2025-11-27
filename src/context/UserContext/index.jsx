@@ -78,6 +78,10 @@ export default function UserProvider() {
         metadata: {
           ...user.metadata,
           lastUsedFilter: filter
+        },
+        preferences: {
+          ...user.preferences,
+          theme: userTheme
         }
       },
       setUser,
@@ -88,7 +92,7 @@ export default function UserProvider() {
       ...updaters,
       setUpdaters
     }),
-    [user, currentUser, userLoaded, updaters, filter]
+    [user, currentUser, userLoaded, updaters, filter, userTheme]
   )
 
   return (
