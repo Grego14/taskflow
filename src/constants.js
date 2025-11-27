@@ -63,7 +63,6 @@ export const RESOURCES = [
   'dialogs',
   'tooltips',
   'templates',
-  'selectors',
   'auth',
   'landing',
   'metrics'
