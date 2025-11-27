@@ -1,5 +1,8 @@
-import { scan } from 'react-scan'
-scan({ enabled: true })
+if (import.meta.env.DEV) {
+  const { scan } = await import('react-scan')
+
+  scan({ enabled: true })
+}
 
 import { StrictMode, forwardRef } from 'react'
 import { createRoot } from 'react-dom/client'
