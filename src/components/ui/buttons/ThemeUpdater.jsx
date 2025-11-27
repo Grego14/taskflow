@@ -1,7 +1,7 @@
 import useUser from '@hooks/useUser'
 import DarkModeIcon from '@mui/icons-material/DarkMode'
 import LightModeIcon from '@mui/icons-material/LightMode'
-import { IconButton } from '@mui/material'
+import IconButton from '@mui/material/IconButton'
 import { useColorScheme } from '@mui/material/styles'
 import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
