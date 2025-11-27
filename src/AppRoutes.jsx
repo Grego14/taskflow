@@ -2,7 +2,6 @@ import useLoadResources from '@hooks/useLoadResources'
 import { lazy } from 'react'
 
 import { Route, Routes } from 'react-router-dom'
-import RoutesHandler from './RoutesHandler'
 import { BrowserRouter as Router } from 'react-router-dom'
 
 import { useAuth } from './firebase/AuthContext.jsx'
