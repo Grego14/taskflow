@@ -87,7 +87,7 @@
     "previewTooltip": "Change tasks preview",
     "actionsTooltip": "Project actions",
     "profileButtonLabel": "Navigate to my profile",
-    "changeTheme_theme": "Change to $t(modes.{{theme}}) mode"
+    "changeTheme_theme": "Change to $t(selectors.themes.{{theme}}) mode"
   },
   "projects": {
     "text": "Projects",
@@ -186,5 +186,17 @@
     "today": "Today",
     "tomorrow": "Tomorrow",
     "overdue": "Overdue"
+  },
+  "selectors": {
+    "members": {
+      "text": "Members"
+    },
+    "themes": {
+      "dark": "dark",
+      "light": "light"
+    },
+    "langs": {
+      "update_lang": "Change language to {{lang}}"
+    }
   }
 }

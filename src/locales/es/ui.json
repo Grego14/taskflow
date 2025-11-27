@@ -92,7 +92,7 @@
     "previewTooltip": "Cambiar la vista de las tareas",
     "actionsTooltip": "Acciones del proyecto",
     "profileButtonLabel": "Ir a mi perfil",
-    "changeTheme_theme": "Cambiar a modo $t(modes.{{theme}})"
+    "changeTheme_theme": "Cambiar al modo $t(selectors.themes.{{theme}})"
   },
   "projects": {
     "errors": {
@@ -191,5 +191,17 @@
     "today": "Hoy",
     "tomorrow": "Mañana",
     "overdue": "Vencida"
+  },
+  "selectors": {
+    "members": {
+      "text": "Miembros"
+    },
+    "themes": {
+      "dark": "oscuro",
+      "light": "claro"
+    },
+    "langs": {
+      "update_lang": "Cambiar idioma a {{lang}}"
+    }
   }
 }
