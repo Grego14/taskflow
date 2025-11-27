@@ -3,6 +3,7 @@ import CreateProject from '@components/ui/buttons/CreateProject'
 import ProjectsCards from '@components/ui/projectcard/ProjectsCards'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
+import CircleLoader from '@components/reusable/loaders/CircleLoader'
 
 // hooks
 import useApp from '@hooks/useApp'
@@ -11,7 +12,6 @@ import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 // utils
-import { db } from '@/firebase/firebase-config'
 import i18n from '@/i18n'
 import { getFriendlyAuthError } from '@utils/getFriendlyAuthError.js'
 import {
@@ -21,12 +21,15 @@ import {
   query,
   where
 } from 'firebase/firestore'
+import db from '@/db'
+import useProjectAccess from '../../context/ProjectsContext/useProjectAccess'
 
 export default function Projects() {
   const { uid } = useUser()
   const { isMobile } = useApp()
   const { t } = useTranslation('ui')
-  const [projects, setProjects] = useState([])
+  const [projects, setProjects] = useState({ user: [], external: [] })
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     let unsubscribe
@@ -48,7 +51,18 @@ export default function Projects() {
           userProjectsQuery,
           snap => {
             const userProjects = snap.docs.map(doc => doc.data())
-            setProjects(prev => [...(prev || []), ...userProjects])
+
+            setProjects(projects => {
+              const newProjects = { user: [], external: projects.external }
+
+              for (const project of userProjects) {
+                newProjects.user.push(project)
+              }
+
+              return newProjects
+            })
+
+            setLoading(false)
           },
           e => console.error(e)
         )
@@ -57,7 +71,18 @@ export default function Projects() {
           externalProjectsQuery,
           snap => {
             const externalProjects = snap.docs.map(doc => doc.data())
-            setProjects(prev => [...(prev || []), ...externalProjects])
+
+            setProjects(projects => {
+              const newProjects = { user: projects.user, external: [] }
+
+              for (const project of externalProjects) {
+                newProjects.external.push(project)
+              }
+
+              return newProjects
+            })
+
+            setLoading(false)
           },
           e => console.error(e)
         )
@@ -75,7 +100,10 @@ export default function Projects() {
     return () => unsubscribe?.()
   }, [uid])
 
-  const projectsQuantity = projects?.length
+  const projectsQuantity = projects.user.length + projects.external.length
+
+  if (loading)
+    return <CircleLoader text={t('projects.loading')} height='100dvh' />
 
   return (
     <Box
@@ -94,7 +122,7 @@ export default function Projects() {
             sx={[theme => ({ ...theme.typography.h4 })]}>
             {t('projects.title_quantity', { quantity: projectsQuantity })}
           </Typography>
-          <ProjectsCards data={projects} />
+          <ProjectsCards data={[...projects.user, ...projects.external]} />
           <CreateProject sx={{ alignSelf: isMobile ? 'center' : 'start' }} />
         </>
       ) : (

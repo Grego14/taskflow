@@ -73,13 +73,13 @@ export default function Project() {
 
   useEffect(() => {
     if (hasAccess)
-      updateUser(uid, {
+      updateUser?.({
         lastEditedProject: projectId,
         // field used on the main page where the "go to last project" link
         // exists
         lastEditedProjectOwner: projectOwner
       })
-  }, [hasAccess, updateUser, uid, projectId, projectOwner])
+  }, [hasAccess, updateUser, projectId, projectOwner])
 
   useEffect(() => {
     ;(() => {
