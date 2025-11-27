@@ -1,7 +1,7 @@
 import useUser from '@hooks/useUser'
 import { useEffect, useState } from 'react'
 
-import { db } from '@/firebase/firebase-config'
+import db from '@/db'
 import { doc, onSnapshot } from 'firebase/firestore'
 
 /**
@@ -11,7 +11,7 @@ import { doc, onSnapshot } from 'firebase/firestore'
  * @param {object} props.projects - List of all projects.
  */
 export default function useProjectAccess({ projectId, owner }) {
-  const { userLoaded, uid } = useUser()
+  const { uid } = useUser()
 
   const [hasAccess, setHasAccess] = useState(true)
   const [validating, setValidating] = useState(true)
@@ -22,7 +22,7 @@ export default function useProjectAccess({ projectId, owner }) {
     let unsubscribe
     ;(() => {
       // If we are still loading, or don't have the projects yet, exit.
-      if (!userLoaded || !owner || !projectId) return
+      if (!owner || !projectId) return
 
       const projectRef = doc(db, 'users', owner, 'projects', projectId)
 
@@ -45,7 +45,7 @@ export default function useProjectAccess({ projectId, owner }) {
     })()
 
     return () => unsubscribe?.()
-  }, [projectId, uid, userLoaded, owner])
+  }, [projectId, uid, owner])
 
   return {
     validating,

@@ -5,9 +5,10 @@ import NotificationsContext from './context.js'
 import useProject from '@hooks/useProject'
 import useUser from '@hooks/useUser'
 
-import { db } from '@/firebase/firebase-config'
 import lazyImport from '@utils/lazyImport'
 import { collection, deleteDoc, doc, onSnapshot } from 'firebase/firestore'
+
+import db from '@/db'
 
 const getActionMetadata = target => {
   if (!target || !target?.currentTarget || !target.currentTarget?.dataset)
