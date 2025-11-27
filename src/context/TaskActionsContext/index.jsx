@@ -15,7 +15,7 @@ import lazyImport from '@utils/lazyImport'
 import { serverTimestamp } from 'firebase/firestore'
 
 export default function TaskActionsProvider({ children }) {
-  const { updateLastActive, uid } = useUser()
+  const { uid } = useUser()
   const { data, id: projectId, isArchived } = useProject()
   const { actions, tasks } = useTasks()
   const [showContainSubtasksMenu, setShowContainSubtasksMenu] = useState(false)

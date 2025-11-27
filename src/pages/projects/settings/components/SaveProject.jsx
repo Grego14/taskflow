@@ -2,7 +2,6 @@ import Button from '@mui/material/Button'
 
 import useApp from '@hooks/useApp'
 import useProject from '@hooks/useProject'
-import useUser from '@hooks/useUser'
 import { useTranslation } from 'react-i18next'
 
 export default function SaveProject({
@@ -17,7 +16,6 @@ export default function SaveProject({
   const { t } = useTranslation('ui')
   const { data, update } = useProject()
   const { appBarHeight, appNotification } = useApp()
-  const { updateLastActive } = useUser()
 
   const valuesChange = name !== data?.name || description !== data?.description
 
@@ -38,8 +36,6 @@ export default function SaveProject({
       message: t('notifications.savedProject'),
       status: 'success'
     })
-
-    updateLastActive()
   }
 
   return (

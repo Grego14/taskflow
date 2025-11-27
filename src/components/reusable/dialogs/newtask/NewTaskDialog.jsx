@@ -62,7 +62,7 @@ export default memo(function NewTaskDialog({
 
   const { t } = useTranslation(['dialogs', 'ui'])
   const { isOffline } = useAuth()
-  const { preferences, updateLastActive } = useUser()
+  const { preferences } = useUser()
   const { appNotification, isMobile } = useApp()
   const { id, data: projectData } = useProject()
   const [titleError, setTitleError] = useState(null)
@@ -127,7 +127,6 @@ export default memo(function NewTaskDialog({
         subtask
       })
 
-      updateLastActive()
       onCreate?.()
     } catch (e) {
       const lang = preferences.lang || 'en'
@@ -153,8 +152,7 @@ export default memo(function NewTaskDialog({
     setOpen,
     task,
     taskId,
-    t,
-    updateLastActive
+    t
   ])
 
   return (

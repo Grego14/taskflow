@@ -5,7 +5,6 @@ import Button from '@mui/material/Button'
 // hooks
 import useApp from '@hooks/useApp'
 import useProject from '@hooks/useProject'
-import useUser from '@hooks/useUser'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 
@@ -19,7 +18,6 @@ import TasksContext from './context'
 export default memo(function TasksProvider({ children }) {
   const { t } = useTranslation(['ui', 'common'])
   const { appNotification } = useApp()
-  const { updateLastActive } = useUser()
   const {
     id: projectId,
     data,
@@ -91,8 +89,6 @@ export default memo(function TasksProvider({ children }) {
           </Button>
         ) : null
       })
-
-      updateLastActive()
     },
     onError: err => console.error(err)
   })
@@ -109,7 +105,6 @@ export default memo(function TasksProvider({ children }) {
       })
     },
     onError: err => console.error(err),
-    onSuccess: () => updateLastActive()
   })
 
   // actions are the functions used on the Task menu
