@@ -17,7 +17,7 @@ import { useTheme } from '@mui/material/styles'
 import useScrollTrigger from '@mui/material/useScrollTrigger'
 
 export default function LandingAppBar({ height, show }) {
-  const { isMobile } = useApp()
+  const { isMobile, appBarHeight } = useApp()
   const theme = useTheme()
   const trigger = useScrollTrigger({ disableHysteresis: true })
 
@@ -26,15 +26,16 @@ export default function LandingAppBar({ height, show }) {
       <Box
         sx={[
           theme => ({
-            top: 0,
-            left: 0,
             width: '100%',
             zIndex: theme.zIndex.appBar,
+            top: 0,
+            left: 0,
             ...(isMobile && {
               bottom: 'auto',
-              right: 'auto',
-              position: 'fixed'
-            })
+              right: 'auto'
+            }),
+            position: 'fixed',
+            minHeight: appBarHeight
           })
         ]}>
         {show && (
@@ -47,6 +48,7 @@ export default function LandingAppBar({ height, show }) {
                 justifyContent: 'space-between',
                 alignItems: 'center',
                 minHeight: height,
+                position: 'relative',
                 px: 2
               }}>
               <Link

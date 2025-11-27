@@ -4,7 +4,6 @@ import Typography from '@mui/material/Typography'
 import Section from './Section'
 
 import { useGSAP } from '@gsap/react'
-import useApp from '@hooks/useApp'
 import gsap from 'gsap'
 import { forwardRef } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -14,14 +13,13 @@ import { SplitText } from 'gsap/SplitText'
 
 const MainText = forwardRef(function MainText(props, ref) {
   const { t } = useTranslation('landing')
-  const { isMobile, appBarHeight } = useApp()
   const { setShowAppBar } = props
   const navigate = useNavigate()
 
   useGSAP(() => {
     document.fonts.ready.then(() => {
       const tl = gsap.timeline({
-        defaults: { ease: 'bounce.out' }
+        defaults: { ease: 'back.out(2)' }
       })
 
       SplitText.create('#bigText', {
@@ -34,7 +32,6 @@ const MainText = forwardRef(function MainText(props, ref) {
             autoAlpha: 0,
             duration: 1,
             stagger: 0.1,
-            ease: 'back.out(2)',
             delay: 0.25
           })
 
@@ -59,7 +56,6 @@ const MainText = forwardRef(function MainText(props, ref) {
           tl.to('#startFree', {
             autoAlpha: 1,
             y: 0,
-            ease: 'bounce.out',
             onComplete: () => setShowAppBar(true)
           })
         }
@@ -68,10 +64,7 @@ const MainText = forwardRef(function MainText(props, ref) {
   })
 
   return (
-    <Section
-      className='text-center'
-      sx={{ mx: 2, pt: appBarHeight }}
-      id='main-text'>
+    <Section className='text-center' sx={{ mx: 2 }} id='main-text'>
       <Typography
         className='text-balance'
         variant='h1'
