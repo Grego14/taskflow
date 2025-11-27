@@ -22,6 +22,7 @@ export default function DeleteProject({ id }) {
     await removeProject({ user: currentUser?.uid, project: id })
 
     appNotification({ message: t('notifications.projectDeleted') })
+    setOpen(false)
   }
 
   return (
