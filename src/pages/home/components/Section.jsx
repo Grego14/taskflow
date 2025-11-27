@@ -1,13 +1,9 @@
 import Box from '@mui/material/Box'
 
-const Section = function Section(props, ref) {
-  const { children, id, scrollTo, sx, ...other } = props
-  const sectionId = `section-${id}`
-
+export default function Section(props) {
+  const { children, sx, ...other } = props
   return (
     <Box
-      id={sectionId}
-      ref={ref}
       sx={{
         display: 'flex',
         flexDirection: 'column',
@@ -23,5 +19,3 @@ const Section = function Section(props, ref) {
     </Box>
   )
 }
-
-export default Section

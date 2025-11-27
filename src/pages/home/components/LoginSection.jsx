@@ -40,12 +40,10 @@ export default function LoginSection({ userTheme }) {
   })
 
   return (
-    <Section
-      id='login'
-      sx={{ position: 'relative', overflow: 'hidden', height: '75dvh' }}>
+    <Section id='login' sx={{ position: 'relative', overflow: 'hidden' }}>
       <div className='flex flex-column flex-center'>
         <Typography
-          variant='h2'
+          variant='h3'
           className='text-balance text-center'
           sx={[theme => ({ ...theme.typography.h4, mx: 4, opacity: 0 })]}
           id='login-text'>

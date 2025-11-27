@@ -1,28 +1,35 @@
+import Typography from '@mui/material/Typography'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import Section from './Section'
+
 import { useGSAP } from '@gsap/react'
 import useApp from '@hooks/useApp'
-import Typography from '@mui/material/Typography'
 import gsap from 'gsap'
 import { forwardRef } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useNavigate } from 'react-router-dom'
 
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { SplitText } from 'gsap/SplitText'
 
 const MainText = forwardRef(function MainText(props, ref) {
   const { t } = useTranslation('landing')
-  const { isMobile } = useApp()
-  const { userTheme, setShowAppBar } = props
-  const taskflowColor = userTheme === 'light' ? '#7E60E0' : '#CFC0FF'
+  const { isMobile, appBarHeight } = useApp()
+  const { setShowAppBar } = props
+  const navigate = useNavigate()
 
   useGSAP(() => {
     document.fonts.ready.then(() => {
-      SplitText.create('.mainTitle', {
-        type: 'words',
-        ignore: '.taskflow',
-        onSplit(self) {
-          gsap.set('.mainTitle', { opacity: 1 })
+      const tl = gsap.timeline({
+        defaults: { ease: 'bounce.out' }
+      })
 
-          return gsap.from(self.words, {
+      SplitText.create('#bigText', {
+        type: 'words',
+        onSplit(self) {
+          gsap.set('#bigText', { opacity: 1 })
+
+          tl.from(self.words, {
             y: 50,
             autoAlpha: 0,
             duration: 1,
@@ -30,41 +37,30 @@ const MainText = forwardRef(function MainText(props, ref) {
             ease: 'back.out(2)',
             delay: 0.25
           })
-        }
-      })
 
-      SplitText.create('.taskflow', {
-        type: 'chars',
-        smartWrap: true,
-        onRevert: self => {
-          return gsap.to(self.chars, {
-            x: 50,
-            rotateZ: 'random(-50deg, 50deg)',
-            autoAlpha: 0,
-            duration: 1,
-            stagger: 0.05,
-            ease: 'bounce.out',
-            delay: 1
+          const shortText = SplitText.create('#shortText', {
+            type: 'chars',
+            smartWrap: true
           })
-        },
-        onSplit: self => {
-          gsap.set('.taskflow', { opacity: 1 })
 
-          return gsap.from(self.chars, {
-            x: 50,
-            rotateZ: 'random(-50deg, 50deg)',
-            autoAlpha: 0,
-            duration: 1,
-            stagger: 0.05,
+          gsap.set('#shortText', { opacity: 1 })
+          gsap.set(shortText.chars, { opacity: 0, x: -10 })
+
+          tl.to(shortText.chars, {
+            x: 0,
+            autoAlpha: 1,
+            stagger: 0.02,
+            duration: 0.1,
+            ease: 'power2.out'
+          })
+
+          gsap.set('#startFree', { y: 100 })
+
+          tl.to('#startFree', {
+            autoAlpha: 1,
+            y: 0,
             ease: 'bounce.out',
-            delay: 1.25,
-            onComplete: () => {
-              gsap.set('.taskflow', {
-                textShadow: `0 0 5px ${taskflowColor}aa, 0 0 10px ${taskflowColor}80`
-              })
-
-              setShowAppBar(true)
-            }
+            onComplete: () => setShowAppBar(true)
           })
         }
       })
@@ -72,32 +68,39 @@ const MainText = forwardRef(function MainText(props, ref) {
   })
 
   return (
-    <Typography
-      ref={ref}
-      className='mainTitle text-center'
-      variant='h1'
-      sx={[
-        theme => ({
-          ...theme.typography.h2,
-          mx: isMobile ? 2 : 5,
-          opacity: 0
-        })
-      ]}
-      color='primary'>
-      {t('title0')}
+    <Section
+      className='text-center'
+      sx={{ mx: 2, pt: appBarHeight }}
+      id='main-text'>
       <Typography
-        className='taskflow'
-        variant='span'
-        sx={{
-          opacity: 0,
-          transition: 'text-shadow .3s ease-in-out',
-          color: taskflowColor
-        }}
-        aria-hidden={true}>
-        TaskFlow
+        className='text-balance'
+        variant='h1'
+        sx={[
+          theme => ({
+            ...theme.typography.h1,
+            mb: 2,
+            fontWeight: 700,
+            opacity: 0
+          })
+        ]}
+        id='bigText'>
+        {t('title0')}
       </Typography>
-      {t('title1')}
-    </Typography>
+      <Typography
+        className='text-balance'
+        color='textSecondary'
+        sx={[theme => ({ ...theme.typography.h5, opacity: 0 })]}
+        id='shortText'>
+        {t('title1')}
+      </Typography>
+      <Button
+        sx={{ mt: 4, opacity: 0 }}
+        variant='contained'
+        id='startFree'
+        onClick={() => navigate('/login')}>
+        {t('startForFree')}
+      </Button>
+    </Section>
   )
 })
 

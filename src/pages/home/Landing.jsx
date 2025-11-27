@@ -14,13 +14,15 @@ import useApp from '@hooks/useApp'
 import useLoadResources from '@hooks/useLoadResources'
 import useUser from '@hooks/useUser'
 import { styled, useTheme } from '@mui/material/styles'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { SplitText } from 'gsap/SplitText'
+
+import { alpha } from '@mui/material/styles'
 
 import setPageTitle from '@utils/setPageTitle'
 
@@ -37,38 +39,13 @@ export default function Landing() {
   // common is already loaded by the AppRoutes
   const loadingResources = useLoadResources('landing')
 
-  const section1 = useRef(null)
-  const mainTextRef = useRef(null)
-
-  const [mainTextHeight, setMainTextHeight] = useState(
-    mainTextRef.current?.clientHeight || 0
-  )
-
   const [showAppBar, setShowAppBar] = useState(false)
 
+  // if the user logouts of his account we update the page title (the
+  // RouteHandler is only available if the user is logged-in)
   useEffect(() => {
-    const handleResize = () => {
-      const newHeight = mainTextRef.current
-        ? mainTextRef.current.clientHeight
-        : 0
-
-      setMainTextHeight(newHeight)
-    }
-
     setPageTitle(t('routes.home', { ns: 'common' }))
-
-    // wait until the landing resource loads... otherwise the cards aren't going
-    // to be animated
-    if (!loadingResources) {
-      handleResize()
-    }
-
-    window.addEventListener('resize', handleResize)
-
-    return () => {
-      window.removeEventListener('resize', handleResize)
-    }
-  }, [loadingResources, t])
+  }, [t])
 
   const mainTextProps = {
     userTheme,
@@ -79,19 +56,18 @@ export default function Landing() {
 
   return (
     <Box
-      sx={{
-        scrollBehavior: 'smooth',
-        scrollSnapType: 'y mandatory',
-        minHeight: '100dvh'
-      }}>
+      sx={[
+        theme => ({
+          scrollBehavior: 'smooth',
+          scrollSnapType: 'y mandatory',
+          minHeight: '100dvh',
+          backgroundColor: alpha(theme.palette.primary.main, 0.05)
+        })
+      ]}
+      component='main'>
       <LandingAppBar show={showAppBar} />
-
-      <Section ref={section1} id='main-text'>
-        <MainText ref={mainTextRef} {...mainTextProps} />
-      </Section>
-
-      <Cards mainTextHeight={mainTextHeight} userTheme={userTheme} />
-
+      <MainText {...mainTextProps} />
+      <Cards userTheme={userTheme} />
       <LoginSection userTheme={userTheme} />
     </Box>
   )

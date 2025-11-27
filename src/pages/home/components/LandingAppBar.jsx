@@ -23,7 +23,20 @@ export default function LandingAppBar({ height, show }) {
 
   return (
     <Slide in={!trigger}>
-      <Box>
+      <Box
+        sx={[
+          theme => ({
+            top: 0,
+            left: 0,
+            width: '100%',
+            zIndex: theme.zIndex.appBar,
+            ...(isMobile && {
+              bottom: 'auto',
+              right: 'auto',
+              position: 'fixed'
+            })
+          })
+        ]}>
         {show && (
           <Suspense>
             <AppBar
@@ -34,14 +47,7 @@ export default function LandingAppBar({ height, show }) {
                 justifyContent: 'space-between',
                 alignItems: 'center',
                 minHeight: height,
-                px: 2,
-                position: 'fixed',
-                ...(isMobile && {
-                  top: 0,
-                  bottom: 'auto',
-                  left: 0,
-                  right: 'auto'
-                })
+                px: 2
               }}>
               <Link
                 to='/'
@@ -49,7 +55,7 @@ export default function LandingAppBar({ height, show }) {
                 gap={1}
                 color='textPrimary'
                 sx={[
-                  theme => ({ ...theme.typography.h6, textDecoration: 'none' })
+                  theme => ({ ...theme.typography.h5, textDecoration: 'none' })
                 ]}>
                 TaskFlow
               </Link>
