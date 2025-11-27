@@ -27,7 +27,7 @@ const getFilterLabel = (label, t) => {
 }
 
 export default function FilterButton() {
-  const { metadata, updateFilter } = useUser()
+  const { metadata, updateFilter, setFilter } = useUser()
   const { t } = useTranslation(['ui', 'common'])
   const [selected, setSelected] = useState(metadata?.lastUsedFilter)
 
@@ -38,9 +38,10 @@ export default function FilterButton() {
       if (!FILTERS.find(f => f === value)) return
 
       setSelected(value)
+      setFilter(value)
       updateFilter(value)
     },
-    [updateFilter]
+    [updateFilter, setFilter]
   )
 
   const filterOptions = FILTERS.map(f => ({

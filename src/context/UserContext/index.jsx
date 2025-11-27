@@ -73,7 +73,13 @@ export default function UserProvider() {
 
   const value = useMemo(
     () => ({
-      ...user,
+      ...{
+        ...user,
+        metadata: {
+          ...user.metadata,
+          lastUsedFilter: filter
+        }
+      },
       setUser,
       userLoaded,
       setUserLoaded,
@@ -82,7 +88,7 @@ export default function UserProvider() {
       ...updaters,
       setUpdaters
     }),
-    [user, currentUser, userLoaded, updaters]
+    [user, currentUser, userLoaded, updaters, filter]
   )
 
   return (
