@@ -43,13 +43,9 @@ export default function AuthButtons({ type, disabledBtn }) {
       provider === 'google' ? googleProvider : githubProvider
     )
       .then(async result => {
-        const createUserDoc = await lazyImport('/src/services/createUserDoc')
         const { locale, ...otherPrefs } = preferences
 
         const user = result.user
-
-        // Create the user document
-        await createUserDoc(user, otherPrefs)
 
         const creationTimestamp = new Date(user.metadata.creationTime).getTime()
         const lastSignInTimestamp = new Date(
@@ -60,6 +56,14 @@ export default function AuthButtons({ type, disabledBtn }) {
           Math.abs(creationTimestamp - lastSignInTimestamp) < 5000
 
         if (isNewUser) {
+          const createUserDoc = await lazyImport('/src/services/createUserDoc')
+
+          // Create the user document
+          await createUserDoc(
+            { ...user, email: user?.email || user?.providerData?.[0]?.email },
+            otherPrefs
+          )
+
           const sendWelcomeNotification = await lazyImport(
             '/src/services/notifications/sendWelcomeNotification'
           )
