@@ -28,8 +28,7 @@ export default async function getProjectMembers({ queryKey }) {
 
       return {
         id: snap.id,
-        ...data.profile,
-        lastActive: data.metadata.lastActive
+        ...data.profile
       }
     })
   } catch (error) {
