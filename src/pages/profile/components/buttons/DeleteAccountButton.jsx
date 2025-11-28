@@ -1,28 +1,28 @@
 import DeleteIcon from '@mui/icons-material/Delete'
-import Button from '@mui/material/Button'
 import HourglassBottomIcon from '@mui/icons-material/HourglassBottom'
+import Button from '@mui/material/Button'
 
-import { useCallback, useState, lazy, Suspense } from 'react'
+import { Suspense, lazy, useCallback, useState } from 'react'
 
 const DeleteUserDialog = lazy(
   () => import('@components/reusable/dialogs/deleteuser/DeleteUserDialog')
 )
 
+import { useAuth } from '@/firebase/AuthContext'
 import useApp from '@hooks/useApp'
 import useUser from '@hooks/useUser'
-import { useTranslation } from 'react-i18next'
-import { useAuth } from '@/firebase/AuthContext'
 import {
+  EmailAuthProvider,
   deleteUser,
   reauthenticateWithCredential,
-  EmailAuthProvider,
   reauthenticateWithPopup
 } from 'firebase/auth'
+import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 
-import lazyImport from '@utils/lazyImport'
-import { keyframes } from '@mui/material/styles'
 import { githubProvider, googleProvider } from '@/firebase/firebase-config'
+import { keyframes } from '@mui/material/styles'
+import lazyImport from '@utils/lazyImport'
 
 const spin = keyframes`
   0% {

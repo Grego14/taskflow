@@ -6,11 +6,11 @@ import ProfileButtons from './components/ProfileButtons'
 import ProfileForm from './components/ProfileForm'
 import ProfileMetadata from './components/ProfileMetadata'
 
+import useLoadResources from '@hooks/useLoadResources.js'
 // hooks
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
-import useLoadResources from '@hooks/useLoadResources.js'
 
 export default function Profile() {
   const navigate = useNavigate()

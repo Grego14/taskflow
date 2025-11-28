@@ -6,16 +6,16 @@ import Button from '@mui/material/Button'
 import IconButton from '@mui/material/IconButton'
 import Typography from '@mui/material/Typography'
 
-import { useState } from 'react'
-import { useTranslation } from 'react-i18next'
 import { useAuth } from '@/firebase/AuthContext'
 import useUser from '@hooks/useUser'
+import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 import {
-  signInWithPopup,
+  auth,
   githubProvider,
   googleProvider,
-  auth
+  signInWithPopup
 } from '@/firebase/firebase-config'
 import lazyImport from '@utils/lazyImport'
 

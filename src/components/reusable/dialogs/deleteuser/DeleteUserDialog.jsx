@@ -1,10 +1,10 @@
-import Dialog from '../Dialog'
-import Typography from '@mui/material/Typography'
 import TextField from '@mui/material/TextField'
+import Typography from '@mui/material/Typography'
+import Dialog from '../Dialog'
 
-import { useTranslation } from 'react-i18next'
-import useUser from '@hooks/useUser'
 import useLoadResources from '@hooks/useLoadResources'
+import useUser from '@hooks/useUser'
+import { useTranslation } from 'react-i18next'
 
 export default function DeleteUserDialog({
   onAccept,

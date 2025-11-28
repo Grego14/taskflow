@@ -22,7 +22,9 @@ export default function ThemeSelector({ error, field }) {
         {...field}>
         {themes.map(theme => (
           <MenuItem key={theme} value={theme}>
-            {upperCaseInitialLetter(t(`selectors.themes.${theme}`, { ns: 'ui' }))}
+            {upperCaseInitialLetter(
+              t(`selectors.themes.${theme}`, { ns: 'ui' })
+            )}
           </MenuItem>
         ))}
       </Select>
