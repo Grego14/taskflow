@@ -41,7 +41,6 @@ export default async function getProjectTasksForMetrics({
       for (const doc of tasksSnapshot.docs) {
         tasksMap.set(doc.id, { ...doc.data(), id: doc.id })
       }
-
       updateTasks()
     }
 
@@ -57,9 +56,11 @@ export default async function getProjectTasksForMetrics({
         }
         subtasksMap.get(taskId).push(subtaskData)
       }
-
       updateTasks()
     }
+
+    // send the empty array so the loading state is updated
+    if (!tasksExists || !subtasksExists) updateTasks()
   } catch (err) {
     console.error(err)
     throw getFriendlyErrorFormatted(

@@ -32,5 +32,6 @@
   "completedTasks": "Completed tasks",
   "completedOnTimeTasks": "Tasks completed on time",
   "cancelledTasks": "Cancelled tasks",
-  "overdueTasks": "Overdue tasks"
+  "overdueTasks": "Overdue tasks",
+  "emptyMetrics": "There's no metrics. Try creating some tasks"
 }

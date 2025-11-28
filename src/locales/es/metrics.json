@@ -32,5 +32,6 @@
   "completedTasks": "Tareas completadas",
   "completedOnTimeTasks": "Tareas completadas a tiempo",
   "cancelledTasks": "Tareas canceladas",
-  "overdueTasks": "Tareas vencidas"
+  "overdueTasks": "Tareas vencidas",
+  "emptyMetrics": "No hay métricas. Primero crea algunas tareas"
 }

@@ -13,6 +13,8 @@ export default function Metrics({ filter }) {
 
   const { completedTasks, completedOnTime } = projectMetrics
 
+  if (!completedTasks || !completedOnTime) return
+
   // fallback to 1 to prevent dividing 0/0
   const averageCompletedOnTime =
     (completedOnTime.total / (completedTasks.total || 1)) * 100

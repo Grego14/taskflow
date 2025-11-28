@@ -31,8 +31,8 @@ export default function ProjectMetricsProvider() {
     () => ({
       loading,
       error,
-      projectMetrics: getMetrics(tasks || []),
-      membersMetrics: getMembersMetrics(tasks || [], projectMembers)
+      projectMetrics: getMetrics(tasks) || [],
+      membersMetrics: getMembersMetrics(tasks, projectMembers) || []
     }),
     [error, loading, tasks, projectMembers]
   )

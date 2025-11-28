@@ -1,10 +1,10 @@
 export default function orderSubtasks(tasks, subtasks) {
   const finalTasks = Array.from(tasks.values()).map(task => ({
-    ...task,
+    ...task || {},
     subtasks: []
   }))
 
-  const tasksById = new Map(finalTasks.map(task => [task.id, task]))
+  const tasksById = new Map(finalTasks.map(task => [task?.id, task]))
 
   for (const [taskId, subtaskArray] of subtasks.entries()) {
     const parentTask = tasksById.get(taskId)
@@ -16,3 +16,4 @@ export default function orderSubtasks(tasks, subtasks) {
 
   return finalTasks
 }
+

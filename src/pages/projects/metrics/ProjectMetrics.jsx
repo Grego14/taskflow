@@ -40,12 +40,25 @@ export default function ProjectMetrics() {
       />
     )
 
+  const emptyMetrics =
+    Object.keys(projectMetrics)?.length < 1 &&
+    Object.keys(membersMetrics)?.length < 1
+
   return (
     <Box className='flex flex-column' p={2} gap={2}>
       <Box className='flex flex-column' gap={2}>
         <MetricsTabs preview={preview} setPreview={setPreview} />
       </Box>
 
+      {emptyMetrics && (
+        <Typography
+          mt={2}
+          className='text-center'
+          variant='h2'
+          sx={[theme => ({ ...theme.typography.h6 })]}>
+          {t('emptyMetrics')}
+        </Typography>
+      )}
       <Box
         className='flex flex-column flex-center'
         gap={4}
