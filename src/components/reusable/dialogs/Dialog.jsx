@@ -30,7 +30,8 @@ export default function Dialog({
   disableAcceptBtn,
   removeActions,
   maxWidth = 'mobile',
-  color = 'textPrimary'
+  color = 'textPrimary',
+  acceptTitle
 }) {
   const { t } = useTranslation(['common', 'dialogs'])
   const { isMobile } = useApp()
@@ -62,7 +63,7 @@ export default function Dialog({
             justifyContent: 'space-between',
             alignItems: 'center'
           }}>
-          {titleLoaded ? (
+          {titleLoaded || !loadingResources ? (
             <Typography variant='h5' color={color}>
               {t(title, { ns: 'dialogs' })}
             </Typography>
@@ -117,7 +118,7 @@ export default function Dialog({
             color='primary'
             variant='contained'
             disabled={disableAcceptBtn}>
-            {t('accept', { ns: 'common' })}
+            {acceptTitle ? acceptTitle : t('accept', { ns: 'common' })}
           </Button>
         </DialogActions>
       )}

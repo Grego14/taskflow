@@ -1,5 +1,5 @@
-import GoBackButton from '@components/reusable/buttons/GoBackButton'
 // components
+import GoBackButton from '@components/reusable/buttons/GoBackButton'
 import CircleLoader from '@components/reusable/loaders/CircleLoader'
 import Box from '@mui/material/Box'
 import ProfileButtons from './components/ProfileButtons'
@@ -10,7 +10,6 @@ import ProfileMetadata from './components/ProfileMetadata'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
-
 import useLoadResources from '@hooks/useLoadResources.js'
 
 export default function Profile() {

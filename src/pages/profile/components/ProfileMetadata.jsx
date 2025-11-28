@@ -20,7 +20,7 @@ export default memo(function ProfileMetadata() {
   const lastLogin = new Date(Number(currentUser.metadata?.lastLoginAt))
 
   return (
-    <Box className='flex flex-column' alignItems='center' gap={0.75}>
+    <Box className='flex flex-column' alignItems='center' gap={1}>
       <Typography>
         {t('accountCreated_date', { date: formatTimeAgo(createdDate, locale) })}
       </Typography>
