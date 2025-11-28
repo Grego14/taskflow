@@ -25,7 +25,7 @@ export default function ProjectMember({
       sx={{ my: 2, p: 2, justifyContent: 'space-between' }}>
       <Box className='flex' gap={2}>
         <Avatar src={data?.avatar} />
-        <Box>
+        <Box className='flex flex-column' gap={1}>
           <Typography fontWeight={600}>{data?.username}</Typography>
           <Typography variant='body2'>{data?.email}</Typography>
         </Box>

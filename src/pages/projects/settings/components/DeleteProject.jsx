@@ -13,7 +13,7 @@ export default function DeleteProject({ isArchived, isOwner }) {
       startIcon={<DeleteIcon fontSize='small' />}
       color='error'
       variant='outlined'
-      disabled={isArchived || !isOwner}>
+      disabled={!isOwner}>
       {t('projects.deleteProject')}
     </Button>
   )
