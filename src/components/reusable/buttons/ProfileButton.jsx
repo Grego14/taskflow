@@ -101,16 +101,18 @@ export default function ProfileButton({
               }}>
               {username}
             </Typography>
-            <Typography
-              variant='caption'
-              sx={{
-                opacity: open ? 1 : 0,
-                width: open ? 'auto' : 0,
-                fontSize: 'var(--fs-tiny, .8rem)',
-                color: 'text.secondary'
-              }}>
-              {email}
-            </Typography>
+            {email && (
+              <Typography
+                variant='caption'
+                sx={{
+                  opacity: open ? 1 : 0,
+                  width: open ? 'auto' : 0,
+                  fontSize: 'var(--fs-tiny, .8rem)',
+                  color: 'text.secondary'
+                }}>
+                {email}
+              </Typography>
+            )}
           </Box>
         )}
       </Button>
