@@ -79,30 +79,20 @@ export default function UserLogged() {
 
   const { user, error } = useGetUserFromDb(uid, setUserLoaded)
 
-  // sometimes the template project and user doc is not created so we check
-  // if the user doc exists and if no, we create it
   useEffect(() => {
     ;(async () => {
-      const docDoesNotExists = error?.includes?.('empty')
-
-      if (docDoesNotExists) {
-        const prefs = { theme: userTheme, lang: i18n.language }
-        const createUserDoc = await lazyImport('/src/services/createUserDoc')
-        await createUserDoc(currentUser, prefs)
-      }
-
       if (userLoaded) {
         updateFilter(user?.metadata?.lastUsedFilter)
         setUser({
           ...user,
           preferences: {
-            ...user.preferences,
-            locale: getLocale(user.preferences.lang)
+            ...user?.preferences,
+            locale: getLocale(user?.preferences.lang)
           }
         })
       }
     })()
-  }, [currentUser, userTheme, error, userLoaded, setUser, updateFilter, user])
+  }, [userLoaded, setUser, updateFilter, user])
 
   return (
     <RouteHandler>

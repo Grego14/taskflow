@@ -48,7 +48,11 @@ export default function UserProvider() {
       lastEditedProjectOwner: '',
       lastUsedMetricFilter: ''
     },
-    profile: { username: '', avatar: '', email: '' }
+    profile: {
+      username: currentUser?.displayName || '',
+      avatar: currentUser?.photoURL || '',
+      email: currentUser?.email || ''
+    }
   })
 
   // functions only available if the user is logged
@@ -73,16 +77,14 @@ export default function UserProvider() {
 
   const value = useMemo(
     () => ({
-      ...{
-        ...user,
-        metadata: {
-          ...user.metadata,
-          lastUsedFilter: filter
-        },
-        preferences: {
-          ...user.preferences,
-          theme: userTheme
-        }
+      ...user,
+      metadata: {
+        ...user.metadata,
+        lastUsedFilter: filter
+      },
+      preferences: {
+        ...user.preferences,
+        theme: userTheme
       },
       setUser,
       userLoaded,
