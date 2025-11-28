@@ -46,13 +46,25 @@ export default function AuthButtons({ type, disabledBtn }) {
         const createUserDoc = await lazyImport('/src/services/createUserDoc')
         const { locale, ...otherPrefs } = preferences
 
-        // Create the user document and make a project template
-        const user = await createUserDoc(result.user, otherPrefs)
+        const user = result.user
 
-        const sendWelcomeNotification = await lazyImport(
-          '/src/services/notifications/sendWelcomeNotification'
-        )
-        await sendWelcomeNotification(result.user.uid)
+        // Create the user document
+        await createUserDoc(user, otherPrefs)
+
+        const creationTimestamp = new Date(user.metadata.creationTime).getTime()
+        const lastSignInTimestamp = new Date(
+          user.metadata.lastSignInTime
+        ).getTime()
+
+        const isNewUser =
+          Math.abs(creationTimestamp - lastSignInTimestamp) < 5000
+
+        if (isNewUser) {
+          const sendWelcomeNotification = await lazyImport(
+            '/src/services/notifications/sendWelcomeNotification'
+          )
+          await sendWelcomeNotification(result.user.uid)
+        }
 
         setPopup(false)
       })

@@ -14,7 +14,8 @@ export default function DeleteUserDialog({
   password,
   error,
   setError,
-  provider
+  provider,
+  popup
 }) {
   const { preferences } = useUser()
   const { t } = useTranslation(['common', 'dialogs', 'profile'])
@@ -31,6 +32,7 @@ export default function DeleteUserDialog({
       onAccept={onAccept}
       onClose={onClose}
       open={open}
+      disableAcceptBtn={popup}
       titleLoaded={!loadingResources}
       acceptTitle={t('delete_x', { x: '', ns: 'common' })}>
       <Typography color={`warning.${preferences.theme}`}>

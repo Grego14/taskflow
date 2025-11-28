@@ -50,7 +50,8 @@ export default function DeleteAccountButton() {
 
   const deleteAccount = useCallback(() => {
     ;(async () => {
-      if (!password) return setError(t('deleteUser.errors.password'))
+      if (!password && provider === 'password')
+        return setError(t('deleteUser.errors.password'))
 
       try {
         setDeleting(true)
@@ -85,7 +86,9 @@ export default function DeleteAccountButton() {
           reauthenticateWithCredential(
             currentUser,
             EmailAuthProvider.credential(currentUser.email, password)
-          ).catch(handleError)
+          )
+            .then(handleUserDeletion)
+            .catch(handleError)
         } else if (provider === 'google.com') {
           await reauthenticateWithPopup(currentUser, googleProvider)
             .then(handleUserDeletion)
@@ -142,6 +145,7 @@ export default function DeleteAccountButton() {
             error={error}
             setError={setError}
             provider={provider}
+            popup={popup}
           />
         </Suspense>
       )}
