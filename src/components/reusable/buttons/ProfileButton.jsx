@@ -35,7 +35,10 @@ export default function ProfileButton({
 
   const borderColor = isOffline ? 'red' : 'green'
   const username = profile?.username || currentUser?.displayName
-  const email = profile?.email || currentUser?.email
+  const email =
+    profile?.email ||
+    currentUser?.email ||
+    currentUser?.providerData?.[0]?.email
 
   const onlyBadge = Boolean(open && showTexts)
 
