@@ -10,6 +10,8 @@
 export default function getMetricPeriod(targetDate) {
   const now = new Date()
 
+  if (!targetDate) return null
+
   // Normalize to midnight for day comparisons
   const currentYear = now.getFullYear()
   const today = new Date(currentYear, now.getMonth(), now.getDate())

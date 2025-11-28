@@ -62,7 +62,7 @@ export default function getMetrics(tasks) {
     // completedTasks
     if (isDone) {
       const completedDate = task?.completedDate
-        ? formatTimestamp(task.completedDate).raw
+        ? formatTimestamp(task.completedDate)?.raw
         : null
       const completedPeriod = getMetricPeriod(completedDate)
 
@@ -87,7 +87,7 @@ export default function getMetrics(tasks) {
 
     if (isCancelled) {
       const cancelledDate = task?.cancelledDate
-        ? formatTimestamp(task.cancelledDate).raw
+        ? formatTimestamp(task.cancelledDate)?.raw
         : null
       const cancelledPeriod = getMetricPeriod(cancelledDate)
 
