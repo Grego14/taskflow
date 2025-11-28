@@ -12,4 +12,4 @@ export const isInviteNotification = data => {
 }
 
 export const getNotificationDate = (date, locale) =>
-  formatTimeAgo(formatTimestamp(date, locale).raw, locale)
+  formatTimeAgo(formatTimestamp(date, locale)?.raw || new Date(), locale)
