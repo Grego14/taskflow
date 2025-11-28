@@ -12,5 +12,13 @@
   "profileUpdated": "Profile updated successfully",
   "loading": "Loading profile",
   "accountCreated_date": "Account creation date: {{date}}",
-  "lastLogin_date": "Last login: {{date}}"
+  "lastLogin_date": "Last login: {{date}}",
+  "deleteUser": {
+    "passwordLabel": "Enter your password",
+    "errors": {
+      "deletingUser": "Couldn't delete the user",
+      "authenticating": "Couldn't authenticate. Try again",
+      "password": "Invalid password"
+    }
+  }
 }

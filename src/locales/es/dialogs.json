@@ -44,5 +44,9 @@
     "title": "Expulsar miembro",
     "text1": "¿Estas seguro/a que deseas expulsar a ",
     "text2": " del proyecto? Esta acción es irreversible."
+  },
+  "deleteUser": {
+    "title": "Eliminar mi cuenta",
+    "text": "Esta acción es irreversible"
   }
 }

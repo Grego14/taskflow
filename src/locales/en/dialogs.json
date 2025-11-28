@@ -44,5 +44,9 @@
     "title": "Kick member",
     "text1": "Are you sure you want to kick ",
     "text2": " from the project? This action cannot be undone"
+  },
+  "deleteUser": {
+    "title": "Delete my account",
+    "text": "This action cannot be undone"
   }
 }
