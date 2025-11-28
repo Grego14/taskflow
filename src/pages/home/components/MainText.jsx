@@ -90,7 +90,7 @@ const MainText = forwardRef(function MainText(props, ref) {
         sx={{ mt: 4, opacity: 0 }}
         variant='contained'
         id='startFree'
-        onClick={() => navigate('/login')}>
+        onClick={() => navigate('/signup')}>
         {t('startForFree')}
       </Button>
     </Section>
