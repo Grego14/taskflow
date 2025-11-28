@@ -37,7 +37,7 @@ export default function Home() {
   useGSAP(
     () => {
       document.fonts.ready.then(() => {
-        if (username) {
+        if (username && userLoaded) {
           gsap.set('#username', { opacity: 1 })
 
           gsap.to('#username', {
@@ -52,7 +52,7 @@ export default function Home() {
         }
       })
     },
-    { dependencies: [username] }
+    { dependencies: [username, userLoaded] }
   )
 
   if (!userLoaded)
