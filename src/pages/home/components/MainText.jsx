@@ -30,7 +30,6 @@ const MainText = forwardRef(function MainText(props, ref) {
           tl.from(self.words, {
             y: 50,
             autoAlpha: 0,
-            duration: 1,
             stagger: 0.1,
             delay: 0.25
           })
@@ -80,7 +79,6 @@ const MainText = forwardRef(function MainText(props, ref) {
         {t('title0')}
       </Typography>
       <Typography
-        className='text-balance'
         color='textSecondary'
         sx={[theme => ({ ...theme.typography.h5, opacity: 0 })]}
         id='shortText'>

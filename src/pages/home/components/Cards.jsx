@@ -11,7 +11,6 @@ import { useGSAP } from '@gsap/react'
 import useApp from '@hooks/useApp'
 import useMediaQuery from '@mui/material/useMediaQuery'
 import gsap from 'gsap'
-import { SplitText } from 'gsap/SplitText'
 import { useTranslation } from 'react-i18next'
 
 import { alpha } from '@mui/material/styles'
@@ -21,7 +20,7 @@ const getText = (cardType, title = true) =>
 
 export default function Cards({ userTheme }) {
   const { t } = useTranslation('landing')
-  const { isMobile } = useApp()
+  const { isMobile, isOnlyMobile } = useApp()
 
   const isBigDevice = useMediaQuery(theme =>
     theme.breakpoints.between('laptop', 'desktop')
@@ -46,47 +45,21 @@ export default function Cards({ userTheme }) {
 
   useGSAP(() => {
     document.fonts.ready.then(() => {
-      gsap.set('.card', { opacity: 0, scale: 0.5 })
-
-      const cardStart = `${isBigDevice ? 'top-=25%' : 'top-=10%'} bottom-=50%`
-
-      // if the device is not mobile/tablet the animation should end faster
-      // (the cards are next to each other in a row direction)
-      const cardEnd = `${isBigDevice ? 'top+=50%' : 'top-=20%'} top`
-
+      gsap.set('.card', { opacity: 0, scale: 0, x: 'random(500, -500)' })
       gsap.to('.card', {
         scale: 1,
         autoAlpha: 1,
-        stagger: 0.2,
-        ease: 'back.out(2)',
-        scrollTrigger: {
-          trigger: '#cards',
-          scrub: 0.8,
-          start: cardStart,
-          end: cardEnd,
-          once: true
-        }
-      })
-
-      const cardsTitles = cards.map(card => `#${card.type}`)
-      const splittedTitles = cardsTitles.map(title => {
-        const splittedTitle = SplitText.create(title, {
-          type: 'chars'
-        }).chars
-        gsap.set(splittedTitle, { x: -30, opacity: 0 })
-        return splittedTitle
-      })
-
-      gsap.to(splittedTitles, {
-        autoAlpha: 1,
-        stagger: 0.03,
-        ease: 'bounce.out',
+        stagger: 1.5,
+        ease: 'power2.out',
         x: 0,
+        duration: 1.5,
         scrollTrigger: {
-          scrub: 0.5,
           trigger: '#cards',
-          start: cardStart,
-          end: cardEnd,
+          scrub: 0.5,
+          start: `${isBigDevice ? 'top-=25%' : 'top-=10%'} bottom-=50%`,
+          // if the device is not mobile/tablet the animation should end faster
+          // (the cards are next to each other in a row direction)
+          end: `${isBigDevice ? 'top+=50%' : 'top+=10%'} top`,
           once: true
         }
       })
@@ -126,8 +99,7 @@ export default function Cards({ userTheme }) {
               <Typography
                 color='primary'
                 variant='h2'
-                sx={[theme => ({ ...theme.typography.h6, fontWeight: 300 })]}
-                id={card.type}>
+                sx={[theme => ({ ...theme.typography.h6, fontWeight: 300 })]}>
                 {t(getText(card.type))}
               </Typography>
             }
@@ -138,7 +110,6 @@ export default function Cards({ userTheme }) {
               '&:last-child': { pb: !isBigDevice ? 4 : 0 }
             }}>
             <Typography
-              className='text-balance'
               sx={[
                 theme =>
                   isBigDevice && { fontSize: theme.typography.h6.fontSize }

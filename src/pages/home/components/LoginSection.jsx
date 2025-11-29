@@ -20,32 +20,44 @@ export default function LoginSection({ userTheme }) {
     document.fonts.ready.then(() => {
       const loginText = SplitText.create('#login-text', { type: 'words' })
       gsap.set('#login-text', { opacity: 1 })
-      gsap.set(['#login-btn', '#signup-btn'], { scale: 0.5, opacity: 0 })
+      gsap.set(['#login-btn', '#signup-btn'], { opacity: 0, y: 120 })
 
-      const tl = gsap.timeline({
-        scrollTrigger: '#login-text',
-        defaults: { ease: 'bounce.out' }
-      })
+      const tl = gsap.timeline()
 
       tl.from(loginText.words, {
-        rotate: 'random(-50, 50)',
-        scale: 'random(0.75, 0.9)',
+        x: 15,
+        scale: 0.9,
+        stagger: 0.05,
         autoAlpha: 0,
-        stagger: 0.05
-      }).to(['#login-btn', '#signup-btn'], {
-        scale: 1,
-        autoAlpha: 1
+        ease: 'power2.out',
+        duration: 2,
+        scrollTrigger: {
+          scrub: 0.3,
+          trigger: '#login',
+          once: true,
+          start: 'top+=50% bottom',
+          end: 'top+=25% bottom-=40%'
+        },
+        onComplete: () => {
+          tl.to(['#login-btn', '#signup-btn'], {
+            y: 0,
+            autoAlpha: 1,
+            ease: 'back.out(2)'
+          })
+        }
       })
     })
   })
 
   return (
-    <Section id='login' sx={{ position: 'relative', overflow: 'hidden' }}>
+    <Section
+      id='login'
+      sx={{ position: 'relative', overflow: 'hidden', height: '75dvh' }}>
       <div className='flex flex-column flex-center'>
         <Typography
           variant='h3'
           className='text-balance text-center'
-          sx={[theme => ({ ...theme.typography.h4, mx: 4, opacity: 0 })]}
+          sx={[theme => ({ ...theme.typography.h3, mx: 4, opacity: 0 })]}
           id='login-text'>
           {t('login')}
         </Typography>
