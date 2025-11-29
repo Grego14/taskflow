@@ -1,6 +1,5 @@
 import {
   createUserWithEmailAndPassword,
-  onAuthStateChanged,
   signInWithEmailAndPassword,
   signOut
 } from 'firebase/auth'
@@ -38,8 +37,4 @@ export const logOut = async () => {
   } catch (error) {
     throw Error(error.message)
   }
-}
-
-export const onAuthStateChange = callback => {
-  return onAuthStateChanged(auth, callback)
 }

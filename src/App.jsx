@@ -10,7 +10,7 @@ import AppRoutes from './AppRoutes.jsx'
 import useApp from '@hooks/useApp'
 import useDebounce from '@hooks/useDebounce'
 import { useColorScheme } from '@mui/material/styles'
-import { useAuth } from './firebase/AuthContext'
+import useAuth from '@hooks/useAuth'
 
 // utils
 import internetNotification from '@utils/notifications/internetConnection.js'

@@ -6,8 +6,8 @@ import Button from '@mui/material/Button'
 import Tooltip from '@mui/material/Tooltip'
 import Typography from '@mui/material/Typography'
 
-import { useAuth } from '@/firebase/AuthContext'
 // hooks
+import useAuth from '@hooks/useAuth'
 import useUser from '@hooks/useUser'
 import useMediaQuery from '@mui/material/useMediaQuery'
 import { useRef } from 'react'

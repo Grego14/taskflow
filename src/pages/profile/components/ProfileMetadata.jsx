@@ -1,7 +1,7 @@
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 
-import { useAuth } from '@/firebase/AuthContext'
+import useAuth from '@hooks/useAuth'
 import useUser from '@hooks/useUser'
 import { memo } from 'react'
 import { useTranslation } from 'react-i18next'

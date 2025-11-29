@@ -1,6 +1,6 @@
 import ProfileFields from './ProfileFields'
 
-import { useAuth } from '@/firebase/AuthContext'
+import useAuth from '@hooks/useAuth'
 import useApp from '@hooks/useApp'
 import useUser from '@hooks/useUser'
 import { useColorScheme } from '@mui/material/styles'

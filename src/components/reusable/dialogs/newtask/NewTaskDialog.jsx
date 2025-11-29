@@ -14,7 +14,7 @@ import TaskPriority from './components/TaskPriority'
 import TaskTitle from './components/TaskTitle'
 
 // hooks
-import { useAuth } from '@/firebase/AuthContext'
+import useAuth from '@hooks/useAuth'
 import useApp from '@hooks/useApp'
 import useLoadResources from '@hooks/useLoadResources'
 import useProject from '@hooks/useProject'

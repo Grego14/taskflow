@@ -9,7 +9,7 @@ import IconButton from '@mui/material/IconButton'
 import Typography from '@mui/material/Typography'
 
 // hooks
-import { useAuth } from '@/firebase/AuthContext'
+import useAuth from '@hooks/useAuth'
 import useUser from '@hooks/useUser'
 import { memo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'

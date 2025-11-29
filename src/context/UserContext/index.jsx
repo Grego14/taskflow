@@ -1,7 +1,7 @@
 import { Outlet } from 'react-router-dom'
 
 // hooks
-import { useAuth } from '@/firebase/AuthContext'
+import useAuth from '@hooks/useAuth'
 import useDebounce from '@hooks/useDebounce'
 import { useColorScheme } from '@mui/material/styles'
 import {

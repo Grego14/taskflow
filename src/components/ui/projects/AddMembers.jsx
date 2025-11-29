@@ -8,7 +8,7 @@ import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
 import AddMembersPreview from './AddMembersPreview'
 
-import { useAuth } from '@/firebase/AuthContext'
+import useAuth from '@hooks/useAuth'
 import useApp from '@hooks/useApp'
 import useDebounce from '@hooks/useDebounce'
 import useLoadResources from '@hooks/useLoadResources'

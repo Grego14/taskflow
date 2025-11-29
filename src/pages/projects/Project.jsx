@@ -17,8 +17,8 @@ const ProjectActions = lazy(
 )
 const AppBar = lazy(() => import('@components/ui/appbar/AppBar'))
 
-import { useAuth } from '@/firebase/AuthContext'
 // hooks
+import useAuth from '@hooks/useAuth'
 import useProjectAccess from '@context/ProjectsContext/useProjectAccess'
 import useProjectMembers from '@context/ProjectsContext/useProjectMembers'
 import useApp from '@hooks/useApp'

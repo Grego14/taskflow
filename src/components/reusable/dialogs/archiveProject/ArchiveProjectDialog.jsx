@@ -1,6 +1,6 @@
 import Dialog from '@components/reusable/dialogs/Dialog'
 
-import { useAuth } from '@/firebase/AuthContext'
+import useAuth from '@hooks/useAuth'
 import useApp from '@hooks/useApp'
 import useLoadResources from '@hooks/useLoadResources'
 import { useTranslation } from 'react-i18next'

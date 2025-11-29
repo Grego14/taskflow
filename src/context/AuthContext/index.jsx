@@ -1,17 +1,16 @@
 import useDebounce from '@hooks/useDebounce.js'
-import { createContext, useContext, useEffect, useMemo, useState } from 'react'
-import { onAuthStateChange } from './auth.js'
-import { auth } from './firebase-config.js'
+import { useEffect, useMemo, useState } from 'react'
 
-const AuthContext = createContext({
-  currentUser: null,
-  loading: true,
-  isOffline: false
-})
+import { auth } from '@/firebase/firebase-config.js'
+import { onAuthStateChanged } from 'firebase/auth'
 
-export function AuthProvider({ children }) {
+import CircleLoader from '@components/reusable/loaders/CircleLoader'
+import AuthContext from './context'
+
+export default function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState(auth.currentUser)
   const [loading, setLoading] = useState(true)
+
   // set the offline state as true to avoid showing the offline notification
   // on the initial update
   const [isOffline, setIsOffline] = useState(false)
@@ -21,7 +20,7 @@ export function AuthProvider({ children }) {
   }, 1000)
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChange(user => {
+    const unsubscribe = onAuthStateChanged(auth, user => {
       setCurrentUser(user)
       setLoading(false)
     })
@@ -39,13 +38,7 @@ export function AuthProvider({ children }) {
     [loading, currentUser, isOffline, debounceOffline]
   )
 
-  return (
-    !loading && (
-      <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
-    )
-  )
-}
+  if (loading) return <CircleLoader height='100dvh' />
 
-export function useAuth() {
-  return useContext(AuthContext)
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }

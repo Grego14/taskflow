@@ -2,7 +2,7 @@ import MenuAction from '@components/reusable/MenuAction'
 import Dialog from '@components/reusable/dialogs/Dialog'
 import Delete from '@mui/icons-material/Delete'
 
-import { useAuth } from '@/firebase/AuthContext'
+import useAuth from '@hooks/useAuth'
 import useApp from '@hooks/useApp'
 import useLoadResources from '@hooks/useLoadResources'
 import { useState } from 'react'

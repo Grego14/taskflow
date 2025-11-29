@@ -6,7 +6,7 @@ import { useEffect, useMemo } from 'react'
 import { Outlet } from 'react-router-dom'
 import RouteHandler from './RoutesHandler'
 
-import { useAuth } from '@/firebase/AuthContext'
+import useAuth from '@hooks/useAuth'
 import useGetUserFromDb from '@hooks/useGetUserFromDb'
 
 import i18n from '@/i18n'
@@ -32,9 +32,7 @@ export default function UserLogged() {
 
   const updateUser = useMutation({
     mutationKey: ['updateUser'],
-    mutationFn: async data => {
-      await updater(uid, data)
-    },
+    mutationFn: async data => await updater(uid, data),
     onError: err => console.error('UpdateUser:', err)
   })
 
@@ -54,7 +52,7 @@ export default function UserLogged() {
     }
   }, 1500)
 
-  // biome-ignore lint: This functions never changes
+  // biome-ignore lint: We need to update this just once
   useEffect(() => {
     setUpdaters({
       update: data => updateUser.mutate(data),

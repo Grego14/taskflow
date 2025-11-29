@@ -14,7 +14,7 @@ const ProjectPercentage = lazy(
 )
 
 // hooks
-import { useAuth } from '@/firebase/AuthContext'
+import useAuth from '@hooks/useAuth'
 import useApp from '@hooks/useApp'
 import useProject from '@hooks/useProject'
 import useTasks from '@hooks/useTasks'

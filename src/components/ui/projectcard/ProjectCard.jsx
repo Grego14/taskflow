@@ -12,9 +12,9 @@ import Chip from '@mui/material/Chip'
 import Typography from '@mui/material/Typography'
 import ProjectActions from './ProjectActions'
 
-import { useAuth } from '@/firebase/AuthContext'
-import useNavigateToProject from '@hooks/useNavigateToProject'
 // hooks
+import useAuth from '@hooks/useAuth'
+import useNavigateToProject from '@hooks/useNavigateToProject'
 import useUser from '@hooks/useUser'
 import { alpha, useTheme } from '@mui/material/styles'
 import { useTranslation } from 'react-i18next'

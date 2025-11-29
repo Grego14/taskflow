@@ -1,4 +1,4 @@
-import { useAuth } from '@/firebase/AuthContext'
+import useAuth from '@hooks/useAuth'
 import useProject from '@hooks/useProject'
 import getProjectTasks from '@querys/getProjectTasks'
 import { useQuery } from '@tanstack/react-query'
