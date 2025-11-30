@@ -1,7 +1,7 @@
 import ProfileFields from './ProfileFields'
 
-import useAuth from '@hooks/useAuth'
 import useApp from '@hooks/useApp'
+import useAuth from '@hooks/useAuth'
 import useUser from '@hooks/useUser'
 import { useColorScheme } from '@mui/material/styles'
 import { useCallback, useEffect, useState } from 'react'

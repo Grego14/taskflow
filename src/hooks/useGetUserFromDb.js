@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react'
 import useApp from '@hooks/useApp'
 import useAuth from '@hooks/useAuth'
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 export default function useGetUserFromDb(userId, setLoadedState) {

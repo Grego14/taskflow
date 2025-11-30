@@ -1,7 +1,7 @@
 import Dialog from '@components/reusable/dialogs/Dialog'
 
-import useAuth from '@hooks/useAuth'
 import useApp from '@hooks/useApp'
+import useAuth from '@hooks/useAuth'
 import useLoadResources from '@hooks/useLoadResources'
 import { useTranslation } from 'react-i18next'
 

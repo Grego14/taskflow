@@ -1,10 +1,10 @@
-import useLoadResources from '@hooks/useLoadResources'
-import useAuth from '@hooks/useAuth'
 import useApp from '@hooks/useApp'
+import useAuth from '@hooks/useAuth'
+import useLoadResources from '@hooks/useLoadResources'
 
+import { Suspense, lazy } from 'react'
 import { Route, Routes } from 'react-router-dom'
 import { BrowserRouter as Router } from 'react-router-dom'
-import { lazy, Suspense } from 'react'
 
 const Notification = lazy(
   () => import('@components/ui/notification/Notification')

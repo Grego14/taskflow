@@ -1,11 +1,11 @@
 import Box from '@mui/material/Box'
-import { Suspense, lazy, useMemo, useState, useEffect } from 'react'
+import { Suspense, lazy, useEffect, useMemo, useState } from 'react'
 import { Outlet, useLocation, useParams } from 'react-router-dom'
 
 import useApp from '@hooks/useApp'
+import useDebounce from '@hooks/useDebounce'
 import useUser from '@hooks/useUser'
 import { useMediaQuery } from '@mui/material'
-import useDebounce from '@hooks/useDebounce'
 
 const LayoutAppBar = lazy(() => import('./components/LayoutAppBar'))
 const AppDrawer = lazy(() => import('@components/ui/drawer/AppDrawer'))

@@ -13,9 +13,9 @@ const ProjectPercentage = lazy(
   () => import('@components/ui/tasks/ProjectPercentage')
 )
 
+import useApp from '@hooks/useApp'
 // hooks
 import useAuth from '@hooks/useAuth'
-import useApp from '@hooks/useApp'
 import useProject from '@hooks/useProject'
 import useTasks from '@hooks/useTasks'
 import useUser from '@hooks/useUser'

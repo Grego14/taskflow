@@ -13,9 +13,9 @@ import TaskMembers from './components/TaskMembers'
 import TaskPriority from './components/TaskPriority'
 import TaskTitle from './components/TaskTitle'
 
+import useApp from '@hooks/useApp'
 // hooks
 import useAuth from '@hooks/useAuth'
-import useApp from '@hooks/useApp'
 import useLoadResources from '@hooks/useLoadResources'
 import useProject from '@hooks/useProject'
 import useUser from '@hooks/useUser'

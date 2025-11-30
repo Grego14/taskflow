@@ -8,8 +8,8 @@ const DeleteUserDialog = lazy(
   () => import('@components/reusable/dialogs/deleteuser/DeleteUserDialog')
 )
 
-import useAuth from '@hooks/useAuth'
 import useApp from '@hooks/useApp'
+import useAuth from '@hooks/useAuth'
 import useUser from '@hooks/useUser'
 import {
   EmailAuthProvider,

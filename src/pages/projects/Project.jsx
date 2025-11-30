@@ -17,11 +17,11 @@ const ProjectActions = lazy(
 )
 const AppBar = lazy(() => import('@components/ui/appbar/AppBar'))
 
-// hooks
-import useAuth from '@hooks/useAuth'
 import useProjectAccess from '@context/ProjectsContext/useProjectAccess'
 import useProjectMembers from '@context/ProjectsContext/useProjectMembers'
 import useApp from '@hooks/useApp'
+// hooks
+import useAuth from '@hooks/useAuth'
 import useDebounce from '@hooks/useDebounce'
 import useUser from '@hooks/useUser'
 import { useTranslation } from 'react-i18next'

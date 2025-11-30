@@ -1,13 +1,13 @@
 import { Outlet } from 'react-router-dom'
 import RouteHandler from './RoutesHandler'
 
+import useApp from '@hooks/useApp'
+import useAuth from '@hooks/useAuth'
 import useDebounce from '@hooks/useDebounce'
+import useGetUserFromDb from '@hooks/useGetUserFromDb'
 import useUser from '@hooks/useUser'
 import { useMutation } from '@tanstack/react-query'
-import { useEffect, useMemo, useRef, lazy, Suspense } from 'react'
-import useAuth from '@hooks/useAuth'
-import useGetUserFromDb from '@hooks/useGetUserFromDb'
-import useApp from '@hooks/useApp'
+import { Suspense, lazy, useEffect, useMemo, useRef } from 'react'
 
 const CloudOffIcon = lazy(() => import('@mui/icons-material/CloudOff'))
 const CloudSyncIcon = lazy(() => import('@mui/icons-material/CloudSync'))

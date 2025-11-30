@@ -92,8 +92,10 @@ export default function Notifications({ open: drawerOpen, toggleDrawer }) {
           id='notifications-menu'>
           {notifications
             ?.sort((a, b) => {
-              const aDate = formatTimestamp(a.notificationDate)?.raw || new Date()
-              const bDate = formatTimestamp(b.notificationDate)?.raw || new Date()
+              const aDate =
+                formatTimestamp(a.notificationDate)?.raw || new Date()
+              const bDate =
+                formatTimestamp(b.notificationDate)?.raw || new Date()
 
               return aDate > bDate ? 0 : 1
             })

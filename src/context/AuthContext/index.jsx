@@ -14,10 +14,7 @@ export default function AuthProvider({ children }) {
   // set the offline state as true to avoid showing the offline notification
   // on the initial update
   const [isOffline, setIsOffline] = useState(false)
-  const [debounceOffline] = useDebounce(val => {
-    setIsOffline(val)
-    console.log('Connection state -> ', val ? 'offline' : 'online')
-  }, 1000)
+  const [debounceOffline] = useDebounce(val => setIsOffline(val), 1000)
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, user => {

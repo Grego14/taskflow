@@ -1,9 +1,9 @@
 // components
 import TextField from '@mui/material/TextField'
 
+import useApp from '@hooks/useApp'
 // hooks
 import useAuth from '@hooks/useAuth'
-import useApp from '@hooks/useApp'
 import useDebounce from '@hooks/useDebounce.js'
 import useProject from '@hooks/useProject'
 import useTasks from '@hooks/useTasks'

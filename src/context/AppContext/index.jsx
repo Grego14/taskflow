@@ -1,9 +1,10 @@
+import useAuth from '@hooks/useAuth.js'
+import { useColorScheme } from '@mui/material/styles'
 // hooks
 import useMediaQuery from '@mui/material/useMediaQuery'
-import { useCallback, useMemo, useReducer, useState, lazy } from 'react'
-import { useColorScheme } from '@mui/material/styles'
-import useAuth from '@hooks/useAuth.js'
+import { lazy, useCallback, useMemo, useReducer, useState } from 'react'
 
+import UserContext from '@context/UserContext'
 // utils
 import {
   ACTION_TYPES,
@@ -11,7 +12,6 @@ import {
   initAppState
 } from './appStateReducer.js'
 import AppContext from './context'
-import UserContext from '@context/UserContext'
 
 const AppRoutes = lazy(() => import('@/AppRoutes.jsx'))
 const Landing = lazy(() => import('@pages/home/Landing'))

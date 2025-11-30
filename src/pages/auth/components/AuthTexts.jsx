@@ -1,8 +1,8 @@
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 
-import { useTranslation } from 'react-i18next'
 import { useGSAP } from '@gsap/react'
+import { useTranslation } from 'react-i18next'
 
 import gsap from 'gsap'
 import { SplitText } from 'gsap/SplitText'
