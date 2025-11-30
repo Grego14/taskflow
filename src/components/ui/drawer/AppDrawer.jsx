@@ -27,12 +27,11 @@ export default memo(function AppDrawer({ open, setOpen, children }) {
 
   const { notifications } = useNotifications()
 
-  const duration =
-    theme.transitions.duration[open ? 'enteringScreen' : 'leavingScreen']
-  const easing = theme.transitions.easing[open ? 'easeOut' : 'easeIn']
-  const widthTransition = `width ${duration}ms ${easing}`
+  const easing = theme.transitions.easing.sharp
   const shadowColor = theme.palette.grey[userTheme === 'light' ? 300 : 800]
   const shadow = `0 ${projectId && !isMobile ? appBarHeight : 0} 3px ${shadowColor}`
+
+  console.log(preferences)
 
   const toggleDrawer = useCallback(
     state => {
@@ -66,11 +65,10 @@ export default memo(function AppDrawer({ open, setOpen, children }) {
       sx={{
         display: 'flex',
         textWrap: 'nowrap',
-        transition: 'width .3s ease-in-out',
         '& .MuiDrawer-paper': {
           width: drawerWidth?.[open ? 'open' : 'closed'],
           overflowX: 'hidden',
-          transition: widthTransition,
+          transition: `width 0.15s ${easing}`,
           ...(!open && { boxShadow: shadow })
         }
       }}>
