@@ -1,16 +1,14 @@
 import Button from '@mui/material/Button'
 import { useTranslation } from 'react-i18next'
-import { useNavigate } from 'react-router-dom'
 
 export default function SignUpButton(props) {
   const { variant = 'contained', color = 'white', ...other } = props
-  const navigate = useNavigate()
   const { t } = useTranslation()
 
   return (
     <Button
       type='button'
-      onClick={() => navigate('signup')}
+      onClick={() => location.assign('signup')}
       {...other}
       variant={variant}>
       {t('signup')}
