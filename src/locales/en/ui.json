@@ -177,7 +177,8 @@
     "invitationDeclined": "Invitation declined",
     "welcome": "Welcome to TaskFlow",
     "kicked": "You have been expelled from project",
-    "kicked2": "by"
+    "kicked2": "by",
+    "cannotGetUserNoInternet": "Couldn't get the user data. Check your connection"
   },
   "loadingUser": "Getting user data",
   "ruteNotFound": "Sorry. We couldn't find that route",

@@ -182,7 +182,8 @@
     "invitationDeclined": "Invitación rechazada",
     "welcome": "Bienvenido/a a TaskFlow",
     "kicked": "Haz sido expulsado del proyecto",
-    "kicked2": "por"
+    "kicked2": "por",
+    "cannotGetUserNoInternet": "No se pudo obtener los datos del usuario. Verifique su conexión"
   },
   "loadingUser": "Obteniendo datos del usuario",
   "ruteNotFound": "Lo sentimos. No pudimos encontrar esa ruta",
