@@ -7,7 +7,7 @@ import Slide from '@mui/material/Slide'
 import { Suspense, lazy } from 'react'
 
 const AppBar = lazy(() => import('@components/ui/appbar/AppBar'))
-const Link = lazy(() => import('@components/reusable/Link'))
+const Link = lazy(() => import('@mui/material/Link'))
 const LangUpdater = lazy(() => import('@components/ui/buttons/LangUpdater'))
 const ThemeUpdater = lazy(() => import('@components/ui/buttons/ThemeUpdater'))
 
@@ -52,7 +52,7 @@ export default function LandingAppBar({ height, show }) {
                 px: 2
               }}>
               <Link
-                to='/'
+                href='/'
                 className='flex flex-center'
                 gap={1}
                 color='textPrimary'

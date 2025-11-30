@@ -7,14 +7,12 @@ import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
 import { forwardRef } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useNavigate } from 'react-router-dom'
 
 import { SplitText } from 'gsap/SplitText'
 
 const MainText = forwardRef(function MainText(props, ref) {
   const { t } = useTranslation('landing')
   const { setShowAppBar } = props
-  const navigate = useNavigate()
 
   useGSAP(() => {
     document.fonts.ready.then(() => {
@@ -88,7 +86,7 @@ const MainText = forwardRef(function MainText(props, ref) {
         sx={{ mt: 4, opacity: 0 }}
         variant='contained'
         id='startFree'
-        onClick={() => navigate('/signup')}>
+        onClick={() => location.assign('signup')}>
         {t('startForFree')}
       </Button>
     </Section>

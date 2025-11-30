@@ -6,11 +6,13 @@ import Section from './Section'
 
 import { useGSAP } from '@gsap/react'
 import { useTheme } from '@mui/material/styles'
+import useApp from '@hooks/useApp'
 import gsap from 'gsap'
 import { SplitText } from 'gsap/SplitText'
 import { useTranslation } from 'react-i18next'
 
 export default function LoginSection({ userTheme }) {
+  const { isOnlyMobile } = useApp()
   const { t } = useTranslation('landing')
   const theme = useTheme()
 
@@ -57,11 +59,14 @@ export default function LoginSection({ userTheme }) {
         <Typography
           variant='h3'
           className='text-balance text-center'
-          sx={[theme => ({ ...theme.typography.h3, mx: 4, opacity: 0 })]}
+          sx={[theme => ({ ...theme.typography.h3, mx: 2, opacity: 0 })]}
           id='login-text'>
           {t('login')}
         </Typography>
-        <Box sx={{ mt: 4, display: 'flex', gap: 4 }}>
+        <Box
+          className={isOnlyMobile ? 'flex flex-column' : 'flex'}
+          gap={isOnlyMobile ? 2 : 4}
+          mt={4}>
           <LoginButton variant='outlined' id='login-btn' />
           <SignUpButton id='signup-btn' />
         </Box>

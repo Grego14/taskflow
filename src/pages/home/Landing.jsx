@@ -1,19 +1,15 @@
 // components
 import CircleLoader from '@components/reusable/loaders/CircleLoader'
-import ChevronIcon from '@mui/icons-material/ChevronLeft'
 import Box from '@mui/material/Box'
-import Typography from '@mui/material/Typography'
 import Cards from './components/Cards'
 import LandingAppBar from './components/LandingAppBar'
 import LoginSection from './components/LoginSection'
 import MainText from './components/MainText'
-import Section from './components/Section'
 
 // hooks
 import useApp from '@hooks/useApp'
 import useLoadResources from '@hooks/useLoadResources'
 import useUser from '@hooks/useUser'
-import { styled, useTheme } from '@mui/material/styles'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -23,7 +19,6 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { SplitText } from 'gsap/SplitText'
 
 import { alpha } from '@mui/material/styles'
-
 import setPageTitle from '@utils/setPageTitle'
 
 gsap.registerPlugin(useGSAP, SplitText, ScrollTrigger)
@@ -33,7 +28,6 @@ export default function Landing() {
   const userTheme = preferences.theme
 
   const { isMobile, appBarHeight } = useApp()
-  const theme = useTheme()
   const { t, i18n } = useTranslation(['landing', 'common'])
 
   // common is already loaded by the AppRoutes
