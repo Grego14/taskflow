@@ -4,30 +4,26 @@ if (import.meta.env.DEV) {
   scan({ enabled: true })
 }
 
-import { StrictMode, forwardRef } from 'react'
+import { forwardRef } from 'react'
 import { createRoot } from 'react-dom/client'
 
-import './main.css'
-
-import CssBaseline from '@mui/material/CssBaseline'
 import Slide from '@mui/material/Slide'
 import Zoom from '@mui/material/Zoom'
 
-import AppProvider from '@context/AppContext/index'
-import {
-  ThemeProvider,
-  createTheme,
-  responsiveFontSizes
-} from '@mui/material/styles'
-
+import { StrictMode } from 'react'
+import AppProvider from '@context/AppContext'
+import AuthProvider from '@context/AuthContext'
 import { I18nextProvider } from 'react-i18next'
-import App from './App'
-import { AuthProvider } from './firebase/AuthContext'
+import CssBaseline from '@mui/material/CssBaseline'
+import { ThemeProvider } from '@mui/material/styles'
 import i18n from './i18n.js'
+
+import { createTheme, responsiveFontSizes } from '@mui/material/styles'
 
 import RubikBold from '/fonts/Rubik-Bold.woff2'
 import RubikMedium from '/fonts/Rubik-Medium.woff2'
 import RubikRegular from '/fonts/Rubik-Regular.woff2'
+import './main.css'
 
 history.scrollRestoration = 'manual'
 
@@ -67,18 +63,23 @@ const theme = responsiveFontSizes(
         styleOverrides: {
           root: ({ theme, ...props }) => {
             const defaultTransition = theme.transitions.create(
-              ['background-color', 'box-shadow', 'border-color', 'color'],
+              [
+                'background-color',
+                'box-shadow',
+                'border-color',
+                'color',
+                'scale'
+              ],
               {
                 duration: theme.transitions.duration.short
               }
             )
-            const scaleTransition = 'scale .25s ease-out'
 
             return {
               fontSize: 'var(--fs-small)',
               textTransform: 'none',
               minWidth: 'auto',
-              transition: `${defaultTransition}, ${scaleTransition}`,
+              transition: defaultTransition,
               '& .MuiButton-icon': { transition: 'inherit' },
               // add a cool press effect
               '&:active, &:active .MuiButton-icon': {
@@ -177,12 +178,9 @@ createRoot(document.getElementById('root')).render(
   <StrictMode>
     <ThemeProvider noSsr theme={theme}>
       <CssBaseline />
-
       <I18nextProvider i18n={i18n}>
         <AuthProvider>
-          <AppProvider>
-            <App />
-          </AppProvider>
+          <AppProvider />
         </AuthProvider>
       </I18nextProvider>
     </ThemeProvider>
