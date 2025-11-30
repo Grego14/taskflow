@@ -1,6 +1,12 @@
 import { useEffect, useState } from 'react'
+import useApp from '@hooks/useApp'
+import useAuth from '@hooks/useAuth'
+import { useTranslation } from 'react-i18next'
 
 export default function useGetUserFromDb(userId, setLoadedState) {
+  const { t } = useTranslation('ui')
+  const { isOffline } = useAuth()
+  const { appNotification } = useApp()
   const [user, setUser] = useState(null)
   const [error, setError] = useState(null)
 
@@ -34,6 +40,14 @@ export default function useGetUserFromDb(userId, setLoadedState) {
             err => {
               console.error(err)
               setError(err)
+
+              if (isOffline) {
+                appNotification({
+                  message: t('notifications.cannotGetUserNoInternet'),
+                  status: 'error'
+                })
+              }
+
               setLoadedState(true)
             }
           )
@@ -42,7 +56,7 @@ export default function useGetUserFromDb(userId, setLoadedState) {
 
       return () => unsubscribe?.()
     }
-  }, [userId, setLoadedState])
+  }, [userId, setLoadedState, appNotification, isOffline, t])
 
   return { user, error }
 }
