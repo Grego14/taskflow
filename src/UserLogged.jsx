@@ -1,13 +1,16 @@
-import useDebounce from '@hooks/useDebounce'
-import useUser from '@hooks/useUser'
-import { useMutation } from '@tanstack/react-query'
-import { useEffect, useMemo } from 'react'
-
 import { Outlet } from 'react-router-dom'
 import RouteHandler from './RoutesHandler'
 
+import useDebounce from '@hooks/useDebounce'
+import useUser from '@hooks/useUser'
+import { useMutation } from '@tanstack/react-query'
+import { useEffect, useMemo, useRef, lazy, Suspense } from 'react'
 import useAuth from '@hooks/useAuth'
 import useGetUserFromDb from '@hooks/useGetUserFromDb'
+import useApp from '@hooks/useApp'
+
+const CloudOffIcon = lazy(() => import('@mui/icons-material/CloudOff'))
+const CloudSyncIcon = lazy(() => import('@mui/icons-material/CloudSync'))
 
 import i18n from '@/i18n'
 import updater from '@services/updateUser'
@@ -16,19 +19,31 @@ import lazyImport from '@utils/lazyImport'
 import { getDatabase, onValue, ref } from 'firebase/database'
 
 export default function UserLogged() {
-  const { uid, setFilter, setUpdaters } = useUser()
-  const { setIsOffline, currentUser } = useAuth()
+  const { uid, setUpdate } = useUser()
+  const { setIsOffline, currentUser, isOffline } = useAuth()
+  const { appNotification, notification } = useApp()
 
-  const {
-    metadata,
-    preferences,
-    updateFilter,
-    userLoaded,
-    setUserLoaded,
-    setUser
-  } = useUser()
+  const lastConnectionState = useRef(isOffline)
 
+  const { metadata, preferences, userLoaded, setUserLoaded, setUser } =
+    useUser()
   const userTheme = preferences?.theme
+
+  const [sendInternetNotification] = useDebounce(async () => {
+    const icon = isOffline ? (
+      <CloudOffIcon fontSize='small' />
+    ) : (
+      <CloudSyncIcon fontSize='small' />
+    )
+
+    const internetNotification = await lazyImport(
+      '/src/utils/notifications/internetConnection'
+    )
+
+    internetNotification(isOffline, props =>
+      appNotification({ ...props, icon })
+    )
+  }, 3000)
 
   const updateUser = useMutation({
     mutationKey: ['updateUser'],
@@ -36,31 +51,9 @@ export default function UserLogged() {
     onError: err => console.error('UpdateUser:', err)
   })
 
-  const [debounceUpdater] = useDebounce(async data => {
-    const { previewer, filter, type } = data
-
-    await updateUser.mutate(
-      previewer
-        ? { previewer: previewer }
-        : filter
-          ? { lastUsedFilter: filter }
-          : null
-    )
-
-    if (type === 'filter') {
-      setFilter(filter)
-    }
-  }, 1500)
-
-  // biome-ignore lint: We need to update this just once
   useEffect(() => {
-    setUpdaters({
-      update: data => updateUser.mutate(data),
-      updatePreviewer: previewer =>
-        debounceUpdater({ previewer, type: 'previewer' }),
-      updateFilter: filter => debounceUpdater({ filter, type: 'filter' })
-    })
-  }, [])
+    setUpdate({ update: data => updateUser.mutate(data) })
+  }, [setUpdate, updateUser.mutate])
 
   // Manage the offline/online state
   useEffect(() => {
@@ -75,12 +68,18 @@ export default function UserLogged() {
     return unsubscribe
   }, [setIsOffline])
 
+  useEffect(() => {
+    if (lastConnectionState.current !== isOffline) {
+      sendInternetNotification()
+      lastConnectionState.current = isOffline
+    }
+  }, [sendInternetNotification, isOffline])
+
   const { user, error } = useGetUserFromDb(uid, setUserLoaded)
 
   useEffect(() => {
     ;(async () => {
       if (userLoaded) {
-        updateFilter(user?.metadata?.lastUsedFilter)
         setUser({
           ...user,
           preferences: {
@@ -90,7 +89,7 @@ export default function UserLogged() {
         })
       }
     })()
-  }, [userLoaded, setUser, updateFilter, user])
+  }, [userLoaded, setUser, user])
 
   return (
     <RouteHandler>
