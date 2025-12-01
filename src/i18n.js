@@ -1,6 +1,5 @@
 import { loadResources } from '@utils/resources.js'
 import i18n from 'i18next'
-import LanguageDetector from 'i18next-browser-languagedetector'
 import { initReactI18next } from 'react-i18next'
 
 // preload the RESOURCES before calling loadResources to avoid the lexical
@@ -8,7 +7,6 @@ import { initReactI18next } from 'react-i18next'
 import { RESOURCES } from './constants'
 
 i18n
-  .use(LanguageDetector)
   .use(initReactI18next)
   .init(
     {
