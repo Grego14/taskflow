@@ -4,10 +4,8 @@ if (import.meta.env.DEV) {
   scan({ enabled: true })
 }
 
-import { forwardRef } from 'react'
 import { createRoot } from 'react-dom/client'
 
-import Slide from '@mui/material/Slide'
 import Zoom from '@mui/material/Zoom'
 
 import AppProvider from '@context/AppContext'
@@ -26,10 +24,6 @@ import RubikRegular from '/fonts/Rubik-Regular.woff2'
 import './main.css'
 
 history.scrollRestoration = 'manual'
-
-const DialogTransition = forwardRef(function DialogTransition(props, ref) {
-  return <Slide direction='right' ref={ref} {...props} />
-})
 
 const theme = responsiveFontSizes(
   createTheme({
@@ -144,13 +138,6 @@ const theme = responsiveFontSizes(
           font-size: inherit;
         }
       `
-      },
-      MuiDialog: {
-        defaultProps: {
-          slots: {
-            transition: DialogTransition
-          }
-        }
       },
       MUITypography: {
         styleOverrides: {
