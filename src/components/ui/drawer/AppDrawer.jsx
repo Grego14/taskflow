@@ -31,8 +31,6 @@ export default memo(function AppDrawer({ open, setOpen, children }) {
   const shadowColor = theme.palette.grey[userTheme === 'light' ? 300 : 800]
   const shadow = `0 ${projectId && !isMobile ? appBarHeight : 0} 3px ${shadowColor}`
 
-  console.log(preferences)
-
   const toggleDrawer = useCallback(
     state => {
       setOpen(state)
