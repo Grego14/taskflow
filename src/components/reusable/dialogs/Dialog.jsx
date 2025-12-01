@@ -9,7 +9,6 @@ import DialogTitle from '@mui/material/DialogTitle'
 import Divider from '@mui/material/Divider'
 import IconButton from '@mui/material/IconButton'
 import Skeleton from '@mui/material/Skeleton'
-import Slide from '@mui/material/Slide'
 import Typography from '@mui/material/Typography'
 
 // hooks
@@ -18,6 +17,11 @@ import useLoadResources from '@hooks/useLoadResources.js'
 import { useTheme } from '@mui/material/styles'
 import { forwardRef, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
+
+import Slide from '@mui/material/Slide'
+const DialogTransition = forwardRef(function DialogTransition(props, ref) {
+  return <Slide direction='right' ref={ref} {...props} />
+})
 
 export default function Dialog({
   children,
@@ -47,6 +51,7 @@ export default function Dialog({
       disableRestoreFocus
       disablePortal
       maxWidth={maxWidth}
+      slots={{ transition: DialogTransition }}
       slotProps={{
         transition: { in: open },
         // avoid horizontal scroll on 320px screens
