@@ -147,7 +147,7 @@ function Main() {
         }
         @font-face {
           font-family: 'Rubik';
-          src: local(Rubik), local(Rubik-Regular), url(${fontsToPreload.regular}) format('woff2');
+          src: local(Rubik-Regular), url(${fontsToPreload.regular}) format('woff2');
           font-style: normal;
           font-weight: 400;
           font-display: swap;
