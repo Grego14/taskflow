@@ -1,7 +1,4 @@
-import DropdownMenu from '@components/reusable/DropdownMenu'
-import MenuIcon from '@mui/icons-material/Menu'
 import Box from '@mui/material/Box'
-import Divider from '@mui/material/Divider'
 import Slide from '@mui/material/Slide'
 
 import { Suspense, lazy } from 'react'
