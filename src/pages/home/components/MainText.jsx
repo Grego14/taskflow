@@ -78,6 +78,7 @@ const MainText = forwardRef(function MainText(props, ref) {
       </Typography>
       <Typography
         color='textSecondary'
+        variant='h2'
         sx={[theme => ({ ...theme.typography.h5, opacity: 0 })]}
         id='shortText'>
         {t('title1')}
