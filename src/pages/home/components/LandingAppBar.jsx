@@ -10,12 +10,10 @@ const ThemeUpdater = lazy(() => import('@components/ui/buttons/ThemeUpdater'))
 
 // hooks
 import useApp from '@hooks/useApp'
-import { useTheme } from '@mui/material/styles'
 import useScrollTrigger from '@mui/material/useScrollTrigger'
 
-export default function LandingAppBar({ height, show }) {
-  const { isMobile, appBarHeight } = useApp()
-  const theme = useTheme()
+export default function LandingAppBar({ show }) {
+  const { appBarHeight } = useApp()
   const trigger = useScrollTrigger({ disableHysteresis: true })
 
   return (
@@ -27,10 +25,8 @@ export default function LandingAppBar({ height, show }) {
             zIndex: theme.zIndex.appBar,
             top: 0,
             left: 0,
-            ...(isMobile && {
-              bottom: 'auto',
-              right: 'auto'
-            }),
+            bottom: 'auto',
+            right: 'auto',
             position: 'fixed',
             minHeight: appBarHeight
           })
@@ -44,7 +40,6 @@ export default function LandingAppBar({ height, show }) {
                 flexDirection: 'row',
                 justifyContent: 'space-between',
                 alignItems: 'center',
-                minHeight: height,
                 position: 'relative',
                 px: 2
               }}>

@@ -6,17 +6,14 @@ import Section from './Section'
 
 import { useGSAP } from '@gsap/react'
 import useApp from '@hooks/useApp'
-import { useTheme } from '@mui/material/styles'
+import useUser from '@hooks/useUser'
 import gsap from 'gsap'
 import { SplitText } from 'gsap/SplitText'
 import { useTranslation } from 'react-i18next'
 
-export default function LoginSection({ userTheme }) {
+export default function LoginSection() {
   const { isOnlyMobile } = useApp()
   const { t } = useTranslation('landing')
-  const theme = useTheme()
-
-  const blurredCircleColor = theme.palette.secondary[userTheme]
 
   useGSAP(() => {
     document.fonts.ready.then(() => {
@@ -72,32 +69,27 @@ export default function LoginSection({ userTheme }) {
         </Box>
       </div>
 
-      <BlurredCircle
-        positions={{ bottom: 0, left: -75 }}
-        color={blurredCircleColor}
-        blur={100}
-      />
-
-      <BlurredCircle
-        positions={{ bottom: -75, right: -50 }}
-        color={blurredCircleColor}
-      />
+      <BlurredCircle positions={{ bottom: 0, left: -75 }} blur={100} />
+      <BlurredCircle positions={{ bottom: -75, right: -50 }} />
     </Section>
   )
 }
 
 function BlurredCircle({ positions, color, blur = 75 }) {
+  const { preferences } = useUser()
+  const userTheme = preferences?.theme
+
   return (
     <Box
-      sx={{
+      sx={theme => ({
         width: 150,
         height: 150,
         borderRadius: '50%',
-        backgroundColor: color,
+        backgroundColor: theme.palette.secondary[userTheme],
         position: 'absolute',
         filter: `blur(${blur}px)`,
         ...positions
-      }}
+      })}
     />
   )
 }

@@ -5,14 +5,12 @@ import Section from './Section'
 
 import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
-import { forwardRef } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { SplitText } from 'gsap/SplitText'
 
-const MainText = forwardRef(function MainText(props, ref) {
+export default function MainText({ setShowAppBar, animationEnded }) {
   const { t } = useTranslation('landing')
-  const { setShowAppBar } = props
 
   useGSAP(() => {
     document.fonts.ready.then(() => {
@@ -45,7 +43,8 @@ const MainText = forwardRef(function MainText(props, ref) {
             autoAlpha: 1,
             stagger: 0.02,
             duration: 0.1,
-            ease: 'power2.out'
+            ease: 'power2.out',
+            onComplete: () => animationEnded(true)
           })
 
           gsap.set('#startFree', { y: 100 })
@@ -92,6 +91,4 @@ const MainText = forwardRef(function MainText(props, ref) {
       </Button>
     </Section>
   )
-})
-
-export default MainText
+}

@@ -8,7 +8,7 @@ import Typography from '@mui/material/Typography'
 import Section from './Section'
 
 import { useGSAP } from '@gsap/react'
-import useApp from '@hooks/useApp'
+import useUser from '@hooks/useUser'
 import useMediaQuery from '@mui/material/useMediaQuery'
 import gsap from 'gsap'
 import { useTranslation } from 'react-i18next'
@@ -18,15 +18,16 @@ import { alpha } from '@mui/material/styles'
 const getText = (cardType, title = true) =>
   `cards.${cardType}.${title ? 'title' : 'text'}`
 
-export default function Cards({ userTheme }) {
+export default function Cards() {
   const { t } = useTranslation('landing')
-  const { isMobile, isOnlyMobile } = useApp()
+  const { preferences } = useUser()
+  const userTheme = preferences?.theme
 
   const isBigDevice = useMediaQuery(theme =>
     theme.breakpoints.between('laptop', 'desktop')
   )
 
-  const iconSize = isMobile ? 'medium' : 'large'
+  const iconSize = !isBigDevice ? 'medium' : 'large'
 
   const cards = [
     {
