@@ -98,7 +98,7 @@ export default function Cards({ userTheme }) {
             title={
               <Typography
                 color='primary'
-                variant='h2'
+                variant='h3'
                 sx={[theme => ({ ...theme.typography.h6, fontWeight: 300 })]}>
                 {t(getText(card.type))}
               </Typography>
