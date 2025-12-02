@@ -67,7 +67,8 @@ export default function TaskMembers({ members, updateMembers }) {
               disabled={actualMembers.some(m => m === member.id)}
               value={member.id}
               key={member.id}
-              className='task-members-select__member'>
+              className='task-members-select__member flex'
+              sx={{ gap: '.75rem' }}>
               <Avatar src={member.avatar} sx={{ width: 22, height: 22 }} />
               <Typography variant='body2'>
                 {substringLongText(member.username, 20)}

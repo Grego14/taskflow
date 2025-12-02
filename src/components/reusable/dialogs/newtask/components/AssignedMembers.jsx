@@ -19,8 +19,8 @@ export default function AssignedMembers({
 
   return (
     <Box
-      display='flex'
-      gap={1}
+      className='flex'
+      gap='.75rem'
       justifyContent={isMobile ? 'start' : 'space-between'}
       alignItems={isMobile ? 'start' : 'center'}
       sx={{ flexWrap: 'wrap' }}>
@@ -37,7 +37,8 @@ export default function AssignedMembers({
               key={`avatar-button__${member}`}
               onClick={removeMember}
               id={`task-member__${member}`}
-              aria-label={`Remove member ${username} from the task`}>
+              aria-label={`Remove member ${username} from the task`}
+              sx={{ gap: '.5rem', pl: '.5rem' }}>
               <Avatar
                 alt={username}
                 src={memberInfo?.avatar}

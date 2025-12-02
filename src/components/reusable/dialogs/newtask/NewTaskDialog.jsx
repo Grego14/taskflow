@@ -45,7 +45,6 @@ import updateProject from '@services/updateProject.js'
 import getDateByKey from '@utils/tasks/getDateByKey'
 
 // unique
-import './NewTaskDialog.css'
 import { initialValue, tasksReducer } from './tasksReducer.js'
 
 export default memo(function NewTaskDialog({
@@ -163,8 +162,22 @@ export default memo(function NewTaskDialog({
       disableAcceptBtn={!task.title}
       maxWidth='tablet'
       title={t('newtask.title', { ns: 'dialogs' })}
+      sx={{
+        '& .MuiSelect-select': {
+          display: 'flex',
+          fontSize: 'var(--fs-tiny)',
+          gap: '.75rem',
+          py: '.75rem',
+          alignItems: 'center'
+        },
+        '& .form': { gap: '1.25rem' },
+        // date and priority selectors
+        '& .MuiFormControl-root:not(".MuiTextField-root")': {
+          mt: '.5rem'
+        }
+      }}
       titleLoaded={!loadingResources}>
-      <form className='newtask-form flex'>
+      <form className='form flex flex-column'>
         <TaskTitle
           updateTitle={setTaskTitle}
           error={titleError}
