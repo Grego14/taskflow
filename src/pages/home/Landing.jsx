@@ -28,7 +28,7 @@ export default function Landing() {
   const userTheme = preferences.theme
 
   const { isMobile, appBarHeight } = useApp()
-  const { t, i18n } = useTranslation(['landing', 'common'])
+  const { t } = useTranslation(['landing', 'common'])
 
   // common is already loaded by the AppRoutes
   const loadingResources = useLoadResources('landing')
@@ -40,11 +40,6 @@ export default function Landing() {
   useEffect(() => {
     setPageTitle(t('routes.home', { ns: 'common' }))
   }, [t])
-
-  const mainTextProps = {
-    userTheme,
-    setShowAppBar
-  }
 
   if (loadingResources) return <CircleLoader height='100dvh' />
 
@@ -60,7 +55,7 @@ export default function Landing() {
       ]}
       component='main'>
       <LandingAppBar show={showAppBar} />
-      <MainText {...mainTextProps} />
+      <MainText userTheme={userTheme} setShowAppBar={setShowAppBar} />
       <Cards userTheme={userTheme} />
       <LoginSection userTheme={userTheme} />
     </Box>

@@ -10,7 +10,7 @@ i18n
   .use(initReactI18next)
   .init(
     {
-      defaultNS: ['common', 'ui'],
+      defaultNS: ['common'],
       fallbackLng: 'en',
       interpolation: {
         escapeValue: false

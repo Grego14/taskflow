@@ -3,7 +3,7 @@ import i18n from '../i18n.js'
 
 const resourcesMap = import.meta.glob('/src/locales/(en|es)/**.json')
 
-export async function loadResources(lng, resources = ['common', 'ui']) {
+export async function loadResources(lng, resources = ['common']) {
   try {
     if (!resources) return
 
