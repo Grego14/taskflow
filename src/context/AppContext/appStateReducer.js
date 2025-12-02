@@ -12,7 +12,6 @@ export function appStateReducer(state, action) {
 
   const payload =
     typeof action.payload === 'function' ? action.payload() : action.payload
-  const user = state.user
 
   switch (action.type) {
     case ACTION_TYPES.NOTIFICATION: {

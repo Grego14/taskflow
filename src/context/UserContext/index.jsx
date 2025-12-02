@@ -2,24 +2,12 @@
 import useAuth from '@hooks/useAuth'
 import useDebounce from '@hooks/useDebounce'
 import { useColorScheme } from '@mui/material/styles'
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState
-} from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 // utils
-import { FILTERS, QUERY_STALE_TIME } from '@/constants'
 import getLocale from '@utils/getLocale'
-import lazyImport from '@utils/lazyImport'
 import UserContext from './context.js'
-
-const getPreview = preview => (preview === 'list' ? 'list' : 'kanban')
-const getFilter = filter => FILTERS.find(f => f === filter) || 'default'
 
 export default function UserProvider({ children }) {
   const { i18n } = useTranslation('ui')
