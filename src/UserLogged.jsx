@@ -52,7 +52,7 @@ export default function UserLogged() {
   })
 
   useEffect(() => {
-    setUpdate({ update: data => updateUser.mutate(data) })
+    setUpdate(() => data => updateUser.mutate(data))
   }, [setUpdate, updateUser.mutate])
 
   // Manage the offline/online state
