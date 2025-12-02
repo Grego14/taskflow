@@ -35,7 +35,8 @@ export default function Dialog({
   removeActions,
   maxWidth = 'mobile',
   color = 'textPrimary',
-  acceptTitle
+  acceptTitle,
+  sx
 }) {
   const { t } = useTranslation(['common', 'dialogs'])
   const { isMobile } = useApp()
@@ -106,7 +107,7 @@ export default function Dialog({
       {children && (
         <>
           <Divider />
-          <DialogContent sx={{ px: isMobile ? 2 : 3 }}>
+          <DialogContent sx={{ px: isMobile ? 2 : 3, ...sx }}>
             {children}
           </DialogContent>
           <Divider />
