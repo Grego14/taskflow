@@ -83,7 +83,8 @@ export default function AppRoutes() {
 
                   <Route path='/templates' element={<Templates />} />
 
-                  <Route path='/projects' element={<Projects />}>
+                  <Route path='/projects'>
+                    <Route index element={<Projects />} />
                     <Route path='new' element={<NewProject />} />
 
                     <Route path=':projectId' element={<Project />}>
