@@ -1,14 +1,11 @@
 import Box from '@mui/material/Box'
 
 export default function Section(props) {
-  const { children, sx, ...other } = props
+  const { children, sx, className, ...other } = props
   return (
     <Box
+      className={`flex flex-column flex-center ${className}`}
       sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
         scrollSnapAlign: 'start',
         scrollSnapStop: 'always',
         height: '100dvh',
