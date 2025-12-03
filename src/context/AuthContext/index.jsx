@@ -1,4 +1,3 @@
-import useDebounce from '@hooks/useDebounce.js'
 import { useEffect, useMemo, useState } from 'react'
 
 import { auth } from '@/firebase/firebase-config.js'
@@ -10,11 +9,6 @@ import AuthContext from './context'
 export default function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState(auth.currentUser)
   const [loading, setLoading] = useState(true)
-
-  // set the offline state as true to avoid showing the offline notification
-  // on the initial update
-  const [isOffline, setIsOffline] = useState(false)
-  const [debounceOffline] = useDebounce(val => setIsOffline(val), 1000)
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, user => {
@@ -28,11 +22,9 @@ export default function AuthProvider({ children }) {
   const value = useMemo(
     () => ({
       currentUser,
-      loading,
-      isOffline,
-      setIsOffline: debounceOffline
+      loading
     }),
-    [loading, currentUser, isOffline, debounceOffline]
+    [loading, currentUser]
   )
 
   if (loading) return <CircleLoader height='100dvh' />

@@ -20,14 +20,16 @@ import { getDatabase, onValue, ref } from 'firebase/database'
 
 export default function UserLogged() {
   const { uid, setUpdate } = useUser()
-  const { setIsOffline, currentUser, isOffline } = useAuth()
-  const { appNotification, notification } = useApp()
+  const { currentUser } = useAuth()
+  const { appNotification, notification, setIsOffline, isOffline } = useApp()
 
   const lastConnectionState = useRef(isOffline)
 
   const { metadata, preferences, userLoaded, setUserLoaded, setUser } =
     useUser()
   const userTheme = preferences?.theme
+
+  const [debounceOffline] = useDebounce(val => setIsOffline(val), 1250)
 
   const [sendInternetNotification] = useDebounce(async () => {
     const icon = isOffline ? (
@@ -62,11 +64,11 @@ export default function UserLogged() {
 
     const unsubscribe = onValue(connectedRef, snap => {
       // if snap.val() is true mean the user is online...
-      setIsOffline(!snap.val())
+      debounceOffline(!snap.val())
     })
 
     return unsubscribe
-  }, [setIsOffline])
+  }, [debounceOffline])
 
   useEffect(() => {
     if (lastConnectionState.current !== isOffline) {

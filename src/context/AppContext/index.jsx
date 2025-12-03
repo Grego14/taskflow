@@ -24,6 +24,8 @@ export default function AppProvider({ children }) {
   const [lastRute, setLastRute] = useState('/')
   const { mode } = useColorScheme()
 
+  const [isOffline, setIsOffline] = useState(false)
+
   // used to manage the alignment of the AppDrawer and the AppBar
   const appBarHeight = isMobile ? '3.8rem' : '3.4rem'
 
@@ -41,6 +43,8 @@ export default function AppProvider({ children }) {
         // the drawer is replaced with an AppBar on mobile so we set width to 0
         closed: isMobile ? 0 : 64
       },
+      isOffline: false,
+      setIsOffline,
       appBarHeight,
       appNotification,
       setLastRute,
