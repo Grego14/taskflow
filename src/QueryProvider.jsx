@@ -1,7 +1,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { Outlet } from 'react-router-dom'
 
-import { Suspense, lazy } from 'react'
+import { lazy } from 'react'
 
 const ReactQueryDevtools = import.meta.env.DEV
   ? lazy(() =>
