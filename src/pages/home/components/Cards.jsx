@@ -10,13 +10,17 @@ import Section from './Section'
 import { useGSAP } from '@gsap/react'
 import useUser from '@hooks/useUser'
 import useMediaQuery from '@mui/material/useMediaQuery'
-import gsap from 'gsap'
 import { useTranslation } from 'react-i18next'
-
-import { alpha } from '@mui/material/styles'
 
 const getText = (cardType, title = true) =>
   `cards.${cardType}.${title ? 'title' : 'text'}`
+
+import gsap from 'gsap'
+import { alpha } from '@mui/material/styles'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import setPageTitle from '@utils/setPageTitle'
+
+gsap.registerPlugin(ScrollTrigger)
 
 export default function Cards() {
   const { t } = useTranslation('landing')

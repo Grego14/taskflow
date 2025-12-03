@@ -14,12 +14,11 @@ import useLoadResources from '@hooks/useLoadResources'
 import { useTranslation } from 'react-i18next'
 import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { SplitText } from 'gsap/SplitText'
 
 import setPageTitle from '@utils/setPageTitle'
 
-gsap.registerPlugin(useGSAP, SplitText, ScrollTrigger)
+gsap.registerPlugin(useGSAP, SplitText)
 
 export default function Landing() {
   const { t } = useTranslation(['landing', 'common'])
