@@ -12,11 +12,11 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import {
-  auth,
-  githubProvider,
-  googleProvider,
-  signInWithPopup
-} from '@/firebase/firebase-config'
+  signInWithPopup,
+  GoogleAuthProvider,
+  GithubAuthProvider
+} from 'firebase/auth'
+import { auth } from '@/firebase/firebase-config'
 import lazyImport from '@utils/lazyImport'
 
 export default function AuthButtons({ type, disabledBtn }) {
@@ -37,6 +37,12 @@ export default function AuthButtons({ type, disabledBtn }) {
     }
 
     setPopup(true)
+
+    const googleProvider = new GoogleAuthProvider()
+    googleProvider.addScope('email')
+
+    const githubProvider = new GithubAuthProvider()
+    githubProvider.addScope('email')
 
     await signInWithPopup(
       auth,

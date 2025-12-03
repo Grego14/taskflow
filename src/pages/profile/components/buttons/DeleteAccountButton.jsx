@@ -20,7 +20,6 @@ import {
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 
-import { githubProvider, googleProvider } from '@/firebase/firebase-config'
 import { keyframes } from '@mui/material/styles'
 import lazyImport from '@utils/lazyImport'
 
@@ -89,11 +88,27 @@ export default function DeleteAccountButton() {
           )
             .then(handleUserDeletion)
             .catch(handleError)
-        } else if (provider === 'google.com') {
+          return
+        }
+
+        let googleProvider
+        let githubProvider
+
+        await import('firebase/auth').then(mod => {
+          const { GithubAuthProvider, GoogleAuthProvider } = mod
+
+          googleProvider = new GoogleAuthProvider()
+          googleProvider.addScope('email')
+
+          githubProvider = new GithubAuthProvider()
+          githubProvider.addScope('email')
+        })
+
+        if (provider === 'google.com' && googleProvider) {
           await reauthenticateWithPopup(currentUser, googleProvider)
             .then(handleUserDeletion)
             .catch(handleError)
-        } else if (provider === 'github.com') {
+        } else if (provider === 'github.com' && githubProvider) {
           await reauthenticateWithPopup(currentUser, githubProvider)
             .then(handleUserDeletion)
             .catch(handleError)
