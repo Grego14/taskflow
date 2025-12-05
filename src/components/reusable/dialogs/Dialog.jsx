@@ -36,7 +36,8 @@ export default function Dialog({
   maxWidth = 'mobile',
   color = 'textPrimary',
   acceptTitle,
-  sx
+  sx,
+  acceptBtn
 }) {
   const { t } = useTranslation(['common', 'dialogs'])
   const { isMobile } = useApp()
@@ -119,13 +120,17 @@ export default function Dialog({
           <Button onClick={onClose} color='primary'>
             {t('close', { ns: 'common' })}
           </Button>
-          <Button
-            onClick={onAccept}
-            color='primary'
-            variant='contained'
-            disabled={disableAcceptBtn}>
-            {acceptTitle ? acceptTitle : t('accept', { ns: 'common' })}
-          </Button>
+          {acceptBtn ? (
+            acceptBtn
+          ) : (
+            <Button
+              onClick={onAccept}
+              color='primary'
+              variant='contained'
+              disabled={disableAcceptBtn}>
+              {acceptTitle ? acceptTitle : t('accept', { ns: 'common' })}
+            </Button>
+          )}
         </DialogActions>
       )}
     </MUIDialog>
