@@ -4,12 +4,12 @@ import imageCompressor from '@utils/imageCompressor.js'
 // compress and returns a base64 string of the avatar
 /**
  * @param avatar File object to compress
- * @returns Compressed avatar
+ * @returns [Compressed file, Compressed avatar]
  */
-async function getCompressedAvatar(avatar) {
+async function getCompressedFiles(avatar) {
   try {
     const compressedFile = await imageCompressor(avatar, {
-      quality: 0.8,
+      quality: 0.9,
       maxWidth: 300,
       maxHeight: 300,
       outputType: 'image/webp'
@@ -18,7 +18,7 @@ async function getCompressedAvatar(avatar) {
     const base64String = await convertToBase64(compressedFile)
     const convertedAvatar = `data:${compressedFile.type};base64,${base64String}`
 
-    return convertedAvatar
+    return [compressedFile, convertedAvatar]
   } catch (e) {
     return { error: true, message: 'convert-error' }
   }
@@ -39,10 +39,10 @@ export default async function validateAvatarFile(file) {
   if (!ALLOWED_FILE_TYPES.includes(file.type))
     return { error: true, message: 'invalid' }
 
-  if (file.size > MAX_FILE_SIZE_KB * 1024)
+  const [compressedFile, compressedAvatar] = await getCompressedFiles(file)
+
+  if (compressedFile.size > MAX_FILE_SIZE_KB * 1024)
     return { error: true, message: 'too-big' }
 
-  const newAvatar = await getCompressedAvatar(file)
-
-  return newAvatar
+  return compressedAvatar
 }
