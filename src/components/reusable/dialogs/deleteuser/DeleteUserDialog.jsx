@@ -1,6 +1,25 @@
-import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
+import Button from '@mui/material/Button'
 import Dialog from '../Dialog'
+
+import { keyframes } from '@mui/material/styles'
+import { Suspense, lazy } from 'react'
+
+const PasswordInput = lazy(
+  () => import('@components/reusable/inputs/PasswordInput')
+)
+
+const spin = keyframes`
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+`
+
+import HourglassBottomIcon from '@mui/icons-material/HourglassBottom'
+import LoadingIcon from '@mui/icons-material/FrontLoader'
 
 import useLoadResources from '@hooks/useLoadResources'
 import useUser from '@hooks/useUser'
@@ -15,7 +34,8 @@ export default function DeleteUserDialog({
   error,
   setError,
   provider,
-  popup
+  popup,
+  deleting
 }) {
   const { preferences } = useUser()
   const { t } = useTranslation(['common', 'dialogs', 'profile'])
@@ -29,24 +49,41 @@ export default function DeleteUserDialog({
   return (
     <Dialog
       title='deleteUser.title'
-      onAccept={onAccept}
       onClose={onClose}
       open={open}
-      disableAcceptBtn={popup}
       titleLoaded={!loadingResources}
-      acceptTitle={t('delete_x', { x: '', ns: 'common' })}>
+      acceptBtn={
+        <Button
+          onClick={onAccept}
+          disabled={popup}
+          variant='contained'
+          endIcon={
+            deleting && (
+              <HourglassBottomIcon
+                sx={{
+                  animation: `${spin} 1s infinite`
+                }}
+              />
+            )
+          }>
+          {t('delete_x', { x: '', ns: 'common' })}
+        </Button>
+      }>
       <Typography color={`warning.${preferences.theme}`}>
         {t('deleteUser.text', { ns: 'dialogs' })}
       </Typography>
+
       {provider === 'password' && (
-        <TextField
-          sx={{ mt: 2 }}
-          label={t('deleteUser.passwordLabel', { ns: 'profile' })}
-          onChange={handleChange}
-          value={password}
-          error={!!error}
-          helperText={error}
-        />
+        <Suspense>
+          <PasswordInput
+            onChange={handleChange}
+            autoComplete='current-password'
+            error={error}
+            name='password'
+            label={t('deleteUser.passwordLabel', { ns: 'profile' })}
+            sx={{ mt: 2 }}
+          />
+        </Suspense>
       )}
     </Dialog>
   )

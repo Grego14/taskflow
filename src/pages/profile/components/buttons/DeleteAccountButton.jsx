@@ -1,5 +1,4 @@
 import DeleteIcon from '@mui/icons-material/Delete'
-import HourglassBottomIcon from '@mui/icons-material/HourglassBottom'
 import Button from '@mui/material/Button'
 
 import { Suspense, lazy, useCallback, useState } from 'react'
@@ -11,53 +10,39 @@ const DeleteUserDialog = lazy(
 import useApp from '@hooks/useApp'
 import useAuth from '@hooks/useAuth'
 import useUser from '@hooks/useUser'
-import {
-  EmailAuthProvider,
-  deleteUser,
-  reauthenticateWithCredential,
-  reauthenticateWithPopup
-} from 'firebase/auth'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
+import useReauthenticate from '@hooks/useReauthenticate'
 
-import { keyframes } from '@mui/material/styles'
 import lazyImport from '@utils/lazyImport'
-
-const spin = keyframes`
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(180deg);
-  }
-`
 
 export default function DeleteAccountButton() {
   const { t } = useTranslation('profile')
   const { currentUser } = useAuth()
   const { preferences, uid } = useUser()
   const { appNotification } = useApp()
-  const [deleting, setDeleting] = useState(false)
   const navigate = useNavigate()
 
+  const [deleting, setDeleting] = useState(false)
   const [open, setOpen] = useState(false)
   const [password, setPassword] = useState('')
   const [error, setError] = useState(null)
-  const [popup, setPopup] = useState(false)
 
-  const provider = currentUser?.providerData?.[0]?.providerId
+  const { reauthenticate, popup, reauthenticateError, provider } =
+    useReauthenticate()
 
   const deleteAccount = useCallback(() => {
     ;(async () => {
-      if (!password && provider === 'password')
-        return setError(t('deleteUser.errors.password'))
-
       try {
-        setDeleting(true)
+        const { success } = await reauthenticate(password)
+
         const deleteUserDocs = await lazyImport('/src/services/deleteUser')
         await deleteUserDocs(uid)
 
-        const handleUserDeletion = async () => {
+        await import('firebase/auth').then(async mod => {
+          const { deleteUser } = mod
+          setDeleting(true)
+
           await deleteUser(currentUser).catch(error => {
             appNotification({
               message: t('deleteUser.errors.deletingUser'),
@@ -65,64 +50,20 @@ export default function DeleteAccountButton() {
             })
           })
 
-          setPopup(false)
           navigate('/')
-        }
-
-        const handleError = () => {
-          appNotification({
-            message: t('deleteUser.errors.authenticating'),
-            status: 'error'
-          })
-        }
-
-        if (provider === 'google.com' || provider === 'github.com') {
-          setPopup(true)
-        }
-
-        if (provider === 'password') {
-          // authenticate the user and delete his Auth
-          reauthenticateWithCredential(
-            currentUser,
-            EmailAuthProvider.credential(currentUser.email, password)
-          )
-            .then(handleUserDeletion)
-            .catch(handleError)
-          return
-        }
-
-        let googleProvider
-        let githubProvider
-
-        await import('firebase/auth').then(mod => {
-          const { GithubAuthProvider, GoogleAuthProvider } = mod
-
-          googleProvider = new GoogleAuthProvider()
-          googleProvider.addScope('email')
-
-          githubProvider = new GithubAuthProvider()
-          githubProvider.addScope('email')
         })
-
-        if (provider === 'google.com' && googleProvider) {
-          await reauthenticateWithPopup(currentUser, googleProvider)
-            .then(handleUserDeletion)
-            .catch(handleError)
-        } else if (provider === 'github.com' && githubProvider) {
-          await reauthenticateWithPopup(currentUser, githubProvider)
-            .then(handleUserDeletion)
-            .catch(handleError)
-        }
       } catch (err) {
-        console.error(err)
-        appNotification({
-          message: t('deleteUser.errors.deletingUser'),
-          status: 'error'
-        })
+        if (err.error) {
+          const errorMsg = t(`deleteUser.errors.${err.error}`)
+
+          setError(errorMsg)
+          appNotification({ message: errorMsg, status: 'error' })
+        }
+
+        setDeleting(false)
       }
-      setDeleting(false)
     })()
-  }, [appNotification, uid, t, currentUser, navigate, password, provider])
+  }, [appNotification, password, reauthenticate, t, currentUser, navigate, uid])
 
   return (
     <>
@@ -131,19 +72,9 @@ export default function DeleteAccountButton() {
         variant='outlined'
         disabled={popup || !!error}
         endIcon={
-          !deleting ? (
-            <DeleteIcon
-              sx={[
-                theme => ({ color: theme.palette.error[preferences.theme] })
-              ]}
-            />
-          ) : (
-            <HourglassBottomIcon
-              sx={{
-                animation: `${spin} 1s infinite alternate`
-              }}
-            />
-          )
+          <DeleteIcon
+            sx={[theme => ({ color: theme.palette.error[preferences.theme] })]}
+          />
         }
         color='error'>
         {t('deleteAccount')}
@@ -161,6 +92,7 @@ export default function DeleteAccountButton() {
             setError={setError}
             provider={provider}
             popup={popup}
+            deleting={deleting}
           />
         </Suspense>
       )}
