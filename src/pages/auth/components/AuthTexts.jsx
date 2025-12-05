@@ -19,7 +19,11 @@ export default function AuthTexts({ type }) {
           type: 'words',
           onSplit(self) {
             const tl = gsap.timeline({ defaults: { ease: 'power2.out' } })
-            const authText = SplitText.create('#authText', { type: 'chars' })
+            const authText = SplitText.create('#authText', {
+              type: 'chars',
+              smartWrap: true
+            })
+
             const authTitle2 = SplitText.create('#authTitle2', {
               type: 'words'
             })
