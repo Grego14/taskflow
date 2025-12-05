@@ -44,14 +44,18 @@ export default function UserProvider({ children }) {
   // fields are different from the local ones (the user changes the theme/lang
   // when he was on the Landing Page)
   useEffect(() => {
-    if (userId && user?.preferences?.theme !== userTheme) {
+    if (
+      userId &&
+      typeof user?.preferences?.theme === 'string' &&
+      user?.preferences?.theme !== userTheme
+    ) {
       setMode(user.preferences.theme === 'light' ? 'light' : 'dark')
     }
 
     if (userId && user?.preferences?.lang !== i18n.language) {
       i18n.changeLanguage(user?.preferences?.lang)
     }
-  }, [user, userTheme, setMode, i18n, userId])
+  }, [user, setMode, i18n, userId, userTheme])
 
   const value = useMemo(
     () => ({
@@ -61,8 +65,6 @@ export default function UserProvider({ children }) {
       },
       preferences: {
         ...user.preferences,
-        theme: userTheme,
-        lang: user.lang || i18n.language,
         locale: getLocale(i18n.language)
       },
       setUser,
@@ -72,7 +74,7 @@ export default function UserProvider({ children }) {
       update,
       setUpdate
     }),
-    [user, currentUser, userLoaded, update, userTheme, i18n]
+    [user, currentUser, userLoaded, update, i18n]
   )
 
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>
