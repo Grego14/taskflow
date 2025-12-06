@@ -6,14 +6,13 @@ import Select from '@mui/material/Select'
 import Typography from '@mui/material/Typography'
 
 import { useTranslation } from 'react-i18next'
-import { useParams } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 
 import useUser from '@hooks/useUser'
 import { useEffect, useState } from 'react'
 
 import db from '@/db'
 import i18n from '@/i18n'
-import useNavigateToProject from '@hooks/useNavigateToProject'
 import { getFriendlyAuthError } from '@utils/getFriendlyAuthError'
 import {
   collection,
@@ -31,7 +30,7 @@ export default function ToolbarSelect({ open, toggleDrawer }) {
   const [projects, setProjects] = useState([])
 
   const { t } = useTranslation('ui')
-  const navigate = useNavigateToProject()
+  const navigate = useNavigate()
 
   function handleProjectChange(e) {
     const projectId = e.target.value
