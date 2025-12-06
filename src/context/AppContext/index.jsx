@@ -1,10 +1,11 @@
+// hooks
 import useAuth from '@hooks/useAuth.js'
 import { useColorScheme } from '@mui/material/styles'
-// hooks
 import useMediaQuery from '@mui/material/useMediaQuery'
 import { lazy, useCallback, useMemo, useReducer, useState } from 'react'
 
 import UserContext from '@context/UserContext'
+
 // utils
 import {
   ACTION_TYPES,
@@ -21,7 +22,6 @@ export default function AppProvider({ children }) {
   const [appState, dispatch] = useReducer(appStateReducer, {}, initAppState)
   const isMobile = useMediaQuery(theme => theme.breakpoints.down('tablet'))
   const isOnlyMobile = useMediaQuery(theme => theme.breakpoints.down('mobile'))
-  const [lastRute, setLastRute] = useState('/')
   const { mode } = useColorScheme()
 
   const [isOffline, setIsOffline] = useState(false)
@@ -46,22 +46,17 @@ export default function AppProvider({ children }) {
       isOffline: false,
       setIsOffline,
       appBarHeight,
-      appNotification,
-      setLastRute,
-      lastRute
+      appNotification
     }),
-    [appState, appBarHeight, isMobile, isOnlyMobile, appNotification, lastRute]
+    [appState, appBarHeight, isMobile, isOnlyMobile, appNotification]
   )
-
-  const isAuthRute =
-    location.pathname === '/login' || location.pathname === '/signup'
 
   if (!mode) return null
 
   return (
     <AppContext.Provider value={contextValue}>
       <UserContext>
-        {!currentUser && !isAuthRute ? <Landing /> : <AppRoutes />}
+        <AppRoutes />
       </UserContext>
     </AppContext.Provider>
   )

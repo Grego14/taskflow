@@ -1,5 +1,4 @@
 import { Outlet } from 'react-router-dom'
-import RouteHandler from './RoutesHandler'
 
 import useApp from '@hooks/useApp'
 import useAuth from '@hooks/useAuth'
@@ -93,9 +92,5 @@ export default function UserLogged() {
     })()
   }, [userLoaded, setUser, user])
 
-  return (
-    <RouteHandler>
-      <Outlet />
-    </RouteHandler>
-  )
+  return <Outlet />
 }

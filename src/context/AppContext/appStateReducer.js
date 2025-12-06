@@ -39,8 +39,6 @@ export function initAppState() {
     notification: null,
     isMobile: true,
     appBarHeight: '3.8rem',
-    lastRute: '/',
-    appNotification: () => {},
-    setLastRute: () => {}
+    appNotification: () => {}
   }
 }
