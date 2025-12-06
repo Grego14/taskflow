@@ -57,8 +57,15 @@ export default memo(function LayoutAppBar({ projectId }) {
   )
 
   const profileBtn = useMemo(
-    () => <ProfileButton open onlyIcon projectId={projectId} />,
-    [projectId]
+    () => (
+      <ProfileButton
+        open
+        onlyIcon
+        projectId={projectId}
+        onClick={() => navigate('/profile')}
+      />
+    ),
+    [projectId, navigate]
   )
 
   // hide the links on laptop/desktop

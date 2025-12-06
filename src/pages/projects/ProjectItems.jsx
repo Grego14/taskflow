@@ -8,10 +8,12 @@ import ProjectActionsMenu from '@pages/projects/components/ProjectActionsMenu'
 
 import useApp from '@hooks/useApp'
 import useProject from '@hooks/useProject'
+import { useNavigate } from 'react-router-dom'
 
 export default function ProjectItems() {
   const { isMobile } = useApp()
   const { id } = useProject()
+  const navigate = useNavigate()
 
   return (
     <>
@@ -31,7 +33,12 @@ export default function ProjectItems() {
           <AddButton />
           <FilterButton />
           <AddMembers />
-          <ProfileButton open onlyIcon projectId={id} />
+          <ProfileButton
+            open
+            onlyIcon
+            projectId={id}
+            onClick={() => navigate('/profile')}
+          />
         </>
       )}
     </>

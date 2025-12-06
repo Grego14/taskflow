@@ -12,26 +12,27 @@ import useUser from '@hooks/useUser'
 import useMediaQuery from '@mui/material/useMediaQuery'
 import { useRef } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
+import useLoadResources from '@hooks/useLoadResources'
 
 export default function ProfileButton({
   open,
   showTexts,
   tooltipPosition = 'top',
   onlyIcon = false,
-  fromAction,
-  sx
+  sx,
+  onClick
 }) {
-  const navigate = useNavigate()
   const { t } = useTranslation('ui')
-  const { projectId } = useParams()
 
   const { isOffline, currentUser } = useAuth()
   const { profile } = useUser()
   const avatar = profile?.avatar
 
-  const deviceCanHover = useMediaQuery('(hover: hover)')
   const profileComponentPreLoaded = useRef(false)
+
+  // we use this component on the Landing page so we need to get the ui
+  // resources...
+  const loadingResource = useLoadResources('ui')
 
   const borderColor = isOffline ? 'red' : 'green'
   const username = profile?.username || currentUser?.displayName
@@ -50,17 +51,15 @@ export default function ProfileButton({
     }
   }
 
+  if (loadingResource) return
+
   return (
     <Tooltip
       title={t('buttons.profileButtonLabel')}
       placement={tooltipPosition}>
       <Button
         disableRipple={onlyIcon}
-        onClick={() =>
-          navigate('/profile', {
-            state: { fromProject: projectId || '', fromAction }
-          })
-        }
+        onClick={onClick}
         onMouseEnter={preloadProfileComponent}
         sx={{
           borderRadius: onlyIcon ? '50%' : 0,

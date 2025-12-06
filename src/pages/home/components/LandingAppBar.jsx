@@ -8,11 +8,17 @@ const Link = lazy(() => import('@mui/material/Link'))
 const LangUpdater = lazy(() => import('@components/ui/buttons/LangUpdater'))
 const ThemeUpdater = lazy(() => import('@components/ui/buttons/ThemeUpdater'))
 
+const ProfileButton = lazy(
+  () => import('@components/reusable/buttons/ProfileButton')
+)
+
 // hooks
 import useApp from '@hooks/useApp'
 import useScrollTrigger from '@mui/material/useScrollTrigger'
+import useAuth from '@hooks/useAuth'
 
 export default function LandingAppBar({ show }) {
+  const { currentUser } = useAuth()
   const { appBarHeight } = useApp()
   const trigger = useScrollTrigger({ disableHysteresis: true })
 
@@ -56,6 +62,13 @@ export default function LandingAppBar({ show }) {
               <Box className='flex flex-center' gap={2}>
                 <ThemeUpdater />
                 <LangUpdater reloadOnChange />
+
+                {currentUser && (
+                  <ProfileButton
+                    onlyIcon
+                    onClick={() => location.assign('profile')}
+                  />
+                )}
               </Box>
             </AppBar>
           </Suspense>
