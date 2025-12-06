@@ -25,7 +25,7 @@ gsap.registerPlugin(ScrollTrigger)
 export default function Cards() {
   const { t } = useTranslation('landing')
   const { preferences } = useUser()
-  const userTheme = preferences?.theme
+  const userTheme = preferences?.theme || 'light'
 
   const isBigDevice = useMediaQuery(theme =>
     theme.breakpoints.between('laptop', 'desktop')

@@ -16,11 +16,13 @@ const ProfileButton = lazy(
 import useApp from '@hooks/useApp'
 import useScrollTrigger from '@mui/material/useScrollTrigger'
 import useAuth from '@hooks/useAuth'
+import { useNavigate } from 'react-router-dom'
 
 export default function LandingAppBar({ show }) {
   const { currentUser } = useAuth()
   const { appBarHeight } = useApp()
   const trigger = useScrollTrigger({ disableHysteresis: true })
+  const navigate = useNavigate()
 
   return (
     <Slide in={!trigger}>
@@ -66,7 +68,7 @@ export default function LandingAppBar({ show }) {
                 {currentUser && (
                   <ProfileButton
                     onlyIcon
-                    onClick={() => location.assign('profile')}
+                    onClick={() => navigate('profile')}
                   />
                 )}
               </Box>
