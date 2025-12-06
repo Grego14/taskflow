@@ -7,13 +7,14 @@ import Drawer from '@mui/material/Drawer'
 import List from '@mui/material/List'
 import DrawerActions from './components/DrawerActions'
 import Toolbar from './components/Toolbar'
+import Notifications from './components/Notifications'
 
 // hooks
 import useApp from '@hooks/useApp'
 import useNotifications from '@hooks/useNotifications'
 import useUser from '@hooks/useUser'
 import { useTheme } from '@mui/material/styles'
-import { useParams } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 
 // utils
 import { setItem } from '@utils/storage.js'
@@ -24,6 +25,7 @@ export default memo(function AppDrawer({ open, setOpen, children }) {
   const { projectId } = useParams()
   const userTheme = preferences?.theme
   const theme = useTheme()
+  const navigate = useNavigate()
 
   const { notifications } = useNotifications()
 
@@ -46,10 +48,10 @@ export default memo(function AppDrawer({ open, setOpen, children }) {
       p: 1.5,
       // avoid moving the badge to the center when the username is removed
       mr: open ? 0 : 'auto',
-      mt: 'auto',
       justifyContent: open ? 'start' : 'center'
     },
-    tooltipPosition: 'right'
+    tooltipPosition: 'right',
+    onClick: () => navigate('/profile')
   }
 
   return (
@@ -74,10 +76,14 @@ export default memo(function AppDrawer({ open, setOpen, children }) {
 
       <List
         className='flex flex-column'
-        sx={{ gap: 1.5, height: '100%' }}
+        sx={{ gap: 1.25, height: '100%' }}
         disablePadding>
         <DrawerActions open={open} toggleDrawer={toggleDrawer} />
-        <ProfileButton {...profileBtnProps} />
+
+        <Box className='flex flex-column' mt='auto' gap={1.5}>
+          <Notifications open={open} />
+          <ProfileButton {...profileBtnProps} />
+        </Box>
       </List>
     </Drawer>
   )
