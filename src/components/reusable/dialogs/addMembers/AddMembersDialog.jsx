@@ -49,7 +49,7 @@ export default function AddMembersDialog(props) {
       title='assignMembers.title'
       maxWidth='tablet'
       onAccept={handleNewMembers}
-      disableAcceptBtn={members.length === 0}>
+      disableAcceptBtn={members?.length === 0}>
       <AddMembers members={members} setMembers={setMembers} isOwner={isOwner} />
       {!isOwner && (
         <Typography mt={2} color='warning'>

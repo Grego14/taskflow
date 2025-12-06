@@ -32,10 +32,14 @@ export default memo(function AddMembers({ members, setMembers, isOwner }) {
   const [disableSearchBtn, setDisableSearchBtn] = useState(true)
   const [email, setEmail] = useState('')
 
+  const userEmail =
+    currentUser?.email ||
+    currentUser?.providerData?.[0]?.email
+
   const [handleGetUsers] = useDebounce(value => {
     ;(async () => {
       try {
-        if (value === currentUser?.email) {
+        if (value === userEmail) {
           setEmail('')
           return setError(t('projects.addMembers.sameUser'))
         }
