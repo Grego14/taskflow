@@ -27,7 +27,7 @@ export default memo(function AvatarUploader({ error, field }) {
   const { currentUser } = useAuth()
   const { profile, preferences } = useUser()
   const { t } = useTranslation('profile')
-  const username = profile?.username || currentUser.displayName
+  const username = profile?.username || currentUser?.displayName
 
   const [uploading, setUploading] = useState(false)
   const fileInputRef = useRef(null)
