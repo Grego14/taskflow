@@ -5,8 +5,7 @@ const ProjectActions = lazy(() => import('./ProjectActions'))
 const DrawerAction = lazy(() => import('./DrawerAction'))
 const ArticleIcon = lazy(() => import('@mui/icons-material/Article'))
 const FolderOpen = lazy(() => import('@mui/icons-material/FolderOpen'))
-
-import Notifications from './Notifications'
+const HouseIcon = lazy(() => import('@mui/icons-material/House'))
 
 import { useTranslation } from 'react-i18next'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
@@ -26,6 +25,18 @@ export default function DrawerActions({ open, toggleDrawer }) {
         <ProjectActions open={open} />
       ) : (
         <>
+          <DrawerAction
+            text={t('drawer.home')}
+            icon={<HouseIcon fontSize='small' />}
+            open={open}
+            onClick={() => {
+              navigate('/home')
+              toggleDrawer(false)
+            }}
+            active={action === 'home'}
+            showText
+          />
+
           <DrawerAction
             text={t('projects.text')}
             icon={<FolderOpen fontSize='small' />}
@@ -51,8 +62,6 @@ export default function DrawerActions({ open, toggleDrawer }) {
           />
         </>
       )}
-
-      <Notifications open={open} />
     </Suspense>
   )
 }
