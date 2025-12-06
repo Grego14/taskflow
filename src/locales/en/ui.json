@@ -158,7 +158,7 @@
     "projectPercentageActual": "Project Progress",
     "projectPercentageLeft": "Remaining Percentage",
     "addMembers": {
-      "sameUser": "You can't add yourself as a member as you'll be the owner of the project",
+      "sameUser": "You can't add yourself as a member!",
       "userNotFound": "User not found",
       "label": "Add members",
       "placeholder": "Search by email...",

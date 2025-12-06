@@ -163,7 +163,7 @@
     "projectPercentageActual": "Progreso del proyecto",
     "projectPercentageLeft": "Porcentaje restante",
     "addMembers": {
-      "sameUser": "No puedes agregarte como miembro ya que serás el propietario del proyecto",
+      "sameUser": "No puedes agregarte como miembro!",
       "userNotFound": "Usuario no encontrado",
       "label": "Agregar miembros",
       "placeholder": "Buscar por correo electrónico...",
