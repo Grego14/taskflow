@@ -8,8 +8,9 @@ import Typography from '@mui/material/Typography'
 
 import useUser from '@hooks/useUser'
 import { getItem } from '@utils/storage.js'
-import { useCallback, useState } from 'react'
+import { useCallback, useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
+import useLayout from '@hooks/useLayout'
 
 import i18n from '@/i18n'
 import getMenuLabel from '@utils/getMenuLabel'
@@ -27,9 +28,19 @@ const getFilterLabel = (label, t) => {
 }
 
 export default function FilterButton() {
-  const { metadata, updateFilter, setFilter } = useUser()
+  const { metadata } = useUser()
+  const { setFilter, updateFilter } = useLayout()
   const { t } = useTranslation(['ui', 'common'])
   const [selected, setSelected] = useState(metadata?.lastUsedFilter)
+
+  useEffect(() => {
+    if (
+      FILTERS.find(f => f === metadata?.lastUsedFilter) &&
+      metadata?.lastUsedFilter !== selected
+    ) {
+      setSelected(metadata.lastUsedFilter)
+    }
+  }, [metadata, selected])
 
   const changeSelectedOption = useCallback(
     e => {

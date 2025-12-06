@@ -17,6 +17,7 @@ const MenuAction = lazy(() => import('@components/reusable/MenuAction'))
 import { useTheme } from '@mui/material/styles'
 import getMenuLabel from '@utils/getMenuLabel'
 import { useTranslation } from 'react-i18next'
+import useLayout from '@hooks/useLayout'
 
 const menuActionStyles = (normal, selected) => ({
   '& .MuiSvgIcon-root': { color: normal },
@@ -30,7 +31,9 @@ const menuActionStyles = (normal, selected) => ({
 export default memo(function PreviewSwitcher() {
   const { t } = useTranslation('ui')
   const { isMobile } = useApp()
-  const { preferences, updatePreviewer } = useUser()
+  const { preferences } = useUser()
+  const { updatePreviewer } = useLayout()
+
   const theme = useTheme()
 
   const selectedColor = theme.palette.primary.main
