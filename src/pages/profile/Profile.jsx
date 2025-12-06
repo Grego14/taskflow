@@ -6,8 +6,8 @@ import ProfileButtons from './components/ProfileButtons'
 import ProfileForm from './components/ProfileForm'
 import ProfileMetadata from './components/ProfileMetadata'
 
-import useLoadResources from '@hooks/useLoadResources.js'
 // hooks
+import useLoadResources from '@hooks/useLoadResources.js'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
@@ -46,7 +46,7 @@ export default function Profile() {
       <GoBackButton
         handler={() =>
           navigate(
-            fromProject ? `/projects/${fromProject}${fromAction}` : '/',
+            fromProject ? `/projects/${fromProject}${fromAction}` : '/home',
             {
               // the LayoutAppBar uses the "projectAction" to check which layout
               // it should render
