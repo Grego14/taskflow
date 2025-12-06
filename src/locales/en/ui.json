@@ -6,6 +6,7 @@
   },
   "drawer": {
     "templates": "Templates",
+    "home": "Home",
     "toolbar": {
       "collapse": "Collapse menu",
       "expand": "Expand menu",

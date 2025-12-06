@@ -6,6 +6,7 @@
   },
   "drawer": {
     "templates": "Plantillas",
+    "home": "Pagina principal",
     "toolbar": {
       "collapse": "Contraer menú",
       "expand": "Expandir menú",
