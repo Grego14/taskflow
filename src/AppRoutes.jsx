@@ -26,8 +26,8 @@ const LayoutManager = lazy(
   () => import('@components/ui/layoutmanager/LayoutManager')
 )
 const Profile = lazy(() => import('@pages/profile/Profile'))
+const Home = lazy(() => import('@pages/home/Home'))
 const Landing = lazy(() => import('@pages/home/Landing.jsx'))
-const Home = lazy(() => import('@pages/home/Home.jsx'))
 const Templates = lazy(() => import('@pages/templates/Templates'))
 
 // projects
@@ -60,6 +60,8 @@ export default function AppRoutes() {
     <>
       <Router>
         <Routes>
+          <Route path='/' element={<Landing />} />
+
           {/* User must not be logged to be able to access this rutes */}
           <Route
             element={
@@ -79,7 +81,7 @@ export default function AppRoutes() {
 
               <Route element={<NotificationsProvider />}>
                 <Route element={<LayoutManager />}>
-                  <Route path='/' element={<Home />} />
+                  <Route path='/home' element={<Home />} />
 
                   <Route path='/templates' element={<Templates />} />
 

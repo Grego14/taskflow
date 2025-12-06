@@ -45,7 +45,7 @@ export default function Home() {
             scrambleText: {
               text: username,
               chars: 'User',
-              speed: 0.5,
+              speed: 0.75,
               revealDelay: 0.5
             }
           })
