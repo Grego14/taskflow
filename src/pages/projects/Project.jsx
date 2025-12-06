@@ -9,18 +9,10 @@ import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import ProjectAppBar from './ProjectAppBar'
 
-const ProfileButton = lazy(
-  () => import('@components/reusable/buttons/ProfileButton')
-)
-const ProjectActions = lazy(
-  () => import('@components/ui/drawer/components/ProjectActions')
-)
-const AppBar = lazy(() => import('@components/ui/appbar/AppBar'))
-
+// hooks
 import useProjectAccess from '@context/ProjectsContext/useProjectAccess'
 import useProjectMembers from '@context/ProjectsContext/useProjectMembers'
 import useApp from '@hooks/useApp'
-// hooks
 import useAuth from '@hooks/useAuth'
 import useDebounce from '@hooks/useDebounce'
 import useUser from '@hooks/useUser'
