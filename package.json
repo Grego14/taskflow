@@ -29,7 +29,7 @@
     "firebase": "^11.10.0",
     "gsap": "^3.13.0",
     "i18next": "^25.5.2",
-    "react": "^19.1.1",
+    "react": "^19.2.3",
     "react-dom": "^19.1.1",
     "react-hook-form": "^7.62.0",
     "react-i18next": "^15.7.3",
