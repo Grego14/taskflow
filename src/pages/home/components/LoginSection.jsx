@@ -10,15 +10,10 @@ import useUser from '@hooks/useUser'
 import gsap from 'gsap'
 import { SplitText } from 'gsap/SplitText'
 import { useTranslation } from 'react-i18next'
-import { useTheme } from '@mui/material/styles'
 
-export default function LoginSection({ bg }) {
+export default function LoginSection({ gradientFrom, gradientTo }) {
   const { isOnlyMobile } = useApp()
   const { t } = useTranslation('landing')
-  const theme = useTheme()
-
-  const gradientFrom = bg
-  const gradientTo = theme.palette.primary.light
 
   useGSAP(() => {
     document.fonts.ready.then(() => {
@@ -60,7 +55,7 @@ export default function LoginSection({ bg }) {
       sx={{
         position: 'relative',
         overflow: 'hidden',
-        backgroundImage: `linear-gradient(${gradientFrom} 50%, ${gradientTo} 120%)`,
+        backgroundImage: `linear-gradient(${gradientFrom} 65%, ${gradientTo} 120%)`,
       }}>
       <div className='flex flex-column flex-center'>
         <Typography

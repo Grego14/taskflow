@@ -23,7 +23,13 @@ import setPageTitle from '@utils/setPageTitle'
 
 gsap.registerPlugin(ScrollTrigger)
 
-export default function Cards({ setAnimationEnded }) {
+const cards = [
+  { type: 'cloud', icon: Cloud }, 
+  { type: 'management', icon: ListAlt },
+  { type: 'collaborate', icon: People }
+]
+
+export default function Cards({ setAnimationEnded, bg }) {
   const { t } = useTranslation('landing')
   const { preferences } = useUser()
   const userTheme = preferences?.theme || 'light'
@@ -31,21 +37,6 @@ export default function Cards({ setAnimationEnded }) {
   const isBigDevice = useMediaQuery(theme =>
     theme.breakpoints.between('laptop', 'desktop')
   )
-
-  const cards = [
-    {
-      type: 'cloud',
-      icon: <Cloud fontSize='large' />
-    },
-    {
-      type: 'management',
-      icon: <ListAlt fontSize='large' />
-    },
-    {
-      type: 'collaborate',
-      icon: <People fontSize='large' />
-    }
-  ]
 
   useGSAP(() => {
     document.fonts.ready.then(() => {
@@ -85,15 +76,15 @@ export default function Cards({ setAnimationEnded }) {
         justifyContent: 'center',
         flexDirection: !isBigDevice ? 'column' : 'row',
         height: !isBigDevice ? '100dvh' : '75dvh',
-        marginInline: !isBigDevice ? 3 : 4
+        paddingInline: !isBigDevice ? 3 : 4,
+        backgroundImage: `linear-gradient(rgba(0,0,0,0), ${bg})`
       }}
       className={!isBigDevice ? 'flex flex-center' : ''}>
-      {cards.map(card => (
+      {cards.map(({type, icon: Icon}) => (
         <Card
-          key={card.type}
+          key={type}
           elevation={3}
           sx={[theme => ({
-            backgroundImage: 'none',
             overflow: 'visible',
             border: `1px solid ${alpha(theme.palette.secondary[userTheme], 0.65)}`,
             backgroundImage: `
@@ -108,13 +99,13 @@ export default function Cards({ setAnimationEnded }) {
           ]}
           className='card'>
           <CardHeader
-            avatar={card.icon}
+            avatar={<Icon fontSize='large' />}
             title={
               <Typography
                 color='primary'
                 variant='h3'
                 sx={[theme => ({ ...theme.typography.h5, fontWeight: 300 })]}>
-                {t(getText(card.type))}
+                {t(getText(type))}
               </Typography>
             }
           />
@@ -124,7 +115,7 @@ export default function Cards({ setAnimationEnded }) {
                 theme =>
                   isBigDevice && { fontSize: theme.typography.h6.fontSize }
               ]}>
-              {t(getText(card.type, false))}
+              {t(getText(type, false))}
             </Typography>
           </CardContent>
         </Card>

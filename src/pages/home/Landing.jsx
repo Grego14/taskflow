@@ -37,6 +37,9 @@ export default function Landing() {
     mainEnded: false
   })
 
+  const landingBg = theme.alpha(theme.palette.primary.main, 0.05)
+  const gradientTo = theme.palette.primary.light
+
   // if the user logouts of his account we update the page title (the
   // RouteHandler is only available if the user is logged-in)
   useEffect(() => {
@@ -54,8 +57,6 @@ export default function Landing() {
 
   if (loadingResources) return <CircleLoader height='100dvh' />
 
-  const landingBg = theme.alpha(theme.palette.primary.main, 0.05)
-
   return (
     <Box
       sx={{
@@ -67,28 +68,39 @@ export default function Landing() {
       component='main'>
       {animationEnded.mainEnded && <LandingAppBar show={showAppBar} />}
 
-      <MainText
-        setShowAppBar={setShowAppBar}
-        animationEnded={setAnimationEnded}
-        setAnimationEnded={() => setAnimationEnded(prev => ({ ...prev, mainEnded: true }))}
-        bg={landingBg}
-      />
+      <ScreenWrapper>
+        <MainText
+          setShowAppBar={setShowAppBar}
+          setAnimationEnded={() => setAnimationEnded(prev => ({ ...prev, mainEnded: true }))}
+        />
+      </ScreenWrapper>
 
-      <Box sx={{ minHeight: '100dvh', backgroundColor: landingBg }}>
+      <ScreenWrapper bg={landingBg}>
         {animationEnded.mainEnded && (
           <Suspense>
-            <Cards setAnimationEnded={() => setAnimationEnded(prev => ({ ...prev, cardsEnded: true }))} />
+            <Cards 
+              setAnimationEnded={() => setAnimationEnded(prev => ({ ...prev, cardsEnded: true }))} 
+              bg={landingBg} 
+            />
           </Suspense>
         )}
-      </Box>
+      </ScreenWrapper>
 
-      <Box sx={{ minHeight: '100dvh' }}>
+      <ScreenWrapper bg={landingBg}>
         {animationEnded.cardsEnded && (
           <Suspense>
-            <LoginSection bg={landingBg} />
+            <LoginSection gradientFrom={landingBg} gradientTo={gradientTo} />
           </Suspense>
         )}
-      </Box>
+      </ScreenWrapper>
+    </Box>
+  )
+}
+
+function ScreenWrapper({ children }){
+  return (
+    <Box sx={{ minHeight: '100dvh' }}>
+      {children}
     </Box>
   )
 }

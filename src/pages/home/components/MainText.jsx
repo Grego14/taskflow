@@ -10,7 +10,7 @@ import { useNavigate } from 'react-router-dom'
 
 import { SplitText } from 'gsap/SplitText'
 
-export default function MainText({ setShowAppBar, setAnimationEnded, bg }) {
+export default function MainText({ setShowAppBar, setAnimationEnded }) {
   const { t } = useTranslation('landing')
   const navigate = useNavigate()
 
@@ -66,7 +66,7 @@ export default function MainText({ setShowAppBar, setAnimationEnded, bg }) {
   })
 
   return (
-    <Section className='text-center' sx={{ px: 2, backgroundColor: bg }} id='main-text'>
+    <Section className='text-center' sx={{ px: 2 }} id='main-text'>
       <Typography
         className='text-balance'
         variant='h1'
