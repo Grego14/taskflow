@@ -19,11 +19,10 @@ const appBarMobileStyles = {
 export default memo(function AppBar({ children, withDrawer, top = false, sx }) {
   const { isMobile, appBarHeight, drawerWidth } = useApp()
   const theme = useTheme()
-  const { updatePreviewer, preferences } = useUser()
-  const preview = preferences?.previewer
+  const { preferences } = useUser()
+  const userTheme = preferences?.theme || 'light'
 
-  const shadowColor =
-    theme.palette.grey[preferences.theme === 'light' ? 300 : 800]
+  const shadowColor = theme.palette.grey[userTheme === 'light' ? 300 : 800]
   const shadow = `0 0 3px ${shadowColor}`
 
   return (
