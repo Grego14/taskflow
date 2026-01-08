@@ -9,16 +9,25 @@ export default function useLoadResources(resources) {
   )
 
   useEffect(() => {
-    ;(async () => {
+    const handleLanguageChange = async (lng) => {
       const resourcesAreLoaded = resourceExists(i18n.language, resources)
 
       if (!resourcesAreLoaded) {
+        setLoading(!resourcesAreLoaded)
         await loadResources(i18n.language, resources)
       }
 
       setLoading(!resourceExists(i18n.language, resources))
-    })()
-  }, [i18n.language, resources])
+    }
+
+    handleLanguageChange()
+
+    i18n.on('languageChanged', handleLanguageChange)
+
+    return () => {
+      i18n.off('languageChanged', handleLanguageChange)
+    }
+  }, [i18n])
 
   return loading
 }
