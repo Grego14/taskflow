@@ -42,17 +42,16 @@ export default function UserProvider({ children }) {
 
   // update MUI internal theme and i18next internal language if the user db
   // fields are different from the local ones (the user changes the theme/lang
-  // when he was on the Landing Page)
+  // when he was on the Landing Page, but he has other theme on the db)
   useEffect(() => {
-    if (
-      userId &&
-      typeof user?.preferences?.theme === 'string' &&
-      user?.preferences?.theme !== userTheme
-    ) {
+    const existsAndEqualsTo = (field, equalTo) =>
+      user?.preferences?.[field] && user?.preferences?.[field] !== equalTo
+
+    if (userId && existsAndEqualsTo('theme', userTheme)) {
       setMode(user.preferences.theme === 'light' ? 'light' : 'dark')
     }
 
-    if (userId && user?.preferences?.lang !== i18n.language) {
+    if (userId && existsAndEqualsTo('theme', i18n.language)) {
       i18n.changeLanguage(user?.preferences?.lang)
     }
   }, [user, setMode, i18n, userId, userTheme])
