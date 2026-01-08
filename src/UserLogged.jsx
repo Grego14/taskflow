@@ -17,6 +17,8 @@ import getLocale from '@utils/getLocale'
 import lazyImport from '@utils/lazyImport'
 import { getDatabase, onValue, ref } from 'firebase/database'
 
+const icons = { offline: CloudOffIcon, online: CloudSyncIcon }
+
 export default function UserLogged() {
   const { uid, setUpdate } = useUser()
   const { currentUser } = useAuth()
@@ -31,18 +33,14 @@ export default function UserLogged() {
   const [debounceOffline] = useDebounce(val => setIsOffline(val), 1250)
 
   const [sendInternetNotification] = useDebounce(async () => {
-    const icon = isOffline ? (
-      <CloudOffIcon fontSize='small' />
-    ) : (
-      <CloudSyncIcon fontSize='small' />
-    )
+    const Icon = icons[isOffline ? 'offline' : 'online']
 
     const internetNotification = await lazyImport(
       '/src/utils/notifications/internetConnection'
     )
 
     internetNotification(isOffline, props =>
-      appNotification({ ...props, icon })
+      appNotification({ ...props, icon: <Icon fontSize='small' /> })
     )
   }, 3000)
 
@@ -79,17 +77,15 @@ export default function UserLogged() {
   const { user, error } = useGetUserFromDb(uid, setUserLoaded)
 
   useEffect(() => {
-    ;(async () => {
-      if (userLoaded) {
-        setUser({
-          ...user,
-          preferences: {
-            ...user?.preferences,
-            locale: getLocale(user?.preferences.lang)
-          }
-        })
-      }
-    })()
+    if (userLoaded) {
+      setUser({
+        ...user,
+        preferences: {
+          ...user?.preferences,
+          locale: getLocale(user?.preferences.lang)
+        }
+      })
+    }
   }, [userLoaded, setUser, user])
 
   return <Outlet />
