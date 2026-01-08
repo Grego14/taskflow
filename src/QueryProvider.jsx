@@ -13,7 +13,7 @@ const ReactQueryDevtools = import.meta.env.DEV
 
 const queryClient = new QueryClient()
 
-export default function QueryProvider({ userId }) {
+export default function QueryProvider() {
   return (
     <QueryClientProvider client={queryClient}>
       {import.meta.env.DEV && <ReactQueryDevtools initialIsOpen={false} />}
