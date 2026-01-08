@@ -45,6 +45,7 @@ export default function AuthPasswordInput({ field, error }) {
                   `inputs.${showPassword ? 'hidePassword' : 'showPassword'}`
                 )}
                 onClick={handleClickShowPassword}
+                onMouseDown={e => e.preventDefault()}
                 edge='end'>
                 {showPassword ? <VisibilityOff /> : <Visibility />}
               </IconButton>
