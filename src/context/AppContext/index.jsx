@@ -56,7 +56,12 @@ export default function AppProvider({ children }) {
   return (
     <AppContext.Provider value={contextValue}>
       <UserContext>
-        <AppRoutes />
+        {/* the smooth scroll is only used on the landing page */}
+        <div id='smooth-wrapper'>
+          <div id='smooth-content'>
+            <AppRoutes />
+          </div>
+        </div>
       </UserContext>
     </AppContext.Provider>
   )

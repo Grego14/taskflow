@@ -1,4 +1,4 @@
-import { useEffect, useState, Suspense, lazy } from 'react'
+import { useLayoutEffect, useEffect, useState, Suspense, lazy } from 'react'
 
 // components
 import CircleLoader from '@components/reusable/loaders/CircleLoader'
@@ -14,20 +14,28 @@ import useLoadResources from '@hooks/useLoadResources'
 import { useTranslation } from 'react-i18next'
 import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
+import { useTheme } from '@mui/material/styles'
+
 import { SplitText } from 'gsap/SplitText'
+import ScrollSmoother from 'gsap/ScrollSmoother'
+import ScrollTrigger from 'gsap/ScrollTrigger'
 
 import setPageTitle from '@utils/setPageTitle'
 
-gsap.registerPlugin(useGSAP, SplitText)
+gsap.registerPlugin(useGSAP, SplitText, ScrollSmoother, ScrollTrigger)
 
 export default function Landing() {
   const { t } = useTranslation(['landing', 'common'])
+  const theme = useTheme()
 
   // common is already loaded by the AppRoutes
   const loadingResources = useLoadResources('landing')
 
   const [showAppBar, setShowAppBar] = useState(false)
-  const [animationEnded, setAnimationEnded] = useState(false)
+  const [animationEnded, setAnimationEnded] = useState({
+    cardsEnded: false,
+    mainEnded: false
+  })
 
   // if the user logouts of his account we update the page title (the
   // RouteHandler is only available if the user is logged-in)
@@ -35,32 +43,52 @@ export default function Landing() {
     setPageTitle(t('routes.home', { ns: 'common' }))
   }, [t])
 
+  useLayoutEffect(() => {
+    const smoother = ScrollSmoother.create({
+      smooth: 1,
+      smoothTouch: 0.1
+    })
+
+    return () => smoother.kill()
+  }, [])
+
   if (loadingResources) return <CircleLoader height='100dvh' />
+
+  const landingBg = theme.alpha(theme.palette.primary.main, 0.05)
 
   return (
     <Box
-      sx={[
-        theme => ({
-          scrollBehavior: 'smooth',
-          scrollSnapType: 'y mandatory',
-          minHeight: '100dvh',
-          backgroundColor: theme.alpha(theme.palette.primary.main, 0.05)
-        })
-      ]}
+      sx={{
+        scrollBehavior: 'smooth',
+        scrollSnapType: 'y mandatory',
+        minHeight: '100dvh',
+        backgroundColor: landingBg
+      }}
       component='main'>
-      {animationEnded && <LandingAppBar show={showAppBar} />}
+      {animationEnded.mainEnded && <LandingAppBar show={showAppBar} />}
 
       <MainText
         setShowAppBar={setShowAppBar}
         animationEnded={setAnimationEnded}
+        setAnimationEnded={() => setAnimationEnded(prev => ({ ...prev, mainEnded: true }))}
+        bg={landingBg}
       />
 
-      {animationEnded && (
-        <Suspense>
-          <Cards />
-          <LoginSection />
-        </Suspense>
-      )}
+      <Box sx={{ minHeight: '100dvh', backgroundColor: landingBg }}>
+        {animationEnded.mainEnded && (
+          <Suspense>
+            <Cards setAnimationEnded={() => setAnimationEnded(prev => ({ ...prev, cardsEnded: true }))} />
+          </Suspense>
+        )}
+      </Box>
+
+      <Box sx={{ minHeight: '100dvh' }}>
+        {animationEnded.cardsEnded && (
+          <Suspense>
+            <LoginSection bg={landingBg} />
+          </Suspense>
+        )}
+      </Box>
     </Box>
   )
 }

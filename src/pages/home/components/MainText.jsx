@@ -10,7 +10,7 @@ import { useNavigate } from 'react-router-dom'
 
 import { SplitText } from 'gsap/SplitText'
 
-export default function MainText({ setShowAppBar, animationEnded }) {
+export default function MainText({ setShowAppBar, setAnimationEnded, bg }) {
   const { t } = useTranslation('landing')
   const navigate = useNavigate()
 
@@ -46,7 +46,9 @@ export default function MainText({ setShowAppBar, animationEnded }) {
             stagger: 0.02,
             duration: 0.1,
             ease: 'power2.out',
-            onComplete: () => animationEnded(true)
+
+            // start loading the cards
+            onComplete: setAnimationEnded
           })
 
           gsap.set('#startFree', { y: 100 })
@@ -54,6 +56,8 @@ export default function MainText({ setShowAppBar, animationEnded }) {
           tl.to('#startFree', {
             autoAlpha: 1,
             y: 0,
+
+            // load and show the appbar
             onComplete: () => setShowAppBar(true)
           })
         }
@@ -62,7 +66,7 @@ export default function MainText({ setShowAppBar, animationEnded }) {
   })
 
   return (
-    <Section className='text-center' sx={{ mx: 2 }} id='main-text'>
+    <Section className='text-center' sx={{ px: 2, backgroundColor: bg }} id='main-text'>
       <Typography
         className='text-balance'
         variant='h1'

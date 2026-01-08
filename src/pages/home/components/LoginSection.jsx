@@ -10,18 +10,31 @@ import useUser from '@hooks/useUser'
 import gsap from 'gsap'
 import { SplitText } from 'gsap/SplitText'
 import { useTranslation } from 'react-i18next'
+import { useTheme } from '@mui/material/styles'
 
-export default function LoginSection() {
+export default function LoginSection({ bg }) {
   const { isOnlyMobile } = useApp()
   const { t } = useTranslation('landing')
+  const theme = useTheme()
+
+  const gradientFrom = bg
+  const gradientTo = theme.palette.primary.light
 
   useGSAP(() => {
     document.fonts.ready.then(() => {
       const loginText = SplitText.create('#login-text', { type: 'words' })
       gsap.set('#login-text', { opacity: 1 })
-      gsap.set(['#login-btn', '#signup-btn'], { opacity: 0, y: 120 })
+      gsap.set(['#login-btn', '#signup-btn'], { autoAlpha: 0, y: 300 })
 
-      const tl = gsap.timeline()
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          scrub: 0.3,
+          trigger: '#login',
+          start: 'top+=30% bottom-=30%',
+          end: 'top+=25% top+=40%',
+          once: true
+        },
+      })
 
       tl.from(loginText.words, {
         x: 15,
@@ -30,28 +43,25 @@ export default function LoginSection() {
         autoAlpha: 0,
         ease: 'power2.out',
         duration: 2,
-        scrollTrigger: {
-          scrub: 0.3,
-          trigger: '#login',
-          once: true,
-          start: 'top+=50% bottom',
-          end: 'top+=25% bottom-=40%'
-        },
-        onComplete: () => {
-          tl.to(['#login-btn', '#signup-btn'], {
-            y: 0,
-            autoAlpha: 1,
-            ease: 'back.out(2)'
-          })
-        }
-      })
+      }).to(
+        ['#login-btn', '#signup-btn'], {
+        y: 0,
+        autoAlpha: 1,
+        ease: 'back.out(2)',
+        duration: 1.5
+      }
+      )
     })
   })
 
   return (
     <Section
       id='login'
-      sx={{ position: 'relative', overflow: 'hidden', height: '75dvh' }}>
+      sx={{
+        position: 'relative',
+        overflow: 'hidden',
+        backgroundImage: `linear-gradient(${gradientFrom} 50%, ${gradientTo} 120%)`,
+      }}>
       <div className='flex flex-column flex-center'>
         <Typography
           variant='h4'
@@ -63,14 +73,14 @@ export default function LoginSection() {
         <Box
           className={isOnlyMobile ? 'flex flex-column' : 'flex'}
           gap={isOnlyMobile ? 2 : 4}
-          mt={4}>
+          mt={8}>
           <LoginButton variant='outlined' id='login-btn' />
           <SignUpButton id='signup-btn' />
         </Box>
       </div>
 
-      <BlurredCircle positions={{ bottom: 0, left: -75 }} blur={100} />
-      <BlurredCircle positions={{ bottom: -75, right: -50 }} />
+      <BlurredCircle positions={{ bottom: isOnlyMobile ? 0 : 250, left: -75 }} blur={100} />
+      <BlurredCircle positions={{ bottom: isOnlyMobile ? -75 : 150, right: -50 }} />
     </Section>
   )
 }
