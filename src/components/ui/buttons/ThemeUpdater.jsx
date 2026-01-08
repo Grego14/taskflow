@@ -8,13 +8,17 @@ import { useTranslation } from 'react-i18next'
 
 export default function ThemeUpdater() {
   const { t } = useTranslation('ui')
-  const { mode, systemMode, setMode } = useColorScheme()
-  const { update, uid } = useUser()
-
-  const userTheme = mode === 'system' ? systemMode : mode
+  const { setMode } = useColorScheme()
+  const { update, uid, preferences, setUser } = useUser()
+  const userTheme = preferences.theme
 
   const updateTheme = useCallback(() => {
-    setMode(userTheme === 'dark' ? 'light' : 'dark')
+    const newTheme = userTheme === 'dark' ? 'light' : 'dark'
+    setMode(newTheme)
+    setUser(prev => ({
+      ...prev,
+      preferences: { ...prev.preferences, theme: newTheme }
+    }))
 
     if (uid) update(uid, { theme: userTheme })
   }, [userTheme, setMode, update, uid])

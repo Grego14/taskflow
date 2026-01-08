@@ -10,27 +10,30 @@ const langs = {
   es: 'Español'
 }
 
-export default function LangUpdater({
-  reloadOnChange = false,
-  longText = true
-}) {
+export default function LangUpdater({ longText = true }) {
   const { t, i18n } = useTranslation('ui')
   const { mode, systemMode, setMode } = useColorScheme()
-  const { update, uid } = useUser()
+  const { update, uid, preferences, setUser } = useUser()
 
   const lang = i18n.language
 
   const updateLang = useCallback(() => {
-    ;(async () => {
-      const newLang = lang === 'en' ? 'es' : 'en'
+    const newLang = lang === 'en' ? 'es' : 'en'
+    i18n.changeLanguage(newLang)
 
-      i18n.changeLanguage(newLang)
+      ; (async () => {
+        setUser(prev => ({
+          ...prev,
+          preferences: {
+            ...prev.preferences,
+            lang: newLang
+          }
+        }))
 
-      if (uid) await update(uid, { lang: newLang })
+        if (uid) await update(uid, { lang: newLang })
 
-      if (reloadOnChange) window.location.reload()
-    })()
-  }, [update, uid, i18n, reloadOnChange, lang])
+      })()
+  }, [update, uid, i18n, lang])
 
   return (
     <Button
