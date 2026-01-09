@@ -60,8 +60,8 @@ export default function LoginSection({ gradientFrom, gradientTo }) {
       <div className='flex flex-column flex-center'>
         <Typography
           variant='h4'
-          className='text-balance text-center'
-          sx={[theme => ({ ...theme.typography.h3, mx: 2, opacity: 0 })]}
+          className='text-center'
+          sx={[theme => ({ ...theme.typography.h3, mx: 2, opacity: 0, maxWidth: '30ch' })]}
           id='login-text'>
           {t('login')}
         </Typography>

@@ -9,6 +9,7 @@ export default function Section(props) {
         scrollSnapAlign: 'start',
         scrollSnapStop: 'always',
         height: '100dvh',
+        flexGrow: 1,
         ...sx
       }}
       {...other}>

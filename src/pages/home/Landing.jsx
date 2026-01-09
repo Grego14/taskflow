@@ -15,6 +15,7 @@ import { useTranslation } from 'react-i18next'
 import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
 import { useTheme } from '@mui/material/styles'
+import useApp from '@hooks/useApp'
 
 import { SplitText } from 'gsap/SplitText'
 import ScrollSmoother from 'gsap/ScrollSmoother'
@@ -27,6 +28,7 @@ gsap.registerPlugin(useGSAP, SplitText, ScrollSmoother, ScrollTrigger)
 export default function Landing() {
   const { t } = useTranslation(['landing', 'common'])
   const theme = useTheme()
+  const { isOnlyMobile } = useApp()
 
   // common is already loaded by the AppRoutes
   const loadingResources = useLoadResources('landing')
@@ -58,14 +60,7 @@ export default function Landing() {
   if (loadingResources) return <CircleLoader height='100dvh' />
 
   return (
-    <Box
-      sx={{
-        scrollBehavior: 'smooth',
-        scrollSnapType: 'y mandatory',
-        minHeight: '100dvh',
-        backgroundColor: landingBg
-      }}
-      component='main'>
+    <Box sx={{ backgroundColor: landingBg }} component='main'>
       {animationEnded.mainEnded && <LandingAppBar show={showAppBar} />}
 
       <ScreenWrapper>
@@ -75,18 +70,18 @@ export default function Landing() {
         />
       </ScreenWrapper>
 
-      <ScreenWrapper bg={landingBg}>
+      <ScreenWrapper height={isOnlyMobile ? null : '80dvh'}>
         {animationEnded.mainEnded && (
           <Suspense>
-            <Cards 
-              setAnimationEnded={() => setAnimationEnded(prev => ({ ...prev, cardsEnded: true }))} 
-              bg={landingBg} 
+            <Cards
+              setAnimationEnded={() => setAnimationEnded(prev => ({ ...prev, cardsEnded: true }))}
+              bg={landingBg}
             />
           </Suspense>
         )}
       </ScreenWrapper>
 
-      <ScreenWrapper bg={landingBg}>
+      <ScreenWrapper>
         {animationEnded.cardsEnded && (
           <Suspense>
             <LoginSection gradientFrom={landingBg} gradientTo={gradientTo} />
@@ -97,9 +92,14 @@ export default function Landing() {
   )
 }
 
-function ScreenWrapper({ children }){
+function ScreenWrapper({ children, height }) {
   return (
-    <Box sx={{ minHeight: '100dvh' }}>
+    <Box sx={{
+      minHeight: height ? height : '100dvh',
+      display: 'flex',
+      minWidth: '100dvw',
+      flexDirection: 'column'
+    }}>
       {children}
     </Box>
   )

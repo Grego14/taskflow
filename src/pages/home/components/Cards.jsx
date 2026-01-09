@@ -1,6 +1,10 @@
 import Cloud from '@mui/icons-material/Cloud'
 import ListAlt from '@mui/icons-material/ListAlt'
 import People from '@mui/icons-material/People'
+import Lock from '@mui/icons-material/Lock'
+import Public from '@mui/icons-material/Public'
+import BarChart from '@mui/icons-material/BarChart'
+
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
 import CardHeader from '@mui/material/CardHeader'
@@ -24,9 +28,12 @@ import setPageTitle from '@utils/setPageTitle'
 gsap.registerPlugin(ScrollTrigger)
 
 const cards = [
-  { type: 'cloud', icon: Cloud }, 
+  { type: 'cloud', icon: Cloud },
   { type: 'management', icon: ListAlt },
-  { type: 'collaborate', icon: People }
+  { type: 'collaborate', icon: People },
+  { type: 'public_templates', icon: Public },
+  { type: 'private_templates', icon: Lock },
+  { type: 'metrics', icon: BarChart }
 ]
 
 export default function Cards({ setAnimationEnded, bg }) {
@@ -35,7 +42,7 @@ export default function Cards({ setAnimationEnded, bg }) {
   const userTheme = preferences?.theme || 'light'
 
   const isBigDevice = useMediaQuery(theme =>
-    theme.breakpoints.between('laptop', 'desktop')
+    theme.breakpoints.up('laptop')
   )
 
   useGSAP(() => {
@@ -46,11 +53,9 @@ export default function Cards({ setAnimationEnded, bg }) {
         scrollTrigger: {
           trigger: '#cards',
           scrub: 0.3,
-          start: `${isBigDevice ? 'top-=10%' : 'top+=10%'} bottom-=50%`,
-          // if the device is not mobile/tablet the animation should end faster
-          // (the cards are next to each other in a row direction)
-          end: `${isBigDevice ? 'top' : 'top+=25%'} top`,
-          once: true,
+          start: `${isBigDevice ? 'top-=10%' : 'top'} bottom-=50%`,
+          end: 'top+=55% top',
+          once: true
         }
       })
 
@@ -64,23 +69,28 @@ export default function Cards({ setAnimationEnded, bg }) {
       })
 
       // load the login section
-      tl.call(() => setAnimationEnded(), null, 0.65 * tl.duration())
+      tl.call(() => setAnimationEnded(), null, 0.33 * tl.duration())
     })
   }, [isBigDevice])
+
+  const cardWidth = !isBigDevice ? '18rem' : '25rem'
 
   return (
     <Section
       id='cards'
       sx={{
-        gap: !isBigDevice ? 5 : 4,
-        justifyContent: 'center',
-        flexDirection: !isBigDevice ? 'column' : 'row',
-        height: !isBigDevice ? '100dvh' : '75dvh',
-        paddingInline: !isBigDevice ? 3 : 4,
-        backgroundImage: `linear-gradient(rgba(0,0,0,0), ${bg})`
+        gap: !isBigDevice ? 3 : 6,
+        paddingInline: !isBigDevice ? 3 : 6,
+        backgroundImage: `linear-gradient(rgba(0,0,0,0), ${bg})`,
+        display: 'grid',
+        gridTemplateColumns: `repeat(auto-fill, minmax(${cardWidth}, 1fr))`,
+        gridTemplateRows: '1fr 1fr 1fr',
+        placeContent: 'center',
+        // replace Section component default height (100dvh)
+        height: '100%'
       }}
       className={!isBigDevice ? 'flex flex-center' : ''}>
-      {cards.map(({type, icon: Icon}) => (
+      {cards.map(({ type, icon: Icon }) => (
         <Card
           key={type}
           elevation={3}
@@ -92,9 +102,7 @@ export default function Cards({ setAnimationEnded, bg }) {
               ${alpha(theme.palette.secondary[userTheme], 0.15)} 10%, 
               ${alpha(theme.palette.secondary[userTheme], 0.40)} 80%
             )`,
-            maxWidth: '30rem',
-            width: !isBigDevice ? 'auto' : '33%',
-            minHeight: !isBigDevice ? 'auto' : '80%'
+            height: '100%'
           })
           ]}
           className='card'>
@@ -112,14 +120,14 @@ export default function Cards({ setAnimationEnded, bg }) {
           <CardContent>
             <Typography
               sx={[
-                theme =>
-                  isBigDevice && { fontSize: theme.typography.h6.fontSize }
+                theme => ({ fontSize: theme.typography.h6.fontSize })
               ]}>
               {t(getText(type, false))}
             </Typography>
           </CardContent>
         </Card>
-      ))}
-    </Section>
+      ))
+      }
+    </Section >
   )
 }

@@ -75,7 +75,8 @@ export default function MainText({ setShowAppBar, setAnimationEnded }) {
             ...theme.typography.h1,
             mb: 2,
             fontWeight: 700,
-            opacity: 0
+            opacity: 0,
+            maxWidth: '15ch'
           })
         ]}
         id='bigText'>
@@ -84,7 +85,8 @@ export default function MainText({ setShowAppBar, setAnimationEnded }) {
       <Typography
         color='textSecondary'
         variant='h2'
-        sx={[theme => ({ ...theme.typography.h5, opacity: 0 })]}
+        className='text-balance'
+        sx={[theme => ({ ...theme.typography.h5, opacity: 0, maxWidth: '40ch' })]}
         id='shortText'>
         {t('title1')}
       </Typography>
