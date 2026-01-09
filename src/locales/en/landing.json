@@ -1,6 +1,6 @@
 {
   "title0": "Never lose another idea",
-  "title1": "With TaskFlow they will be safe, searchable, and ready for action",
+  "title1": "With TaskFlow they will be safe, searchable, and ready for action.",
   "startForFree": "Get started free",
   "login": "Capture instantly, organize effortlessly, and delete with ease. Your productivity will thank you!",
   "cards": {
@@ -15,6 +15,18 @@
     "collaborate": {
       "title": "Collaboration",
       "text": "Invite team members to collaborate on projects, assign tasks, and track progress in real-time."
+    },
+    "public_templates": {
+      "title": "Community Library",
+      "text": "Explore and use templates created by other users to jumpstart your projects instantly."
+    },
+    "private_templates": {
+      "title": "Private Templates",
+      "text": "Standardize your processes by saving your own workflows as personal reusable templates."
+    },
+    "metrics": {
+      "title": "Smart Metrics",
+      "text": "Visualize your team's performance and project progress with intuitive charts."
     }
   }
 }

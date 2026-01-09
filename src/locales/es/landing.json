@@ -1,6 +1,6 @@
 {
   "title0": "Nunca pierdas otra idea",
-  "title1": "Con TaskFlow siempre estarán seguras, accesibles y listas para convertirse en acción",
+  "title1": "Con TaskFlow siempre estarán seguras, accesibles y listas para convertirse en acción.",
   "startForFree": "Comienza gratis",
   "login": "Anota al instante, organiza sin esfuerzo y borra fácilmente. ¡Tu productividad te lo agradecerá!",
   "cards": {
@@ -15,6 +15,18 @@
     "collaborate": {
       "title": "Colaboración",
       "text": "Invita a miembros del equipo a colaborar en proyectos, asignar tareas y seguir el progreso en tiempo real."
+    },
+    "public_templates": {
+      "title": "Biblioteca Comunitaria",
+      "text": "Explora y utiliza plantillas creadas por otros usuarios para acelerar el inicio de tus proyectos."
+    },
+    "private_templates": {
+      "title": "Plantillas Privadas",
+      "text": "Estandariza tus procesos guardando tus propios flujos de trabajo como plantillas personales."
+    },
+    "metrics": {
+      "title": "Métricas Inteligentes",
+      "text": "Visualiza el rendimiento de tu equipo y el progreso del proyecto con gráficos intuitivos."
     }
   }
 }
