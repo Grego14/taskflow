@@ -1,5 +1,6 @@
 import Box from '@mui/material/Box'
 import Slide from '@mui/material/Slide'
+import Typography from '@mui/material/Typography'
 
 import { Suspense, lazy } from 'react'
 
@@ -13,6 +14,7 @@ const ProfileButton = lazy(
 )
 
 // hooks
+import useUser from '@hooks/useUser'
 import useApp from '@hooks/useApp'
 import useScrollTrigger from '@mui/material/useScrollTrigger'
 import useAuth from '@hooks/useAuth'
@@ -21,8 +23,11 @@ import { useNavigate } from 'react-router-dom'
 export default function LandingAppBar({ show }) {
   const { currentUser } = useAuth()
   const { appBarHeight } = useApp()
+  const { preferences } = useUser()
   const trigger = useScrollTrigger({ disableHysteresis: true })
   const navigate = useNavigate()
+
+  const userTheme = preferences?.theme === 'light' ? 'light' : 'dark'
 
   return (
     <Slide in={!trigger}>
@@ -57,9 +62,10 @@ export default function LandingAppBar({ show }) {
                 gap={1}
                 color='textPrimary'
                 sx={[
-                  theme => ({ ...theme.typography.h5, textDecoration: 'none' })
+                  theme => ({ ...theme.typography.h5, textDecoration: 'none', gap: 0 })
                 ]}>
-                TaskFlow
+                <img width='48' height='48' alt='' aria-hidden='true' src={`/taskflow-logo-${userTheme}.svg`} />
+                <Typography>TaskFlow</Typography>
               </Link>
               <Box className='flex flex-center' gap={2}>
                 <ThemeUpdater />
