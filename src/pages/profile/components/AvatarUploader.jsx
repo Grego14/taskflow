@@ -66,7 +66,7 @@ export default memo(function AvatarUploader({ error, field }) {
             }
           })}>
           {/* if there isn't an avatar show the initial letter of the username */}
-          {!field.value && username[0]}
+          {!field.value && username?.[0]}
         </Avatar>
 
         {showUploadIcon && (
