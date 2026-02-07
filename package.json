@@ -10,6 +10,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
+    "@preact/preset-vite": "^2.10.3",
     "@tanstack/react-query-devtools": "^5.89.0",
     "@vitejs/plugin-react": "^4.7.0",
     "react-scan": "^0.4.3",

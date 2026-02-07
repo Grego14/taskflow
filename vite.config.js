@@ -1,10 +1,10 @@
 import path from 'node:path'
-import react from '@vitejs/plugin-react'
+import preact from '@preact/preset-vite'
 import { defineConfig } from 'vite'
 import { visualizer } from "rollup-plugin-visualizer"
 
 export default defineConfig({
-  plugins: [react(), visualizer()],
+  plugins: [preact(), visualizer()],
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
