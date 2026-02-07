@@ -13,6 +13,7 @@
     "@tanstack/react-query-devtools": "^5.89.0",
     "@vitejs/plugin-react": "^4.7.0",
     "react-scan": "^0.4.3",
+    "rollup-plugin-visualizer": "^6.0.5",
     "vite": "^6.3.6"
   },
   "dependencies": {
