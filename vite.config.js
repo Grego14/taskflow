@@ -1,9 +1,10 @@
 import path from 'node:path'
 import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
+import { visualizer } from "rollup-plugin-visualizer"
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(), visualizer()],
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
@@ -14,7 +15,11 @@ export default defineConfig({
       '@assets': path.resolve(__dirname, './src/assets'),
       '@services': path.resolve(__dirname, './src/services'),
       '@querys': path.resolve(__dirname, './src/querys'),
-      '@context': path.resolve(__dirname, './src/context')
+      '@context': path.resolve(__dirname, './src/context'),
+      'react': 'preact/compat',
+      'react-dom/test-utils': 'preact/compat/test-utils',
+      'react-dom': 'preact/compat',
+      'react/jsx-runtime': 'preact/jsx-runtime'
     }
   },
   build: { target: 'esnext' }
