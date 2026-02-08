@@ -4,7 +4,15 @@ import { defineConfig } from 'vite'
 import { visualizer } from "rollup-plugin-visualizer"
 
 export default defineConfig({
-  plugins: [preact(), visualizer()],
+  plugins: [
+    preact(),
+    visualizer({
+      open: true,
+      filename: 'preact-stats.html',
+      gzipSize: true,
+      brotliSize: true
+    })
+  ],
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
