@@ -49,10 +49,10 @@ function Main() {
         light: {
           palette: {
             primary: {
-              main: '#54448A'
+              main: '#7C5DFA'
             },
             secondary: {
-              main: '#B97BD8'
+              main: '#A592E8'
             }
           }
         },
@@ -161,6 +161,16 @@ function Main() {
           styleOverrides: {
             root: {
               fontFamily: 'Rubik, Arial, sans-serif'
+            }
+          }
+        },
+        MuiAvatar: {
+          defaultProps: {
+            slotProps: {
+              img: {
+                referrerPolicy: 'no-referrer',
+                crossOrigin: 'anonymous'
+              }
             }
           }
         }
