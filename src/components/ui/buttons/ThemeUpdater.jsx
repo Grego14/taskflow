@@ -20,7 +20,7 @@ export default function ThemeUpdater() {
       preferences: { ...prev.preferences, theme: newTheme }
     }))
 
-    if (uid) update(uid, { theme: userTheme })
+    if (uid) update(uid, { theme: newTheme })
   }, [userTheme, setMode, update, uid])
 
   return (
