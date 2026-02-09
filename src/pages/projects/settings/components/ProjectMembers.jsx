@@ -88,7 +88,7 @@ export default function ProjectMembers() {
         : data?.members?.map(member => <ProjectMemberSkeleton key={member} />)}
 
       {open && (
-        <Suspense>
+        <Suspense fallback={null}>
           <KickMemberDialog
             open={open}
             onClose={() => setOpen(false)}

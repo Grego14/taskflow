@@ -81,7 +81,7 @@ export default function DeleteAccountButton() {
       </Button>
 
       {open && (
-        <Suspense>
+        <Suspense fallback={null}>
           <DeleteUserDialog
             onAccept={deleteAccount}
             onClose={() => setOpen(false)}

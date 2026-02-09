@@ -46,7 +46,7 @@ export default memo(function TasksContainer({
     }),
     divider: showOverdueTasks,
     children: !hasTodayTasks && (
-      <Suspense>
+      <Suspense fallback={null}>
         <NoTodayTasks />
       </Suspense>
     ),

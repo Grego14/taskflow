@@ -29,7 +29,7 @@ export default function CreateSubtask({ id, showMenu }) {
       />
 
       {taskDialogOpen && (
-        <Suspense>
+        <Suspense fallback={null}>
           <NewTaskDialog
             open={taskDialogOpen}
             setOpen={setTaskDialogOpen}

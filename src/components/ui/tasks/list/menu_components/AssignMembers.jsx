@@ -28,7 +28,7 @@ export default function AssignMembers(props) {
       />
 
       {open && (
-        <Suspense>
+        <Suspense fallback={null}>
           <AssignMembersDialog
             open={open}
             closeMenus={() => {

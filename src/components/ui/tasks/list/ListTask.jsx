@@ -125,7 +125,7 @@ export default memo(function ListTask({ data, subtask }) {
       </Box>
 
       {containsSubtasks?.length > 0 && (
-        <Suspense>
+        <Suspense fallback={null}>
           <Subtasks
             data={data?.subtasks?.filter(subtask =>
               // if the parent task is overdue only show the overdue sub-tasks
@@ -139,7 +139,7 @@ export default memo(function ListTask({ data, subtask }) {
       )}
 
       {!!contextMenu && (
-        <Suspense>
+        <Suspense fallback={null}>
           <TaskContextMenu
             open={!!contextMenu}
             setOpen={handler}

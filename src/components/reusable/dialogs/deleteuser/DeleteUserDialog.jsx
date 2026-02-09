@@ -74,7 +74,7 @@ export default function DeleteUserDialog({
       </Typography>
 
       {provider === 'password' && (
-        <Suspense>
+        <Suspense fallback={null}>
           <PasswordInput
             onChange={handleChange}
             autoComplete='current-password'

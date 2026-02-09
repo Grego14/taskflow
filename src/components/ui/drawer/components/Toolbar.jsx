@@ -35,7 +35,7 @@ export default memo(function DrawerToolbar({ open, toggleDrawer }) {
         minHeight={`calc(${appBarHeight} - 1px)`}
         px={1}>
         {selectLoaded && (
-          <Suspense>
+          <Suspense fallback={null}>
             <ToolbarSelect open={open} toggleDrawer={toggleDrawer} />
           </Suspense>
         )}
