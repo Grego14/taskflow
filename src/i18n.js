@@ -23,8 +23,7 @@ i18n
     },
     async (error, t) => {
       try {
-        const lang = i18n.language
-        await loadResources(lang)
+        await loadResources(i18n.language)
       } catch (error) {
         console.error('Error when loading translations resources ->', error)
       }

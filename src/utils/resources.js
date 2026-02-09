@@ -35,22 +35,17 @@ export async function loadResources(lng, resources = ['common']) {
           )
       )
     )
+      .catch(err => console.error("Couldn't get all the resources:", resourceList))
 
-    const resourcesData = {}
-
-    // organize resources
+    // add the resources
     for (const [index, result] of Object.entries(loadedResources)) {
       if (result.value) {
-        resourcesData[resourcesConverted[index].key] = result.value
+        console.log(lng, resourcesConverted[index].key, result.value)
+        i18n.addResourceBundle(lng, resourcesConverted[index].key, result.value)
       }
     }
-
-    // add resources
-    for (const [key, value] of Object.entries(resourcesData)) {
-      i18n.addResourceBundle(lng, key, value)
-    }
   } catch (err) {
-    console.error(err)
+    console.error('Error when fetching and adding the resources:', err)
   }
 }
 
