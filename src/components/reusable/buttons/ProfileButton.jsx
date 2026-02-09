@@ -44,10 +44,11 @@ export default function ProfileButton({
   const onlyBadge = Boolean(open && showTexts)
 
   const preloadProfileComponent = async () => {
-    if (!profileComponentPreLoaded.current) {
+    try {
       await import('@pages/profile/Profile.jsx')
-
       profileComponentPreLoaded.current = true
+    } catch (err) {
+      console.error('ProfileButton: error preloading the Profile component.')
     }
   }
 
