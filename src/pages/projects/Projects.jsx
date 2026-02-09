@@ -22,7 +22,6 @@ import {
   query,
   where
 } from 'firebase/firestore'
-import useProjectAccess from '../../context/ProjectsContext/useProjectAccess'
 
 export default function Projects() {
   const { uid } = useUser()
