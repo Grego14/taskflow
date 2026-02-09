@@ -34,10 +34,8 @@ export default function Landing() {
   const loadingResources = useLoadResources('landing')
 
   const [showAppBar, setShowAppBar] = useState(false)
-  const [animationEnded, setAnimationEnded] = useState({
-    cardsEnded: false,
-    mainEnded: false
-  })
+  const [mainEnded, setMainEnded] = useState(false)
+  const [cardsEnded, setCardsEnded] = useState(false)
 
   const landingBg = theme.alpha(theme.palette.primary.main, 0.05)
 
@@ -60,46 +58,39 @@ export default function Landing() {
 
   return (
     <Box sx={{ backgroundColor: landingBg }} component='main'>
-      {animationEnded.mainEnded && <LandingAppBar show={showAppBar} />}
+      {mainEnded && <LandingAppBar show={showAppBar} />}
 
       <ScreenWrapper>
         <MainText
           showAppBar={() => setShowAppBar(true)}
-          setAnimationEnded={() => setAnimationEnded(prev => ({ ...prev, mainEnded: true }))}
+          setAnimationEnded={() => setMainEnded(true)}
         />
       </ScreenWrapper>
 
       <ScreenWrapper height={isOnlyMobile ? null : '80dvh'}>
-        {animationEnded.mainEnded && (
-          <Suspense fallback={null}>
-            <Cards
-              setAnimationEnded={() => setAnimationEnded(prev => ({ ...prev, cardsEnded: true }))}
-              bg={landingBg}
-            />
-          </Suspense>
+        {mainEnded && (
+          <Cards
+            setAnimationEnded={() => setCardsEnded(true)}
+            bg={landingBg}
+          />
         )}
       </ScreenWrapper>
-
-      <ScreenWrapper>
-        {animationEnded.cardsEnded && (
-          <Suspense fallback={null}>
-            <LoginSection gradientFrom={landingBg} />
-          </Suspense>
-        )}
-      </ScreenWrapper>
+      <ScreenWrapper>{cardsEnded && <LoginSection gradientFrom={landingBg} />}</ScreenWrapper>
     </Box>
   )
 }
 
-function ScreenWrapper({ children, height }) {
+function ScreenWrapper({ children, height = '100dvh' }) {
   return (
     <Box sx={{
-      minHeight: height ? height : '100dvh',
+      minHeight: height,
       display: 'flex',
       minWidth: '100dvw',
       flexDirection: 'column'
     }}>
-      {children}
+      <Suspense fallback={null}>
+        {children}
+      </Suspense>
     </Box>
   )
 }

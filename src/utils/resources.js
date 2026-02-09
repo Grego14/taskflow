@@ -40,7 +40,6 @@ export async function loadResources(lng, resources = ['common']) {
     // add the resources
     for (const [index, result] of Object.entries(loadedResources)) {
       if (result.value) {
-        console.log(lng, resourcesConverted[index].key, result.value)
         i18n.addResourceBundle(lng, resourcesConverted[index].key, result.value)
       }
     }

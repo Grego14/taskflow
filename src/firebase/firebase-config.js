@@ -7,7 +7,6 @@ const app = initializeApp({
   databaseURL: 'https://taskflow-ef99b-default-rtdb.firebaseio.com',
   projectId: 'taskflow-ef99b',
   storageBucket: 'taskflow-ef99b.firebasestorage.app',
-  messagingSenderId: '713417388789',
   appId: '1:713417388789:web:20d2f37f5e792028e84bbc',
   measurementId: 'G-QR77L7MXGH'
 })

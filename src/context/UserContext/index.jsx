@@ -44,8 +44,6 @@ export default function UserProvider({ children }) {
     if (updatePlaceholder.current) {
       return updatePlaceholder.current(data)
     }
-
-    console.warn('Update called before being initialized')
   }, [])
 
   // update MUI internal theme and i18next internal language if the user db
@@ -78,7 +76,7 @@ export default function UserProvider({ children }) {
       setUser,
       userLoaded,
       setUserLoaded,
-      uid: currentUser?.uid,
+      uid: userId,
       update,
       setUpdateImplementation: (fn) => { updatePlaceholder.current = fn }
     }),
