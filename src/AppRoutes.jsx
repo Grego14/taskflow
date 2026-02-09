@@ -3,28 +3,25 @@ import useAuth from '@hooks/useAuth'
 import useLoadResources from '@hooks/useLoadResources'
 
 import { Suspense, lazy } from 'react'
-import { Route, Routes } from 'react-router-dom'
-import { BrowserRouter as Router } from 'react-router-dom'
+import { Route, Routes, BrowserRouter as Router } from 'react-router-dom'
+
+import NotFound from '@pages/notfound/NotFound'
 
 const Notification = lazy(
   () => import('@components/ui/notification/Notification')
 )
-
 const UserLogged = lazy(() => import('./UserLogged'))
 const QueryProvider = lazy(() => import('./QueryProvider'))
 const Auth = lazy(() => import('@pages/auth/Auth'))
-const NotFound = lazy(() => import('@pages/notfound/NotFound'))
 const RestrictedRoute = lazy(
   () => import('@components/reusable/RestrictedRute')
 )
 const ProtectedRoute = lazy(() => import('@components/reusable/ProtectedRute'))
-const UserProvider = lazy(() => import('@context/UserContext'))
 const NotificationsProvider = lazy(
   () => import('@context/NotificationsContext')
 )
-const LayoutManager = lazy(
-  () => import('@components/ui/layoutmanager/LayoutManager')
-)
+const LayoutProvider = lazy(() => import('@context/LayoutContext/index'))
+const LayoutManager = lazy(() => import('@components/ui/layoutmanager/LayoutManager'))
 const Profile = lazy(() => import('@pages/profile/Profile'))
 const Home = lazy(() => import('@pages/home/Home'))
 const Landing = lazy(() => import('@pages/home/Landing.jsx'))
@@ -59,55 +56,60 @@ export default function AppRoutes() {
   return (
     <>
       <Router>
-        <Routes>
-          <Route path='/' element={<Landing />} />
+        <Suspense fallback={null}>
 
-          {/* User must not be logged to be able to access this rutes */}
-          <Route
-            element={
-              <RestrictedRoute
-                isAuthenticated={!!currentUser}
-                restrictedPaths={restrictedPaths}
-              />
-            }>
-            <Route path='/login' element={<Auth type='login' />} />
-            <Route path='/signup' element={<Auth type='signup' />} />
-          </Route>
-          {/* <-----------------------------------------------------> */}
+          <Routes>
+            <Route path='/' element={<Landing />} />
 
-          <Route element={<QueryProvider />}>
-            <Route element={<UserLogged />}>
-              <Route path='/profile' element={<Profile />} />
+            {/* User must not be logged to be able to access this rutes */}
+            <Route
+              element={
+                <RestrictedRoute
+                  isAuthenticated={!!currentUser}
+                  restrictedPaths={restrictedPaths}
+                />
+              }>
+              <Route path='/login' element={<Auth type='login' />} />
+              <Route path='/signup' element={<Auth type='signup' />} />
+            </Route>
+            {/* <-----------------------------------------------------> */}
 
-              <Route element={<NotificationsProvider />}>
-                <Route element={<LayoutManager />}>
-                  <Route path='/home' element={<Home />} />
+            <Route element={<QueryProvider />}>
+              <Route element={<UserLogged />}>
+                <Route path='/profile' element={<Profile />} />
 
-                  <Route path='/templates' element={<Templates />} />
+                <Route element={<NotificationsProvider />}>
+                  <Route element={<LayoutProvider />}>
+                    <Route element={<LayoutManager />}>
+                      <Route path='/home' element={<Home />} />
 
-                  <Route path='/projects'>
-                    <Route index element={<Projects />} />
-                    <Route path='new' element={<NewProject />} />
+                      <Route path='/templates' element={<Templates />} />
 
-                    <Route path=':projectId' element={<Project />}>
-                      <Route index element={<ProjectDashBoard />} />
-                      <Route path='settings' element={<ProjectSettings />} />
+                      <Route path='/projects'>
+                        <Route index element={<Projects />} />
+                        <Route path='new' element={<NewProject />} />
 
-                      <Route element={<ProjectMetricsProvider />}>
-                        <Route path='metrics' element={<ProjectMetrics />} />
+                        <Route path=':projectId' element={<Project />}>
+                          <Route index element={<ProjectDashBoard />} />
+                          <Route path='settings' element={<ProjectSettings />} />
+
+                          <Route element={<ProjectMetricsProvider />}>
+                            <Route path='metrics' element={<ProjectMetrics />} />
+                          </Route>
+                        </Route>
                       </Route>
                     </Route>
                   </Route>
                 </Route>
               </Route>
             </Route>
-          </Route>
 
-          <Route path='*' element={<NotFound />} />
-        </Routes>
+            <Route path='*' element={<NotFound />} />
+          </Routes>
+        </Suspense>
       </Router>
 
-      <Suspense>{notification?.open && <Notification />}</Suspense>
+      <Suspense fallback={null}>{notification?.open && <Notification />}</Suspense>
     </>
   )
 }

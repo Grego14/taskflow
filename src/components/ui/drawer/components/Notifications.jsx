@@ -52,10 +52,6 @@ export default function Notifications({ open: drawerOpen, toggleDrawer }) {
     }
   }
 
-  const handleOnClick = e => {
-    setAnchorEl(e.currentTarget)
-  }
-
   return (
     <>
       <DrawerAction
@@ -69,17 +65,15 @@ export default function Notifications({ open: drawerOpen, toggleDrawer }) {
           </Badge>
         }
         text={t('drawer.notifications')}
-        onClick={e => {
-          handleOnClick(e)
-        }}
+        onClick={(e) => setAnchorEl(e.currentTarget)}
         showText
         id='notifications-button'
-        aria-controls={open ? 'notifications-menu' : undefined}
+        aria-controls={'notifications-menu'}
         aria-haspopup='true'
-        aria-expanded={open ? 'true' : undefined}
+        aria-expanded={open}
       />
 
-      <Suspense>
+      <Suspense fallback={null}>
         <Menu
           anchorOrigin={{
             vertical: 'top',
@@ -90,45 +84,47 @@ export default function Notifications({ open: drawerOpen, toggleDrawer }) {
           onClose={handleOnClose}
           aria-labelledby='notifications-button'
           id='notifications-menu'>
-          {notifications
-            ?.sort((a, b) => {
-              const aDate =
-                formatTimestamp(a.notificationDate)?.raw || new Date()
-              const bDate =
-                formatTimestamp(b.notificationDate)?.raw || new Date()
+          <Suspense fallback={null}>
+            {notifications
+              ?.sort((a, b) => {
+                const aDate =
+                  formatTimestamp(a.notificationDate)?.raw || new Date()
+                const bDate =
+                  formatTimestamp(b.notificationDate)?.raw || new Date()
 
-              return aDate > bDate ? 0 : 1
-            })
-            .map(notification => {
-              if (notification.type === 'welcome') {
-                return (
-                  <WelcomeNotification
-                    key={notification.id}
-                    data={notification}
-                  />
-                )
-              }
+                return aDate > bDate ? 0 : 1
+              })
+              .map(notification => {
+                if (notification.type === 'welcome') {
+                  return (
+                    <WelcomeNotification
+                      key={notification.id}
+                      data={notification}
+                    />
+                  )
+                }
 
-              if (notification.type === 'kicked') {
-                return (
-                  <KickedNotification
-                    key={notification.id}
-                    data={notification}
-                    closeMenu={() => setAnchorEl(null)}
-                  />
-                )
-              }
+                if (notification.type === 'kicked') {
+                  return (
+                    <KickedNotification
+                      key={notification.id}
+                      data={notification}
+                      closeMenu={() => setAnchorEl(null)}
+                    />
+                  )
+                }
 
-              if (notification.type === 'invitation') {
-                return (
-                  <InvitationNotification
-                    key={notification.id}
-                    data={notification}
-                    closeMenu={() => setAnchorEl(null)}
-                  />
-                )
-              }
-            })}
+                if (notification.type === 'invitation') {
+                  return (
+                    <InvitationNotification
+                      key={notification.id}
+                      data={notification}
+                      closeMenu={() => setAnchorEl(null)}
+                    />
+                  )
+                }
+              })}
+          </Suspense>
 
           {notifications?.length === 0 && (
             <Typography px={2} color='textSecondary'>

@@ -75,7 +75,7 @@ export default memo(function LayoutAppBar({ projectId }) {
     if (isOnlyMobile) {
       return (
         <>
-          {...links}
+          {links}
           {profileBtn}
         </>
       )
@@ -84,7 +84,7 @@ export default memo(function LayoutAppBar({ projectId }) {
     return (
       <>
         <Box className='flex' gap={2}>
-          {...links}
+          {links}
         </Box>
         {profileBtn}
       </>
@@ -99,7 +99,9 @@ export default memo(function LayoutAppBar({ projectId }) {
         width: `calc(100% - ${drawerWidth?.closed}px)`,
         ml: 'auto'
       }}>
-      {layout}
+      <Suspense fallback={null}>
+        {layout}
+      </Suspense>
     </AppBar>
   )
 })

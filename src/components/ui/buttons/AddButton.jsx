@@ -42,7 +42,7 @@ export default function AddButton() {
       </Tooltip>
 
       {taskDialogOpen && (
-        <Suspense>
+        <Suspense fallback={null}>
           <NewTaskDialog
             open={taskDialogOpen}
             setOpen={setTaskDialogOpen}

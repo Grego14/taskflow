@@ -4,7 +4,9 @@ import { useColorScheme } from '@mui/material/styles'
 import useMediaQuery from '@mui/material/useMediaQuery'
 import { lazy, useCallback, useMemo, useReducer, useState } from 'react'
 
-import UserContext from '@context/UserContext'
+import UserProvider from '@context/UserContext'
+import AppContext from './context'
+import AppRoutes from '@/AppRoutes.jsx'
 
 // utils
 import {
@@ -12,10 +14,6 @@ import {
   appStateReducer,
   initAppState
 } from './appStateReducer.js'
-import AppContext from './context'
-
-const AppRoutes = lazy(() => import('@/AppRoutes.jsx'))
-const Landing = lazy(() => import('@pages/home/Landing'))
 
 export default function AppProvider({ children }) {
   const { currentUser } = useAuth()
@@ -55,14 +53,14 @@ export default function AppProvider({ children }) {
 
   return (
     <AppContext.Provider value={contextValue}>
-      <UserContext>
+      <UserProvider>
         {/* the smooth scroll is only used on the landing page */}
         <div id='smooth-wrapper'>
           <div id='smooth-content'>
             <AppRoutes />
           </div>
         </div>
-      </UserContext>
+      </UserProvider>
     </AppContext.Provider>
   )
 }

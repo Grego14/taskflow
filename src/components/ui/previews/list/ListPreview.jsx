@@ -21,13 +21,14 @@ import useTasks from '@hooks/useTasks'
 import useUser from '@hooks/useUser'
 import { useTranslation } from 'react-i18next'
 import useTaskProcessing from './useTaskProcessing'
+import useLayout from '@hooks/useLayout'
 
 export default memo(function ListPreview() {
   const { isOffline } = useAuth()
   const { t } = useTranslation(['ui', 'common'])
 
   const { uid, metadata } = useUser()
-  const filter = metadata?.lastUsedFilter || 'default'
+  const { filter } = useLayout()
 
   const { tasks, error } = useTasks()
   const { id, data } = useProject()
@@ -43,9 +44,9 @@ export default memo(function ListPreview() {
   const noTasksWithFilter =
     !isDefaultFilter && filteredTasks.length < 1
       ? t('tasks.noTasksWithFilter_filter', {
-          filter,
-          count: filteredTasks.length
-        })
+        filter,
+        count: filteredTasks.length
+      })
       : ''
 
   return (
@@ -68,7 +69,7 @@ export default memo(function ListPreview() {
           {errorTranslation && <Retry />}
         </>
       )}
-      <Suspense>
+      <Suspense fallback={null}>
         {/* button to let the user retry the query */}
         {error === 'query' && !tasks?.length && (
           <>

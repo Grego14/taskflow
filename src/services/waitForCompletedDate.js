@@ -18,6 +18,9 @@ export default function waitForCompletedDate({
 
   const unsubscribe = onSnapshot(taskRef, docSnapshot => {
     const taskData = docSnapshot.data()
+
+    if (!taskData) return unsubscribe()
+
     const { completedDate } = taskData
 
     if (completedDate && dueDate) {

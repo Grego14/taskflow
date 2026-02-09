@@ -1,7 +1,7 @@
 // hooks
 import useAuth from '@hooks/useAuth'
 import { useColorScheme } from '@mui/material/styles'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState, useRef, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 
 // utils
@@ -37,24 +37,33 @@ export default function UserProvider({ children }) {
     }
   })
 
+  const updatePlaceholder = useRef(null)
+
   // function to update the user document, only available if the user is logged
-  const [update, setUpdate] = useState(null)
+  const update = useCallback((data) => {
+    if (updatePlaceholder.current) {
+      return updatePlaceholder.current(data)
+    }
+
+    console.warn('Update called before being initialized')
+  }, [])
 
   // update MUI internal theme and i18next internal language if the user db
   // fields are different from the local ones (the user changes the theme/lang
   // when he was on the Landing Page, but he has other theme on the db)
   useEffect(() => {
-    const existsAndEqualsTo = (field, equalTo) =>
-      user?.preferences?.[field] && user?.preferences?.[field] !== equalTo
+    if (!userId || !userLoaded) return
 
-    if (userId && existsAndEqualsTo('theme', userTheme)) {
-      setMode(user.preferences.theme === 'light' ? 'light' : 'dark')
+    const { theme, lang } = user.preferences
+
+    if (theme && theme !== userTheme) {
+      setMode(theme)
     }
 
-    if (userId && existsAndEqualsTo('theme', i18n.language)) {
-      i18n.changeLanguage(user?.preferences?.lang)
+    if (lang && lang !== i18n.language) {
+      i18n.changeLanguage(lang)
     }
-  }, [user, setMode, i18n, userId, userTheme])
+  }, [user?.preferences, setMode, i18n, userId, userTheme, userLoaded])
 
   const value = useMemo(
     () => ({
@@ -71,7 +80,7 @@ export default function UserProvider({ children }) {
       setUserLoaded,
       uid: currentUser?.uid,
       update,
-      setUpdate
+      setUpdateImplementation: (fn) => { updatePlaceholder.current = fn }
     }),
     [user, currentUser, userLoaded, update, i18n]
   )

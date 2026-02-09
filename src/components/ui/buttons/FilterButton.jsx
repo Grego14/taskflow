@@ -40,7 +40,7 @@ export default function FilterButton() {
     ) {
       setSelected(metadata.lastUsedFilter)
     }
-  }, [metadata, selected])
+  }, [metadata])
 
   const changeSelectedOption = useCallback(
     e => {

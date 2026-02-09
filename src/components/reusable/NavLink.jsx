@@ -2,6 +2,8 @@ import Link from '@mui/material/Link'
 import { forwardRef } from 'react'
 import { NavLink as RouterNavLink } from 'react-router-dom'
 
-export default function NavLink(props) {
-  return <Link component={RouterNavLink} {...props} />
-}
+const NavLink = forwardRef((props, ref) => {
+  return <Link component={RouterNavLink} {...props} ref={ref} />
+})
+
+export default NavLink

@@ -31,7 +31,7 @@ export default function CreateTask({ sx }) {
       </Button>
 
       {taskDialogOpen && (
-        <Suspense>
+        <Suspense fallback={null}>
           <NewTaskDialog open={taskDialogOpen} setOpen={setTaskDialogOpen} />
         </Suspense>
       )}

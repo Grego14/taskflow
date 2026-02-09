@@ -40,7 +40,6 @@ export default function Landing() {
   })
 
   const landingBg = theme.alpha(theme.palette.primary.main, 0.05)
-  const gradientTo = theme.palette.primary.light
 
   // if the user logouts of his account we update the page title (the
   // RouteHandler is only available if the user is logged-in)
@@ -65,14 +64,14 @@ export default function Landing() {
 
       <ScreenWrapper>
         <MainText
-          setShowAppBar={setShowAppBar}
+          showAppBar={() => setShowAppBar(true)}
           setAnimationEnded={() => setAnimationEnded(prev => ({ ...prev, mainEnded: true }))}
         />
       </ScreenWrapper>
 
       <ScreenWrapper height={isOnlyMobile ? null : '80dvh'}>
         {animationEnded.mainEnded && (
-          <Suspense>
+          <Suspense fallback={null}>
             <Cards
               setAnimationEnded={() => setAnimationEnded(prev => ({ ...prev, cardsEnded: true }))}
               bg={landingBg}
@@ -83,8 +82,8 @@ export default function Landing() {
 
       <ScreenWrapper>
         {animationEnded.cardsEnded && (
-          <Suspense>
-            <LoginSection gradientFrom={landingBg} gradientTo={gradientTo} />
+          <Suspense fallback={null}>
+            <LoginSection gradientFrom={landingBg} />
           </Suspense>
         )}
       </ScreenWrapper>

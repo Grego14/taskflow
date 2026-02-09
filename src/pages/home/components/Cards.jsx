@@ -4,30 +4,18 @@ import People from '@mui/icons-material/People'
 import Lock from '@mui/icons-material/Lock'
 import Public from '@mui/icons-material/Public'
 import BarChart from '@mui/icons-material/BarChart'
-
-import Card from '@mui/material/Card'
-import CardContent from '@mui/material/CardContent'
-import CardHeader from '@mui/material/CardHeader'
-import Typography from '@mui/material/Typography'
+import { Card, CardContent, CardHeader, Typography, useMediaQuery, Box } from '@mui/material'
 import Section from './Section'
-import Box from '@mui/material/Box'
-
 import { useGSAP } from '@gsap/react'
 import useUser from '@hooks/useUser'
-import useMediaQuery from '@mui/material/useMediaQuery'
 import { useTranslation } from 'react-i18next'
-
-const getText = (cardType, title = true) =>
-  `cards.${cardType}.${title ? 'title' : 'text'}`
-
 import gsap from 'gsap'
 import { alpha } from '@mui/material/styles'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import setPageTitle from '@utils/setPageTitle'
 
 gsap.registerPlugin(ScrollTrigger)
 
-const cards = [
+const CARDS_DATA = [
   { type: 'cloud', icon: Cloud },
   { type: 'management', icon: ListAlt },
   { type: 'collaborate', icon: People },
@@ -36,98 +24,93 @@ const cards = [
   { type: 'metrics', icon: BarChart }
 ]
 
+const getText = (cardType, title = true) =>
+  `cards.${cardType}.${title ? 'title' : 'text'}`
+
+const cardStyles = (theme, isDark) => ({
+  overflow: 'visible',
+  backgroundColor: isDark
+    ? alpha(theme.palette.background.paper, 0.4)
+    : alpha('#fff', 0.6),
+  border: `1px solid ${alpha(theme.palette.secondary.main, 0.3)}`,
+  borderRadius: '16px',
+  height: '100%',
+  transition: 'transform 0.3s ease',
+  '&:hover': {
+    transform: 'translateY(-8px)',
+    border: `1px solid ${theme.palette.secondary.main}`
+  }
+})
+
 export default function Cards({ setAnimationEnded, bg }) {
   const { t } = useTranslation('landing')
   const { preferences } = useUser()
-  const userTheme = preferences?.theme || 'light'
-
-  const isBigDevice = useMediaQuery(theme =>
-    theme.breakpoints.up('laptop')
-  )
+  const isDark = preferences?.theme === 'dark'
+  const isLaptop = useMediaQuery(theme => theme.breakpoints.up('laptop'))
 
   useGSAP(() => {
     document.fonts.ready.then(() => {
-      gsap.set('.card', { autoAlpha: 0, scale: 0.5, y: 25 })
+      gsap.set('.card', { autoAlpha: 0, scale: 0.8, y: 40 })
 
-      const tl = gsap.timeline({
+      const tween = gsap.to('.card', {
         scrollTrigger: {
           trigger: '#cards',
-          scrub: 0.3,
-          start: `${isBigDevice ? 'top-=10%' : 'top'} bottom-=50%`,
-          end: 'top+=55% top',
-          once: true
-        }
-      })
-
-      tl.to('.card', {
+          start: 'top 80%',
+          toggleActions: 'play none none none',
+          end: 'bottom center',
+          once: true,
+          scrub: 0.2,
+        },
         autoAlpha: 1,
-        keyframes: [{ scale: 1 }, { scale: 1.1 }, { scale: 1 }],
-        stagger: 1.5,
+        scale: 1,
         y: 0,
-        ease: 'power4.out',
-        duration: 1.5,
+        stagger: 0.25,
+        duration: 1.2,
+        ease: 'elastic.out(1, 0.8)',
+        onProgress: (card) => { if (card === 3) setAnimationEnded() }
       })
-
-      // load the login section
-      tl.call(() => setAnimationEnded(), null, 0.33 * tl.duration())
     })
-  }, [isBigDevice])
-
-  const cardWidth = !isBigDevice ? '18rem' : '25rem'
+  }, [isLaptop])
 
   return (
     <Section
       id='cards'
       sx={{
-        gap: !isBigDevice ? 3 : 6,
-        paddingInline: !isBigDevice ? 3 : 6,
+        gap: isLaptop ? 4 : 2,
+        padding: isLaptop ? 8 : 3,
         backgroundImage: `linear-gradient(rgba(0,0,0,0), ${bg})`,
         display: 'grid',
-        gridTemplateColumns: `repeat(auto-fill, minmax(${cardWidth}, 1fr))`,
-        gridTemplateRows: '1fr 1fr 1fr',
-        placeContent: 'center',
-        // replace Section component default height (100dvh)
-        height: '100%'
+        gridTemplateColumns: `repeat(auto-fit, minmax(${isLaptop ? '350px' : '100%'}, 1fr))`,
+        height: 'auto',
+        minHeight: '100dvh'
       }}
-      className={!isBigDevice ? 'flex flex-center' : ''}>
-      {cards.map(({ type, icon: Icon }) => (
-        <Card
-          key={type}
-          elevation={3}
-          sx={[theme => ({
-            overflow: 'visible',
-            border: `1px solid ${alpha(theme.palette.secondary[userTheme], 0.65)}`,
-            backgroundImage: `
-            linear-gradient(-30deg, 
-              ${alpha(theme.palette.secondary[userTheme], 0.15)} 10%, 
-              ${alpha(theme.palette.secondary[userTheme], 0.40)} 80%
-            )`,
-            height: '100%'
-          })
-          ]}
-          className='card'>
+    >
+      {CARDS_DATA.map(({ type, icon: Icon }) => (
+        <Card key={type} sx={t => cardStyles(t, isDark)} className='card' elevation={0}>
           <CardHeader
-            avatar={<Icon fontSize='large' />}
+            avatar={
+              <Box sx={{
+                p: 1.5,
+                borderRadius: '50%',
+                background: t => alpha(t.palette.primary.main, 0.1),
+                display: 'flex'
+              }}>
+                <Icon color='primary' fontSize='large' />
+              </Box>
+            }
             title={
-              <Typography
-                color='primary'
-                variant='h3'
-                sx={[theme => ({ ...theme.typography.h5, fontWeight: 300 })]}>
-                {t(getText(type))}
+              <Typography variant='h5' sx={{ fontWeight: 600 }}>
+                {t(`cards.${type}.title`)}
               </Typography>
             }
           />
           <CardContent>
-            <Typography
-              sx={[
-                theme => ({ fontSize: theme.typography.h6.fontSize })
-              ]}>
-              {t(getText(type, false))}
+            <Typography variant='body1' color='text.secondary'>
+              {t(`cards.${type}.text`)}
             </Typography>
           </CardContent>
         </Card>
-      ))
-      }
-    </Section >
+      ))}
+    </Section>
   )
 }

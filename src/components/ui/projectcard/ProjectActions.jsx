@@ -14,7 +14,7 @@ export default function ProjectActions({ id, archived, isOwner, owner }) {
         </>
       )}
       {!isOwner && (
-        <Suspense>
+        <Suspense fallback={null}>
           <AbandonProject id={id} owner={owner} />
         </Suspense>
       )}

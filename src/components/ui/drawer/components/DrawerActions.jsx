@@ -20,7 +20,7 @@ export default function DrawerActions({ open, toggleDrawer }) {
   const action = projectId ? null : rutes?.[rutes?.length - 1]
 
   return (
-    <Suspense>
+    <Suspense fallback={null}>
       {projectId ? (
         <ProjectActions open={open} />
       ) : (

@@ -29,6 +29,7 @@ export default memo(function AppBar({ children, withDrawer, top = false, sx }) {
     <MUIAppBar
       color='inherit'
       variant='outlined'
+      elevation={0}
       position={isMobile && !top ? 'fixed' : 'relative'}
       sx={{
         height: appBarHeight,

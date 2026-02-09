@@ -6,7 +6,7 @@ import useDebounce from '@hooks/useDebounce'
 import useGetUserFromDb from '@hooks/useGetUserFromDb'
 import useUser from '@hooks/useUser'
 import { useMutation } from '@tanstack/react-query'
-import { Suspense, lazy, useEffect, useMemo, useRef } from 'react'
+import { lazy, useEffect, useMemo, useRef, Suspense } from 'react'
 
 const CloudOffIcon = lazy(() => import('@mui/icons-material/CloudOff'))
 const CloudSyncIcon = lazy(() => import('@mui/icons-material/CloudSync'))
@@ -17,42 +17,24 @@ import getLocale from '@utils/getLocale'
 import lazyImport from '@utils/lazyImport'
 import { getDatabase, onValue, ref } from 'firebase/database'
 
-const icons = { offline: CloudOffIcon, online: CloudSyncIcon }
-
 export default function UserLogged() {
-  const { uid, setUpdate } = useUser()
+  const { uid, setUpdateImplementation } = useUser()
   const { currentUser } = useAuth()
   const { appNotification, notification, setIsOffline, isOffline } = useApp()
 
   const lastConnectionState = useRef(isOffline)
 
-  const { metadata, preferences, userLoaded, setUserLoaded, setUser } =
-    useUser()
-  const userTheme = preferences?.theme
-
-  const [debounceOffline] = useDebounce(val => setIsOffline(val), 1250)
-
-  const [sendInternetNotification] = useDebounce(async () => {
-    const Icon = icons[isOffline ? 'offline' : 'online']
-
-    const internetNotification = await lazyImport(
-      '/src/utils/notifications/internetConnection'
-    )
-
-    internetNotification(isOffline, props =>
-      appNotification({ ...props, icon: <Icon fontSize='small' /> })
-    )
-  }, 3000)
-
   const updateUser = useMutation({
     mutationKey: ['updateUser'],
-    mutationFn: async data => await updater(uid, data),
+    mutationFn: data => updater(uid, data),
     onError: err => console.error('UpdateUser:', err)
   })
 
   useEffect(() => {
-    setUpdate(() => data => updateUser.mutate(data))
-  }, [setUpdate, updateUser.mutate])
+    setUpdateImplementation(data => updateUser.mutate(data))
+  }, [updateUser.mutate, setUpdateImplementation])
+
+  const [debounceOffline] = useDebounce(val => setIsOffline(val), 1250)
 
   // Manage the offline/online state
   useEffect(() => {
@@ -67,6 +49,23 @@ export default function UserLogged() {
     return unsubscribe
   }, [debounceOffline])
 
+  const [sendInternetNotification] = useDebounce(async () => {
+    const Icon = isOffline ? CloudOffIcon : CloudSyncIcon
+
+    const internetNotification = await lazyImport(
+      '/src/utils/notifications/internetConnection'
+    )
+
+    internetNotification(isOffline, props =>
+      appNotification({
+        ...props,
+        icon: <Suspense fallback={null}>
+          <Icon fontSize='small' />
+        </Suspense>
+      })
+    )
+  }, 3000)
+
   useEffect(() => {
     if (lastConnectionState.current !== isOffline) {
       sendInternetNotification()
@@ -74,19 +73,7 @@ export default function UserLogged() {
     }
   }, [sendInternetNotification, isOffline])
 
-  const { user, error } = useGetUserFromDb(uid, setUserLoaded)
-
-  useEffect(() => {
-    if (userLoaded) {
-      setUser({
-        ...user,
-        preferences: {
-          ...user?.preferences,
-          locale: getLocale(user?.preferences.lang)
-        }
-      })
-    }
-  }, [userLoaded, setUser, user])
+  useGetUserFromDb()
 
   return <Outlet />
 }

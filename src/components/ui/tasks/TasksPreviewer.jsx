@@ -28,7 +28,7 @@ export default memo(function TasksPreviewer({ actualPreview }) {
       {loading && <CircleLoader text={t('tasks.loading')} height='auto' />}
 
       <TaskActionsProvider>
-        <Suspense>
+        <Suspense fallback={null}>
           {!loading &&
             (actualPreview === 'kanban' ? <KanbanPreview /> : <ListPreview />)}
         </Suspense>

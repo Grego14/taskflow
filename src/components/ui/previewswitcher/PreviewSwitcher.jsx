@@ -70,7 +70,7 @@ export default memo(function PreviewSwitcher() {
     // there's a bug that makes the DropdownMenu re-render and makes a layout
     // shift... so we add a wrapper with a default width
     <Box minWidth='40px'>
-      <Suspense>
+      <Suspense fallback={null}>
         {isMobile ? (
           <DropdownMenu
             icon={<VisibilityIcon fontSize='medium' />}
