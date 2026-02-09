@@ -20,7 +20,7 @@ const defaultValues = values => ({
 })
 
 export default function ProfileForm({ setSaveBtnDisabled, fields }) {
-  const { preferences, profile } = useUser()
+  const { preferences, profile, setUser } = useUser()
   const { currentUser } = useAuth()
   const { appNotification } = useApp()
   const { t, i18n } = useTranslation('ui')
@@ -94,9 +94,13 @@ export default function ProfileForm({ setSaveBtnDisabled, fields }) {
 
       if (invalidFields) return
 
-      // Update UI
-      setMode(theme)
-      i18n.changeLanguage(lang)
+      setUser((prev) => ({
+        ...prev, preferences: {
+          ...prev.preferences,
+          theme,
+          lang
+        }
+      }))
 
       const updateUserProfile = await lazyImport(
         '/src/services/updateUserProfile'
