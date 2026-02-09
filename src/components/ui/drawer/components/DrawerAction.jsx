@@ -5,17 +5,15 @@ import ListItemText from '@mui/material/ListItemText'
 import Tooltip from '@mui/material/Tooltip'
 
 export default function DrawerAction(props) {
-  const { text, icon, open, onClick, disabled, active, showText, ...other } =
+  const { text, icon, open, active, showText, ...other } =
     props
 
   const listItem = (
     <ListItemButton
-      onClick={onClick}
       sx={theme => ({
         px: 2.5,
         backgroundColor: `${active ? theme.palette.action.hover : 'transparent'}`
       })}
-      disabled={disabled}
       {...other}>
       <ListItemIcon
         sx={[
