@@ -31,7 +31,7 @@ export default function ProjectAppBar() {
     <AppBar>
       {isProjectSubRoute ? (
         <Box className='flex flex-grow' gap={1.5} px={2}>
-          <Suspense>
+          <Suspense fallback={null}>
             <GoBackButton
               handler={() => navigate(id, data?.createdBy)}
               text={t('projects.goBack')}
@@ -61,7 +61,9 @@ export default function ProjectAppBar() {
           </Box>
         </Box>
       ) : (
-        <ProjectItems />
+        <Suspense fallback={null}>
+          <ProjectItems />
+        </Suspense>
       )}
     </AppBar>
   )
