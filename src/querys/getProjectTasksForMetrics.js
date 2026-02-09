@@ -62,7 +62,7 @@ export default async function getProjectTasksForMetrics({
     // send the empty array so the loading state is updated
     if (!tasksExists || !subtasksExists) updateTasks()
   } catch (err) {
-    console.error(err)
+    console.error('getProjectTasksForMetrics:', err)
     throw getFriendlyErrorFormatted(
       'getProjectTasksForMetrics',
       err.message,
