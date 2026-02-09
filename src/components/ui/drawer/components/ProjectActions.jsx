@@ -21,7 +21,7 @@ export default function ProjectActions({
   const { projectId } = useParams()
   const location = useLocation()
   const { preferences } = useUser()
-  const { toggleDrawer } = useLayout()
+  const { setDrawerOpen } = useLayout()
 
   const rute = location.pathname?.split(projectId)?.[1]
   const action = rute === '' ? 'dashboard' : rute
@@ -68,7 +68,7 @@ export default function ProjectActions({
               }
             })
 
-            toggleDrawer(false)
+            setDrawerOpen(false)
           }}
           key={`projectRow-${row.text}`}
           text={row.text}
