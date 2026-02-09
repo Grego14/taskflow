@@ -17,7 +17,7 @@ const getActionMetadata = target => {
   return target.currentTarget.dataset
 }
 
-export default function NotificationsProvider({ children }) {
+export default function NotificationsProvider() {
   const { uid } = useUser()
   const [notifications, setNotifications] = useState([])
   const [error, setError] = useState(null)
@@ -48,7 +48,7 @@ export default function NotificationsProvider({ children }) {
 
   const onDecline = useCallback(
     e => {
-      ;(async () => {
+      ; (async () => {
         const { notificationId, projectOwner, projectId } = getActionMetadata(e)
 
         if (!notificationId || !projectOwner || !projectId) return
@@ -74,7 +74,7 @@ export default function NotificationsProvider({ children }) {
 
   const onAccept = useCallback(
     e => {
-      ;(async () => {
+      ; (async () => {
         const { notificationId, projectOwner, projectId } = getActionMetadata(e)
 
         if (!notificationId || !projectOwner || !projectId) return
@@ -100,7 +100,7 @@ export default function NotificationsProvider({ children }) {
 
   const deleteNotification = useCallback(
     e => {
-      ;(async () => {
+      ; (async () => {
         const { notificationId } = getActionMetadata(e)
 
         if (!notificationId) return
@@ -123,7 +123,7 @@ export default function NotificationsProvider({ children }) {
 
   return (
     <NotificationsContext.Provider value={value}>
-      <Outlet>{children}</Outlet>
+      <Outlet />
     </NotificationsContext.Provider>
   )
 }
