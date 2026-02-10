@@ -19,15 +19,17 @@ i18n
         escapeValue: false
       },
       lowerCaseLng: true,
-      supportedLngs: ['en', 'es']
-    },
-    async (error, t) => {
-      try {
-        await loadResources(i18n.language)
-      } catch (error) {
-        console.error('Error when loading translations resources ->', error)
+      supportedLngs: ['en', 'es'],
+      react: {
+        useSuspense: false
       }
-    }
+    },
   )
+
+const initialLanguage = i18n.language || 'en'
+
+loadResources(initialLanguage).catch(error => {
+  console.error('Error when loading translations resources ->', error)
+})
 
 export default i18n

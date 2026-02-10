@@ -4,7 +4,7 @@ import AppProvider from '@context/AppContext'
 import AuthProvider from '@context/AuthContext'
 import CssBaseline from '@mui/material/CssBaseline'
 import { ThemeProvider } from '@mui/material/styles'
-import { StrictMode, useEffect } from 'react'
+import { StrictMode, useEffect, Suspense } from 'react'
 import { I18nextProvider } from 'react-i18next'
 import i18n from './i18n.js'
 import { createTheme, responsiveFontSizes } from '@mui/material/styles'
@@ -19,9 +19,9 @@ const fontsToPreload = {
 }
 
 if (import.meta.env.DEV) {
-  const { scan } = await import('react-scan')
-
-  scan({ enabled: true })
+  import('react-scan').then(({ scan }) => {
+    scan({ enabled: true })
+  })
 }
 
 function Main() {
@@ -199,7 +199,9 @@ function Main() {
 
 render(
   <StrictMode>
-    <Main />
+    <Suspense fallback={null}>
+      <Main />
+    </Suspense>
   </StrictMode>,
   document.getElementById('root')
 )
