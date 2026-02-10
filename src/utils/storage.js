@@ -2,11 +2,11 @@ export function setItem(item, value) {
   try {
     // check against undefined to allow falsy values
     if (!value === undefined)
-      throw Error("Storage setItem error: value can't be undefined")
+      throw Error("value can't be undefined")
 
     localStorage.setItem(item, JSON.stringify(value))
   } catch (err) {
-    console.error(err)
+    console.error('setItem error:', err)
   }
 }
 
@@ -20,6 +20,6 @@ export function getItem(item, defaultValue) {
     setItem(item, defaultValue)
     return defaultValue
   } catch (err) {
-    console.error(err)
+    console.error('getItem error:', err)
   }
 }
