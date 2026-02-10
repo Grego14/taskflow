@@ -28,6 +28,10 @@ const fontsToPreload = {
   regular: '/fonts/Rubik-Regular.woff2'
 }
 
+window.addEventListener('unhandledrejection', event => {
+  console.log('Detected unhandled promise:', event, event.reason)
+})
+
 function Main() {
   useEffect(() => {
     for (const font of Object.values(fontsToPreload)) {
