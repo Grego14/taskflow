@@ -1,13 +1,5 @@
-if (import.meta.env.DEV) {
-  const { scan } = await import('react-scan')
-
-  scan({ enabled: true })
-}
-
-import { createRoot } from 'react-dom/client'
-
+import { render } from 'preact'
 import Zoom from '@mui/material/Zoom'
-
 import AppProvider from '@context/AppContext'
 import AuthProvider from '@context/AuthContext'
 import CssBaseline from '@mui/material/CssBaseline'
@@ -15,9 +7,7 @@ import { ThemeProvider } from '@mui/material/styles'
 import { StrictMode, useEffect } from 'react'
 import { I18nextProvider } from 'react-i18next'
 import i18n from './i18n.js'
-
 import { createTheme, responsiveFontSizes } from '@mui/material/styles'
-
 import './main.css'
 
 history.scrollRestoration = 'manual'
@@ -28,9 +18,11 @@ const fontsToPreload = {
   regular: '/fonts/Rubik-Regular.woff2'
 }
 
-window.addEventListener('unhandledrejection', event => {
-  console.log('Detected unhandled promise:', event, event.reason)
-})
+if (import.meta.env.DEV) {
+  const { scan } = await import('react-scan')
+
+  scan({ enabled: true })
+}
 
 function Main() {
   useEffect(() => {
@@ -205,8 +197,9 @@ function Main() {
   )
 }
 
-createRoot(document.getElementById('root')).render(
+render(
   <StrictMode>
     <Main />
-  </StrictMode>
+  </StrictMode>,
+  document.getElementById('root')
 )
