@@ -1,8 +1,10 @@
-import dbManipulationWrapper from '@utils/dbManipulationWrapper'
 import { doc, writeBatch } from 'firebase/firestore'
+import db from '@/db'
+import i18n from '@/i18n'
+import { getFriendlyErrorFormatted } from '@utils/getFriendlyAuthError'
 
-export default function markNotificationsAsRead({ user, notifications }) {
-  const markNotificationsAsRead = async db => {
+export default async function markNotificationsAsRead({ user, notifications }) {
+  try {
     const batch = writeBatch(db)
 
     for (const id of notifications) {
@@ -11,9 +13,7 @@ export default function markNotificationsAsRead({ user, notifications }) {
     }
 
     await batch.commit()
+  } catch (err) {
+    console.error(getFriendlyErrorFormatted('markNotificationsAsRead', err.message, i18n.language))
   }
-
-  dbManipulationWrapper('markNotificationsAsRead', db =>
-    markNotificationsAsRead(db)
-  )
 }
