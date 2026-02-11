@@ -18,27 +18,26 @@ export default function useGetUserFromDb() {
 
     let unsubscribe
 
-    // dynamic imports for bundle optimization
-    import('@/db.js').then(mod => {
-      const db = mod.default
+    const initFirestore = async () => {
+      try {
+        const [db, fs] = await Promise.all([
+          import('@/db.js'),
+          import('firebase/firestore')
+        ])
 
-      import('firebase/firestore').then(mod => {
-        const { doc, onSnapshot } = mod
-        const userDoc = doc(db, 'users', uid)
+        const { doc, onSnapshot } = fs
+        const userDoc = doc(db.default, 'users', uid)
 
         unsubscribe = onSnapshot(
           userDoc,
           userSnapshot => {
             if (userSnapshot.exists()) {
               setUser(userSnapshot.data())
-            } else {
-              console.warn('No user document found')
             }
             setUserLoaded(true)
           },
           err => {
             console.error('useGetUserFromDb:', err)
-
             if (isOffline) {
               appNotification({
                 message: t('notifications.cannotGetUserNoInternet'),
@@ -48,8 +47,13 @@ export default function useGetUserFromDb() {
             setUserLoaded(true)
           }
         )
-      })
-    })
+      } catch (err) {
+        console.error('Failed to load Firestore modules', err)
+        setUserLoaded(true)
+      }
+    }
+
+    initFirestore()
 
     return () => unsubscribe?.()
   }, [uid, setUser, setUserLoaded, appNotification, isOffline, t])
