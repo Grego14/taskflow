@@ -57,13 +57,11 @@ export default memo(function AppDrawer({ open, setOpen, children }) {
   }, { scope: drawerRef })
 
   useGSAP(() => {
-    console.log(open)
     const isOpening = open
     const targetWidth = isOpening ? drawerWidth.open : drawerWidth.closed
     const _labels = gsap.utils.toArray('.MuiListItemText-root')
     const labels = [..._labels, '.profile-btn-text']
 
-    console.log(_labels)
     gsap.set('.profile-btn-text', { opacity: 0 })
 
     const tl = gsap.timeline({
