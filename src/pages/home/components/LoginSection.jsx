@@ -11,17 +11,6 @@ import { SplitText } from 'gsap/SplitText'
 import { useTranslation } from 'react-i18next'
 import { alpha } from '@mui/material/styles'
 
-const textStyles = (theme) => ({
-  ...theme.typography.h3,
-  mx: 2,
-  opacity: 0,
-  maxWidth: '30ch',
-  fontWeight: 700,
-  lineHeight: 1.2,
-  perspective: '1000px',
-  transformOrigin: '0 50% -50'
-})
-
 export default function LoginSection({ gradientFrom, prefetchAuth }) {
   const { isOnlyMobile } = useApp()
   const { t } = useTranslation('landing')
@@ -84,7 +73,19 @@ export default function LoginSection({ gradientFrom, prefetchAuth }) {
         backgroundColor: gradientFrom,
       }}>
       <div className='flex flex-column flex-center' style={{ zIndex: 2 }}>
-        <Typography variant='h4' className='text-center' sx={textStyles} id='login-text'>
+        <Typography
+          variant='h3'
+          className='text-center'
+          sx={{
+            mx: 2,
+            opacity: 0,
+            maxWidth: '30ch',
+            fontWeight: 700,
+            lineHeight: 1.2,
+            perspective: '1000px',
+            transformOrigin: '0 50% -50'
+          }}
+          id='login-text'>
           {t('login')}
         </Typography>
         <Box

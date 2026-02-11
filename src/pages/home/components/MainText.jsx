@@ -19,8 +19,8 @@ const h1Styles = (theme) => ({
   background: `linear-gradient(90deg, ${theme.palette.primary.main}, 
   ${theme.palette.secondary.main}, ${theme.palette.primary.main})`,
   backgroundSize: '200% auto',
-  backgroundClip: 'text',
   WebkitBackgroundClip: 'text',
+  backgroundClip: 'text',
   WebkitTextFillColor: 'transparent',
   WebkitFontSmoothing: 'antialiased'
 })
@@ -112,7 +112,7 @@ export default function MainText({ showAppBar, setAnimationEnded, prefetchAuth }
       </Typography>
       <Typography
         color='textSecondary'
-        variant='h2'
+        variant='body1'
         className='text-balance'
         sx={h2Styles}
         id='shortText'>

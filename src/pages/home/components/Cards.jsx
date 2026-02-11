@@ -104,7 +104,7 @@ export default function Cards({ setAnimationEnded, bg }) {
               </Box>
             }
             title={
-              <Typography variant='h5' sx={{ fontWeight: 600 }}>
+              <Typography variant='h2' sx={[theme => ({ ...theme.typography.h5, fontWeight: 600, })]}>
                 {t(`cards.${type}.title`)}
               </Typography>
             }
