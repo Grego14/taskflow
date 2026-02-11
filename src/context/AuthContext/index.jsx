@@ -11,22 +11,23 @@ export default function AuthProvider({ children }) {
   useEffect(() => {
     if (!shouldInit) return
 
-    const init = async () => {
+    let unsubscribe;
+
+    (async () => {
       try {
         const { auth } = await import('@/firebase/firebase-config.js')
         const { onAuthStateChanged } = await import('firebase/auth')
 
-        return onAuthStateChanged(auth, user => {
+        unsubscribe = onAuthStateChanged(auth, user => {
           setCurrentUser(user)
-          initialized(true)
+          setInitialized(true)
         })
       } catch (err) {
         console.error('Error loading auth:', err)
       }
-    }
+    })()
 
-    const unsubPromise = init()
-    return () => unsubPromise.then(unsub => unsub?.())
+    return () => unsubscribe?.()
   }, [shouldInit])
 
   const value = useMemo(() => ({
