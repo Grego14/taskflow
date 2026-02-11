@@ -1,10 +1,10 @@
 import useApp from '@hooks/useApp'
 import useAuth from '@hooks/useAuth'
-import useLoadResources from '@hooks/useLoadResources'
 
 import { Suspense, lazy } from 'react'
 import { Route, Routes, BrowserRouter as Router } from 'react-router-dom'
 
+import Landing from '@pages/home/Landing'
 import NotFound from '@pages/notfound/NotFound'
 
 const Notification = lazy(
@@ -24,7 +24,6 @@ const LayoutProvider = lazy(() => import('@context/LayoutContext/index'))
 const LayoutManager = lazy(() => import('@components/ui/layoutmanager/LayoutManager'))
 const Profile = lazy(() => import('@pages/profile/Profile'))
 const Home = lazy(() => import('@pages/home/Home'))
-const Landing = lazy(() => import('@pages/home/Landing.jsx'))
 const Templates = lazy(() => import('@pages/templates/Templates'))
 
 // projects
@@ -48,10 +47,6 @@ export default function AppRoutes() {
   const { notification } = useApp()
   const { currentUser } = useAuth()
   const restrictedPaths = ['/login', '/signup']
-
-  const loadingResources = useLoadResources(['common', 'ui'])
-
-  if (loadingResources) return null
 
   return (
     <>
