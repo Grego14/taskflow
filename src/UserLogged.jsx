@@ -15,7 +15,6 @@ import i18n from '@/i18n'
 import updater from '@services/updateUser'
 import getLocale from '@utils/getLocale'
 import lazyImport from '@utils/lazyImport'
-import { getDatabase, onValue, ref } from 'firebase/database'
 
 export default function UserLogged() {
   const { uid, setUpdateImplementation } = useUser()
