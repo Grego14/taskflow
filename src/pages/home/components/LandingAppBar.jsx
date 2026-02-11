@@ -71,14 +71,12 @@ export default function LandingAppBar() {
       <Box className='flex flex-center nav-item' sx={{ display: 'flex', gap: 2 }}>
         <ThemeUpdater />
         <LangUpdater reloadOnChange />
-        <Box sx={{ width: '2.5rem', height: '2.5rem' }}>
-          {currentUser && (
-            <ProfileButton
-              onlyIcon
-              onClick={() => navigate('profile')}
-            />
-          )}
-        </Box>
+        {currentUser && (
+          <ProfileButton
+            onlyIcon
+            onClick={() => navigate('profile')}
+          />
+        )}
       </Box>
     </AppBar>
   )
