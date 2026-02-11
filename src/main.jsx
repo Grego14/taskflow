@@ -8,7 +8,6 @@ import { StrictMode, useEffect, Suspense } from 'react'
 import { I18nextProvider } from 'react-i18next'
 import i18n from './i18n.js'
 import { createTheme, responsiveFontSizes } from '@mui/material/styles'
-import './main.css'
 
 history.scrollRestoration = 'manual'
 

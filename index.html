@@ -24,6 +24,74 @@
   <meta property="og:url" content="https://apptaskflow.netlify.app">
   <meta property="og:type" content="website">
 
+  <style>
+    #root {
+      min-height: 100dvh;
+      flex-direction: column
+    }
+
+    :root,
+    body {
+      overflow-x: hidden
+    }
+
+    :root {
+      --fs-tiny: clamp(.6rem, .6rem + 1vw, .8rem);
+      --fs-small: clamp(.75rem, .75rem + 2.5vw, .95rem);
+      --fs-medium: clamp(.9rem, .9rem + 2.5vw, 1.15rem);
+      min-height: 100dvh
+    }
+
+    img {
+      max-width: 100%;
+      height: auto;
+      vertical-align: middle
+    }
+
+    @media only screen and (min-width: 75rem) {
+      :root {
+        font-size: clamp(16px, 16px + .25vw, 22px)
+      }
+    }
+
+    .flex {
+      display: flex
+    }
+
+    .flex-wrap {
+      flex-wrap: wrap
+    }
+
+    .flex-grow {
+      flex-grow: 1
+    }
+
+    .flex-column {
+      flex-direction: column
+    }
+
+    .flex-center {
+      justify-content: center;
+      align-items: center
+    }
+
+    .text-center {
+      text-align: center
+    }
+
+    .text-balance {
+      text-wrap: balance
+    }
+
+    .relative {
+      position: relative
+    }
+
+    .absolute {
+      position: absolute
+    }
+  </style>
+
 </head>
 
 <body>
