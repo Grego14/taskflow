@@ -15,23 +15,30 @@ import useNotifications from '@hooks/useNotifications'
 import useUser from '@hooks/useUser'
 import { useTheme } from '@mui/material/styles'
 import { useParams, useNavigate } from 'react-router-dom'
+import { useRef } from 'preact/hooks'
+import { useGSAP } from '@gsap/react'
 
 // utils
 import { setItem } from '@utils/storage.js'
+import gsap from 'gsap'
+
+// Helper to calculate shadow outside to keep component clean
+const getDrawerShadow = (projectId, isMobile, appBarHeight, theme, userTheme) => {
+  const shadowColor = theme.palette.grey[userTheme === 'light' ? 300 : 800]
+  return `0 ${projectId && !isMobile ? appBarHeight : 0} 3px ${shadowColor}`
+}
 
 export default memo(function AppDrawer({ open, setOpen, children }) {
   const { drawerWidth, appBarHeight, isMobile } = useApp()
-  const { preferences, metadata } = useUser()
+  const { preferences } = useUser()
   const { projectId } = useParams()
-  const userTheme = preferences?.theme
   const theme = useTheme()
   const navigate = useNavigate()
+  const drawerRef = useRef(null)
+
+  const shadow = getDrawerShadow(projectId, isMobile, appBarHeight, theme, preferences?.theme)
 
   const { notifications } = useNotifications()
-
-  const easing = theme.transitions.easing.sharp
-  const shadowColor = theme.palette.grey[userTheme === 'light' ? 300 : 800]
-  const shadow = `0 ${projectId && !isMobile ? appBarHeight : 0} 3px ${shadowColor}`
 
   const toggleDrawer = useCallback(
     state => {
@@ -40,6 +47,25 @@ export default memo(function AppDrawer({ open, setOpen, children }) {
     },
     [setOpen]
   )
+
+  useGSAP(() => {
+    const targetWidth = open ? drawerWidth.open : drawerWidth.closed
+
+    // Animate the paper element directly
+    gsap.to('.MuiDrawer-paper', {
+      width: targetWidth,
+      duration: 0.4,
+      ease: 'power3.inOut',
+      overwrite: 'auto'
+    })
+
+    if (open) {
+      gsap.fromTo('#drawer-items',
+        { opacity: 0, x: -10 },
+        { opacity: 1, x: 0, duration: 0.3, stagger: 0.05, delay: 0.1 }
+      )
+    }
+  }, { scope: drawerRef, dependencies: [open] })
 
   const profileBtnProps = {
     open,
@@ -62,19 +88,22 @@ export default memo(function AppDrawer({ open, setOpen, children }) {
       ModalProps={{
         disablePortal: true
       }}
+      ref={drawerRef}
       sx={{
         display: 'flex',
         textWrap: 'nowrap',
+        width: open ? drawerWidth.open : drawerWidth.closed,
         '& .MuiDrawer-paper': {
-          width: drawerWidth?.[open ? 'open' : 'closed'],
+          width: open ? drawerWidth.open : drawerWidth.closed,
+          transition: 'none',
           overflowX: 'hidden',
-          transition: `width 0.15s ${easing}`,
           ...(!open && { boxShadow: shadow })
         }
       }}>
       <Toolbar open={open} toggleDrawer={toggleDrawer} />
 
       <List
+        id='drawer-items'
         className='flex flex-column'
         sx={{ gap: 1.25, height: '100%' }}
         disablePadding>
