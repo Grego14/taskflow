@@ -55,7 +55,7 @@ const btnStyles = (theme) => ({
   boxShadow: theme.palette.mode === 'light' ? `0 10px 20px -10px ${theme.palette.primary.main}80` : 'none'
 })
 
-export default function MainText({ showAppBar, setAnimationEnded, prefetchAuth }) {
+export default function MainText({ setAnimationEnded, prefetchAuth }) {
   const { t } = useTranslation('landing')
   const navigate = useNavigate()
   const mainRef = useRef(null)
@@ -91,9 +91,6 @@ export default function MainText({ showAppBar, setAnimationEnded, prefetchAuth }
         .to('#startFree', {
           autoAlpha: 1, y: 0, scale: 1,
           onComplete: () => {
-            // load and show the appbar
-            showAppBar()
-
             gsap.to('#startFree', { '--shine-left': '200%', duration: 2.5, repeat: -1, ease: 'power1.inOut', repeatDelay: 1 })
             gsap.to('#bigText', { backgroundPosition: '200% center', duration: 5, repeat: -1, ease: 'none' })
           }

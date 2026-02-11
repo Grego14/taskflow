@@ -92,15 +92,14 @@ export default function Landing() {
 
   return (
     <Box sx={{ backgroundColor: landingBg }} component='main'>
-      {mainEnded &&
+      {showAppBar &&
         <Suspense fallback={null}>
-          <LandingAppBar show={showAppBar} />
+          <LandingAppBar />
         </Suspense>
       }
 
       <ScreenWrapper>
         <MainText
-          showAppBar={() => setShowAppBar(true)}
           setAnimationEnded={handleMainAnim}
           prefetchAuth={handlePrefetch}
         />
@@ -110,6 +109,7 @@ export default function Landing() {
         {mainEnded && (
           <Cards
             setAnimationEnded={() => setCardsEnded(true)}
+            showAppBar={() => setShowAppBar(true)}
             bg={landingBg}
           />
         )}

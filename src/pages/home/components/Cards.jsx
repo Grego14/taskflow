@@ -17,6 +17,7 @@ import { useTranslation } from 'react-i18next'
 import gsap from 'gsap'
 import { alpha } from '@mui/material/styles'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { useEffect } from 'react'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -47,11 +48,15 @@ const cardStyles = (theme, isDark) => ({
   }
 })
 
-export default function Cards({ setAnimationEnded, bg }) {
+export default function Cards({ setAnimationEnded, bg, showAppBar }) {
   const { t } = useTranslation('landing')
   const { preferences } = useUser()
   const isDark = preferences?.theme === 'dark'
   const isLaptop = useMediaQuery(theme => theme.breakpoints.up('laptop'))
+
+  useEffect(() => {
+    showAppBar()
+  }, [])
 
   useGSAP(() => {
     document.fonts.ready.then(() => {
