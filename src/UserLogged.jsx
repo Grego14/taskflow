@@ -7,7 +7,9 @@ import useGetUserFromDb from '@hooks/useGetUserFromDb'
 import useUser from '@hooks/useUser'
 import { useMutation } from '@tanstack/react-query'
 import { lazy, useEffect, useMemo, useRef, Suspense } from 'react'
+import useLoadResources from '@hooks/useLoadResources'
 
+import CircleLoader from '@components/reusable/loaders/CircleLoader'
 const CloudOffIcon = lazy(() => import('@mui/icons-material/CloudOff'))
 const CloudSyncIcon = lazy(() => import('@mui/icons-material/CloudSync'))
 
@@ -22,6 +24,7 @@ export default function UserLogged() {
   const { appNotification, notification, setIsOffline, isOffline } = useApp()
 
   const lastConnectionState = useRef(isOffline)
+  const loadingResources = useLoadResources('ui')
 
   useEffect(() => {
     initAuth()
@@ -82,6 +85,8 @@ export default function UserLogged() {
   }, [sendInternetNotification, isOffline])
 
   useGetUserFromDb()
+
+  if (loadingResources) return <CircleLoader />
 
   return <Outlet />
 }
