@@ -1,11 +1,11 @@
-import { useLayoutEffect, useEffect, useState, Suspense, lazy } from 'react'
+import { useEffect, useState, Suspense, lazy } from 'react'
 
 // components
 import CircleLoader from '@components/reusable/loaders/CircleLoader'
 import Box from '@mui/material/Box'
-import LandingAppBar from './components/LandingAppBar'
 import MainText from './components/MainText'
 
+const LandingAppBar = lazy(() => import('./components/LandingAppBar'))
 const Cards = lazy(() => import('./components/Cards'))
 const LoginSection = lazy(() => import('./components/LoginSection'))
 
@@ -18,12 +18,19 @@ import { useTheme } from '@mui/material/styles'
 import useApp from '@hooks/useApp'
 
 import { SplitText } from 'gsap/SplitText'
-import ScrollSmoother from 'gsap/ScrollSmoother'
-import ScrollTrigger from 'gsap/ScrollTrigger'
 
 import setPageTitle from '@utils/setPageTitle'
 
-gsap.registerPlugin(useGSAP, SplitText, ScrollSmoother, ScrollTrigger)
+gsap.registerPlugin(useGSAP, SplitText)
+
+let authPrefetched = false
+
+const handlePrefetch = () => {
+  if (authPrefetched) return
+
+  import('@pages/auth/Auth')
+  authPrefetched = true
+}
 
 export default function Landing() {
   const { t } = useTranslation(['landing', 'common'])
@@ -45,25 +52,45 @@ export default function Landing() {
     setPageTitle(t('routes.home', { ns: 'common' }))
   }, [t])
 
-  useLayoutEffect(() => {
-    const smoother = ScrollSmoother.create({
-      smooth: 1,
-      smoothTouch: 0.1
-    })
+  useEffect(() => {
+    let smoother
 
-    return () => smoother.kill()
-  }, [])
+    const initGSAPPlugins = async () => {
+      const [{ ScrollTrigger }, { ScrollSmoother }] = await Promise.all([
+        import('gsap/ScrollTrigger'),
+        import('gsap/ScrollSmoother')
+      ])
+
+      gsap.registerPlugin(ScrollTrigger, ScrollSmoother)
+
+      smoother = ScrollSmoother.create({
+        smooth: 1,
+        smoothTouch: 0.1
+      })
+
+      ScrollTrigger.refresh()
+    }
+
+    if (!loadingResources) initGSAPPlugins()
+
+    return () => smoother?.kill?.()
+  }, [loadingResources])
 
   if (loadingResources) return <CircleLoader height='100dvh' />
 
   return (
     <Box sx={{ backgroundColor: landingBg }} component='main'>
-      {mainEnded && <LandingAppBar show={showAppBar} />}
+      {mainEnded &&
+        <Suspense fallback={null}>
+          <LandingAppBar show={showAppBar} />
+        </Suspense>
+      }
 
       <ScreenWrapper>
         <MainText
           showAppBar={() => setShowAppBar(true)}
           setAnimationEnded={() => setMainEnded(true)}
+          prefetchAuth={handlePrefetch}
         />
       </ScreenWrapper>
 
@@ -75,7 +102,14 @@ export default function Landing() {
           />
         )}
       </ScreenWrapper>
-      <ScreenWrapper>{cardsEnded && <LoginSection gradientFrom={landingBg} />}</ScreenWrapper>
+      <ScreenWrapper>
+        {cardsEnded &&
+          <LoginSection
+            gradientFrom={landingBg}
+            prefetchAuth={handlePrefetch}
+          />
+        }
+      </ScreenWrapper>
     </Box>
   )
 }
