@@ -3,7 +3,7 @@ import CircularProgress from '@mui/material/CircularProgress'
 import Typography from '@mui/material/Typography'
 import { useTranslation } from 'react-i18next'
 
-export default function CircleLoader({ text, height = '100%' }) {
+export default function CircleLoader({ text, height = '100dvh' }) {
   const { t } = useTranslation('common')
 
   return (
