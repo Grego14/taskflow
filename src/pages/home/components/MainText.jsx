@@ -55,7 +55,7 @@ const btnStyles = (theme) => ({
   boxShadow: theme.palette.mode === 'light' ? `0 10px 20px -10px ${theme.palette.primary.main}80` : 'none'
 })
 
-export default function MainText({ showAppBar, setAnimationEnded }) {
+export default function MainText({ showAppBar, setAnimationEnded, prefetchAuth }) {
   const { t } = useTranslation('landing')
   const navigate = useNavigate()
   const mainRef = useRef(null)
@@ -121,6 +121,7 @@ export default function MainText({ showAppBar, setAnimationEnded }) {
       <Button
         sx={btnStyles}
         variant='contained'
+        onMouseEnter={prefetchAuth}
         id='startFree'
         onClick={() => navigate('signup')}>
         {t('startForFree')}

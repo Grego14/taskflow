@@ -22,7 +22,7 @@ const textStyles = (theme) => ({
   transformOrigin: '0 50% -50'
 })
 
-export default function LoginSection({ gradientFrom }) {
+export default function LoginSection({ gradientFrom, prefetchAuth }) {
   const { isOnlyMobile } = useApp()
   const { t } = useTranslation('landing')
 
@@ -91,8 +91,8 @@ export default function LoginSection({ gradientFrom }) {
           className={isOnlyMobile ? 'flex flex-column' : 'flex'}
           gap={isOnlyMobile ? 2 : 3}
           mt={6}>
-          <LoginButton variant='outlined' id='login-btn' />
-          <SignUpButton id='signup-btn' />
+          <LoginButton variant='outlined' id='login-btn' onMouseEnter={prefetchAuth} />
+          <SignUpButton id='signup-btn' onMouseEnter={prefetchAuth} />
         </Box>
       </div>
 
