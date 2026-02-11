@@ -24,7 +24,7 @@ const appBarStyles = {
   position: 'fixed'
 }
 
-export default function LandingAppBar({ show }) {
+export default function LandingAppBar() {
   const { currentUser } = useAuth()
   const { appBarHeight } = useApp()
   const { preferences } = useUser()
@@ -33,18 +33,14 @@ export default function LandingAppBar({ show }) {
   const userTheme = preferences?.theme === 'light' ? 'light' : 'dark'
 
   useGSAP(() => {
-    if (show) {
-      gsap.from('.nav-item', {
-        y: -20,
-        opacity: 0,
-        stagger: 0.1,
-        duration: 0.8,
-        ease: 'power3.out'
-      })
-    }
-  }, [show])
-
-  if (!show) return null
+    gsap.from('.nav-item', {
+      y: -20,
+      opacity: 0,
+      stagger: 0.1,
+      duration: 0.8,
+      ease: 'power3.out'
+    })
+  })
 
   return (
     <AppBar color='inherit' sx={appBarStyles}>
@@ -75,13 +71,15 @@ export default function LandingAppBar({ show }) {
       <Box className='flex flex-center nav-item' sx={{ display: 'flex', gap: 2 }}>
         <ThemeUpdater />
         <LangUpdater reloadOnChange />
-        {currentUser && (
-          <ProfileButton
-            onlyIcon
-            onClick={() => navigate('profile')}
-          />
-        )}
+        <Box sx={{ width: '2.5rem', height: '2.5rem' }}>
+          {currentUser && (
+            <ProfileButton
+              onlyIcon
+              onClick={() => navigate('profile')}
+            />
+          )}
+        </Box>
       </Box>
-    </AppBar  >
+    </AppBar>
   )
 }
