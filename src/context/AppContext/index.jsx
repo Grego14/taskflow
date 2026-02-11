@@ -1,53 +1,57 @@
-// hooks
-import useAuth from '@hooks/useAuth.js'
+import { useCallback, useMemo, useState } from 'react'
 import { useColorScheme } from '@mui/material/styles'
 import useMediaQuery from '@mui/material/useMediaQuery'
-import { lazy, useCallback, useMemo, useReducer, useState } from 'react'
 
 import UserProvider from '@context/UserContext'
 import AppContext from './context'
 import AppRoutes from '@/AppRoutes.jsx'
 
-// utils
-import {
-  ACTION_TYPES,
-  appStateReducer,
-  initAppState
-} from './appStateReducer.js'
+const DRAWER_CONFIG = {
+  widthOpen: 260,
+  widthClosedDesktop: 64
+}
 
 export default function AppProvider({ children }) {
-  const { currentUser } = useAuth()
-  const [appState, dispatch] = useReducer(appStateReducer, {}, initAppState)
-  const isMobile = useMediaQuery(theme => theme.breakpoints.down('tablet'))
-  const isOnlyMobile = useMediaQuery(theme => theme.breakpoints.down('mobile'))
   const { mode } = useColorScheme()
 
+  const [notification, setNotification] = useState(null)
   const [isOffline, setIsOffline] = useState(false)
 
-  // used to manage the alignment of the AppDrawer and the AppBar
-  const appBarHeight = isMobile ? '3.8rem' : '3.4rem'
+  const isMobile = useMediaQuery(theme => theme.breakpoints.down('tablet'))
+  const isOnlyMobile = useMediaQuery(theme => theme.breakpoints.down('mobile'))
 
-  const appNotification = useCallback(data => {
-    dispatch({ type: ACTION_TYPES.NOTIFICATION, payload: data })
+  const appNotification = useCallback(payload => {
+    if (!payload) {
+      setNotification(null)
+      return
+    }
+
+    const { message, status = 'success', open, ...rest } = payload
+    setNotification({
+      ...rest,
+      message,
+      status,
+      open: open ?? !!message
+    })
   }, [])
 
-  const contextValue = useMemo(
-    () => ({
-      ...appState,
+  const contextValue = useMemo(() => {
+    const appBarHeight = isMobile ? '3.8rem' : '3.4rem'
+
+    return {
+      notification,
       isMobile,
       isOnlyMobile,
-      drawerWidth: {
-        open: 260,
-        // the drawer is replaced with an AppBar on mobile so we set width to 0
-        closed: isMobile ? 0 : 64
-      },
-      isOffline: false,
-      setIsOffline,
       appBarHeight,
+      drawerWidth: {
+        open: DRAWER_CONFIG.widthOpen,
+        closed: isMobile ? 0 : DRAWER_CONFIG.widthClosedDesktop
+      },
+      isOffline,
+      setIsOffline,
       appNotification
-    }),
-    [appState, appBarHeight, isMobile, isOnlyMobile, appNotification]
-  )
+    }
+  }, [notification, isMobile, isOnlyMobile, isOffline, appNotification])
 
   if (!mode) return null
 
