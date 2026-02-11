@@ -5,8 +5,8 @@ import { Suspense, lazy } from 'react'
 import { Route, Routes, BrowserRouter as Router } from 'react-router-dom'
 
 import Landing from '@pages/home/Landing'
-import NotFound from '@pages/notfound/NotFound'
 
+const NotFound = lazy(() => import('@pages/notfound/NotFound'))
 const Notification = lazy(
   () => import('@components/ui/notification/Notification')
 )
