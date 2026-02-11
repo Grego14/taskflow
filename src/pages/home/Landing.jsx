@@ -16,6 +16,7 @@ import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
 import { useTheme } from '@mui/material/styles'
 import useApp from '@hooks/useApp'
+import useAuth from '@hooks/useAuth'
 
 import { SplitText } from 'gsap/SplitText'
 
@@ -33,6 +34,7 @@ const handlePrefetch = () => {
 }
 
 export default function Landing() {
+  const { initAuth } = useAuth()
   const { t } = useTranslation(['landing', 'common'])
   const theme = useTheme()
   const { isOnlyMobile } = useApp()
@@ -43,6 +45,7 @@ export default function Landing() {
   const [showAppBar, setShowAppBar] = useState(false)
   const [mainEnded, setMainEnded] = useState(false)
   const [cardsEnded, setCardsEnded] = useState(false)
+  const [getPlugins, setGetPlugins] = useState(false)
 
   const landingBg = theme.alpha(theme.palette.primary.main, 0.05)
 
@@ -53,6 +56,8 @@ export default function Landing() {
   }, [t])
 
   useEffect(() => {
+    if (!getPlugins) return
+
     let smoother
 
     const initGSAPPlugins = async () => {
@@ -74,9 +79,16 @@ export default function Landing() {
     if (!loadingResources) initGSAPPlugins()
 
     return () => smoother?.kill?.()
-  }, [loadingResources])
+  }, [loadingResources, getPlugins])
 
   if (loadingResources) return <CircleLoader height='100dvh' />
+
+  const handleMainAnim = () => {
+    setMainEnded(true)
+
+    initAuth()
+    setGetPlugins(true)
+  }
 
   return (
     <Box sx={{ backgroundColor: landingBg }} component='main'>
@@ -89,7 +101,7 @@ export default function Landing() {
       <ScreenWrapper>
         <MainText
           showAppBar={() => setShowAppBar(true)}
-          setAnimationEnded={() => setMainEnded(true)}
+          setAnimationEnded={handleMainAnim}
           prefetchAuth={handlePrefetch}
         />
       </ScreenWrapper>

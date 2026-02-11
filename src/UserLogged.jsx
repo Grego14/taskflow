@@ -19,10 +19,14 @@ import { getDatabase, onValue, ref } from 'firebase/database'
 
 export default function UserLogged() {
   const { uid, setUpdateImplementation } = useUser()
-  const { currentUser } = useAuth()
+  const { currentUser, initAuth } = useAuth()
   const { appNotification, notification, setIsOffline, isOffline } = useApp()
 
   const lastConnectionState = useRef(isOffline)
+
+  useEffect(() => {
+    initAuth()
+  }, [initAuth])
 
   const updateUser = useMutation({
     mutationKey: ['updateUser'],
@@ -38,16 +42,21 @@ export default function UserLogged() {
 
   // Manage the offline/online state
   useEffect(() => {
-    const rtdb = getDatabase()
-    const connectedRef = ref(rtdb, '.info/connected')
+    if (!currentUser) return
 
-    const unsubscribe = onValue(connectedRef, snap => {
-      // if snap.val() is true mean the user is online...
-      debounceOffline(!snap.val())
-    })
+    const initRTDB = async () => {
+      const { getDatabase, ref, onValue } = await import('firebase/database')
+      const rtdb = getDatabase()
+      const connectedRef = ref(rtdb, '.info/connected')
 
-    return unsubscribe
-  }, [debounceOffline])
+      return onValue(connectedRef, snap => {
+        debounceOffline(!snap.val())
+      })
+    }
+
+    const unsubPromise = initRTDB()
+    return () => unsubPromise.then(unsub => unsub?.())
+  }, [currentUser, debounceOffline])
 
   const [sendInternetNotification] = useDebounce(async () => {
     const Icon = isOffline ? CloudOffIcon : CloudSyncIcon
