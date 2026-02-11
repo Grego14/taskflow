@@ -1,6 +1,7 @@
 import Button from '@mui/material/Button'
 import Typography from '@mui/material/Typography'
 import Section from './Section'
+import Box from '@mui/material/Box'
 import { useRef } from 'react'
 import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
@@ -107,14 +108,36 @@ export default function MainText({ setAnimationEnded, prefetchAuth }) {
         id='bigText'>
         {t('title0')}
       </Typography>
-      <Typography
-        color='textSecondary'
-        variant='body1'
-        className='text-balance'
-        sx={h2Styles}
-        id='shortText'>
-        {t('title1')}
-      </Typography>
+
+      <Box className='relative' sx={{
+        '& .sr-only': {
+          position: 'absolute',
+          width: '1px',
+          height: '1px',
+          padding: 0,
+          margin: '-1px',
+          overflow: 'hidden',
+          clip: 'rect(0, 0, 0, 0)',
+          whiteSpace: 'nowrap',
+          borderWwidth: 0
+        }
+      }}>
+        <Typography
+          color='textSecondary'
+          variant='body1'
+          className='text-balance'
+          sx={h2Styles}
+          id='shortText'
+          aria-hidden='true'>
+          {t('title1')}
+        </Typography>
+
+        {/* Only visible to screen readers */}
+        <span className='sr-only'>
+          {t('title1')}
+        </span>
+      </Box>
+
       <Button
         sx={btnStyles}
         variant='contained'
