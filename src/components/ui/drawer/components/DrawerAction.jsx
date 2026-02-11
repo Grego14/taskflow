@@ -38,7 +38,6 @@ export default function DrawerAction(props) {
             theme => ({
               my: 0,
               opacity: open ? 1 : 0,
-              transition: 'opacity .25s ease-out',
               color: active ? theme.palette.primary.main : 'inherit'
             })
           ]}
@@ -49,17 +48,13 @@ export default function DrawerAction(props) {
 
   return (
     <ListItem
-      className='flex'
+      className='flex drawer-action'
       key={text}
       disablePadding
       sx={{ width: !showText ? 'fit-content' : '100%' }}>
-      {open ? (
-        listItem
-      ) : (
-        <Tooltip title={text} placement='right'>
-          {listItem}
-        </Tooltip>
-      )}
+      <Tooltip title={text} placement='right'>
+        {listItem}
+      </Tooltip>
     </ListItem>
   )
 }

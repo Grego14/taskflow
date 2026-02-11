@@ -20,7 +20,8 @@ export default function ProfileButton({
   tooltipPosition = 'top',
   onlyIcon = false,
   sx,
-  onClick
+  onClick,
+  className
 }) {
   const { t } = useTranslation('ui')
 
@@ -67,7 +68,8 @@ export default function ProfileButton({
           ...(onlyIcon && { p: 0 }),
           ...sx
         }}
-        aria-label={t('buttons.profileButtonLabel')}>
+        aria-label={t('buttons.profileButtonLabel')}
+        className={className}>
         <Badge
           variant='dot'
           overlap='circular'
@@ -89,6 +91,7 @@ export default function ProfileButton({
 
         {showTexts && open && (
           <Box
+            className='profile-btn-text'
             sx={{
               display: 'flex',
               flexDirection: 'column',

@@ -48,22 +48,59 @@ export default memo(function AppDrawer({ open, setOpen, children }) {
     [setOpen]
   )
 
+  // initial enter animation
   useGSAP(() => {
-    const targetWidth = open ? drawerWidth.open : drawerWidth.closed
+    gsap.from('.MuiDrawer-paper', {
+      autoAlpha: 0,
+      x: -drawerWidth[open ? 'open' : 'closed']
+    })
+  }, { scope: drawerRef })
 
-    // Animate the paper element directly
-    gsap.to('.MuiDrawer-paper', {
-      width: targetWidth,
-      duration: 0.4,
-      ease: 'power3.inOut',
-      overwrite: 'auto'
+  useGSAP(() => {
+    console.log(open)
+    const isOpening = open
+    const targetWidth = isOpening ? drawerWidth.open : drawerWidth.closed
+    const _labels = gsap.utils.toArray('.MuiListItemText-root')
+    const labels = [..._labels, '.profile-btn-text']
+
+    console.log(_labels)
+    gsap.set('.profile-btn-text', { opacity: 0 })
+
+    const tl = gsap.timeline({
+      defaults: { ease: 'expo.inOut', overwrite: 'auto', duration: 0.5 }
     })
 
-    if (open) {
-      gsap.fromTo('#drawer-items',
-        { opacity: 0, x: -10 },
-        { opacity: 1, x: 0, duration: 0.3, stagger: 0.05, delay: 0.1 }
+    tl.to('.MuiDrawer-paper', {
+      width: targetWidth,
+      duration: 0.4,
+      ease: 'power3.out'
+    }).addLabel('items')
+
+    if (isOpening) {
+      tl.fromTo('.drawer-action .MuiListItemIcon-root',
+        { opacity: 0, x: -8 },
+        { opacity: 1, x: 0, stagger: 0.05 },
+        'items'
       )
+
+      tl.fromTo(labels,
+        { x: -15, opacity: 0 },
+        { x: 0, opacity: 1, stagger: 0.075 },
+        'items-=0.2'
+      )
+    } else {
+      tl.to(labels, {
+        opacity: 0,
+        x: -15,
+        duration: 0.15,
+        stagger: 0.03
+      }, 'items-=0.4')
+
+      tl.to('.drawer-action .MuiListItemIcon-root', {
+        x: 0,
+        opacity: 1,
+        duration: 0.3
+      }, 'items')
     }
   }, { scope: drawerRef, dependencies: [open] })
 
@@ -77,7 +114,8 @@ export default memo(function AppDrawer({ open, setOpen, children }) {
       justifyContent: open ? 'start' : 'center'
     },
     tooltipPosition: 'right',
-    onClick: () => navigate('/profile')
+    onClick: () => navigate('/profile'),
+    className: 'drawer-action'
   }
 
   return (
@@ -96,14 +134,13 @@ export default memo(function AppDrawer({ open, setOpen, children }) {
         '& .MuiDrawer-paper': {
           width: open ? drawerWidth.open : drawerWidth.closed,
           transition: 'none',
-          overflowX: 'hidden',
+          overflow: 'hidden',
           ...(!open && { boxShadow: shadow })
         }
       }}>
       <Toolbar open={open} toggleDrawer={toggleDrawer} />
 
       <List
-        id='drawer-items'
         className='flex flex-column'
         sx={{ gap: 1.25, height: '100%' }}
         disablePadding>
