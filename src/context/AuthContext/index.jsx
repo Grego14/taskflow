@@ -6,6 +6,7 @@ import AuthContext from './context'
 export default function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState(null)
   const [shouldInit, setShouldInit] = useState(false)
+  const [initialized, setInitialized] = useState(false)
 
   useEffect(() => {
     if (!shouldInit) return
@@ -17,6 +18,7 @@ export default function AuthProvider({ children }) {
 
         return onAuthStateChanged(auth, user => {
           setCurrentUser(user)
+          initialized(true)
         })
       } catch (err) {
         console.error('Error loading auth:', err)
@@ -29,7 +31,8 @@ export default function AuthProvider({ children }) {
 
   const value = useMemo(() => ({
     currentUser,
-    initAuth: () => setShouldInit(true)
+    initAuth: () => setShouldInit(true),
+    initialized
   }), [currentUser])
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
