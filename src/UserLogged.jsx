@@ -86,7 +86,5 @@ export default function UserLogged() {
 
   useGetUserFromDb()
 
-  if (loadingResources) return <CircleLoader />
-
   return <Outlet />
 }
