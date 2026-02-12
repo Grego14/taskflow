@@ -89,7 +89,7 @@ export default function ProfileButton({
           />
         </Badge>
 
-        {showTexts && open && (
+        {showTexts && (
           <Box
             className='profile-btn-text'
             sx={{
@@ -100,9 +100,8 @@ export default function ProfileButton({
             }}>
             <Typography
               sx={{
-                opacity: open ? 1 : 0,
-                width: open ? 'auto' : 0,
-                fontSize: 'var(--fs-small, .95rem)',
+                opacity: 1,
+                fontSize: 'var(--fs-small)',
                 color: 'text.primary'
               }}>
               {username}
@@ -111,9 +110,8 @@ export default function ProfileButton({
               <Typography
                 variant='caption'
                 sx={{
-                  opacity: open ? 1 : 0,
-                  width: open ? 'auto' : 0,
-                  fontSize: 'var(--fs-tiny, .8rem)',
+                  opacity: 1,
+                  fontSize: 'var(--fs-tiny)',
                   color: 'text.secondary'
                 }}>
                 {email}
