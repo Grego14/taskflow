@@ -1,8 +1,7 @@
-import { useState } from 'react'
+import { useRef } from 'react'
 
 // components
 import Link from '@components/reusable/Link'
-import CircleLoader from '@components/reusable/loaders/CircleLoader'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 
@@ -12,81 +11,113 @@ import useUser from '@hooks/useUser'
 import { useTranslation } from 'react-i18next'
 
 // utils
-import { getItem } from '@utils/storage.js'
 import gsap from 'gsap'
 import { ScrambleTextPlugin } from 'gsap/ScrambleTextPlugin'
 
-gsap.registerPlugin(useGSAP, ScrambleTextPlugin)
+gsap.registerPlugin(ScrambleTextPlugin)
 
-const linkHoverStyles = {
-  '&:hover': {
-    opacity: 0.8
+const linkStyles = {
+  position: 'relative',
+  opacity: 0,
+  translate: '0 20px',
+  visibility: 'hidden',
+  display: 'inline-block',
+  '&::after': {
+    content: '""',
+    position: 'absolute',
+    bottom: -2,
+    left: 0,
+    width: '0%',
+    height: '1px',
+    backgroundColor: 'currentColor',
+    transition: 'width 0.3s ease'
+  },
+  '&:hover::after': {
+    width: '100%'
   }
 }
 
 export default function Home() {
   const { t } = useTranslation(['common', 'ui'])
-  const [open, setOpen] = useState(getItem('drawerOpen', false))
-
   const { profile, metadata, userLoaded } = useUser()
+  const containerRef = useRef(null)
 
-  const lastEditedProject = metadata?.lastEditedProject
-  const lastEditedProjectOwner = metadata?.lastEditedProjectOwner
   const username = profile?.username
+  const lastEdited = metadata?.lastEditedProject
+  const owner = metadata?.lastEditedProjectOwner
 
-  useGSAP(
-    () => {
-      document.fonts.ready.then(() => {
-        if (username && userLoaded) {
-          gsap.set('#username', { opacity: 1 })
+  const navLinks = [
+    { to: '/projects', text: t('projects.goToProjects', { ns: 'ui' }) },
+    { to: '/projects/new', text: t('projects.createProject', { ns: 'ui' }) },
+    ...(lastEdited ? [{
+      to: `/projects/${lastEdited}?o=${owner}`,
+      text: t('projects.lastEditedProject', { ns: 'ui' })
+    }] : [])
+  ]
 
-          gsap.to('#username', {
-            duration: 1,
-            scrambleText: {
-              text: username,
-              chars: 'User',
-              speed: 0.75,
-              revealDelay: 0.5
-            }
-          })
-        }
-      })
-    },
-    { dependencies: [username, userLoaded] }
-  )
+  const { contextSafe } = useGSAP({ scope: containerRef })
 
-  if (!userLoaded)
-    return (
-      <CircleLoader height='100dvh' text={t('loadingUser', { ns: 'ui' })} />
-    )
+  const handleHover = contextSafe((e, isEnter) => {
+    gsap.to(e.currentTarget, {
+      x: isEnter ? 5 : 0,
+      duration: 0.3,
+      ease: 'power2.out'
+    })
+  })
+
+  useGSAP(() => {
+    if (!userLoaded || !username) return
+
+    document.fonts.ready.then(() => {
+      const tl = gsap.timeline()
+
+      tl.to('#welcome', { autoAlpha: 1 })
+        .to('#username', {
+          duration: 1.2,
+          autoAlpha: 1,
+          scrambleText: {
+            text: username,
+            chars: 'upperCase',
+            speed: 0.4,
+            revealDelay: 0.2
+          }
+        }, '<')
+
+      tl.to('.home-link', {
+        y: 0,
+        autoAlpha: 1,
+        duration: 0.6,
+        stagger: 0.15,
+        ease: 'power2.out'
+      }, '-=0.5')
+    })
+  }, { dependencies: [username, userLoaded], scope: containerRef })
 
   return (
-    <Box className='flex flex-column flex-center text-center' m='auto'>
-      <Typography variant='h4'>
+    <Box
+      className='flex flex-column flex-center text-center'
+      m='auto'
+      ref={containerRef}>
+      <Typography variant='h4' sx={{ opacity: 0, visibility: 'hidden' }} id='welcome'>
         {t('welcome', { ns: 'common' })}{' '}
-        <Typography variant='span' sx={{ opacity: 0 }} id='username'>
+        <Typography variant='span' sx={{ color: 'primary.main', fontWeight: 700 }} id='username'>
           {username}
         </Typography>
       </Typography>
 
-      <Link to='/projects' marginTop={4} sx={linkHoverStyles}>
-        <Typography>{t('projects.goToProjects', { ns: 'ui' })}</Typography>
-      </Link>
-
-      {lastEditedProject && (
-        <Link
-          to={`/projects/${lastEditedProject}?o=${lastEditedProjectOwner}`}
-          marginTop={2}
-          sx={linkHoverStyles}>
-          <Typography>
-            {t('projects.lastEditedProject', { ns: 'ui' })}
-          </Typography>
-        </Link>
-      )}
-
-      <Link to='/projects/new' marginTop={2} sx={linkHoverStyles}>
-        <Typography>{t('projects.createProject', { ns: 'ui' })}</Typography>
-      </Link>
+      <Box className='flex flex-column flex-center' gap={2} mt={3}>
+        {navLinks.map((link) => (
+          <Link
+            key={link.to}
+            to={link.to}
+            className='home-link'
+            sx={linkStyles}
+            onMouseEnter={(e) => handleHover(e, true)}
+            onMouseLeave={(e) => handleHover(e, false)}>
+            <Typography>{link.text}</Typography>
+          </Link>
+        ))}
+      </Box>
     </Box>
   )
 }
