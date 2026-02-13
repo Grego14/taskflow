@@ -1,5 +1,5 @@
-import CircleLoader from '@components/reusable/loaders/CircleLoader'
 // components
+import CircleLoader from '@components/reusable/loaders/CircleLoader'
 import CreateProject from '@components/ui/buttons/CreateProject'
 import ProjectsCards from '@components/ui/projectcard/ProjectsCards'
 import Box from '@mui/material/Box'
@@ -8,11 +8,11 @@ import Typography from '@mui/material/Typography'
 // hooks
 import useApp from '@hooks/useApp'
 import useUser from '@hooks/useUser'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import db from '@/db'
 // utils
+import db from '@/db'
 import i18n from '@/i18n'
 import { getFriendlyAuthError } from '@utils/getFriendlyAuthError.js'
 import {
@@ -31,78 +31,41 @@ export default function Projects() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    let unsubscribe
-    ;(async () => {
-      try {
-        const userProjectsQuery = query(
-          collectionGroup(db, 'projects'),
-          where('createdBy', '==', uid),
-          where('drawerData', '==', false)
-        )
-        const externalProjectsQuery = query(
-          collectionGroup(db, 'projects'),
-          where('members', 'array-contains', uid),
-          where('createdBy', '!=', uid),
-          where('drawerData', '==', false)
-        )
+    if (!uid) return
 
-        const userProjectsSnapshot = onSnapshot(
-          userProjectsQuery,
-          snap => {
-            const userProjects = snap.docs.map(doc => doc.data())
+    const qUser = query(
+      collectionGroup(db, 'projects'),
+      where('createdBy', '==', uid),
+      where('drawerData', '==', false))
+    const qExt = query(
+      collectionGroup(db, 'projects'),
+      where('members', 'array-contains', uid),
+      where('createdBy', '!=', uid),
+      where('drawerData', '==', false))
 
-            setProjects(projects => {
-              const newProjects = { user: [], external: projects.external }
+    const unsubUser = onSnapshot(qUser, snap => {
+      const docs = snap.docs.map(doc => doc.data())
+      setProjects(prev => ({ ...prev, user: docs }))
+    })
 
-              for (const project of userProjects) {
-                newProjects.user.push(project)
-              }
+    const unsubExt = onSnapshot(qExt, snap => {
+      const docs = snap.docs.map(doc => doc.data())
+      setProjects(prev => ({ ...prev, external: docs }))
+      setLoading(false)
+    })
 
-              return newProjects
-            })
-
-            setLoading(false)
-          },
-          e => console.error(e)
-        )
-
-        const externalProjectsSnapshot = onSnapshot(
-          externalProjectsQuery,
-          snap => {
-            const externalProjects = snap.docs.map(doc => doc.data())
-
-            setProjects(projects => {
-              const newProjects = { user: projects.user, external: [] }
-
-              for (const project of externalProjects) {
-                newProjects.external.push(project)
-              }
-
-              return newProjects
-            })
-
-            setLoading(false)
-          },
-          e => console.error(e)
-        )
-
-        unsubscribe = () => {
-          userProjectsSnapshot()
-          externalProjectsSnapshot()
-        }
-      } catch (error) {
-        // console.error('getProjects:', error)
-        throw getFriendlyAuthError(error.message, i18n.language)
-      }
-    })()
-
-    return () => unsubscribe?.()
+    return () => {
+      unsubUser()
+      unsubExt()
+    }
   }, [uid])
 
   const projectsQuantity = projects.user.length + projects.external.length
 
-  if (loading)
-    return <CircleLoader text={t('projects.loading')} height='100dvh' />
+  const allProjects = useMemo(() => ([...projects.user, ...projects.external]), [projects])
+  const hasProjects = allProjects.length > 0
+
+  if (loading) return <CircleLoader text={t('projects.loading')} height='100dvh' />
 
   return (
     <Box
@@ -119,9 +82,9 @@ export default function Projects() {
             className={isMobile ? 'text-center' : ''}
             variant='h1'
             sx={[theme => ({ ...theme.typography.h4 })]}>
-            {t('projects.title_quantity', { quantity: projectsQuantity })}
+            {t('projects.title_quantity', { quantity: allProjects.length })}
           </Typography>
-          <ProjectsCards data={[...projects.user, ...projects.external]} />
+          <ProjectsCards data={allProjects} />
           <CreateProject sx={{ alignSelf: isMobile ? 'center' : 'start' }} />
         </>
       ) : (

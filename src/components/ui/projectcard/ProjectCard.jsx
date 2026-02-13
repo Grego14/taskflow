@@ -10,7 +10,9 @@ import CardContent from '@mui/material/CardContent'
 import CardHeader from '@mui/material/CardHeader'
 import Chip from '@mui/material/Chip'
 import Typography from '@mui/material/Typography'
-import ProjectActions from './ProjectActions'
+
+import { lazy, Suspense } from 'preact/compat'
+const ProjectActions = lazy(() => import('./ProjectActions'))
 
 // hooks
 import useAuth from '@hooks/useAuth'
@@ -18,123 +20,160 @@ import useNavigateToProject from '@hooks/useNavigateToProject'
 import useUser from '@hooks/useUser'
 import { alpha, useTheme } from '@mui/material/styles'
 import { useTranslation } from 'react-i18next'
+import { useRef } from 'preact/hooks'
+import { useGSAP } from '@gsap/react'
+import useApp from '@hooks/useApp'
 
 // utils
 import formatTimeAgo from '@utils/formatTimeAgo.js'
 import formatTimestamp from '@utils/formatTimestamp.js'
 import getMenuLabel from '@utils/getMenuLabel'
+import gsap from 'gsap'
 
-export default function ProjectCard({ data }) {
-  const { currentUser } = useAuth()
+export default function ProjectCard({ data, isRecent }) {
   const { t } = useTranslation('ui')
   const theme = useTheme()
+  const { uid } = useUser()
+  const { isMobile } = useApp()
   const navigate = useNavigateToProject()
   const { preferences } = useUser()
+  const cardRef = useRef(null)
 
-  const locale = preferences?.locale
+  const { contextSafe } = useGSAP({ scope: cardRef })
 
-  // format the firebase timestamp ({seconds, nanoseconds}) to a Date object
-  const createdDate = data?.createdAt
-    ? formatTimestamp(data?.createdAt, locale)?.raw
-    : new Date()
-  const date = formatTimeAgo(createdDate, locale)
+  const onHover = contextSafe((active) => {
+    const borderColor = theme.palette.primary.main
 
-  if (!data) return null
+    gsap.to(cardRef.current, {
+      y: active ? -6 : 0,
+      duration: 0.3,
+      boxShadow: active ? '0 10px 20px rgba(0,0,0,0.1)' : '0 1px 3px rgba(0,0,0,0.05)',
+      borderColor: active ?
+        borderColor :
+        // keep the border color if the card is recent
+        isRecent ? borderColor : 'transparent'
+    })
+  })
+
+  const date = formatTimeAgo(
+    formatTimestamp(data?.createdAt,
+      preferences?.locale)?.raw || new Date(),
+    preferences?.locale)
+
+  const noDescription = !data?.description
+
+  if (!data || !date) return null
 
   return (
     <Card
       data-id={data?.id}
-      className='flex flex-column'
-      sx={{ maxWidth: '30rem' }}>
+      className='flex flex-column card'
+      ref={cardRef}
+      onMouseEnter={() => onHover(true)}
+      onMouseLeave={() => onHover(false)}
+      sx={{
+        borderRadius: 2,
+        border: isRecent ? `1px solid ${theme.palette.primary.main}` : '1px solid transparent',
+        bgcolor: 'background.paper',
+        maxWidth: '35rem',
+        opacity: 0,
+        visibility: 'hidden'
+      }}
+    >
       <CardHeader
         disableTypography
         action={
           <DropdownMenu
             icon={<MoreVertIcon />}
-            label={state =>
-              getMenuLabel(state, 'projects.projectCardMenuLabel', 'ui')
-            }>
-            <ProjectActions
-              id={data?.id}
-              archived={data?.isArchived}
-              isOwner={data?.createdBy === currentUser?.uid}
-              owner={data?.createdBy}
-            />
+            label={s => getMenuLabel(s, 'projects.projectCardMenuLabel', 'ui')}
+            slotProps={{ list: { sx: { py: 0 } }, paper: { sx: { minWidth: 0, minHeight: 0 } } }}
+          >
+            <Suspense fallback={null}>
+              <ProjectActions
+                id={data?.id}
+                archived={data?.isArchived}
+                isOwner={data?.createdBy === uid}
+                owner={data?.createdBy}
+              />
+            </Suspense>
           </DropdownMenu>
         }
         title={
-          <Typography variant='h3' sx={[theme => ({ ...theme.typography.h6 })]}>
+          <Typography
+            className='project-title'
+            sx={{
+              opacity: 0,
+              visibility: 'hidden',
+              perspective: '1000px',
+              transformOrigin: '0 50% -50'
+            }}
+            variant='h6'
+            fontWeight={700}>
             {data?.name}
-          </Typography>
-        }
+          </Typography>}
         subheader={
-          <Box className='flex' gap={2} mt={1}>
-            <Typography>{data?.id}</Typography>
-            {data?.isTemplate && (
-              <Chip
-                variant='outlined'
+          <Box className='flex' gap={1} mt={0.5} flexWrap='wrap'>
+            <Typography variant='caption' sx={{ opacity: 0.7 }}>{data?.id}</Typography>
+            {data?.isTemplate &&
+              <StatusChip
                 label={t('projects.template')}
                 color='primary'
-                sx={{
-                  ...theme.typography.caption,
-                  fontWeight: 'bold',
-                  backgroundColor: alpha(
-                    theme.palette.primary[preferences?.theme],
-                    0.1
-                  )
-                }}
-                size='small'
+                theme={theme}
+                type={preferences?.theme}
               />
-            )}
-
-            {data?.isArchived && (
-              <Chip
-                variant='outlined'
+            }
+            {data?.isArchived &&
+              <StatusChip
                 label={t('projects.archived')}
                 color='warning'
-                sx={{
-                  ...theme.typography.caption,
-                  fontWeight: 'bold',
-                  backgroundColor: alpha(theme.palette.warning.main, 0.1)
-                }}
-                size='small'
+                theme={theme}
               />
-            )}
+            }
           </Box>
         }
       />
-      <CardContent
-        className='flex flex-column'
-        sx={{ py: 0, height: '100%', gap: 1 }}>
-        <Typography>{data?.description}</Typography>
-        <Box
-          className='flex'
+      <CardContent className='flex flex-column' sx={{ flexGrow: 1, py: 0 }}>
+        <Typography
           sx={{
-            mt: 'auto',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            gap: 2,
-            my: 0.75
+            minHeight: theme.typography.body1.fontSize,
+            fontStyle: noDescription ? 'italic' : 'normal',
+            color: `text.${noDescription ? 'secondary' : 'primary'}`
           }}>
-          <Typography color='textSecondary' variant='body2'>
-            {t('projects.created_date', { date })}
-          </Typography>
-          {data?.members?.length > 0 && (
-            <Typography color='textSecondary' variant='body2'>
-              {t('projects.members', { count: data?.members?.length })}
-            </Typography>
-          )}
-        </Box>
+          {data?.description || t('projects.noDescription')}
+        </Typography>
       </CardContent>
-      <CardActions
-        className='flex'
-        sx={{ justifyContent: 'space-between', py: 2 }}>
+      <CardActions sx={{ p: 2, justifyContent: 'space-between', mt: 'auto' }}>
+        <Typography variant='caption' color='textSecondary'>
+          {t('projects.created_date', { date })}
+        </Typography>
         <Button
-          endIcon={<GoToProjectIcon fontSize='small' />}
-          onClick={() => navigate(data?.id, data?.createdBy)}>
-          {t('projects.goToProject')}
+          size='small'
+          endIcon={<GoToProjectIcon />}
+          onClick={() => navigate(data?.id, data?.createdBy)}
+          aria-label={isMobile ? t('projects.goToProject') : null}
+          sx={{
+            fontWeight: 700, '& .MuiButton-endIcon': {
+              ...(isMobile && { ml: 0, p: 1 })
+            }
+          }}>
+          {!isMobile && t('projects.goToProject')}
         </Button>
       </CardActions>
     </Card>
   )
 }
+
+const StatusChip = ({ label, color, theme, type }) => (
+  <Chip
+    label={label}
+    size='small'
+    variant='outlined'
+    sx={{
+      fontSize: '0.65rem',
+      fontWeight: 900,
+      bgcolor: alpha(theme.palette[color].main, 0.08),
+      color: theme.palette[color].main,
+      border: 'none'
+    }}
+  />
+)
