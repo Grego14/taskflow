@@ -30,6 +30,8 @@ import formatTimestamp from '@utils/formatTimestamp.js'
 import getMenuLabel from '@utils/getMenuLabel'
 import gsap from 'gsap'
 
+const hidden = { opacity: 0, visibility: 'hidden' }
+
 export default function ProjectCard({ data, isRecent }) {
   const { t } = useTranslation('ui')
   const theme = useTheme()
@@ -76,8 +78,7 @@ export default function ProjectCard({ data, isRecent }) {
         border: isRecent ? `1px solid ${theme.palette.primary.main}` : '1px solid transparent',
         bgcolor: 'background.paper',
         maxWidth: '35rem',
-        opacity: 0,
-        visibility: 'hidden'
+        ...hidden
       }}
     >
       <CardHeader
@@ -102,8 +103,7 @@ export default function ProjectCard({ data, isRecent }) {
           <Typography
             className='project-title'
             sx={{
-              opacity: 0,
-              visibility: 'hidden',
+              ...hidden,
               perspective: '1000px',
               transformOrigin: '0 50% -50'
             }}
@@ -113,7 +113,13 @@ export default function ProjectCard({ data, isRecent }) {
           </Typography>}
         subheader={
           <Box className='flex' gap={1} mt={0.5} flexWrap='wrap'>
-            <Typography variant='caption' sx={{ opacity: 0.7 }}>{data?.id}</Typography>
+            <Typography
+              className='project-id'
+              variant='caption'
+              sx={hidden}
+              color='textSecondary'>
+              {data?.id}
+            </Typography>
             {data?.isTemplate &&
               <StatusChip
                 label={t('projects.template')}
@@ -134,6 +140,7 @@ export default function ProjectCard({ data, isRecent }) {
       />
       <CardContent className='flex flex-column' sx={{ flexGrow: 1, py: 0 }}>
         <Typography
+          className='project-description'
           sx={{
             minHeight: theme.typography.body1.fontSize,
             fontStyle: noDescription ? 'italic' : 'normal',

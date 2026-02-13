@@ -1,10 +1,8 @@
-// components
 import ProjectCard from '@components/ui/projectcard/ProjectCard'
 import Box from '@mui/material/Box'
 import Divider from '@mui/material/Divider'
 import Typography from '@mui/material/Typography'
 
-// hooks
 import useApp from '@hooks/useApp'
 import useUser from '@hooks/useUser'
 import { useTranslation } from 'react-i18next'
@@ -14,8 +12,18 @@ import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
 import { SplitText } from 'gsap/SplitText'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { ScrambleTextPlugin } from 'gsap/ScrambleTextPlugin'
 
-gsap.registerPlugin(SplitText, ScrollTrigger)
+gsap.registerPlugin(SplitText, ScrollTrigger, ScrambleTextPlugin)
+
+const ProjectsSection = ({ title, children }) => (
+  <Box className='flex flex-column' gap={1.5} minWidth='100%'>
+    <Typography variant='overline' color='textSecondary' sx={{ fontSize: '0.85rem' }}>
+      {title}
+    </Typography>
+    {children}
+  </Box>
+)
 
 export default function ProjectsCards({ data }) {
   const { t } = useTranslation('ui')
@@ -25,55 +33,85 @@ export default function ProjectsCards({ data }) {
 
   const lastId = metadata?.lastEditedProject
 
-  // filter out the last project and sort the rest
-  const projects = useMemo(() => ({
-    other: data
-      ?.filter(p => p.id !== lastId)
-      ?.sort((a, b) => (a.isArchived === b.isArchived ? 0 : a.isArchived ? 1 : -1)),
-    last: data?.find(p => p.id === lastId)
-  }),
-    [data, metadata])
+  const projects = useMemo(() => {
+    if (!data) return { other: [], last: null }
+
+    return {
+      other: data
+        .filter(p => p.id !== lastId)
+        .sort((a, b) => (a.isArchived === b.isArchived ? 0 : a.isArchived ? 1 : -1)),
+      last: data.find(p => p.id === lastId)
+    }
+  }, [data, lastId])
 
   useGSAP(() => {
-    if (!userLoaded || userLoaded && !lastId) return
+    if (!userLoaded || !lastId) return
 
     const cards = gsap.utils.toArray('.card', containerRef.current)
-
     const tl = gsap.timeline({ defaults: { ease: 'expo.out' } })
 
-    gsap.set('.project-title', { autoAlpha: 1 })
+    gsap.set('.project-title, .project-description', { autoAlpha: 1 })
 
-    gsap.set([...cards], { x: -300 })
-    tl.to([...cards], { autoAlpha: 1, x: 0, ease: 'back.out(2)', duration: 1.25, stagger: 0.25 }, 'start')
+    for (const card of cards) {
+      const titleEl = card.querySelector('.project-title')
+      const descEl = card.querySelector('.project-description')
+      const idEl = card.querySelector('.project-id')
 
-    const title = SplitText.create('.project-title', {
-      smartWrap: true, type: 'chars', onSplit(self) {
-        gsap.set(self.chars, { x: -15, rotateZ: 45, y: 15, opacity: 0 })
+      const title = SplitText.create(titleEl, { smartWrap: true, type: 'chars' })
+      const description = SplitText.create(descEl, { smartWrap: true, type: 'chars' })
 
-        tl.to(self.chars, {
+      gsap.set(card, { x: -50, autoAlpha: 0 })
+      gsap.set(title.chars, { x: -15, rotateZ: 45, y: 15, opacity: 0 })
+      gsap.set(description.chars, { x: -15, rotateZ: -45, y: 15, opacity: 0 })
+
+      // make the non initial cards appear
+      const position = cards.indexOf(card) > 0 ? '-=0.75' : '+=0'
+
+      tl.to(card, {
+        autoAlpha: 1,
+        x: 0,
+        ease: 'back.out(2)',
+        duration: 1.25,
+        delay: 0.35
+      }, position)
+        .to(title.chars, {
           x: 0,
           rotateZ: 0,
           y: 0,
           opacity: 1,
           stagger: 0.02
-        }, 'start+=0.5')
-      }
-    })
-  }, { dependencies: [userLoaded, lastId] })
+        }, '<0.2')
+        .to(idEl, {
+          autoAlpha: 1,
+          scrambleText: {
+            text: '{original}',
+            chars: 'abcdefghifj1234567890',
+            revealDelay: 0.3
+          }
+        }, '<0.3')
+        .to(description.chars, {
+          x: 0,
+          rotateZ: 0,
+          y: 0,
+          opacity: 1,
+          stagger: 0.01
+        }, '<0.2')
+    }
+  }, { dependencies: [userLoaded, lastId], scope: containerRef })
 
-  if (!userLoaded) return
+  if (!userLoaded) return null
 
   return (
     <Box
       ref={containerRef}
-      className={`flex flex-column${isMobile ? ' flex-center' : ''}`}
+      className={`flex flex-column ${isMobile ? 'flex-center' : ''}`}
       gap={4}
       my={3}
-      id='cards'>
+      id='cards'
+    >
       {projects.last && (
         <ProjectsSection title={t('projects.recentProject')}>
           <ProjectCard data={projects.last} isRecent />
-
           {projects.other.length > 0 && <Divider sx={{ mt: 2 }} />}
         </ProjectsSection>
       )}
@@ -83,26 +121,16 @@ export default function ProjectsCards({ data }) {
           <Box
             sx={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fill, 1fr)',
-              gap: 3,
-            }}>
+              gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
+              gap: 3
+            }}
+          >
             {projects.other.map(project => (
               <ProjectCard data={project} key={project.id} />
             ))}
           </Box>
         </ProjectsSection>
       )}
-    </Box>
-  )
-}
-
-function ProjectsSection({ title, children }) {
-  return (
-    <Box className='flex flex-column' gap={1.5} minWidth='100%'>
-      <Typography variant='overline' color='textSecondary' sx={{ fontSize: '0.85rem' }}>
-        {title}
-      </Typography>
-      {children}
     </Box>
   )
 }
