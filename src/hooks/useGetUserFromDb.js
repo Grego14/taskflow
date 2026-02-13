@@ -11,10 +11,7 @@ export default function useGetUserFromDb() {
   const { uid, setUser, setUserLoaded } = useUser()
 
   useEffect(() => {
-    if (!uid) {
-      setUserLoaded(true)
-      return
-    }
+    if (!uid) return
 
     let unsubscribe
 
