@@ -18,9 +18,12 @@ const UserContext = createContext({
     avatar: '',
     email: ''
   },
-  update: () => {},
-  preview: 'list',
-  updatePreviewer: () => {}
+  update: () => { },
+  setUser: () => { },
+  userLoaded: false,
+  setUserLoaded: () => { },
+  uid: '',
+  setUpdateImplementation: () => { }
 })
 
 export default UserContext
