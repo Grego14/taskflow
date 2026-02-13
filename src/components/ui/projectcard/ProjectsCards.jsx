@@ -45,12 +45,21 @@ export default function ProjectsCards({ data }) {
   }, [data, lastId])
 
   useGSAP(() => {
-    if (!userLoaded || !lastId) return
+    if (!userLoaded || !data) return
+
+    // wait until the last is ready
+    if (lastId && !projects.last && data.length > 0) return
 
     const cards = gsap.utils.toArray('.card', containerRef.current)
-    const tl = gsap.timeline({ defaults: { ease: 'expo.out' } })
-
     gsap.set('.project-title, .project-description', { autoAlpha: 1 })
+
+    gsap.to('#divider', {
+      width: '100%',
+      opacity: 1,
+      ease: 'power4.out',
+      duration: 2,
+      delay: 0.5
+    })
 
     for (const card of cards) {
       const titleEl = card.querySelector('.project-title')
@@ -60,14 +69,23 @@ export default function ProjectsCards({ data }) {
       const title = SplitText.create(titleEl, { smartWrap: true, type: 'chars' })
       const description = SplitText.create(descEl, { smartWrap: true, type: 'chars' })
 
+      const cardTl = gsap.timeline({
+        scrollTrigger: {
+          trigger: card,
+          start: 'top 85%',
+          toggleActions: 'play none none none'
+        },
+        defaults: { ease: 'expo.out' }
+      })
+
       gsap.set(card, { x: -50, autoAlpha: 0 })
       gsap.set(title.chars, { x: -15, rotateZ: 45, y: 15, opacity: 0 })
       gsap.set(description.chars, { x: -15, rotateZ: -45, y: 15, opacity: 0 })
 
       // make the non initial cards appear
-      const position = cards.indexOf(card) > 0 ? '-=0.75' : '+=0'
+      const position = 0.1 * cards.indexOf(card)
 
-      tl.to(card, {
+      cardTl.to(card, {
         autoAlpha: 1,
         x: 0,
         ease: 'back.out(2)',
@@ -112,7 +130,16 @@ export default function ProjectsCards({ data }) {
       {projects.last && (
         <ProjectsSection title={t('projects.recentProject')}>
           <ProjectCard data={projects.last} isRecent />
-          {projects.other.length > 0 && <Divider sx={{ mt: 2 }} />}
+          {projects.other.length > 0 &&
+            <Divider
+              id='divider'
+              sx={{
+                mt: 2,
+                width: 0,
+                opacity: 0
+              }}
+            />
+          }
         </ProjectsSection>
       )}
 
