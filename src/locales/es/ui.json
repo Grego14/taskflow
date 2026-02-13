@@ -169,7 +169,8 @@
       "placeholder": "Buscar por correo electrónico...",
       "search": "Buscar miembro"
     },
-    "loadingMetrics": "Cargando métricas"
+    "loadingMetrics": "Cargando métricas",
+    "noDescription": "No se agrego una descripción..."
   },
   "notifications": {
     "projectDeleted": "Proyecto borrado exitosamente",

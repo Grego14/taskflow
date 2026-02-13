@@ -164,7 +164,8 @@
       "placeholder": "Search by email...",
       "search": "Search member"
     },
-    "loadingMetrics": "Loading metrics"
+    "loadingMetrics": "Loading metrics",
+    "noDescription": "No description provided..."
   },
   "notifications": {
     "projectDeleted": "Project successfully deleted",
