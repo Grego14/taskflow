@@ -8,7 +8,7 @@ export default memo(function ProjectInput(props) {
   const { id, label, value, setValue, onChange, placeholder, error, ...other } =
     props
   const [localValue, setLocalValue] = useState(value)
-  const [debounceChange] = useDebounce(newValue => setValue(newValue), 1000)
+  const [debounceChange] = useDebounce(newValue => setValue(newValue), 750)
 
   const handleChange = e => {
     const result = onChange(e)
