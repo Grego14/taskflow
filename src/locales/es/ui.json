@@ -167,7 +167,9 @@
       "userNotFound": "Usuario no encontrado",
       "label": "Agregar miembros",
       "placeholder": "Buscar por correo electrónico...",
-      "search": "Buscar miembro"
+      "search": "Buscar miembro",
+      "couldNotGetTheUser": "No se pudo obtener al usuario. Intente nuevamente",
+      "alreadyAdded": "Ese usuario ya esta agregado"
     },
     "loadingMetrics": "Cargando métricas",
     "noDescription": "No se agrego una descripción..."

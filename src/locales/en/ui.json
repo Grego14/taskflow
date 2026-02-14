@@ -162,7 +162,9 @@
       "userNotFound": "User not found",
       "label": "Add members",
       "placeholder": "Search by email...",
-      "search": "Search member"
+      "search": "Search member",
+      "couldNotGetTheUser": "Couldn't get the user. Try again",
+      "alreadyAdded": "That user is already added"
     },
     "loadingMetrics": "Loading metrics",
     "noDescription": "No description provided..."
