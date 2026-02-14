@@ -9,14 +9,14 @@ export default function AddMembersPreview({ members = [], setMembers }) {
 
     if (!toDelete) return
 
-    setMembers(prev => {
-      const newMembers = []
+    const newMembers = []
 
-      for (const member of members) {
-        if (member.email === toDelete) continue
-        newMembers.push(member)
-      }
-    })
+    for (const member of members) {
+      if (member.email === toDelete) continue
+      newMembers.push(member)
+    }
+
+    setMembers(newMembers)
   }
 
   return (

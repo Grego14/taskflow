@@ -1,16 +1,14 @@
 import SearchIcon from '@mui/icons-material/Search'
-import AutoComplete from '@mui/material/Autocomplete'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import CircularProgress from '@mui/material/CircularProgress'
 import Skeleton from '@mui/material/Skeleton'
-import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
 import AddMembersPreview from './AddMembersPreview'
+import ProjectInput from '@components/reusable/projects/Input'
 
 import useApp from '@hooks/useApp'
 import useAuth from '@hooks/useAuth'
-import useDebounce from '@hooks/useDebounce'
 import useLoadResources from '@hooks/useLoadResources'
 import { memo, useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -23,144 +21,110 @@ export default memo(function AddMembers({ members, setMembers, isOwner }) {
   const { t } = useTranslation(['ui', 'validations'])
   const { isMobile } = useApp()
   const { currentUser } = useAuth()
-
   const loadingResources = useLoadResources('validations')
 
-  const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
-  const [disableSearchBtn, setDisableSearchBtn] = useState(true)
   const [email, setEmail] = useState('')
 
-  const userEmail =
-    currentUser?.email ||
-    currentUser?.providerData?.[0]?.email
+  const userEmail = currentUser?.email || currentUser?.providerData?.[0]?.email
 
-  const [handleGetUsers] = useDebounce(value => {
-    ;(async () => {
-      try {
-        if (value === userEmail) {
-          setEmail('')
-          return setError(t('projects.addMembers.sameUser'))
-        }
+  const [open, setOpen] = useState(false)
+  const [disableSearchBtn, setDisableSearchBtn] = useState(true)
 
-        setLoading(true)
+  const handleSearch = useCallback(async (targetEmail) => {
+    const value = targetEmail?.trim()
 
-        const newMember = await getUserByEmail(value)
+    if (!value) return
 
-        if (newMember?.username) {
-          setMembers(prev => {
-            // avoid duplicated objects
-            if (prev?.find(member => member.email === value)) {
-              return prev
-            }
+    const emailValidation = validateEmail(value, { username: true })
 
-            return [...(prev || []), newMember]
-          })
-        } else {
-          setError(t('projects.addMembers.userNotFound'))
-        }
+    if (emailValidation.error)
+      return setError(t(`email.${emailValidation.key}`, { ns: 'validations' }))
 
-        setLoading(false)
-        setEmail('')
-        setDisableSearchBtn(true)
-      } catch (err) {
-        // console.error(err)
-        setLoading(false)
-      }
-    })()
-  }, 500)
+    if (value === userEmail)
+      return setError(t('projects.addMembers.sameUser'))
 
-  const handleOnChange = useCallback(
-    e => {
-      const value = e.target.value.trim()
-
-      setEmail(value)
-
-      const emailValidation = validateEmail(value, { username: true })
-
-      if (!value) {
-        setError(t('email.emailRequired', { ns: 'validations' }))
-        setDisableSearchBtn(true)
-        return
-      }
-
-      if (emailValidation.error) {
-        setError(t(`email.${emailValidation.key}`, { ns: 'validations' }))
-        setDisableSearchBtn(true)
-        return
-      }
-
-      setDisableSearchBtn(false)
+    try {
+      setLoading(true)
       setError('')
-    },
-    [t]
-  )
 
-  const handleKeyDown = useCallback(e => {
+      const newMember = await getUserByEmail(value)
+
+      if (!newMember?.username) {
+        setError(t('projects.addMembers.userNotFound'))
+        return
+      } else {
+
+        // check for duplicates
+        if (members?.some(m => m.email === value)) {
+          setError(t('projects.addMembers.alreadyAdded'))
+          return
+        }
+
+        setMembers([...(members || []), newMember])
+        setEmail('')
+      }
+    } catch (err) {
+      setError(t('projects.addMembers.couldNotGetTheUser'))
+    } finally {
+      setLoading(false)
+    }
+  }, [members, userEmail, t, setMembers])
+
+  const handleKeyDown = (e) => {
     const { isEnter } = getInteraction(e)
+    if (isEnter) handleSearch(email)
+  }
 
-    if (!isEnter || error) return
-
-    handleGetUsers(e.target.value.trim())
-  })
-
-  if (loadingResources)
-    return (
-      <Box>
-        <Skeleton width='25%' />
-        <Skeleton width='55%' height='4rem' />
-      </Box>
-    )
+  if (loadingResources) return (
+    <Box>
+      <Skeleton width='25%' />
+      <Skeleton width='55%' height='4rem' />
+    </Box>
+  )
 
   return (
     <Box>
-      <Typography variant='subtitle1' fontWeight={600} mb={1.5}>
-        {t('projects.addMembers.label')}
-      </Typography>
-
       <Box
         className={`flex${isMobile ? ' flex-column' : ''}`}
-        alignItems={isMobile ? 'initial' : 'center'}
-        gap={2}>
-        <TextField
-          disabled={!isOwner}
-          label={t('projects.addMembers.placeholder')}
-          error={!!error}
-          aria-errormessage='emailError'
-          onKeyDown={handleKeyDown}
+        alignItems={isMobile ? 'initial' : 'flex-end'}
+        gap={2}
+      >
+        <ProjectInput
+          id='member-search'
+          label={t('projects.addMembers.label')}
+          placeholder={t('projects.addMembers.placeholder')}
+          disabled={!isOwner || loading}
           value={email}
-          onChange={handleOnChange}
-          onBlur={() => setError('')}
+          setValue={setEmail}
+          // the validations are made when the user clicks the search button so
+          // we just send true and remove the error
+          onChange={() => {
+            if (error) setError('')
+            return true
+          }}
+          onKeyDown={handleKeyDown}
+          error={error}
           slotProps={{
             input: {
-              endAdornment: loading ? (
-                <CircularProgress color='inherit' size={20} />
-              ) : null,
-              startAdornment: <SearchIcon fontSize='small' />,
-              sx: {
-                '& .MuiInputBase-input': {
-                  pl: 1
-                }
-              }
+              startAdornment: <SearchIcon fontSize='small' sx={{ mr: 1 }} />,
+              endAdornment: loading && <CircularProgress color='inherit' size={20} />
             }
           }}
+          sx={{ mt: 1 }}
         />
 
         <Button
+          sx={{ height: '2.5rem', mb: error && 3 }} // align with the input height
           startIcon={<SearchIcon fontSize='small' />}
           variant='contained'
-          onClick={() => handleGetUsers(email)}
-          disabled={!isOwner || disableSearchBtn || !!error}>
+          onClick={() => handleSearch(email)}
+          disabled={!isOwner || loading || !email}
+        >
           {t('projects.addMembers.search')}
         </Button>
       </Box>
-
-      {error && (
-        <Typography variant='body2' color='error' id='emailError' mt={1}>
-          {error}
-        </Typography>
-      )}
 
       <AddMembersPreview members={members} setMembers={setMembers} />
     </Box>

@@ -8,6 +8,7 @@ import FileCopyIcon from '@mui/icons-material/FileCopy'
 import PeopleIcon from '@mui/icons-material/People'
 
 import { useTranslation } from 'react-i18next'
+import useApp from '@hooks/useApp'
 
 export default function MakeTemplate({
   template,
@@ -15,25 +16,24 @@ export default function MakeTemplate({
   publicTemplate,
   setPublicTemplate
 }) {
+  const { isMobile } = useApp()
   const { t } = useTranslation('ui')
 
   return (
-    <Container className='flex flex-column' sx={{ gap: 2.5 }}>
+    <Container className='flex flex-column' sx={{ gap: isMobile ? 1.25 : 2.5, px: isMobile ? 0 : 2 }}>
       <SwitcthContainer
         title={t('projects.new.makeTemplate')}
         subtitle={t('projects.new.makeTemplateHelpText')}
         checked={template}
         onCheck={() => {
-          setTemplate(prev => {
-            const newVal = !prev
+          const newVal = !template
 
+          setTemplate(newVal)
+
+          if (!newVal) {
             // a template can only be public if the template switch is checked
-            if (!newVal) {
-              setPublicTemplate(false)
-            }
-
-            return newVal
-          })
+            setPublicTemplate(false)
+          }
         }}
         icon={<FileCopyIcon fontSize='medium' />}
       />
@@ -42,7 +42,7 @@ export default function MakeTemplate({
         title={t('projects.new.makeTemplatePublic')}
         subtitle={t('projects.new.makeTemplatePublicHelpText')}
         checked={publicTemplate}
-        onCheck={() => setPublicTemplate(prev => !prev)}
+        onCheck={() => setPublicTemplate(!publicTemplate)}
         icon={<PeopleIcon fontSize='medium' />}
         disabled={!template}
       />
@@ -71,7 +71,7 @@ function SwitcthContainer({
         <Typography variant='body2' fontWeight={600}>
           {title}
         </Typography>
-        <Typography variant='caption' color='textSecondary'>
+        <Typography variant='caption' color='textSecondary' sx={[theme => ({ lineHeight: 1.25 })]}>
           {subtitle}
         </Typography>
       </Box>

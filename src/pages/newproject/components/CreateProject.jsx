@@ -11,7 +11,9 @@ export default function CreateProject({
   isTemplate,
   publicTemplate,
   members,
-  errors
+  errors,
+  sx,
+  ...other
 }) {
   const navigate = useNavigate()
   const { uid } = useUser()
@@ -20,7 +22,7 @@ export default function CreateProject({
   return (
     <Button
       endIcon={null}
-      sx={{ mt: 2, ml: 'auto' }}
+      sx={{ mt: 2, ml: 'auto', ...sx }}
       variant='contained'
       onClick={async () => {
         const createProject = await lazyImport('/src/services/createProject')
@@ -43,6 +45,7 @@ export default function CreateProject({
       disabled={
         errors?.name || errors?.description || !name || name?.length < 3
       }
+      {...other}
     >
       {t('projects.new.create')}
     </Button>
