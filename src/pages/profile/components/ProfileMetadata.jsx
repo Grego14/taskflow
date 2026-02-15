@@ -16,8 +16,8 @@ export default memo(function ProfileMetadata() {
 
   if (!currentUser?.metadata) return null
 
-  const createdDate = new Date(Number(currentUser.metadata?.createdAt))
-  const lastLogin = new Date(Number(currentUser.metadata?.lastLoginAt))
+  const createdDate = new Date(currentUser.metadata?.creationTime)
+  const lastLogin = new Date(currentUser.metadata?.lastSignInTime)
 
   return (
     <Box className='flex flex-column' alignItems='center' gap={1}>
