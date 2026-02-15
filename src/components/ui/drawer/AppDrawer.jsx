@@ -7,7 +7,6 @@ import Drawer from '@mui/material/Drawer'
 import List from '@mui/material/List'
 import DrawerActions from './components/DrawerActions'
 import Toolbar from './components/Toolbar'
-import Notifications from './components/Notifications'
 
 // hooks
 import useApp from '@hooks/useApp'
@@ -17,6 +16,7 @@ import { useTheme } from '@mui/material/styles'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useRef } from 'preact/hooks'
 import { useGSAP } from '@gsap/react'
+import useLayout from '@hooks/useLayout'
 
 // utils
 import { setItem } from '@utils/storage.js'
@@ -28,13 +28,14 @@ const getDrawerShadow = (projectId, isMobile, appBarHeight, theme, userTheme) =>
   return `0 ${projectId && !isMobile ? appBarHeight : 0} 3px ${shadowColor}`
 }
 
-export default memo(function AppDrawer({ open, setOpen, children }) {
+export default memo(function AppDrawer({ children }) {
   const { drawerWidth, appBarHeight, isMobile } = useApp()
   const { preferences } = useUser()
   const { projectId } = useParams()
   const theme = useTheme()
   const navigate = useNavigate()
   const drawerRef = useRef(null)
+  const { drawerOpen, setDrawerOpen } = useLayout()
 
   const shadow = getDrawerShadow(projectId, isMobile, appBarHeight, theme, preferences?.theme)
 
@@ -42,22 +43,22 @@ export default memo(function AppDrawer({ open, setOpen, children }) {
 
   const toggleDrawer = useCallback(
     state => {
-      setOpen(state)
+      setDrawerOpen(state)
       setItem('drawerOpen', state)
     },
-    [setOpen]
+    [setDrawerOpen]
   )
 
   // initial enter animation
   useGSAP(() => {
     gsap.from('.MuiDrawer-paper', {
       autoAlpha: 0,
-      x: -drawerWidth[open ? 'open' : 'closed']
+      x: -drawerWidth[drawerOpen ? 'open' : 'closed']
     })
   }, { scope: drawerRef })
 
   useGSAP(() => {
-    const isOpening = open
+    const isOpening = drawerOpen
     const targetWidth = isOpening ? drawerWidth.open : drawerWidth.closed
     const _labels = gsap.utils.toArray('.MuiListItemText-root')
     const labels = [..._labels, '.profile-btn-text']
@@ -100,7 +101,7 @@ export default memo(function AppDrawer({ open, setOpen, children }) {
         duration: 0.3
       }, 'items')
     }
-  }, { scope: drawerRef, dependencies: [open] })
+  }, { scope: drawerRef, dependencies: [drawerOpen] })
 
   const profileBtnProps = {
     open,
@@ -108,17 +109,17 @@ export default memo(function AppDrawer({ open, setOpen, children }) {
     sx: {
       p: 1.5,
       // avoid moving the badge to the center when the username is removed
-      mr: open ? 0 : 'auto',
-      justifyContent: open ? 'start' : 'center'
+      mr: drawerOpen ? 0 : 'auto',
+      justifyContent: drawerOpen ? 'start' : 'center'
     },
     tooltipPosition: 'right',
     onClick: () => navigate('/profile'),
-    className: 'drawer-action'
+    className: 'drawer-action',
   }
 
   return (
     <Drawer
-      open={open}
+      open={drawerOpen}
       onClose={() => toggleDrawer(false)}
       variant='permanent'
       ModalProps={{
@@ -128,24 +129,23 @@ export default memo(function AppDrawer({ open, setOpen, children }) {
       sx={{
         display: 'flex',
         textWrap: 'nowrap',
-        width: open ? drawerWidth.open : drawerWidth.closed,
+        width: drawerOpen ? drawerWidth.open : drawerWidth.closed,
         '& .MuiDrawer-paper': {
-          width: open ? drawerWidth.open : drawerWidth.closed,
+          width: drawerOpen ? drawerWidth.open : drawerWidth.closed,
           transition: 'none',
           overflow: 'hidden',
-          ...(!open && { boxShadow: shadow })
+          ...(!drawerOpen && { boxShadow: shadow })
         }
       }}>
-      <Toolbar open={open} toggleDrawer={toggleDrawer} />
+      <Toolbar open={drawerOpen} toggleDrawer={toggleDrawer} />
 
       <List
         className='flex flex-column'
         sx={{ gap: 1.25, height: '100%' }}
         disablePadding>
-        <DrawerActions open={open} toggleDrawer={toggleDrawer} />
+        <DrawerActions open={drawerOpen} toggleDrawer={toggleDrawer} />
 
         <Box className='flex flex-column' mt='auto' gap={1.5}>
-          <Notifications open={open} />
           <ProfileButton {...profileBtnProps} />
         </Box>
       </List>
