@@ -1,45 +1,34 @@
-import Box from '@mui/material/Box'
-import { Suspense, lazy, useEffect, useMemo, useState } from 'react'
-import { Outlet, useLocation, useParams } from 'react-router-dom'
+import { Suspense, lazy, memo, useEffect } from 'react'
+import { Outlet } from 'react-router-dom'
 
 import useApp from '@hooks/useApp'
-import useDebounce from '@hooks/useDebounce'
-import useUser from '@hooks/useUser'
-import { useMediaQuery } from '@mui/material'
-import useLayout from '@hooks/useLayout'
+import useLoadResources from '@hooks/useLoadResources'
 
-const LayoutAppBar = lazy(() => import('./components/LayoutAppBar'))
+import Box from '@mui/material/Box'
+import LayoutAppBar from '@components/ui/layoutmanager/components/LayoutAppBar'
+
 const AppDrawer = lazy(() => import('@components/ui/drawer/AppDrawer'))
 
-import { getItem } from '@utils/storage'
-
-export default function LayoutManager() {
+export default memo(function LayoutManager() {
   const { isMobile, drawerWidth, appBarHeight } = useApp()
-  const { uid } = useUser()
-  const { projectId } = useParams()
-
-  const { drawerOpen, setDrawerOpen } = useLayout()
+  const loadingResource = useLoadResources('ui')
 
   return (
-    <>
-      {uid && (
-        <Suspense fallback={null}>
-          <LayoutAppBar projectId={projectId} />
-          {!isMobile && (
-            <AppDrawer open={drawerOpen} setOpen={setDrawerOpen} />
-          )}
-        </Suspense>
-      )}
+    <Box>
+      <LayoutAppBar />
+
+      <Suspense fallback={null}>
+        {!isMobile && <AppDrawer />}
+      </Suspense>
 
       <Box
         component='main'
         minHeight='100dvh'
-        marginLeft={`${uid && !isMobile ? drawerWidth?.closed : 0}px`}
+        marginLeft={`${!isMobile ? drawerWidth?.closed : 0}px`}
         className='flex flex-column'
-        pb={isMobile ? appBarHeight : 0}
-      >
+        pb={isMobile ? appBarHeight : 0}>
         <Outlet />
       </Box>
-    </>
+    </Box>
   )
-}
+})
