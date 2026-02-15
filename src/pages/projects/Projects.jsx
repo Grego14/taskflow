@@ -23,6 +23,8 @@ import {
   where
 } from 'firebase/firestore'
 
+const boxStyles = { display: 'flex', flexDirection: 'column', gap: 2 }
+
 export default function Projects() {
   const { uid } = useUser()
   const { isMobile } = useApp()
@@ -65,19 +67,20 @@ export default function Projects() {
   const allProjects = useMemo(() => ([...projects.user, ...projects.external]), [projects])
   const hasProjects = allProjects.length > 0
 
+  const createProjectBtnStyles = { alignSelf: isMobile ? 'center' : 'start' }
+
   if (loading) return <CircleLoader text={t('projects.loading')} height='100dvh' />
 
   return (
     <Box
-      className={`flex flex-column${!projectsQuantity ? ' flex-center' : ''}`}
-      gap={2}
+      className={`${!projectsQuantity ? ' flex-center' : ''}`}
       pt={2}
       pb={10} // enough padding
       px={isMobile ? 2 : 3}
       my={!projectsQuantity ? 'auto' : 0}
       width='100%'>
       {projectsQuantity ? (
-        <>
+        <Box sx={boxStyles}>
           <Typography
             className={isMobile ? 'text-center' : ''}
             variant='h1'
@@ -85,15 +88,15 @@ export default function Projects() {
             {t('projects.title_quantity', { quantity: allProjects.length })}
           </Typography>
           <ProjectsCards data={allProjects} />
-          <CreateProject sx={{ alignSelf: isMobile ? 'center' : 'start' }} />
-        </>
+          <CreateProject sx={createProjectBtnStyles} />
+        </Box>
       ) : (
-        <>
+        <Box sx={boxStyles}>
           <Typography variant='h5' textAlign='center'>
             {t('projects.errors.empty')}
           </Typography>
-          <CreateProject />
-        </>
+          <CreateProject sx={createProjectBtnStyles} />
+        </Box>
       )}
     </Box>
   )
