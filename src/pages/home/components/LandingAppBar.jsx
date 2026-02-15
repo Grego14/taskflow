@@ -21,7 +21,8 @@ const appBarStyles = {
   px: 2,
   width: '100%',
   border: 'none',
-  position: 'fixed'
+  position: 'fixed',
+  top: 0
 }
 
 export default function LandingAppBar() {
