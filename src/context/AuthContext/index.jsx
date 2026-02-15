@@ -1,7 +1,22 @@
 import { useEffect, useMemo, useState } from 'react'
 
-import CircleLoader from '@components/reusable/loaders/CircleLoader'
 import AuthContext from './context'
+
+const mapUserData = user => {
+  if (!user) return null
+
+  return {
+    uid: user.uid,
+    email: user.email,
+    username: user.displayName,
+    avatar: user.photoURL,
+    metadata: {
+      creationTime: user.metadata.creationTime,
+      lastSignInTime: user.metadata.lastSignInTime
+    },
+    providerId: user.providerData[0].providerId
+  }
+}
 
 export default function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState(null)
@@ -19,7 +34,7 @@ export default function AuthProvider({ children }) {
         const { onAuthStateChanged } = await import('firebase/auth')
 
         unsubscribe = onAuthStateChanged(auth, user => {
-          setCurrentUser(user)
+          setCurrentUser(mapUserData(user))
           setInitialized(true)
         })
       } catch (err) {
@@ -34,7 +49,7 @@ export default function AuthProvider({ children }) {
     currentUser,
     initAuth: () => setShouldInit(true),
     initialized
-  }), [currentUser])
+  }), [currentUser, initialized])
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }
