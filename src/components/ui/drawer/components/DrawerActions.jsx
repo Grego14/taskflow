@@ -2,13 +2,22 @@ import { Suspense, lazy } from 'react'
 
 import Box from '@mui/material/Box'
 const ProjectActions = lazy(() => import('./ProjectActions'))
-const DrawerAction = lazy(() => import('./DrawerAction'))
 const ArticleIcon = lazy(() => import('@mui/icons-material/Article'))
 const FolderOpen = lazy(() => import('@mui/icons-material/FolderOpen'))
 const HouseIcon = lazy(() => import('@mui/icons-material/House'))
 
+import DrawerAction from './DrawerAction'
+import NotificationsAction from './NotificationsAction'
+
 import { useTranslation } from 'react-i18next'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
+
+const actions = [
+  { component: DrawerAction, icon: HouseIcon, link: 'home' },
+  { component: DrawerAction, icon: FolderOpen, link: 'projects', keyTranslation: 'projects.text' },
+  { component: DrawerAction, icon: ArticleIcon, link: 'templates' },
+  { component: NotificationsAction, link: 'notifications' },
+]
 
 export default function DrawerActions({ open, toggleDrawer }) {
   const { t } = useTranslation('ui')
@@ -17,51 +26,32 @@ export default function DrawerActions({ open, toggleDrawer }) {
   const location = useLocation()
 
   const rutes = location.pathname?.split('/')
-  const action = projectId ? null : rutes?.[rutes?.length - 1]
+  const currentAction = projectId ? null : rutes?.[rutes?.length - 1]
+
+  const actionsHandler =
+    !projectId ?
+      (to) => {
+        navigate(`/${to}`)
+        toggleDrawer(false)
+      } : null
 
   return (
     <Suspense fallback={null}>
       {projectId ? (
         <ProjectActions open={open} />
-      ) : (
-        <>
-          <DrawerAction
-            text={t('drawer.home')}
-            icon={<HouseIcon fontSize='small' />}
-            open={open}
-            onClick={() => {
-              navigate('/home')
-              toggleDrawer(false)
-            }}
-            active={action === 'home'}
-            showText
-          />
-
-          <DrawerAction
-            text={t('projects.text')}
-            icon={<FolderOpen fontSize='small' />}
-            open={open}
-            onClick={() => {
-              navigate('projects')
-              toggleDrawer(false)
-            }}
-            active={action === 'projects'}
-            showText
-          />
-
-          <DrawerAction
-            text={t('drawer.templates')}
-            icon={<ArticleIcon fontSize='small' />}
-            open={open}
-            onClick={() => {
-              navigate('templates')
-              toggleDrawer(false)
-            }}
-            active={action === 'templates'}
-            showText
-          />
-        </>
-      )}
+      ) : actions.map(action => (
+        <action.component
+          key={action.link}
+          icon={action.icon && <action.icon fontSize='small' />}
+          onClick={() => actionsHandler(action.link)}
+          open={open}
+          text={action.keyTranslation
+            ? t(action.keyTranslation)
+            : t(`drawer.${action.link}`)}
+          showText
+          active={currentAction === action.link}
+        />
+      ))}
     </Suspense>
   )
 }
