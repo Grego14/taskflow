@@ -6,7 +6,6 @@ import Button from '@mui/material/Button'
 import IconButton from '@mui/material/IconButton'
 import Typography from '@mui/material/Typography'
 
-import useAuth from '@hooks/useAuth'
 import useUser from '@hooks/useUser'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -21,7 +20,6 @@ import lazyImport from '@utils/lazyImport'
 
 export default function AuthButtons({ type, disabledBtn }) {
   const { t } = useTranslation('auth')
-  const { currentUser } = useAuth()
   const [popup, setPopup] = useState(false)
   const [error, setError] = useState(null)
   const { preferences } = useUser()
