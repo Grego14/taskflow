@@ -1,10 +1,8 @@
 import MUIAppBar from '@mui/material/AppBar'
-import { memo } from 'react'
 
 // hooks
 import useApp from '@hooks/useApp'
-import useUser from '@hooks/useUser'
-import { useTheme } from '@mui/material/styles'
+import { forwardRef } from 'react'
 
 const appBarMobileStyles = {
   px: 0,
@@ -16,17 +14,21 @@ const appBarMobileStyles = {
   right: 'auto'
 }
 
-export default memo(function AppBar({ children, withDrawer, top = false, sx }) {
-  const { isMobile, appBarHeight, drawerWidth } = useApp()
-  const theme = useTheme()
-  const { preferences } = useUser()
-  const userTheme = preferences?.theme || 'light'
+const AppBar = forwardRef((props, ref) => {
+  const {
+    children,
+    withDrawer,
+    top = false,
+    sx,
+    shadow,
+    ...other
+  } = props
 
-  const shadowColor = theme.palette.grey[userTheme === 'light' ? 300 : 800]
-  const shadow = `0 0 3px ${shadowColor}`
+  const { isMobile, appBarHeight, drawerWidth } = useApp()
 
   return (
     <MUIAppBar
+      ref={ref}
       color='inherit'
       variant='outlined'
       elevation={0}
@@ -48,3 +50,5 @@ export default memo(function AppBar({ children, withDrawer, top = false, sx }) {
     </MUIAppBar>
   )
 })
+
+export default AppBar
