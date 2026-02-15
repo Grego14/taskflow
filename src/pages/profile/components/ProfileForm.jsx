@@ -9,6 +9,7 @@ import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 
 import lazyImport from '@utils/lazyImport'
+import { auth } from '@/firebase/firebase-config'
 
 const defaultValues = values => ({
   defaultValues: {
@@ -105,7 +106,7 @@ export default function ProfileForm({ setSaveBtnDisabled, fields }) {
       const updateUserProfile = await lazyImport(
         '/src/services/updateUserProfile'
       )
-      const result = await updateUserProfile({ currentUser, data })
+      const result = await updateUserProfile({ currentUser: auth.currentUser, data })
 
       if (result.success) {
         // updates the initialValue of the avatar and AvatarUploader component value
