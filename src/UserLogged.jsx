@@ -1,27 +1,49 @@
 import { Outlet } from 'react-router-dom'
+import { lazy, useEffect, useRef, Suspense, useCallback } from 'react'
+import { useMutation } from '@tanstack/react-query'
 
 import useApp from '@hooks/useApp'
 import useAuth from '@hooks/useAuth'
 import useDebounce from '@hooks/useDebounce'
 import useGetUserFromDb from '@hooks/useGetUserFromDb'
 import useUser from '@hooks/useUser'
-import { useMutation } from '@tanstack/react-query'
-import { lazy, useEffect, useMemo, useRef, Suspense } from 'react'
 import useLoadResources from '@hooks/useLoadResources'
 
-import CircleLoader from '@components/reusable/loaders/CircleLoader'
-const CloudOffIcon = lazy(() => import('@mui/icons-material/CloudOff'))
-const CloudSyncIcon = lazy(() => import('@mui/icons-material/CloudSync'))
-
-import i18n from '@/i18n'
 import updater from '@services/updateUser'
-import getLocale from '@utils/getLocale'
 import lazyImport from '@utils/lazyImport'
 
-export default function UserLogged() {
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+
+const CloudOff = lazy(() => import('@mui/icons-material/CloudOff'))
+const CloudSync = lazy(() => import('@mui/icons-material/CloudSync'))
+
+const ReactQueryDevtools = import.meta.env.DEV
+  ? lazy(() =>
+    import('@tanstack/react-query-devtools').then(module => ({
+      default: module.ReactQueryDevtools
+    }))
+  )
+  : null
+
+const queryClient = new QueryClient()
+
+const QueryProvider = ({ children }) => {
+  return (
+    <QueryClientProvider client={queryClient}>
+      {import.meta.env.DEV &&
+        <Suspense fallback={null}>
+          <ReactQueryDevtools initialIsOpen={false} />
+        </Suspense>
+      }
+      {children}
+    </QueryClientProvider>
+  )
+}
+
+const Services = () => {
   const { uid, setUpdateImplementation } = useUser()
   const { currentUser, initAuth } = useAuth()
-  const { appNotification, notification, setIsOffline, isOffline } = useApp()
+  const { appNotification, setIsOffline, isOffline } = useApp()
 
   const lastConnectionState = useRef(isOffline)
   const loadingResources = useLoadResources('ui')
@@ -36,45 +58,47 @@ export default function UserLogged() {
     onError: err => console.error('UpdateUser:', err)
   })
 
+  // We wrap the mutation call to keep the reference stable
+  const handleUpdate = useCallback(data => {
+    updateUser.mutate(data)
+  }, [updateUser])
+
   useEffect(() => {
-    setUpdateImplementation(data => updateUser.mutate(data))
-  }, [updateUser.mutate, setUpdateImplementation])
+    setUpdateImplementation(handleUpdate)
+  }, [handleUpdate, setUpdateImplementation])
 
   const [debounceOffline] = useDebounce(val => setIsOffline(val), 1250)
 
-  // Manage the offline/online state
+  // Firebase RTDB connection listener
   useEffect(() => {
     if (!currentUser) return
+
+    let unsub
 
     const initRTDB = async () => {
       const { getDatabase, ref, onValue } = await import('firebase/database')
       const rtdb = getDatabase()
       const connectedRef = ref(rtdb, '.info/connected')
 
-      return onValue(connectedRef, snap => {
+      unsub = onValue(connectedRef, snap => {
         debounceOffline(!snap.val())
       })
     }
 
-    const unsubPromise = initRTDB()
-    return () => unsubPromise.then(unsub => unsub?.())
+    initRTDB()
+    return () => unsub?.()
   }, [currentUser, debounceOffline])
 
   const [sendInternetNotification] = useDebounce(async () => {
-    const Icon = isOffline ? CloudOffIcon : CloudSyncIcon
+    const Icon = isOffline ? CloudOff : CloudSync
+    const internetNotification = await lazyImport('/src/utils/notifications/internetConnection')
 
-    const internetNotification = await lazyImport(
-      '/src/utils/notifications/internetConnection'
-    )
-
-    internetNotification(isOffline, props =>
-      appNotification({
-        ...props,
-        icon: <Suspense fallback={null}>
-          <Icon fontSize='small' />
-        </Suspense>
-      })
-    )
+    internetNotification(isOffline, props => appNotification({
+      ...props,
+      icon: <Suspense fallback={null}>
+        <Icon fontSize='smal' />
+      </Suspense>
+    }))
   }, 3000)
 
   useEffect(() => {
@@ -85,6 +109,11 @@ export default function UserLogged() {
   }, [sendInternetNotification, isOffline])
 
   useGetUserFromDb()
+}
 
-  return <Outlet />
+export default function UserLogged() {
+  return <QueryProvider>
+    <Services />
+    <Outlet />
+  </QueryProvider>
 }
