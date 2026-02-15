@@ -1,42 +1,41 @@
 import Typography from '@mui/material/Typography'
 import Button from '@mui/material/Button'
 import Dialog from '../Dialog'
-
 import { keyframes } from '@mui/material/styles'
 import { Suspense, lazy } from 'react'
+import HourglassBottomIcon from '@mui/icons-material/HourglassBottom'
+
+import useLoadResources from '@hooks/useLoadResources'
+import useUser from '@hooks/useUser'
+import { useTranslation } from 'react-i18next'
+import useAuth from '@hooks/useAuth'
 
 const PasswordInput = lazy(
   () => import('@components/reusable/inputs/PasswordInput')
 )
 
 const spin = keyframes`
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 `
 
-import HourglassBottomIcon from '@mui/icons-material/HourglassBottom'
-import LoadingIcon from '@mui/icons-material/FrontLoader'
+const spinningIconSx = {
+  animation: `${spin} 1s infinite`
+}
 
-import useLoadResources from '@hooks/useLoadResources'
-import useUser from '@hooks/useUser'
-import { useTranslation } from 'react-i18next'
+export default function DeleteUserDialog(props) {
+  const {
+    onAccept,
+    popup,
+    setPassword,
+    setError,
+    password,
+    error,
+    deleting,
+    ...other
+  } = props
 
-export default function DeleteUserDialog({
-  onAccept,
-  onClose,
-  open,
-  setPassword,
-  password,
-  error,
-  setError,
-  provider,
-  popup,
-  deleting
-}) {
+  const { providerId } = useAuth()
   const { preferences } = useUser()
   const { t } = useTranslation(['common', 'dialogs', 'profile'])
   const loadingResources = useLoadResources(['dialogs'])
@@ -49,8 +48,7 @@ export default function DeleteUserDialog({
   return (
     <Dialog
       title='deleteUser.title'
-      onClose={onClose}
-      open={open}
+      {...other}
       titleLoaded={!loadingResources}
       acceptBtn={
         <Button
@@ -58,22 +56,18 @@ export default function DeleteUserDialog({
           disabled={popup}
           variant='contained'
           endIcon={
-            deleting && (
-              <HourglassBottomIcon
-                sx={{
-                  animation: `${spin} 1s infinite`
-                }}
-              />
-            )
-          }>
+            deleting && <HourglassBottomIcon sx={spinningIconSx} />
+          }
+        >
           {t('delete_x', { x: '', ns: 'common' })}
         </Button>
-      }>
+      }
+    >
       <Typography color={`warning.${preferences.theme}`}>
         {t('deleteUser.text', { ns: 'dialogs' })}
       </Typography>
 
-      {provider === 'password' && (
+      {providerId === 'password' && (
         <Suspense fallback={null}>
           <PasswordInput
             onChange={handleChange}

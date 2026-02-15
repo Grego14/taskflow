@@ -1,73 +1,63 @@
 import useAuth from '@hooks/useAuth'
 import { useCallback, useState, useMemo } from 'react'
 
+const GOOGLE_ID = 'google.com'
+const GITHUB_ID = 'github.com'
+const PASSWORD_ID = 'password'
+
+const getSocialProvider = (id, GoogleAuthProvider, GithubAuthProvider) => {
+  const provider = id === GOOGLE_ID ? new GoogleAuthProvider() : new GithubAuthProvider()
+  provider.addScope('email')
+  return provider
+}
+
 export default function useReauthenticate() {
   const { currentUser } = useAuth()
-  const provider = currentUser?.providerData?.[0]?.providerId
-
   const [popup, setPopup] = useState(false)
 
-  const reauthenticate = useCallback(
-    password => {
-      return new Promise((resolve, reject) => {
-        if (!password && provider === 'password') return 'password'
+  const reauthenticate = useCallback(async (password) => {
+    const providerId = currentUser?.providerId
+    const email = currentUser?.email
 
-        if (provider === 'password') {
-          import('firebase/auth').then(async mod => {
-            const { EmailAuthProvider, reauthenticateWithCredential } = mod
-            await reauthenticateWithCredential(
-              currentUser,
-              EmailAuthProvider.credential(currentUser.email, password)
-            ).then(
-              () => resolve({ error: null, success: true }),
-              () => reject({ error: 'authenticating', success: false })
-            )
-          })
-        }
+    try {
+      if (!password && providerId === PASSWORD_ID) return PASSWORD_ID
 
-        if (provider === 'github.com' || provider === 'google.com') {
-          setPopup(true)
-          // get the github/google provider and reauthenticate the user
-          import('firebase/auth').then(async mod => {
-            const {
-              GithubAuthProvider,
-              GoogleAuthProvider,
-              reauthenticateWithPopup
-            } = mod
+      if (providerId === PASSWORD_ID) {
+        const [{ auth }, { EmailAuthProvider, reauthenticateWithCredential }] =
+          await Promise.all([import('@/firebase/firebase-config'), import('firebase/auth')])
+        const credential = EmailAuthProvider.credential(email, password)
 
-            const googleProvider = new GoogleAuthProvider()
-            googleProvider.addScope('email')
+        await reauthenticateWithCredential(auth.currentUser, credential)
+        return { error: null, success: true }
+      }
 
-            const githubProvider = new GithubAuthProvider()
-            githubProvider.addScope('email')
+      if (providerId !== GITHUB_ID && providerId !== GOOGLE_ID) return null
 
-            const authProvider =
-              provider === 'google.com' ? googleProvider : githubProvider
+      setPopup(true)
 
-            await reauthenticateWithPopup(currentUser, authProvider).catch(
-              () => {
-                reject({ error: 'authenticating', success: false })
-                setPopup(false)
-              }
-            )
+      const [
+        { auth },
+        { GithubAuthProvider, GoogleAuthProvider, reauthenticateWithPopup }
+      ] = await Promise.all([
+        import('@/firebase/firebase-config'),
+        import('firebase/auth')
+      ])
 
-            resolve({ error: null, success: true })
-            setPopup(false)
-          })
-        }
-      })
-    },
-    [provider, currentUser]
-  )
+      const authProvider = getSocialProvider(providerId, GoogleAuthProvider, GithubAuthProvider)
 
-  const value = useMemo(
-    () => ({
-      reauthenticate,
-      popup,
-      provider
-    }),
-    [reauthenticate, popup, provider]
-  )
+      await reauthenticateWithPopup(auth.currentUser, authProvider)
 
-  return value
+      return { error: null, success: true }
+    } catch (err) {
+      console.error('reauthenticate error:', err)
+      return { error: 'authenticating', success: false }
+    } finally {
+      setPopup(false)
+    }
+  }, [currentUser])
+
+  return useMemo(() => ({
+    reauthenticate,
+    popup,
+  }), [reauthenticate, popup])
 }

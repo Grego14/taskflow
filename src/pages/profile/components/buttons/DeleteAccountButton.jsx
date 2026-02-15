@@ -1,69 +1,71 @@
 import DeleteIcon from '@mui/icons-material/Delete'
 import Button from '@mui/material/Button'
-
 import { Suspense, lazy, useCallback, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+
+import useApp from '@hooks/useApp'
+import useAuth from '@hooks/useAuth'
+import useUser from '@hooks/useUser'
+import useReauthenticate from '@hooks/useReauthenticate'
 
 const DeleteUserDialog = lazy(
   () => import('@components/reusable/dialogs/deleteuser/DeleteUserDialog')
 )
 
-import useApp from '@hooks/useApp'
-import useAuth from '@hooks/useAuth'
-import useUser from '@hooks/useUser'
-import { useTranslation } from 'react-i18next'
-import { useNavigate } from 'react-router-dom'
-import useReauthenticate from '@hooks/useReauthenticate'
-
-import lazyImport from '@utils/lazyImport'
+const getIconSx = (preferences) => (theme) => ({
+  color: theme.palette.error[preferences.theme]
+})
 
 export default function DeleteAccountButton() {
   const { t } = useTranslation('profile')
-  const { currentUser } = useAuth()
   const { preferences, uid } = useUser()
   const { appNotification } = useApp()
-  const navigate = useNavigate()
+  const { reauthenticate, popup } = useReauthenticate()
 
   const [deleting, setDeleting] = useState(false)
   const [open, setOpen] = useState(false)
   const [password, setPassword] = useState('')
   const [error, setError] = useState(null)
 
-  const { reauthenticate, popup, reauthenticateError, provider } =
-    useReauthenticate()
+  const deleteAccount = useCallback(async () => {
+    try {
+      const { success, error: authError } = await reauthenticate(password)
 
-  const deleteAccount = useCallback(() => {
-    ;(async () => {
-      try {
-        const { success } = await reauthenticate(password)
-
-        const deleteUserDocs = await lazyImport('/src/services/deleteUser')
-        await deleteUserDocs(uid)
-
-        await import('firebase/auth').then(async mod => {
-          const { deleteUser } = mod
-          setDeleting(true)
-
-          await deleteUser(currentUser).catch(error => {
-            appNotification({
-              message: t('deleteUser.errors.deletingUser'),
-              status: 'error'
-            })
-          })
-
-          navigate('/')
-        })
-      } catch (err) {
-        if (err.error) {
-          const errorMsg = t(`deleteUser.errors.${err.error}`)
-
-          setError(errorMsg)
-          appNotification({ message: errorMsg, status: 'error' })
+      if (!success) {
+        if (authError) {
+          const msg = t(`deleteUser.errors.${authError}`)
+          setError(msg)
+          appNotification({ message: msg, status: 'error' })
         }
-
-        setDeleting(false)
+        return
       }
-    })()
-  }, [appNotification, password, reauthenticate, t, currentUser, navigate, uid])
+
+      setDeleting(true)
+
+      const [
+        { default: deleteUserDocs },
+        { deleteUser },
+        { auth }
+      ] = await Promise.all([
+        import('@services/deleteUser'),
+        import('firebase/auth'),
+        import('@/firebase/firebase-config')
+      ])
+
+      await deleteUserDocs(uid)
+
+      await deleteUser(auth.currentUser)
+
+      location.assign('/')
+    } catch (err) {
+      console.error('Error deleting account:', err)
+      appNotification({
+        message: t('deleteUser.errors.deletingUser'),
+        status: 'error'
+      })
+      setDeleting(false)
+    }
+  }, [appNotification, password, reauthenticate, t, uid])
 
   return (
     <>
@@ -71,12 +73,9 @@ export default function DeleteAccountButton() {
         onClick={() => setOpen(true)}
         variant='outlined'
         disabled={popup || !!error}
-        endIcon={
-          <DeleteIcon
-            sx={[theme => ({ color: theme.palette.error[preferences.theme] })]}
-          />
-        }
-        color='error'>
+        endIcon={<DeleteIcon sx={getIconSx(preferences)} />}
+        color='error'
+      >
         {t('deleteAccount')}
       </Button>
 
@@ -90,7 +89,6 @@ export default function DeleteAccountButton() {
             password={password}
             error={error}
             setError={setError}
-            provider={provider}
             popup={popup}
             deleting={deleting}
           />
