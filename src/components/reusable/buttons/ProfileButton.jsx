@@ -13,6 +13,7 @@ import useMediaQuery from '@mui/material/useMediaQuery'
 import { useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import useLoadResources from '@hooks/useLoadResources'
+import { useNavigate } from 'react-router-dom'
 
 export default function ProfileButton({
   open,
@@ -24,6 +25,7 @@ export default function ProfileButton({
   className
 }) {
   const { t } = useTranslation('ui')
+  const navigate = useNavigate()
 
   const { isOffline, currentUser } = useAuth()
   const { profile } = useUser()
@@ -36,11 +38,8 @@ export default function ProfileButton({
   const loadingResource = useLoadResources('ui')
 
   const borderColor = isOffline ? 'red' : 'green'
-  const username = profile?.username || currentUser?.displayName
-  const email =
-    profile?.email ||
-    currentUser?.email ||
-    currentUser?.providerData?.[0]?.email
+  const username = profile?.username || currentUser?.username
+  const email = profile?.email || currentUser?.email
 
   const onlyBadge = Boolean(open && showTexts)
 
@@ -53,15 +52,13 @@ export default function ProfileButton({
     }
   }
 
-  if (loadingResource) return
-
   return (
     <Tooltip
       title={t('buttons.profileButtonLabel')}
       placement={tooltipPosition}>
       <Button
         disableRipple={onlyIcon}
-        onClick={onClick}
+        onClick={() => navigate('/profile')}
         onMouseEnter={preloadProfileComponent}
         sx={{
           borderRadius: onlyIcon ? '50%' : 0,
