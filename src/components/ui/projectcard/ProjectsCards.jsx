@@ -117,8 +117,6 @@ export default function ProjectsCards({ data }) {
     }
   }, { dependencies: [userLoaded, lastId], scope: containerRef })
 
-  if (!userLoaded) return null
-
   return (
     <Box
       ref={containerRef}
