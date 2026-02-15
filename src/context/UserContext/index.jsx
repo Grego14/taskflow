@@ -20,9 +20,9 @@ export default function UserProvider({ children }) {
     // default values
     preferences: {
       theme: userTheme,
-      lang: i18n.language,
+      lang: i18n.language || 'en',
       previewer: 'list',
-      locale: getLocale(i18n.language)
+      locale: getLocale(i18n.language || 'en')
     },
     metadata: {
       lastUsedFilter: 'default',
@@ -31,8 +31,8 @@ export default function UserProvider({ children }) {
       lastUsedMetricFilter: ''
     },
     profile: {
-      username: currentUser?.displayName || '',
-      avatar: currentUser?.photoURL || '',
+      username: currentUser?.username || '',
+      avatar: currentUser?.avatar || '',
       email: currentUser?.email || ''
     }
   })
@@ -71,7 +71,7 @@ export default function UserProvider({ children }) {
       },
       preferences: {
         ...user.preferences,
-        locale: getLocale(i18n.language)
+        locale: getLocale(user.preferences.lang)
       },
       setUser,
       userLoaded,
