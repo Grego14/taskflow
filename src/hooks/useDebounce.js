@@ -3,9 +3,6 @@ import { useCallback, useEffect, useRef } from 'react'
 export default function useDebounce(callback, delay) {
   const timeoutRef = useRef(null)
   const latestCallback = useRef(callback)
-  const cancelRef = useRef(() => {
-    clearTimeout(timeoutRef.current)
-  })
 
   latestCallback.current = callback
 
