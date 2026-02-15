@@ -1,30 +1,34 @@
-[![Netlify Status](https://api.netlify.com/api/v1/badges/ed3df4d9-fd25-48e4-8579-c4c2b423e4d0/deploy-status)](https://app.netlify.com/projects/apptaskflow/deploys)
+# TaskFlow | Project Management App
 
-## Contributing Guide
-- Clone the repo and install dependencies.
+A high-performance, collaborative project management SPA built with a focus on speed, refined animations.
 
-### Prerequisites
-- git.
-- pnpm or npm.
+**🚀 [Live Demo Link Here](https://apptaskflow.netlify.app/)**
 
-### Installation
+## ⚡V0.2
+- **React to Preact Migration:** Switched to `preact` to achieve a minimal bundle footprint.
+- **Lighthouse Score:** Optimized from 66 to **98** on mobile devices.
+- **UI Improvement:** Changes on the theme colors and add cool animations.
+- **Working On**: Using RTDB instead of Firestore to improve real-time data
+fetching.
 
-1. Clone the repository:
+## Key Features
+- **Real-time Sync:** Powered by Firestore for instant updates across clients.
+- **Drag-and-Drop:** Intuitive task management using native-like interactions.
+- **Collaborative:** Secure email-based invitations for team collaboration.
 
-```bash
-git clone https://github.com/Grego14/taskflow
-```
+## 🛠️ Key Technical Features
+- **Advanced State Management:** Uses **TanStack Query (v5)** with `async-storage-persister` for robust data fetching and caching
+- **Polished UX/UI:** - Dynamic animations with **GSAP** and `@gsap/react`.
+  - Responsive design using **MUI (Material UI v7)** and Emotion.
+  - Interactive data visualization with **MUI X Charts**.
+- **Internationalization:** Multi-language support with `i18next` and automatic language detection.
+- **Modern DX:** High-speed linting and formatting with **BiomeJS**.
 
-2. Navigate to the project directory:
-
-```bash
-cd taskflow
-```
-
-3. Install dependencies using either pnpm or npm:
-
-```bash
-pnpm install
-# or
-npm install
-```
+## 📦 Tech Stack
+- **Core:** Preact
+- **Data Fetching:** TanStack Query
+- **Routing:** React Router 7
+- **Forms:** React Hook Form
+- **Styling:** MUI + Emotion
+- **Animations:** GSAP
+- **Build Tool:** Vite 6
