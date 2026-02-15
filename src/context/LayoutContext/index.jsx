@@ -3,9 +3,8 @@ import { getItem } from '@utils/storage'
 import useUser from '@hooks/useUser'
 import useDebounce from '@hooks/useDebounce'
 import LayoutContext from './context'
-import { Outlet } from 'react-router-dom'
 
-export default function LayoutProvider() {
+export default function LayoutProvider({ children }) {
   const { userLoaded, update, metadata } = useUser()
   const [drawerOpen, setDrawerOpen] = useState(getItem('drawerOpen'))
   const [filter, setFilter] = useState('default')
@@ -25,7 +24,7 @@ export default function LayoutProvider() {
 
   useEffect(() => {
     if (userLoaded) setFilter(metadata?.lastUsedFilter || 'default')
-  }, [userLoaded, metadata])
+  }, [userLoaded, metadata?.lastUsedFilter])
 
   const value = useMemo(() => ({
     drawerOpen,
@@ -38,7 +37,7 @@ export default function LayoutProvider() {
 
   return (
     <LayoutContext.Provider value={value}>
-      <Outlet />
+      {children}
     </LayoutContext.Provider>
   )
 }

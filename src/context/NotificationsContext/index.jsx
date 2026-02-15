@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { Outlet } from 'react-router-dom'
 import NotificationsContext from './context.js'
 
 import useProject from '@hooks/useProject'
@@ -17,7 +16,7 @@ const getActionMetadata = target => {
   return target.currentTarget.dataset
 }
 
-export default function NotificationsProvider() {
+export default function NotificationsProvider({ children }) {
   const { uid } = useUser()
   const [notifications, setNotifications] = useState([])
   const [error, setError] = useState(null)
@@ -123,7 +122,7 @@ export default function NotificationsProvider() {
 
   return (
     <NotificationsContext.Provider value={value}>
-      <Outlet />
+      {children}
     </NotificationsContext.Provider>
   )
 }

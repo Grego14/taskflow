@@ -1,7 +1,7 @@
 import { createContext } from 'react'
 
 const NotificationsContext = createContext({
-  notifications: [],
+  notifications: null,
   deleteNotification: () => {},
 
   // special functions used when the notification is a invitation to a project
