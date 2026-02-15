@@ -1,5 +1,4 @@
 // components
-import DropdownMenu from '@components/reusable/DropdownMenu'
 import GoToProjectIcon from '@mui/icons-material/ChevronRight'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
 import Box from '@mui/material/Box'
@@ -12,7 +11,9 @@ import Chip from '@mui/material/Chip'
 import Typography from '@mui/material/Typography'
 
 import { lazy, Suspense } from 'preact/compat'
+
 const ProjectActions = lazy(() => import('./ProjectActions'))
+const DropdownMenu = lazy(() => import('@components/reusable/DropdownMenu'))
 
 // hooks
 import useAuth from '@hooks/useAuth'
@@ -84,20 +85,27 @@ export default function ProjectCard({ data, isRecent }) {
       <CardHeader
         disableTypography
         action={
-          <DropdownMenu
-            icon={<MoreVertIcon />}
-            label={s => getMenuLabel(s, 'projects.projectCardMenuLabel', 'ui')}
-            slotProps={{ list: { sx: { py: 0 } }, paper: { sx: { minWidth: 0, minHeight: 0 } } }}
-          >
-            <Suspense fallback={null}>
+          <Suspense fallback={null}>
+            <DropdownMenu
+              icon={<MoreVertIcon />}
+              label={s => getMenuLabel(s, 'projects.projectCardMenuLabel', 'ui')}
+              slotProps={{
+                list: { sx: { py: 0 } }, paper: {
+                  sx: {
+                    minWidth: 0,
+                    minHeight: 0
+                  }
+                }
+              }}
+            >
               <ProjectActions
                 id={data?.id}
                 archived={data?.isArchived}
                 isOwner={data?.createdBy === uid}
                 owner={data?.createdBy}
               />
-            </Suspense>
-          </DropdownMenu>
+            </DropdownMenu>
+          </Suspense>
         }
         title={
           <Typography
@@ -148,7 +156,7 @@ export default function ProjectCard({ data, isRecent }) {
           }}>
           {data?.description || t('projects.noDescription')}
         </Typography>
-      </CardContent>
+      </CardContent >
       <CardActions sx={{ p: 2, justifyContent: 'space-between', mt: 'auto' }}>
         <Typography variant='caption' color='textSecondary'>
           {t('projects.created_date', { date })}
