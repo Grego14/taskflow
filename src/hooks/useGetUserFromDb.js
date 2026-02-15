@@ -8,10 +8,10 @@ export default function useGetUserFromDb() {
   const { t } = useTranslation('ui')
   const { isOffline } = useAuth()
   const { appNotification } = useApp()
-  const { uid, setUser, setUserLoaded } = useUser()
+  const { uid, setUser, setUserLoaded, userLoaded } = useUser()
 
   useEffect(() => {
-    if (!uid) return
+    if (!uid || userLoaded) return
 
     let unsubscribe
 
@@ -53,5 +53,5 @@ export default function useGetUserFromDb() {
     initFirestore()
 
     return () => unsubscribe?.()
-  }, [uid, setUser, setUserLoaded, appNotification, isOffline, t])
+  }, [uid, setUser, setUserLoaded, appNotification, isOffline, t, userLoaded])
 }
