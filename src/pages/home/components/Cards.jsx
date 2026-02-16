@@ -30,9 +30,6 @@ const CARDS_DATA = [
   { type: 'metrics', icon: BarChart }
 ]
 
-const getText = (cardType, title = true) =>
-  `cards.${cardType}.${title ? 'title' : 'text'}`
-
 const cardStyles = (theme, isDark) => ({
   overflow: 'visible',
   backgroundColor: isDark
@@ -41,11 +38,12 @@ const cardStyles = (theme, isDark) => ({
   border: `1px solid ${alpha(theme.palette.secondary.main, 0.3)}`,
   borderRadius: '16px',
   height: '100%',
-  transition: 'transform 0.3s ease',
   '&:hover': {
     transform: 'translateY(-8px)',
-    border: `1px solid ${theme.palette.secondary.main}`
-  }
+    border: `1px solid ${theme.palette.secondary.main}`,
+    transition: 'transform 0.3s ease',
+  },
+  backgroundImage: 'none'
 })
 
 export default function Cards({ setAnimationEnded, bg, showAppBar }) {
@@ -65,11 +63,11 @@ export default function Cards({ setAnimationEnded, bg, showAppBar }) {
       const tween = gsap.to('.card', {
         scrollTrigger: {
           trigger: '#cards',
-          start: 'top 80%',
+          start: 'top 50%',
           toggleActions: 'play none none none',
-          end: 'bottom center',
+          end: 'bottom 75%',
           once: true,
-          scrub: 0.2,
+          scrub: true
         },
         autoAlpha: 1,
         scale: 1,
@@ -77,7 +75,7 @@ export default function Cards({ setAnimationEnded, bg, showAppBar }) {
         stagger: 0.25,
         duration: 1.2,
         ease: 'elastic.out(1, 0.8)',
-        onProgress: (card) => { if (card === 3) setAnimationEnded() }
+        onComplete: setAnimationEnded
       })
     })
   }, [isLaptop])

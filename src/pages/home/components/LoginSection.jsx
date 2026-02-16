@@ -11,7 +11,7 @@ import { SplitText } from 'gsap/SplitText'
 import { useTranslation } from 'react-i18next'
 import { alpha } from '@mui/material/styles'
 
-export default function LoginSection({ gradientFrom, prefetchAuth }) {
+export default function LoginSection({ prefetchAuth }) {
   const { isOnlyMobile } = useApp()
   const { t } = useTranslation('landing')
 
@@ -21,6 +21,8 @@ export default function LoginSection({ gradientFrom, prefetchAuth }) {
 
       gsap.set('#login-text', { opacity: 1 })
       gsap.set(['#login-btn', '#signup-btn'], { autoAlpha: 0, y: 40 })
+
+      gsap.to('.blur-circle', { opacity: 1 })
 
       const tl = gsap.timeline({
         scrollTrigger: {
@@ -69,8 +71,7 @@ export default function LoginSection({ gradientFrom, prefetchAuth }) {
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: gradientFrom,
+        alignItems: 'center'
       }}>
       <div className='flex flex-column flex-center' style={{ zIndex: 2 }}>
         <Typography
@@ -118,6 +119,7 @@ function BlurredCircle({ positions, color = 'secondary', blur = 80, className })
         position: 'absolute',
         filter: `blur(${blur}px)`,
         zIndex: 1,
+        opacity: 0,
         ...positions
       })}
     />

@@ -114,10 +114,9 @@ export default function Landing() {
           />
         )}
       </ScreenWrapper>
-      <ScreenWrapper>
+      <ScreenWrapper sx={{ backgroundColor: landingBg }}>
         {cardsEnded &&
           <LoginSection
-            gradientFrom={landingBg}
             prefetchAuth={handlePrefetch}
           />
         }
@@ -126,13 +125,14 @@ export default function Landing() {
   )
 }
 
-function ScreenWrapper({ children, height = '100dvh' }) {
+function ScreenWrapper({ children, height = '100dvh', sx }) {
   return (
     <Box sx={{
       minHeight: height,
       display: 'flex',
       minWidth: '100dvw',
-      flexDirection: 'column'
+      flexDirection: 'column',
+      ...sx
     }}>
       <Suspense fallback={null}>
         {children}
