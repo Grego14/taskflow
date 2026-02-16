@@ -67,7 +67,7 @@ export default function Projects() {
   const allProjects = useMemo(() => ([...projects.user, ...projects.external]), [projects])
   const hasProjects = allProjects.length > 0
 
-  const createProjectBtnStyles = { alignSelf: isMobile ? 'center' : 'start' }
+  const createProjectBtnStyles = { alignSelf: !hasProjects ? 'center' : 'start' }
 
   if (loading) return <CircleLoader text={t('projects.loading')} height='100dvh' />
 
