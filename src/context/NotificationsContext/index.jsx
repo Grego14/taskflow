@@ -8,6 +8,7 @@ export default function NotificationsProvider({ children }) {
   const { uid } = useUser()
   const [notifications, setNotifications] = useState([])
   const [error, setError] = useState(null)
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     if (!uid) {
@@ -15,6 +16,7 @@ export default function NotificationsProvider({ children }) {
       return
     }
 
+    setLoading(true)
     const query = notificationService.getNotificationsQuery(uid)
 
     const unsubscribe = dbAdapter.listen(
@@ -28,10 +30,12 @@ export default function NotificationsProvider({ children }) {
           })
         }
         setNotifications(data)
+        setLoading(false)
       },
       (err) => {
         console.error('Notification Listener Error:', err)
         setError(err.message)
+        setLoading(false)
       }
     )
 
@@ -65,13 +69,27 @@ export default function NotificationsProvider({ children }) {
     if (notificationId) await notificationService.delete(uid, notificationId)
   }, [uid])
 
+  const markNotificationsAsRead = useCallback(async (ids) => {
+    if (!uid || !ids.length) return
+    await notificationService.markAsRead(uid, ids)
+  }, [uid])
+
   const value = useMemo(() => ({
     notifications,
     onAccept,
     onDecline,
     deleteNotification,
-    error
-  }), [notifications, onAccept, onDecline, deleteNotification, error])
+    markNotificationsAsRead,
+    error,
+    loading
+  }), [notifications,
+    onAccept,
+    onDecline,
+    deleteNotification,
+    error,
+    loading,
+    markNotificationsAsRead]
+  )
 
   return (
     <NotificationsContext.Provider value={value}>
