@@ -24,6 +24,7 @@ export default defineConfig({
       '@services': path.resolve(__dirname, './src/services'),
       '@querys': path.resolve(__dirname, './src/querys'),
       '@context': path.resolve(__dirname, './src/context'),
+      '@constants': path.resolve(__dirname, './src/constants'),
       'react': 'preact/compat',
       'react-dom/test-utils': 'preact/compat/test-utils',
       'react-dom': 'preact/compat',
