@@ -1,0 +1,24 @@
+{
+  "title": "Notificaciones",
+  "empty": "No tienes notificaciones pendientes",
+  "actions": {
+    "accept": "Aceptar",
+    "decline": "Declinar",
+    "delete": "Eliminar",
+    "markAsRead": "Marcar como leída"
+  },
+  "types": {
+    "welcome": {
+      "title": "¡Bienvenido/a!",
+      "message": "Gracias por unirte a nuestra plataforma. ¡Comienza creando un proyecto!"
+    },
+    "kicked": {
+      "title": "Expulsión de proyecto",
+      "message": "Has sido eliminado del proyecto {{projectName}} por {{kickedBy}}."
+    },
+    "invitation": {
+      "title": "Invitación recibida",
+      "message": "{{invitedBy}} te ha invitado a colaborar en el proyecto {{projectName}}."
+    }
+  }
+}

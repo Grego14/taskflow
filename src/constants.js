@@ -65,5 +65,6 @@ export const RESOURCES = [
   'templates',
   'auth',
   'landing',
-  'metrics'
+  'metrics',
+  'notifications'
 ]
