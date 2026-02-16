@@ -4,10 +4,11 @@ import useDebounce from '@hooks/useDebounce'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
-export default function AuthInput({ field, error }) {
+export default function AuthInput(props) {
+  const { ref, onChange, name, ...other } = props
   const { t } = useTranslation('auth')
   const [value, setValue] = useState('')
-  const [debounceOnChange] = useDebounce(e => field.onChange(e), 750)
+  const [debounceOnChange] = useDebounce(e => onChange(e), 750)
 
   const handleOnChange = e => {
     const newValue = e.target.value
@@ -18,23 +19,19 @@ export default function AuthInput({ field, error }) {
 
   return (
     <TextField
-      id={`${field.name}-label`}
+      {...other}
+      id={`${name}-label`}
       fullWidth
-      name={field.name}
-      label={t(`inputs.labels.${field.name}`, { ns: 'auth' })}
+      name={name}
+      label={t(`inputs.labels.${name}`, { ns: 'auth' })}
       value={value}
-      type={field.type || 'text'}
       placeholder={t(
         // use the same placeholder for the repeatedPassword
-        `inputs.placeholders.${field.name === 'repeatedPassword' ? 'password' : field.name}`,
+        `inputs.placeholders.${name === 'repeatedPassword' ? 'password' : name}`,
         { ns: 'auth' }
       )}
       onChange={handleOnChange}
-      onBlur={field.onBlur}
-      error={!!error}
-      inputRef={field.ref}
-      autoComplete={field.autoComplete}
-      helperText={error?.message}
+      inputRef={ref}
     />
   )
 }
