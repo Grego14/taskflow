@@ -9,7 +9,7 @@ export default function CreateFromTemplate({ sx }) {
 
   return (
     <Box
-      gap={{ mobile: 1, tablet: 2 }}
+      gap={{ xs: 1, mobile: 2 }}
       className='flex flex-column flex-center'
       sx={sx}
     >
