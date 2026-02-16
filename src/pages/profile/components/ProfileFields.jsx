@@ -82,8 +82,6 @@ export default function ProfileFields({
         const isAvatar = field.name === 'avatar'
         const defaultProps = { key: field.name, control, ...field }
 
-        console.log(getTranslatedRules(field.rules, t))
-
         return (
           <RegisterComponent
             {...defaultProps}
