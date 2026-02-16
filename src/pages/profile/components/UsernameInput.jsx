@@ -1,15 +1,11 @@
 import TextField from '@mui/material/TextField'
 import { useTranslation } from 'react-i18next'
 
-export default function UsernameInput({ error, field }) {
+export default function UsernameInput(props) {
   const { t } = useTranslation('profile')
 
-  return (
-    <TextField
-      label={t('labels.username')}
-      error={!!error}
-      helperText={error?.message}
-      {...field}
-    />
+  console.log(props)
+
+  return (<TextField label={t('labels.username')} {...props} />
   )
 }

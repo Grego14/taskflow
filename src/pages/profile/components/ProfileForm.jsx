@@ -30,7 +30,7 @@ export default function ProfileForm({ setSaveBtnDisabled, fields }) {
   const [initialValues, setInitialValues] = useState({
     theme: preferences?.theme || 'light',
     lang: preferences?.lang || i18n.language,
-    username: profile?.username || currentUser?.displayName,
+    username: profile?.username || currentUser?.username,
     avatar: profile?.avatar
   })
 

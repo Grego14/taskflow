@@ -21,9 +21,7 @@ const bottomIconStyles = {
   right: 0
 }
 
-// in this component we only use the value and the onChange properties of
-// the field prop
-export default memo(function AvatarUploader({ error, field }) {
+export default memo(function AvatarUploader({ error, onChange, value }) {
   const { currentUser } = useAuth()
   const { profile, preferences } = useUser()
   const { t } = useTranslation('profile')
@@ -52,7 +50,7 @@ export default memo(function AvatarUploader({ error, field }) {
       <Box position='relative' width='fit-content'>
         <Avatar
           alt={t('avatarAlt_user', { user: username })}
-          src={field.value}
+          src={value}
           onClick={handleInputClick}
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
@@ -66,7 +64,7 @@ export default memo(function AvatarUploader({ error, field }) {
             }
           })}>
           {/* if there isn't an avatar show the initial letter of the username */}
-          {!field.value && username?.[0]}
+          {!value && username?.[0]}
         </Avatar>
 
         {showUploadIcon && (
@@ -137,7 +135,7 @@ export default memo(function AvatarUploader({ error, field }) {
       <input
         type='file'
         ref={fileInputRef}
-        onChange={field.onChange}
+        onChange={onChange}
         accept='image/jpeg, image/png, image/webp'
         className=''
         style={{ display: 'none' }}

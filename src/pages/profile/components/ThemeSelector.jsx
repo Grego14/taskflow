@@ -8,7 +8,7 @@ import { useTranslation } from 'react-i18next'
 
 const themes = ['dark', 'light']
 
-export default function ThemeSelector({ error, field }) {
+export default function ThemeSelector(props) {
   const { t } = useTranslation(['profile', 'ui'])
 
   return (
@@ -19,7 +19,7 @@ export default function ThemeSelector({ error, field }) {
       <Select
         labelId='select-theme'
         label={t('labels.theme', { ns: 'profile' })}
-        {...field}>
+        {...props}>
         {themes.map(theme => (
           <MenuItem key={theme} value={theme}>
             {upperCaseInitialLetter(

@@ -10,17 +10,16 @@ const languages = {
   es: 'Español'
 }
 
-export default function LangSelector({ error, field }) {
+export default function LangSelector(props) {
   const { t } = useTranslation('profile')
 
   return (
     <FormControl>
       <InputLabel id='select-lang'>{t('labels.lang')}</InputLabel>
       <Select
+        {...props}
         labelId='select-lang'
-        value={field.value}
-        label={t('labels.lang')}
-        onChange={field.onChange}>
+        label={t('labels.lang')}>
         {Object.entries(languages).map(lang => (
           <MenuItem key={lang[0]} value={lang[0]}>
             {lang[1]}
