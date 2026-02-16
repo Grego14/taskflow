@@ -41,8 +41,6 @@ export default function ProfileButton({
   const username = profile?.username || currentUser?.username
   const email = profile?.email || currentUser?.email
 
-  const onlyBadge = Boolean(open && showTexts)
-
   const preloadProfileComponent = async () => {
     try {
       await import('@pages/profile/Profile.jsx')
@@ -68,13 +66,14 @@ export default function ProfileButton({
         aria-label={t('buttons.profileButtonLabel')}
         className={className}>
         <Badge
+          className='profile-btn-avatar'
           variant='dot'
           overlap='circular'
           anchorOrigin={{ vertical: 'bottom' }}
           color={isOffline ? 'error' : 'success'}
           sx={{
-            mr: onlyBadge ? 2 : 0,
-            scale: open ? '1' : '0.7',
+            mr: showTexts && open ? 2 : 0,
+            scale: open ? '1.2' : '0.8',
             transition: 'scale .25s ease-in-out'
           }}>
           <Avatar
@@ -93,8 +92,11 @@ export default function ProfileButton({
               display: 'flex',
               flexDirection: 'column',
               gap: '.1rem',
-              alignItems: 'start'
-            }}>
+              alignItems: 'start',
+              position: 'absolute',
+              left: '4.75rem'
+            }}
+            aria-hidden={!open}>
             <Typography
               sx={{
                 opacity: 1,
