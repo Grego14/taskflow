@@ -58,7 +58,9 @@ export default function AppRoutes() {
             {/* Main App Layout Wrapper */}
             <Route element={
               <LayoutProvider>
-                <LayoutManager />
+                <NotificationsProvider>
+                  <LayoutManager />
+                </NotificationsProvider>
               </LayoutProvider>
             }>
               <Route path='/home' element={<Home />} />
