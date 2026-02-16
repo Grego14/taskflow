@@ -9,7 +9,7 @@ import { useState, forwardRef } from 'react'
 import { useTranslation } from 'react-i18next'
 
 const PasswordInput = forwardRef((props, ref) => {
-  const { error, onChange, onBlur, ...other } = props
+  const { name, onChange, ...other } = props
 
   const [showPassword, setShowPassword] = useState(false)
   const [value, setValue] = useState('')
@@ -28,9 +28,8 @@ const PasswordInput = forwardRef((props, ref) => {
   return (
     <TextField
       id={`${name}-label`}
+      name={name}
       fullWidth
-      value={value}
-      type={showPassword ? 'text' : 'password'}
       slotProps={{
         input: {
           endAdornment: (
@@ -48,12 +47,11 @@ const PasswordInput = forwardRef((props, ref) => {
           )
         }
       }}
-      onChange={handleOnChange}
-      onBlur={onBlur}
-      error={!!error}
-      inputRef={ref}
-      helperText={error?.message}
       {...other}
+      type={showPassword ? 'text' : 'password'}
+      value={value}
+      onChange={handleOnChange}
+      inputRef={ref}
     />
   )
 })
