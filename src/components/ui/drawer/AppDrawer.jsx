@@ -1,72 +1,65 @@
-import { memo, useCallback } from 'react'
+import { memo, useCallback, useRef } from 'react'
 
-// components
-import ProfileButton from '@components/reusable/buttons/ProfileButton'
 import Box from '@mui/material/Box'
 import Drawer from '@mui/material/Drawer'
 import List from '@mui/material/List'
+import ProfileButton from '@components/reusable/buttons/ProfileButton'
 import DrawerActions from './components/DrawerActions'
 import Toolbar from './components/Toolbar'
 
-// hooks
-import useApp from '@hooks/useApp'
-import useNotifications from '@hooks/useNotifications'
-import useUser from '@hooks/useUser'
-import { useTheme } from '@mui/material/styles'
 import { useParams, useNavigate } from 'react-router-dom'
-import { useRef } from 'preact/hooks'
+import { useTheme, alpha } from '@mui/material/styles'
 import { useGSAP } from '@gsap/react'
+import useApp from '@hooks/useApp'
+import useUser from '@hooks/useUser'
 import useLayout from '@hooks/useLayout'
+import useLoadResources from '@hooks/useLoadResources'
 
-// utils
 import { setItem } from '@utils/storage.js'
 import gsap from 'gsap'
 
-// Helper to calculate shadow outside to keep component clean
-const getDrawerShadow = (projectId, isMobile, appBarHeight, theme, userTheme) => {
-  const shadowColor = theme.palette.grey[userTheme === 'light' ? 300 : 800]
-  return `0 ${projectId && !isMobile ? appBarHeight : 0} 3px ${shadowColor}`
-}
+const drawerPaperStyles = (open, width, shadow) => ({
+  width: open ? width.open : width.closed,
+  transition: 'none',
+  overflow: 'hidden',
+  ...(!open && { boxShadow: shadow })
+})
 
 export default memo(function AppDrawer({ children }) {
   const { drawerWidth, appBarHeight, isMobile } = useApp()
   const { preferences } = useUser()
   const { projectId } = useParams()
+  const { drawerOpen, setDrawerOpen } = useLayout()
   const theme = useTheme()
   const navigate = useNavigate()
   const drawerRef = useRef(null)
-  const { drawerOpen, setDrawerOpen } = useLayout()
 
-  const shadow = getDrawerShadow(projectId, isMobile, appBarHeight, theme, preferences?.theme)
+  const loadingResources = useLoadResources('ui')
 
-  const { notifications } = useNotifications()
+  const userTheme = preferences?.theme || 'dark'
+  const shadowColor = theme.palette.grey[userTheme === 'light' ? 300 : 800]
+  const shadow = `0 ${projectId && !isMobile ? appBarHeight : 0} 3px ${shadowColor}`
 
-  const toggleDrawer = useCallback(
-    state => {
-      setDrawerOpen(state)
-      setItem('drawerOpen', state)
-    },
-    [setDrawerOpen]
-  )
+  const toggleDrawer = useCallback(state => {
+    setDrawerOpen(state)
+    setItem('drawerOpen', state)
+  }, [setDrawerOpen])
 
   // initial enter animation
   useGSAP(() => {
-    gsap.from('.MuiDrawer-paper', {
-      autoAlpha: 0,
-      x: -drawerWidth[drawerOpen ? 'open' : 'closed']
-    })
-  }, { scope: drawerRef })
+    if (loadingResources) return
 
-  useGSAP(() => {
     const isOpening = drawerOpen
     const targetWidth = isOpening ? drawerWidth.open : drawerWidth.closed
-    const _labels = gsap.utils.toArray('.MuiListItemText-root')
-    const labels = [..._labels, '.profile-btn-text']
-
-    gsap.set('.profile-btn-text', { opacity: 0 })
+    const labels = ['.nav-action-text', '.profile-btn-text']
+    const icons = '.drawer-action .MuiSvgIcon-root'
 
     const tl = gsap.timeline({
-      defaults: { ease: 'expo.inOut', overwrite: 'auto', duration: 0.5 }
+      defaults: {
+        ease: 'expo.inOut',
+        duration: 0.5,
+        overwrite: 'auto'
+      }
     })
 
     tl.to('.MuiDrawer-paper', {
@@ -76,67 +69,35 @@ export default memo(function AppDrawer({ children }) {
     }).addLabel('items')
 
     if (isOpening) {
-      tl.fromTo('.drawer-action .MuiListItemIcon-root',
+      tl.fromTo(icons,
         { opacity: 0, x: -8 },
-        { opacity: 1, x: 0, stagger: 0.05 },
-        'items'
-      )
+        { opacity: 1, x: 0, stagger: 0.05 }, 'items')
 
-      tl.fromTo(labels,
-        { x: -15, opacity: 0 },
-        { x: 0, opacity: 1, stagger: 0.075 },
-        'items-=0.2'
-      )
+        .fromTo(labels,
+          { x: -15, opacity: 0 },
+          { x: 0, opacity: 1, stagger: 0.075 }, 'items-=0.2')
     } else {
-      tl.to(labels, {
-        opacity: 0,
-        x: -15,
-        duration: 0.15,
-        stagger: 0.03
-      }, 'items-=0.4')
-
-      tl.to('.drawer-action .MuiListItemIcon-root', {
-        x: 0,
-        opacity: 1,
-        duration: 0.3
-      }, 'items')
+      tl.to(labels,
+        { opacity: 0, x: -15, duration: 0.15, stagger: 0.03 }, 'items-=0.4')
+        .to(icons, { x: 0, opacity: 1, duration: 0.3 }, 'items')
     }
-  }, { scope: drawerRef, dependencies: [drawerOpen] })
+  }, { scope: drawerRef, dependencies: [drawerOpen, loadingResources] })
 
-  const profileBtnProps = {
-    open,
-    showTexts: true,
-    sx: {
-      p: 1.5,
-      // avoid moving the badge to the center when the username is removed
-      mr: drawerOpen ? 0 : 'auto',
-      justifyContent: drawerOpen ? 'start' : 'center'
-    },
-    tooltipPosition: 'right',
-    onClick: () => navigate('/profile'),
-    className: 'drawer-action',
-  }
+  if (loadingResources) return
 
   return (
     <Drawer
       open={drawerOpen}
       onClose={() => toggleDrawer(false)}
       variant='permanent'
-      ModalProps={{
-        disablePortal: true
-      }}
       ref={drawerRef}
       sx={{
         display: 'flex',
         textWrap: 'nowrap',
         width: drawerOpen ? drawerWidth.open : drawerWidth.closed,
-        '& .MuiDrawer-paper': {
-          width: drawerOpen ? drawerWidth.open : drawerWidth.closed,
-          transition: 'none',
-          overflow: 'hidden',
-          ...(!drawerOpen && { boxShadow: shadow })
-        }
-      }}>
+        '& .MuiDrawer-paper': drawerPaperStyles(drawerOpen, drawerWidth, shadow)
+      }}
+    >
       <Toolbar open={drawerOpen} toggleDrawer={toggleDrawer} />
 
       <List
@@ -146,7 +107,19 @@ export default memo(function AppDrawer({ children }) {
         <DrawerActions open={drawerOpen} toggleDrawer={toggleDrawer} />
 
         <Box className='flex flex-column' mt='auto' gap={1.5}>
-          <ProfileButton {...profileBtnProps} />
+          <ProfileButton
+            open={drawerOpen}
+            showTexts
+            className='drawer-action'
+            onClick={() => navigate('/profile')}
+            sx={{
+              p: 1.5,
+              mr: drawerOpen ? 0 : 'auto',
+              justifyContent: drawerOpen ? 'start' : 'center',
+              maxWidth: '100%'
+            }}
+            tooltipPosition='right'
+          />
         </Box>
       </List>
     </Drawer>
