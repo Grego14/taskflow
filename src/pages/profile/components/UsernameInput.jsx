@@ -4,8 +4,6 @@ import { useTranslation } from 'react-i18next'
 export default function UsernameInput(props) {
   const { t } = useTranslation('profile')
 
-  console.log(props)
 
-  return (<TextField label={t('labels.username')} {...props} />
-  )
+  return <TextField label={t('labels.username')} {...props} />
 }
