@@ -7,7 +7,6 @@ import useAuth from '@hooks/useAuth'
 import useDebounce from '@hooks/useDebounce'
 import useGetUserFromDb from '@hooks/useGetUserFromDb'
 import useUser from '@hooks/useUser'
-import useLoadResources from '@hooks/useLoadResources'
 
 import updater from '@services/updateUser'
 import lazyImport from '@utils/lazyImport'
@@ -46,7 +45,6 @@ const Services = () => {
   const { appNotification, setIsOffline, isOffline } = useApp()
 
   const lastConnectionState = useRef(isOffline)
-  const loadingResources = useLoadResources('ui')
 
   useEffect(() => {
     initAuth()
