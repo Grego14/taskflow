@@ -4,9 +4,9 @@ import CreateProject from '@components/ui/buttons/CreateProject'
 import ProjectsCards from '@components/ui/projectcard/ProjectsCards'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
+import CreateFromTemplate from '@components/reusable/projects/CreateFromTemplate'
 
 // hooks
-import useApp from '@hooks/useApp'
 import useUser from '@hooks/useUser'
 import { useEffect, useState, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -27,7 +27,6 @@ const boxStyles = { display: 'flex', flexDirection: 'column', gap: 2 }
 
 export default function Projects() {
   const { uid } = useUser()
-  const { isMobile } = useApp()
   const { t } = useTranslation('ui')
   const [projects, setProjects] = useState({ user: [], external: [] })
   const [loading, setLoading] = useState(true)
@@ -74,16 +73,15 @@ export default function Projects() {
   return (
     <Box
       className={`${!projectsQuantity ? ' flex-center' : ''}`}
-      pt={2}
-      pb={10} // enough padding
-      px={isMobile ? 2 : 3}
+      py={2}
+      px={{ mobile: 2, tablet: 3 }}
       my={!projectsQuantity ? 'auto' : 0}
       width='100%'>
       {projectsQuantity ? (
         <Box sx={boxStyles}>
           <Typography
-            className={isMobile ? 'text-center' : ''}
             variant='h1'
+            textAlign={{ mobile: 'center', tablet: 'start' }}
             sx={[theme => ({ ...theme.typography.h4 })]}>
             {t('projects.title_quantity', { quantity: allProjects.length })}
           </Typography>
@@ -95,7 +93,10 @@ export default function Projects() {
           <Typography variant='h5' textAlign='center'>
             {t('projects.errors.empty')}
           </Typography>
-          <CreateProject sx={createProjectBtnStyles} />
+          <Box className='flex flex-center flex-column' gap={2} mt={2}>
+            <CreateProject sx={createProjectBtnStyles} />
+            <CreateFromTemplate />
+          </Box>
         </Box>
       )}
     </Box>

@@ -1,0 +1,80 @@
+{
+  "createFromTemplate": "Create from template",
+  "text": "Projects",
+  "errors": {
+    "notFound": "We couldn't find the project",
+    "noAccess": "Sorry. You don't have access to this project",
+    "members": "Failed to get project members",
+    "empty": "No projects were found",
+    "noConnection": "Sorry. We couldn't check if you have access to this project, check your internet connection."
+  },
+  "inputs": {
+    "nameLabel": "Project name",
+    "namePlaceholder": "Enter a name for your project",
+    "descriptionLabel": "Project description",
+    "descriptionPlaceholder": "Provide a brief summary of the project",
+    "errors": {
+      "nameIsEmpty": "Project name is required",
+      "nameIsInvalid": "Project name contains invalid characters",
+      "descriptionIsInvalid": "Project description contains invalid characters"
+    }
+  },
+  "new": {
+    "makeTemplate": "Make this project a template",
+    "makeTemplateHelpText": "Templates can be reused for new projects",
+    "makeTemplatePublic": "Public template",
+    "makeTemplatePublicHelpText": "Public templates can be used by any user",
+    "create": "Create project"
+  },
+  "goToProjects": "Go to my projects",
+  "recentProject": "Recently edited",
+  "lastProjects": "Last projects",
+  "lastEditedProject": "Go to my last edited project",
+  "createProject": "$t(common:create) a new project",
+  "loading": "Getting projects",
+  "loadingProject": "Getting project data",
+  "validating": "Validating access",
+  "goToProject": "Go to project",
+  "title_quantity": "Projects ({{quantity}})",
+  "template": "Template",
+  "archived": "Archived",
+  "created_date": "Created {{date}}",
+  "delete": "$t(common:delete) project",
+  "members_one": "{{count}} member",
+  "members_other": "{{count}} members",
+  "projectCardMenuLabel": "project actions",
+  "myProjects": "My Projects",
+  "goBack": "Go back to project",
+  "deleteProject": "Delete project",
+  "archiveProject": "Archive project",
+  "settings": {
+    "labelsLabel": "Labels",
+    "labelsInfo": "The tags shown here are being used by current tasks or sub-tasks",
+    "membersLabel": "Members",
+    "goToMembers": "Manage project members",
+    "createdBy": "Created by",
+    "createdAt": "Creation date",
+    "archivedAt": "Archived date",
+    "isTemplate": "Is a template",
+    "dangerTitle": "Danger zone",
+    "dangerSubtitle": "Manage irreversible actions for this project",
+    "saveProject": "Save changes",
+    "onlyOwnerCanChange": "Only the project creator can make changes",
+    "removeMember": "Kick member"
+  },
+  "cantUpdateArchived": "The project is archived, it can't longer receive changes",
+  "abandoneProject": "Leave project",
+  "projectPercentageActual": "Project Progress",
+  "projectPercentageLeft": "Remaining Percentage",
+  "addMembers": {
+    "sameUser": "You can't add yourself as a member!",
+    "userNotFound": "User not found",
+    "label": "Add members",
+    "placeholder": "Search by email...",
+    "search": "Search member",
+    "couldNotGetTheUser": "Couldn't get the user. Try again",
+    "alreadyAdded": "That user is already added"
+  },
+  "loadingMetrics": "Loading metrics",
+  "noDescription": "No description provided..."
+}

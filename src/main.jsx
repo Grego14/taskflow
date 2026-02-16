@@ -137,6 +137,7 @@ const theme = responsiveFontSizes(
     },
     breakpoints: {
       values: {
+        xs: 0,
         mobile: 420,
         tablet: 640,
         laptop: 1024,

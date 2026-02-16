@@ -8,7 +8,7 @@ import AddMembers from '@components/ui/projects/AddMembers'
 import CreateProject from './components/CreateProject'
 import MakeTemplate from './components/MakeTemplate'
 import CircleLoader from '@components/reusable/loaders/CircleLoader'
-import Link from '@components/reusable/Link'
+import CreateFromTemplate from '@components/reusable/projects/CreateFromTemplate'
 
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -27,7 +27,7 @@ const hidden = { opacity: 0, visibility: 'hidden' }
 export default function NewProject() {
   const { isMobile, isOnlyMobile } = useApp()
   const { t } = useTranslation(['ui', 'common'])
-  const loadingResources = useLoadResources('ui')
+  const loadingResources = useLoadResources(['ui', 'projects'])
   const containerRef = useRef(null)
 
   const [form, setForm] = useState({
@@ -54,7 +54,7 @@ export default function NewProject() {
 
     gsap.set('#newProjectTitle', { autoAlpha: 1 })
     gsap.set('#newProjectForm', { x: -300 })
-    gsap.set('#newProjectcreate', { y: 75 })
+    gsap.set('#newProjectCreate', { y: 75 })
 
     const tl = gsap.timeline({
       defaults: {
@@ -72,7 +72,7 @@ export default function NewProject() {
       duration: 1.5,
     }).to('#newProjectForm', { autoAlpha: 1, x: 0, ease: 'expo.out' }, '<0.5')
       .to(
-        '#newProjectcreate',
+        '#newProjectCreate',
         { autoAlpha: 1, y: 0 },
         '-=0.5'
       )
@@ -153,7 +153,7 @@ export default function NewProject() {
           justifyContent={isMobile ? 'start' : 'space-between'}
           alignItems='center'
           minWidth='100%'
-          id='newProjectcreate'
+          id='newProjectCreate'
           {...hidden}
           gap={2}>
           <CreateProject
@@ -161,15 +161,8 @@ export default function NewProject() {
             errors={errors}
             sx={{ m: 0 }}
           />
-          <Box
-            className='flex flex-column flex-center'
-            flexDirection='inherit'
-            gap={isMobile ? 1 : 2}>
-            <Typography color='textSecondary' sx={[theme => ({ ...theme.typography.subtitle2 })]}>
-              {t('or', { ns: 'common' })}
-            </Typography>
-            <Link to='/templates'>Create from template</Link>
-          </Box>
+
+          <CreateFromTemplate sx={{ flexDirection: 'inherit' }} />
         </Box>
       </Box>
     </Box>
