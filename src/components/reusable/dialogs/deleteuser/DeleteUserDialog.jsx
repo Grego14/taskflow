@@ -35,7 +35,7 @@ export default function DeleteUserDialog(props) {
     ...other
   } = props
 
-  const { providerId } = useAuth()
+  const { currentUser } = useAuth()
   const { preferences } = useUser()
   const { t } = useTranslation(['common', 'dialogs', 'profile'])
   const loadingResources = useLoadResources(['dialogs'])
@@ -67,12 +67,13 @@ export default function DeleteUserDialog(props) {
         {t('deleteUser.text', { ns: 'dialogs' })}
       </Typography>
 
-      {providerId === 'password' && (
+      {currentUser?.providerId === 'password' && (
         <Suspense fallback={null}>
           <PasswordInput
             onChange={handleChange}
             autoComplete='current-password'
-            error={error}
+            error={!!error}
+            helperText={error}
             name='password'
             label={t('deleteUser.passwordLabel', { ns: 'profile' })}
             sx={{ mt: 2 }}
