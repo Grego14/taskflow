@@ -1,4 +1,4 @@
-import { memo, useCallback, useRef } from 'react'
+import { useCallback, useRef } from 'react'
 
 import Box from '@mui/material/Box'
 import Drawer from '@mui/material/Drawer'
@@ -25,7 +25,7 @@ const drawerPaperStyles = (open, width, shadow) => ({
   ...(!open && { boxShadow: shadow })
 })
 
-export default memo(function AppDrawer({ children }) {
+export default function AppDrawer({ children }) {
   const { drawerWidth, appBarHeight, isMobile } = useApp()
   const { preferences } = useUser()
   const { projectId } = useParams()
@@ -40,10 +40,13 @@ export default memo(function AppDrawer({ children }) {
   const shadowColor = theme.palette.grey[userTheme === 'light' ? 300 : 800]
   const shadow = `0 ${projectId && !isMobile ? appBarHeight : 0} 3px ${shadowColor}`
 
-  const toggleDrawer = useCallback(state => {
-    setDrawerOpen(state)
-    setItem('drawerOpen', state)
-  }, [setDrawerOpen])
+  const toggleDrawer = useCallback((state) => {
+    setDrawerOpen(prev => {
+      const newState = typeof state === 'boolean' ? state : !prev
+      setItem('drawerOpen', newState)
+      return newState
+    })
+  }, [])
 
   // initial enter animation
   useGSAP(() => {
@@ -124,4 +127,4 @@ export default memo(function AppDrawer({ children }) {
       </List>
     </Drawer>
   )
-})
+}
