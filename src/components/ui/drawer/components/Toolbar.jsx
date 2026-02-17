@@ -1,4 +1,4 @@
-import { Suspense, lazy, memo } from 'react'
+import { Suspense, lazy } from 'react'
 import { useTranslation } from 'react-i18next'
 import useApp from '@hooks/useApp'
 
@@ -10,7 +10,7 @@ import MenuIcon from '@mui/icons-material/Menu'
 
 const ToolbarSelect = lazy(() => import('./ToolbarSelect'))
 
-export default memo(function DrawerToolbar({ open, toggleDrawer }) {
+export default function DrawerToolbar({ open, toggleDrawer }) {
   const { t } = useTranslation('ui')
   const { appBarHeight } = useApp()
 
@@ -25,7 +25,7 @@ export default memo(function DrawerToolbar({ open, toggleDrawer }) {
 
         <IconButton
           aria-label={t(`drawer.toolbar.${open ? 'collapse' : 'expand'}`)}
-          onClick={() => toggleDrawer(!open)}
+          onClick={toggleDrawer}
           sx={{ ml: open ? 'auto' : 0 }}
         >
           {open ? <ChevronLeftIcon fontSize='small' /> : <MenuIcon fontSize='small' />}
@@ -34,4 +34,4 @@ export default memo(function DrawerToolbar({ open, toggleDrawer }) {
       <Divider sx={{ display: 'block' }} />
     </Box>
   )
-})
+}
