@@ -52,7 +52,11 @@ const Services = () => {
 
   const updateUser = useMutation({
     mutationKey: ['updateUser'],
-    mutationFn: data => updater(uid, data),
+    mutationFn: data => {
+      if (!uid) return
+
+      return updater(uid, data)
+    },
     onError: err => console.error('UpdateUser:', err)
   })
 
