@@ -50,7 +50,7 @@ export default function Home() {
     { to: '/projects', text: t('projects.goToProjects', { ns: 'ui' }) },
     { to: '/projects/new', text: t('projects.createProject', { ns: 'ui' }) },
     ...(lastEdited ? [{
-      to: `/projects/${lastEdited}?o=${owner}`,
+      to: `/projects/${owner}/${lastEdited}`,
       text: t('projects.lastEditedProject', { ns: 'ui' })
     }] : [])
   ]
