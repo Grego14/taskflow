@@ -12,18 +12,15 @@ import ProjectAppBar from './ProjectAppBar'
 // hooks
 import useProjectAccess from '@context/ProjectsContext/useProjectAccess'
 import useProjectMembers from '@context/ProjectsContext/useProjectMembers'
-import useApp from '@hooks/useApp'
 import useAuth from '@hooks/useAuth'
-import useDebounce from '@hooks/useDebounce'
 import useUser from '@hooks/useUser'
 import { useTranslation } from 'react-i18next'
 import {
   Outlet,
-  useLocation,
   useNavigate,
   useParams,
-  useSearchParams
 } from 'react-router-dom'
+import useLoadResources from '@hooks/useLoadResources'
 
 import updateProject from '@services/updateProject'
 import ProjectContext from './context'
@@ -31,16 +28,12 @@ import ProjectContext from './context'
 export default function Project() {
   const { isOffline } = useAuth()
   const { uid, update: updateUser, metadata } = useUser()
-  const { isMobile } = useApp()
-  const { t } = useTranslation(['ui'])
-  const { projectId } = useParams()
+  const { t } = useTranslation(['common', 'projects'])
+  const { projectId, projectOwner } = useParams()
+
+  const loadingResources = useLoadResources('projects')
 
   const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const location = useLocation()
-
-  const rute = location.pathname?.split(projectId)?.[1]
-  const action = rute === '' ? 'dashboard' : rute
 
   const [metrics, setMetrics] = useState({
     totalTasks: 0,
@@ -49,13 +42,8 @@ export default function Project() {
 
   const { validating, hasAccess, projectData } = useProjectAccess({
     projectId,
-    owner:
-      location.state?.o ||
-      searchParams.get('o') ||
-      metadata?.lastEditedProjectOwner
+    owner: projectOwner
   })
-
-  const projectOwner = projectData?.createdBy
 
   const { projectMembers, projectMembersError } = useProjectMembers({
     projectsFetched: !!projectData,
@@ -65,7 +53,7 @@ export default function Project() {
 
   useEffect(() => {
     if (hasAccess)
-      updateUser?.({
+      updateUser({
         lastEditedProject: projectId,
         // field used on the main page where the "go to last project" link
         // exists
@@ -73,36 +61,16 @@ export default function Project() {
       })
   }, [hasAccess, updateUser, projectId, projectOwner])
 
-  useEffect(() => {
-    ;(() => {
-      const lastEditedProjectOwner = metadata?.lastEditedProjectOwner
-
-      if (
-        projectOwner &&
-        (location.state?.o === lastEditedProjectOwner ||
-          projectOwner === lastEditedProjectOwner)
-      ) {
-        if (searchParams.get('o') === (projectOwner || lastEditedProjectOwner))
-          return
-
-        setSearchParams(searchParams => {
-          searchParams.set('o', projectOwner)
-          return searchParams
-        })
-      }
-    })()
-  }, [location, setSearchParams, metadata, projectOwner, searchParams])
-
   const contextValue = useMemo(
     () => ({
       id: projectId,
       data: projectData,
       isArchived: projectData?.isArchived,
-      isOwner: projectData?.createdBy === uid,
+      isOwner: projectOwner === uid,
       hasAccess,
       validating,
       projectMembers,
-      update: data => updateProject(projectData?.createdBy, projectId, data),
+      update: data => updateProject(projectOwner, projectId, data),
       metrics,
       updateMetrics: data => {
         setMetrics(data)
@@ -110,6 +78,7 @@ export default function Project() {
     }),
     [
       projectId,
+      projectOwner,
       projectData,
       hasAccess,
       validating,
@@ -119,8 +88,11 @@ export default function Project() {
     ]
   )
 
+  if (loadingResources)
+    return <CircleLoader text={t('loading', { ns: 'common' })} />
+
   if (validating)
-    return <CircleLoader height='100dvh' text={t('projects.validating')} />
+    return <CircleLoader text={t('projects.validating', { ns: 'projects' })} />
 
   if (!hasAccess)
     return (
@@ -130,18 +102,18 @@ export default function Project() {
         width='100%'>
         <ErrorText className='text-center text-balance'>
           {isOffline
-            ? t('projects.errors.noConnection')
-            : t('projects.errors.noAccess')}
+            ? t('projects.errors.noConnection', { ns: 'projects' })
+            : t('projects.errors.noAccess', { ns: 'projects' })}
         </ErrorText>
         <GoBackButton
           handler={() => navigate('/projects')}
-          text={t('projects.goToProjects')}
+          text={t('projects.goToProjects', { ns: 'projects' })}
         />
       </Box>
     )
 
   if (projectMembersError)
-    return <ErrorText>{t('projects.errors.members')}</ErrorText>
+    return <ErrorText>{t('projects.errors.members', { ns: 'projects' })}</ErrorText>
 
   return (
     <ProjectContext.Provider value={contextValue}>
