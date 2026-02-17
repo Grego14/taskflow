@@ -37,7 +37,8 @@ export default function Dialog({
   color = 'textPrimary',
   acceptTitle,
   sx,
-  acceptBtn
+  acceptBtn,
+  disableButtons = false,
 }) {
   const { t } = useTranslation(['common', 'dialogs'])
   const { isMobile } = useApp()
@@ -117,7 +118,7 @@ export default function Dialog({
 
       {!removeActions && (
         <DialogActions>
-          <Button onClick={onClose} color='primary'>
+          <Button onClick={onClose} color='primary' disabled={disableButtons}>
             {t('close', { ns: 'common' })}
           </Button>
           {acceptBtn ? (
@@ -127,7 +128,7 @@ export default function Dialog({
               onClick={onAccept}
               color='primary'
               variant='contained'
-              disabled={disableAcceptBtn}>
+              disabled={disableAcceptBtn || disableButtons}>
               {acceptTitle ? acceptTitle : t('accept', { ns: 'common' })}
             </Button>
           )}
