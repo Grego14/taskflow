@@ -45,9 +45,17 @@ export default function Projects() {
     const projectMap = new Map()
 
     const handleSnapshot = (snap) => {
-      for (const doc of snap.docs) {
-        projectMap.set(doc.id, projectService.formatProject(doc))
+      for (const change of snap.docChanges()) {
+        const { id } = change.doc
+
+        if (change.type === 'removed') {
+          projectMap.delete(id)
+        } else {
+          // 'added' or 'modified'
+          projectMap.set(id, projectService.formatProject(change.doc))
+        }
       }
+
       setProjects([...projectMap.values()])
       setLoading(false)
     }
