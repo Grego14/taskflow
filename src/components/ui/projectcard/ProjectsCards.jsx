@@ -53,13 +53,15 @@ export default function ProjectsCards({ data }) {
     const cards = gsap.utils.toArray('.card', containerRef.current)
     gsap.set('.project-title, .project-description', { autoAlpha: 1 })
 
-    gsap.to('#divider', {
-      width: '100%',
-      opacity: 1,
-      ease: 'power4.out',
-      duration: 2,
-      delay: 0.5
-    })
+    if (projects.other.length) {
+      gsap.to('#divider', {
+        width: '100%',
+        opacity: 1,
+        ease: 'power4.out',
+        duration: 2,
+        delay: 0.5
+      })
+    }
 
     for (const card of cards) {
       const titleEl = card.querySelector('.project-title')
@@ -115,7 +117,7 @@ export default function ProjectsCards({ data }) {
           stagger: 0.01
         }, '<0.2')
     }
-  }, { dependencies: [userLoaded, lastId], scope: containerRef })
+  }, { dependencies: [userLoaded, lastId, projects.other.length], scope: containerRef })
 
   return (
     <Box

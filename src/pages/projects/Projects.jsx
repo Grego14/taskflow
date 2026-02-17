@@ -1,59 +1,59 @@
-// components
-import CircleLoader from '@components/reusable/loaders/CircleLoader'
-import CreateProject from '@components/ui/buttons/CreateProject'
-import ProjectsCards from '@components/ui/projectcard/ProjectsCards'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
+
+import CircleLoader from '@components/reusable/loaders/CircleLoader'
 import CreateFromTemplate from '@components/reusable/projects/CreateFromTemplate'
 
-// hooks
-import useUser from '@hooks/useUser'
-import { useEffect, useState, useMemo } from 'react'
+import { useEffect, useState, useMemo, Suspense, lazy } from 'preact/compat'
 import { useTranslation } from 'react-i18next'
+import useUser from '@hooks/useUser'
+import useLoadResources from '@hooks/useLoadResources'
+import { useGSAP } from '@gsap/react'
 
-// utils
-import db from '@/db'
-import i18n from '@/i18n'
-import { getFriendlyAuthError } from '@utils/getFriendlyAuthError.js'
-import {
-  collection,
-  collectionGroup,
-  onSnapshot,
-  query,
-  where
-} from 'firebase/firestore'
+const CreateProject = lazy(() => import('@components/ui/buttons/CreateProject'))
+const ProjectsCards = lazy(() => import('@components/ui/projectcard/ProjectsCards'))
 
-const boxStyles = { display: 'flex', flexDirection: 'column', gap: 2 }
+import { dbAdapter } from '@services/dbAdapter'
+import projectService from '@services/project'
+
+import gsap from 'gsap'
+
+const containerStyles = (hasProjects) => ({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: 2,
+  width: '100%',
+  py: 2,
+  px: { xs: 2, mobile: 3, tablet: 5 },
+  ...(hasProjects ? {} : { height: '100%', justifyContent: 'center', my: 'auto' })
+})
+
+const hidden = { opacity: 0, visibility: 'hidden' }
 
 export default function Projects() {
   const { uid } = useUser()
-  const { t } = useTranslation('ui')
-  const [projects, setProjects] = useState({ user: [], external: [] })
+  const { t } = useTranslation('projects')
+  const [projects, setProjects] = useState([])
   const [loading, setLoading] = useState(true)
+  const loadingResources = useLoadResources('projects')
 
+  // get the user projects and external projects he is working on
   useEffect(() => {
     if (!uid) return
 
-    const qUser = query(
-      collectionGroup(db, 'projects'),
-      where('createdBy', '==', uid),
-      where('drawerData', '==', false))
-    const qExt = query(
-      collectionGroup(db, 'projects'),
-      where('members', 'array-contains', uid),
-      where('createdBy', '!=', uid),
-      where('drawerData', '==', false))
+    const { userProjects, externalProjects } = projectService.getProjectsQueries(uid)
+    const projectMap = new Map()
 
-    const unsubUser = onSnapshot(qUser, snap => {
-      const docs = snap.docs.map(doc => doc.data())
-      setProjects(prev => ({ ...prev, user: docs }))
-    })
-
-    const unsubExt = onSnapshot(qExt, snap => {
-      const docs = snap.docs.map(doc => doc.data())
-      setProjects(prev => ({ ...prev, external: docs }))
+    const handleSnapshot = (snap) => {
+      for (const doc of snap.docs) {
+        projectMap.set(doc.id, projectService.formatProject(doc))
+      }
+      setProjects([...projectMap.values()])
       setLoading(false)
-    })
+    }
+
+    const unsubUser = dbAdapter.listen(userProjects, handleSnapshot)
+    const unsubExt = dbAdapter.listen(externalProjects, handleSnapshot)
 
     return () => {
       unsubUser()
@@ -61,44 +61,63 @@ export default function Projects() {
     }
   }, [uid])
 
-  const projectsQuantity = projects.user.length + projects.external.length
+  useGSAP(() => {
+    if (loadingResources || loading) return
 
-  const allProjects = useMemo(() => ([...projects.user, ...projects.external]), [projects])
-  const hasProjects = allProjects.length > 0
+    gsap.set('#project-buttons', { y: 50 })
+    gsap.to('#project-buttons', { autoAlpha: 1, y: 0, ease: 'expo.out', duration: 0.75, delay: 0.5 })
+  }, [loadingResources, loading])
 
-  const createProjectBtnStyles = { alignSelf: !hasProjects ? 'center' : 'start' }
+  const hasProjects = projects.length > 0
+  const btnStyles = { alignSelf: hasProjects ? 'start' : 'center' }
 
-  if (loading) return <CircleLoader text={t('projects.loading')} height='100dvh' />
+  if (loadingResources) return <CircleLoader text={t('loading', { ns: 'common' })} />
+  if (loading) return <CircleLoader text={t('loading', { ns: 'projects' })} />
 
   return (
-    <Box
-      className={`${!projectsQuantity ? ' flex-center' : ''}`}
-      py={2}
-      px={{ mobile: 2, tablet: 3 }}
-      my={!projectsQuantity ? 'auto' : 0}
-      width='100%'>
-      {projectsQuantity ? (
-        <Box sx={boxStyles}>
-          <Typography
-            variant='h1'
-            textAlign={{ mobile: 'center', tablet: 'start' }}
-            sx={[theme => ({ ...theme.typography.h4 })]}>
-            {t('projects.title_quantity', { quantity: allProjects.length })}
-          </Typography>
-          <ProjectsCards data={allProjects} />
-          <CreateProject sx={createProjectBtnStyles} />
-        </Box>
-      ) : (
-        <Box sx={boxStyles}>
-          <Typography variant='h5' textAlign='center'>
-            {t('projects.errors.empty')}
-          </Typography>
-          <Box className='flex flex-center flex-column' gap={2} mt={2}>
-            <CreateProject sx={createProjectBtnStyles} />
-            <CreateFromTemplate />
+    <Box sx={containerStyles(hasProjects)}>
+      <Suspense fallback={null}>
+        {!hasProjects ? (
+          <Box>
+            <Typography variant='h5' textAlign='center'>
+              {t('errors.empty', { ns: 'projects' })}
+            </Typography>
+            <Box
+              className='flex flex-center flex-column'
+              gap={2}
+              mt={4}
+              {...hidden}
+              id='project-buttons'>
+              <CreateProject sx={btnStyles} />
+              <CreateFromTemplate />
+            </Box>
           </Box>
-        </Box>
-      )}
+        ) : (
+          <Box>
+            <Typography
+              variant='h1'
+              textAlign={{ xs: 'center', tablet: 'start' }}
+              sx={[theme => ({ ...theme.typography.h4, fontWeight: 700 })]}>
+              {t('title_quantity', { quantity: projects.length, ns: 'projects' })}
+            </Typography>
+
+            <ProjectsCards data={projects} />
+            <Box className='flex' sx={{
+              '@media (max-width: 28rem)': {
+                flexDirection: 'column',
+                alignItems: 'start'
+              }
+            }}
+              gap={{ xs: 1, mobile: 2 }}
+              {...hidden}
+              mt={4}
+              id='project-buttons'>
+              <CreateProject sx={btnStyles} />
+              <CreateFromTemplate sx={{ flexDirection: 'row' }} />
+            </Box>
+          </Box>
+        )}
+      </Suspense>
     </Box>
   )
 }

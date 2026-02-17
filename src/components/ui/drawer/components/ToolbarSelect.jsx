@@ -38,7 +38,7 @@ export default function ToolbarSelect({ open, toggleDrawer }) {
 
     const updateProjects = (snap) => {
       for (const doc of snap.docs) {
-        projectMap.set(doc.id, projectService.formatProject(doc))
+        projectMap.set(doc.id, projectService.formatDrawerProject(doc))
       }
       setProjects([...projectMap.values()])
       setLoading(false)
