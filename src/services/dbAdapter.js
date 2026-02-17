@@ -12,7 +12,8 @@ import {
   arrayRemove,
   query,
   collectionGroup,
-  where
+  where,
+  getDocs
 } from 'firebase/firestore'
 
 const getFilters = (filters) => filters?.map(filter => where(...filter))
@@ -21,10 +22,22 @@ export const dbAdapter = {
   getServerTimestamp: () => serverTimestamp(),
   createBatch: () => writeBatch(db),
 
-  getDocRef: (path, ...segments) => doc(db, path, ...segments),
-  getColRef: (path, ...segments) => collection(db, path, ...segments),
+  getDocRef: (path, ...segments) => {
+    if (typeof path === 'string') {
+      return doc(db, path, ...segments)
+    }
+    return doc(path, ...segments)
+  },
+  getColRef: (path, ...segments) => {
+    if (typeof path === 'string') {
+      return collection(db, path, ...segments)
+    }
+    return collection(path, ...segments)
+  },
+
   getQuery: (q, ...filters) => query(q, ...getFilters(filters)),
   getGroupQuery: (q, ...filters) => query(collectionGroup(db, q), ...getFilters(filters)),
+  getDocs: (col) => getDocs(col),
 
   add: async (colRef, data) => await addDoc(colRef, data),
   update: async (docRef, data) => await updateDoc(docRef, data),
