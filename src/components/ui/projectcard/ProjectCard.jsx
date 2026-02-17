@@ -9,11 +9,10 @@ import CardContent from '@mui/material/CardContent'
 import CardHeader from '@mui/material/CardHeader'
 import Chip from '@mui/material/Chip'
 import Typography from '@mui/material/Typography'
+import DropdownMenu from '@components/reusable/DropdownMenu'
 
 import { lazy, Suspense } from 'preact/compat'
-
 const ProjectActions = lazy(() => import('./ProjectActions'))
-const DropdownMenu = lazy(() => import('@components/reusable/DropdownMenu'))
 
 // hooks
 import useAuth from '@hooks/useAuth'
@@ -85,27 +84,27 @@ export default function ProjectCard({ data, isRecent }) {
       <CardHeader
         disableTypography
         action={
-          <Suspense fallback={null}>
-            <DropdownMenu
-              icon={<MoreVertIcon />}
-              label={s => getMenuLabel(s, 'projects.projectCardMenuLabel', 'ui')}
-              slotProps={{
-                list: { sx: { py: 0 } }, paper: {
-                  sx: {
-                    minWidth: 0,
-                    minHeight: 0
-                  }
+          <DropdownMenu
+            icon={<MoreVertIcon />}
+            label={s => getMenuLabel(s, 'projects.projectCardMenuLabel', 'ui')}
+            slotProps={{
+              list: { sx: { py: 0 } }, paper: {
+                sx: {
+                  minWidth: 0,
+                  minHeight: 0
                 }
-              }}
-            >
+              }
+            }}
+          >
+            <Suspense fallback={null}>
               <ProjectActions
                 id={data?.id}
                 archived={data?.isArchived}
                 isOwner={data?.createdBy === uid}
                 owner={data?.createdBy}
               />
-            </DropdownMenu>
-          </Suspense>
+            </Suspense>
+          </DropdownMenu>
         }
         title={
           <Typography
