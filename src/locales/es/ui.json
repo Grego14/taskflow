@@ -208,5 +208,11 @@
     "langs": {
       "update_lang": "Cambiar idioma a {{lang}}"
     }
+  },
+  "alerts": {
+    "projects": {
+      "projectDeleted": "Proyecto borrado exitosamente. Tareas: {{tasks}}, Subtareas: {{subtasks}}",
+      "errorDeleting": "No se pudo eliminar el proyecto"
+    }
   }
 }

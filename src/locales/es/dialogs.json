@@ -33,7 +33,16 @@
     "archive": "¿Estás seguro de que quieres archivar este proyecto?",
     "archive2": "Si archivas el proyecto, ya no podrás realizar cambios en él",
     "abandone": "¿Estás seguro de que quieres abandonar este proyecto?",
-    "abandone2": "Si abandonas el proyecto, ya no tendrás acceso hasta que te vuelvan a invitar"
+    "abandone2": "Si abandonas el proyecto, ya no tendrás acceso hasta que te vuelvan a invitar",
+    "status": {
+      "idle": "Esta acción es permanente.",
+      "tasks": "Escaneando estructura...",
+      "subtasks": "Analizando subtareas en {{count}} tareas...",
+      "deleting": "Eliminando {{count}} elementos...",
+      "project": "Finalizando borrado de proyecto...",
+      "button_deleting": "Borrando..."
+    },
+    "deleting": "Borrando..."
   },
   "assignMembers": {
     "title": "Asignar miembros",

@@ -203,5 +203,11 @@
     "langs": {
       "update_lang": "Change language to {{lang}}"
     }
+  },
+  "alerts": {
+    "projects": {
+      "projectDeleted": "Project successfully deleted. Tasks: {{tasks}}, Subtasks: {{subtasks}}",
+      "errorDeleting": "Couldn't delete the project"
+    }
   }
 }
