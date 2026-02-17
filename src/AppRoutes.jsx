@@ -71,7 +71,7 @@ export default function AppRoutes() {
                 <Route index element={<Projects />} />
                 <Route path='new' element={<NewProject />} />
 
-                <Route path=':projectId' element={<Project />}>
+                <Route path=':projectOwner/:projectId' element={<Project />}>
                   <Route index element={<ProjectDashBoard />} />
                   <Route path='settings' element={<ProjectSettings />} />
                   <Route element={<ProjectMetricsProvider />}>
