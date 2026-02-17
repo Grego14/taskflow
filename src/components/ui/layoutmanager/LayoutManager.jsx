@@ -26,6 +26,7 @@ export default memo(function LayoutManager() {
         minHeight='100dvh'
         marginLeft={`${!isMobile ? drawerWidth?.closed : 0}px`}
         className='flex flex-column'
+        py={2}
         pb={isMobile ? appBarHeight : 0}>
         <Outlet />
       </Box>
