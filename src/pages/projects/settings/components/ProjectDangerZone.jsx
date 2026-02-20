@@ -29,14 +29,7 @@ export default function ProjectDangerZone({ isOwner, isArchived }) {
         {t('settings.dangerSubtitle')}
       </Typography>
 
-      <Box
-        className='flex flex-column'
-        sx={{
-          gap: 2,
-          maxWidth: '25rem',
-          mt: 2
-        }}
-      >
+      <Box className='flex flex-column' sx={{ gap: 2, mt: 2 }}>
         <Suspense fallback={null}>
           {isOwner && (
             <Box className='flex flex-column' gap={2}>
