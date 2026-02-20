@@ -35,7 +35,7 @@ export default function CreateProject({
           description
         })
 
-        navigate(`/projects/${projectId}`, {
+        navigate(`/projects/${uid}/${projectId}`, {
           state: {
             o: uid
           }
