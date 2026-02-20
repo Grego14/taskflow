@@ -17,13 +17,13 @@ export default function ProjectMember({
   removeMember,
   owner
 }) {
-  const { t } = useTranslation('ui')
+  const { t } = useTranslation('projects')
 
   return (
     <Paper
       className='flex'
       sx={{ my: 2, p: 2, justifyContent: 'space-between' }}>
-      <Box className='flex' gap={2}>
+      <Box className='flex flex-center' gap={2}>
         <Avatar src={data?.avatar} />
         <Box className='flex flex-column' gap={1}>
           <Typography fontWeight={600}>{data?.username}</Typography>
@@ -33,11 +33,11 @@ export default function ProjectMember({
 
       {/* the owner can't be kicked */}
       {!isUser && !(data.id === owner) && (
-        <Tooltip title={t('projects.settings.removeMember')}>
-          <span>
+        <Tooltip title={t('settings.removeMember')}>
+          <span class='flex flex-center'>
             <IconButton
               data-member-id={data.id}
-              aria-label={t('projects.settings.removeMember')}
+              aria-label={t('settings.removeMember')}
               onClick={removeMember}
               disabled={isArchived || !isOwner}>
               <PersonRemoveIcon />
