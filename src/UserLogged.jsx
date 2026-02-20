@@ -8,7 +8,6 @@ import useDebounce from '@hooks/useDebounce'
 import useGetUserFromDb from '@hooks/useGetUserFromDb'
 import useUser from '@hooks/useUser'
 
-import updater from '@services/updateUser'
 import lazyImport from '@utils/lazyImport'
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
@@ -40,7 +39,7 @@ const QueryProvider = ({ children }) => {
 }
 
 const Services = () => {
-  const { uid, setUpdateImplementation } = useUser()
+  const { uid, setUpdatePlaceholder } = useUser()
   const { currentUser, initAuth } = useAuth()
   const { appNotification, setIsOffline, isOffline } = useApp()
 
@@ -50,24 +49,26 @@ const Services = () => {
     initAuth()
   }, [initAuth])
 
-  const updateUser = useMutation({
+  const updateUserMutation = useMutation({
     mutationKey: ['updateUser'],
-    mutationFn: data => {
+    mutationFn: async (data) => {
       if (!uid) return
-
-      return updater(uid, data)
+      const { default: userService } = await import('@services/user')
+      return await userService(uid, data)
     },
     onError: err => console.error('UpdateUser:', err)
   })
 
-  // We wrap the mutation call to keep the reference stable
-  const handleUpdate = useCallback(data => {
-    updateUser.mutate(data)
-  }, [updateUser])
-
   useEffect(() => {
-    setUpdateImplementation(handleUpdate)
-  }, [handleUpdate, setUpdateImplementation])
+    setUpdatePlaceholder(() => async (data) => {
+      try {
+        const result = await updateUserMutation.mutateAsync(data)
+        return result
+      } catch (err) {
+        return { error: true, message: err.message }
+      }
+    })
+  }, [setUpdatePlaceholder, updateUserMutation.mutateAsync])
 
   const [debounceOffline] = useDebounce(val => setIsOffline(val), 1250)
 

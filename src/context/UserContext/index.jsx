@@ -37,14 +37,14 @@ export default function UserProvider({ children }) {
     }
   })
 
-  const updatePlaceholder = useRef(null)
+  const [updatePlaceholder, setUpdatePlaceholder] = useState(null)
 
   // function to update the user document, only available if the user is logged
   const update = useCallback((data) => {
-    if (updatePlaceholder.current) {
-      return updatePlaceholder.current(data)
+    if (updatePlaceholder) {
+      return updatePlaceholder(data)
     }
-  }, [])
+  }, [updatePlaceholder])
 
   // update MUI internal theme and i18next internal language if the user db
   // fields are different from the local ones (the user changes the theme/lang
@@ -78,7 +78,7 @@ export default function UserProvider({ children }) {
       setUserLoaded,
       uid: userId,
       update,
-      setUpdateImplementation: (fn) => { updatePlaceholder.current = fn }
+      setUpdatePlaceholder
     }),
     [user, currentUser, userLoaded, update, i18n]
   )
