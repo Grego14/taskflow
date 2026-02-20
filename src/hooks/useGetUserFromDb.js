@@ -1,5 +1,6 @@
 import useApp from '@hooks/useApp'
 import useAuth from '@hooks/useAuth'
+import { dbAdapter } from '@services/dbAdapter'
 import useUser from '@hooks/useUser'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -11,47 +12,31 @@ export default function useGetUserFromDb() {
   const { uid, setUser, setUserLoaded, userLoaded } = useUser()
 
   useEffect(() => {
-    if (!uid || userLoaded) return
+    if (!uid) return
 
-    let unsubscribe
+    const userRef = dbAdapter.getDocRef('users', uid)
 
-    const initFirestore = async () => {
-      try {
-        const [db, fs] = await Promise.all([
-          import('@/db.js'),
-          import('firebase/firestore')
-        ])
+    const unsubscribe = dbAdapter.listen(
+      userRef,
+      snapshot => {
+        if (snapshot.exists()) {
+          setUser(snapshot.data())
+        }
 
-        const { doc, onSnapshot } = fs
-        const userDoc = doc(db.default, 'users', uid)
-
-        unsubscribe = onSnapshot(
-          userDoc,
-          userSnapshot => {
-            if (userSnapshot.exists()) {
-              setUser(userSnapshot.data())
-            }
-            setUserLoaded(true)
-          },
-          err => {
-            console.error('useGetUserFromDb:', err)
-            if (isOffline) {
-              appNotification({
-                message: t('notifications.cannotGetUserNoInternet'),
-                status: 'error'
-              })
-            }
-            setUserLoaded(true)
-          }
-        )
-      } catch (err) {
-        console.error('Failed to load Firestore modules', err)
+        if (!userLoaded) setUserLoaded(true)
+      },
+      (err) => {
+        console.error('useGetUserFromDb:', err)
+        if (isOffline) {
+          appNotification({
+            message: t('notifications.cannotGetUserNoInternet'),
+            status: 'error'
+          })
+        }
         setUserLoaded(true)
       }
-    }
+    )
 
-    initFirestore()
-
-    return () => unsubscribe?.()
+    return () => unsubscribe()
   }, [uid, setUser, setUserLoaded, appNotification, isOffline, t, userLoaded])
 }
