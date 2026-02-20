@@ -13,7 +13,8 @@ import {
   query,
   collectionGroup,
   where,
-  getDocs
+  getDocs,
+  documentId
 } from 'firebase/firestore'
 
 const getFilters = (filters) => filters?.map(filter => where(...filter))
@@ -21,6 +22,7 @@ const getFilters = (filters) => filters?.map(filter => where(...filter))
 export const dbAdapter = {
   getServerTimestamp: () => serverTimestamp(),
   createBatch: () => writeBatch(db),
+  documentId: () => documentId(),
 
   getDocRef: (path, ...segments) => {
     if (typeof path === 'string') {
