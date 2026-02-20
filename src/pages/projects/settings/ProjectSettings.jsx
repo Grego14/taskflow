@@ -13,8 +13,11 @@ import SaveProject from './components/SaveProject'
 import useApp from '@hooks/useApp'
 import useProject from '@hooks/useProject'
 import useUser from '@hooks/useUser'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
+
+import gsap from 'gsap'
+import { useGSAP } from '@gsap/react'
 
 const BOX_STYLING = {
   display: 'flex',
@@ -30,6 +33,8 @@ export default function ProjectSettings() {
   const { data } = useProject()
   const { uid } = useUser()
 
+  const settingsRef = useRef(null)
+
   const owner = data?.createdBy
   const isArchived = data?.isArchived
   const isOwner = owner === uid
@@ -39,6 +44,16 @@ export default function ProjectSettings() {
   const [description, setDescription] = useState(data?.description)
   const [errors, setErrors] = useState(null)
   const [disableBtn, setDisableBtn] = useState(true)
+
+  useGSAP(() => {
+    gsap.to(settingsRef.current, {
+      opacity: 1,
+      x: 0,
+      duration: 0.75,
+      ease: 'back.out(2)',
+      delay: 0.1
+    })
+  }, { scope: settingsRef })
 
   useEffect(() => {
     if (data) {
@@ -61,7 +76,12 @@ export default function ProjectSettings() {
 
   return (
     <Box
-      sx={BOX_STYLING}
+      ref={settingsRef}
+      sx={{
+        ...BOX_STYLING,
+        transform: 'translateX(-30px)',
+        opacity: 0
+      }}
       p={isMobile ? 4 : 3}
       gap={3}
     >
