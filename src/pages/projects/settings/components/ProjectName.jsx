@@ -1,7 +1,8 @@
-import ProjectInput from './ProjectInput.jsx'
-
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import ProjectInput from './ProjectInput.jsx'
+
+import validateProjectField from '@utils/projects/validateProjectField'
 
 export default function ProjectName({
   name,
@@ -11,38 +12,32 @@ export default function ProjectName({
   isArchived,
   setDisableBtn
 }) {
-  const { t } = useTranslation('ui')
+  const { t } = useTranslation('projects')
   const [error, setError] = useState('')
 
-  const validateName = e => {
-    const newName = e.target.value.trim()
-    const isEmpty = !newName
-    const isInvalid = !/^[a-zA-Z0-9!@#$()[\]{}<>~:"';.,/\\=+_\-*\s]+$/.test(
-      newName
-    )
+  const handleValidation = (e) => {
+    const { hasError, errorMsg } = validateProjectField(e.target.value, {
+      t,
+      type: 'name',
+      isRequired: true
+    })
 
-    if (isEmpty) setError(t('projects.inputs.errors.nameIsEmpty'))
-    if (isInvalid) setError(t('projects.inputs.errors.nameIsInvalid'))
+    setError(errorMsg)
+    setErrors(prev => ({ ...prev, name: hasError }))
 
-    if (isEmpty || isInvalid) {
-      setErrors(prev => ({ ...prev, name: true }))
-      return false
-    }
+    if (!hasError) setDisableBtn(false)
 
-    setError('')
-    setErrors(prev => ({ ...prev, name: false }))
-    setDisableBtn(false)
-    return true
+    return !hasError
   }
 
   return (
     <ProjectInput
       id='project-name'
-      label={t('projects.inputs.nameLabel')}
+      label={t('inputs.nameLabel')}
       error={error}
       value={name}
       setValue={setName}
-      onChange={validateName}
+      onChange={handleValidation}
       disabled={isArchived || !isOwner}
     />
   )

@@ -1,8 +1,9 @@
-import ProjectInput from './ProjectInput.jsx'
-
-import useDebounce from '@hooks/useDebounce'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+
+import ProjectInput from './ProjectInput.jsx'
+
+import validateProjectField from '@utils/projects/validateProjectField'
 
 export default function ProjectDescription({
   description,
@@ -12,32 +13,31 @@ export default function ProjectDescription({
   isArchived,
   setDisableBtn
 }) {
-  const { t } = useTranslation('ui')
+  const { t } = useTranslation('projects')
   const [error, setError] = useState('')
 
-  const validateDescription = e => {
-    const value = e.target.value.trim()
+  const handleValidation = (e) => {
+    const { hasError, errorMsg } = validateProjectField(e.target.value, {
+      t,
+      type: 'description'
+    })
 
-    if (!/^[a-zA-Z0-9!@#$()[\]{}<>~:"';.,/\\=+_\-*\s]+$/.test(value)) {
-      setError(t('projects.inputs.errors.descriptionIsInvalid'))
-      setErrors(prev => ({ ...prev, description: true }))
-      return false
-    }
+    setError(errorMsg)
+    setErrors(prev => ({ ...prev, name: hasError }))
 
-    setError('')
-    setErrors(prev => ({ ...prev, description: false }))
-    setDisableBtn(false)
-    return true
+    if (!hasError) setDisableBtn(false)
+
+    return !hasError
   }
 
   return (
     <ProjectInput
       id='project-description'
-      label={t('projects.inputs.descriptionLabel')}
+      label={t('inputs.descriptionLabel')}
       value={description}
       setValue={setDescription}
-      onChange={validateDescription}
-      placeholder={t('projects.inputs.descriptionPlaceholder')}
+      onChange={handleValidation}
+      placeholder={t('inputs.descriptionPlaceholder')}
       error={error}
       multiline
       rows={5}

@@ -16,14 +16,24 @@ import useUser from '@hooks/useUser'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
-export default function ProjectSettings() {
-  const { t } = useTranslation('ui')
-  const { isMobile } = useApp()
+const BOX_STYLING = {
+  display: 'flex',
+  flexDirection: 'column',
+  flexGrow: 1,
+  maxWidth: '35rem',
+  mx: 'auto'
+}
 
+export default function ProjectSettings() {
+  const { t } = useTranslation('projects')
+  const { isMobile } = useApp()
   const { data } = useProject()
   const { uid } = useUser()
+
   const owner = data?.createdBy
   const isArchived = data?.isArchived
+  const isOwner = owner === uid
+  const canEdit = isOwner && !isArchived
 
   const [name, setName] = useState(data?.name)
   const [description, setDescription] = useState(data?.description)
@@ -31,62 +41,73 @@ export default function ProjectSettings() {
   const [disableBtn, setDisableBtn] = useState(true)
 
   useEffect(() => {
-    if (errors?.name || errors?.description) setDisableBtn(true)
+    if (data) {
+      setName(data.name)
+      setDescription(data.description)
+    }
+  }, [data])
+
+  useEffect(() => {
+    const hasErrors = errors?.name || errors?.description
+    if (hasErrors) setDisableBtn(true)
   }, [errors])
+
+  const commonProps = {
+    isOwner,
+    isArchived,
+    setErrors,
+    setDisableBtn
+  }
 
   return (
     <Box
-      className='flex flex-column flex-grow'
+      sx={BOX_STYLING}
       p={isMobile ? 4 : 3}
       gap={3}
-      maxWidth='35rem'
-      mx='auto'>
-      {owner !== uid && (
-        <Typography variant='body2' color='warning'>
-          {t('projects.settings.onlyOwnerCanChange')}
+    >
+      {/* Warning messages */}
+      {!isOwner && (
+        <Typography variant='body2' color='orange' className='font-medium'>
+          {t('settings.onlyOwnerCanChange')}
         </Typography>
       )}
 
       {isArchived && (
-        <Typography variant='body2' color='warning'>
-          {t('projects.cantUpdateArchived')}
+        <Typography variant='body2' color='orange' className='font-medium'>
+          {t('cantUpdateArchived')}
         </Typography>
       )}
 
       <ProjectName
         name={name}
         setName={setName}
-        setErrors={setErrors}
-        isOwner={owner === uid}
-        isArchived={isArchived}
-        setDisableBtn={setDisableBtn}
+        {...commonProps}
       />
 
       <ProjectDescription
         description={description}
         setDescription={setDescription}
-        setErrors={setErrors}
-        isOwner={owner === uid}
-        isArchived={isArchived}
-        setDisableBtn={setDisableBtn}
+        {...commonProps}
       />
+
       <ProjectLabels labels={data?.labels} />
+
       <ProjectMembers />
 
       <Divider />
       <ProjectMetadata />
       <Divider />
 
-      <ProjectDangerZone isOwner={owner === uid} isArchived={isArchived} />
+      <ProjectDangerZone isOwner={isOwner} isArchived={isArchived} />
 
       <SaveProject
         name={name}
         description={description}
         errors={errors}
-        isOwner={owner === uid}
-        isArchived={isArchived}
         disableBtn={disableBtn}
         setDisableBtn={setDisableBtn}
+        isOwner={isOwner}
+        isArchived={isArchived}
       />
     </Box>
   )
