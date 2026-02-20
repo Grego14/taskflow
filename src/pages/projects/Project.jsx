@@ -46,9 +46,8 @@ export default function Project() {
   })
 
   const { projectMembers, projectMembersError } = useProjectMembers({
-    projectsFetched: !!projectData,
     members: projectData?.members || [],
-    hasAccess
+    enabled: !!projectData && hasAccess
   })
 
   useEffect(() => {

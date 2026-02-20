@@ -95,7 +95,7 @@ const projectService = {
       return { totalTasks, totalSubtasks }
     } catch (err) {
       console.error('Error deleting project:', err)
-      throw getFriendlyErrorFormatted('removeProject', err.message, 'en')
+      throw getFriendlyErrorFormatted('removeProject', err.message)
     }
   },
 
@@ -113,7 +113,7 @@ const projectService = {
       return { success: true }
     } catch (err) {
       console.error('Error archiving project:', err)
-      throw getFriendlyErrorFormatted('archiveProject', err.message, 'en')
+      throw getFriendlyErrorFormatted('archiveProject', err.message)
     }
   },
 
@@ -138,8 +138,45 @@ const projectService = {
       await batch.commit()
       return { success: true }
     } catch (err) {
-      throw getFriendlyErrorFormatted('abandonProject', err.message, 'en')
+      throw getFriendlyErrorFormatted('abandonProject', err.message)
     }
+  },
+
+  // fetch members profile data
+  getProjectMembers: async (membersIds) => {
+    if (!membersIds || membersIds.length === 0) return null
+
+    try {
+      const q = dbAdapter.getQuery(
+        dbAdapter.getColRef('users'),
+        [dbAdapter.documentId(), 'in', membersIds]
+      )
+
+      const snapshot = await dbAdapter.getDocs(q)
+
+      if (snapshot.empty) return null
+
+      return snapshot.docs.map(snap => ({
+        id: snap.id,
+        ...snap.data().profile
+      }))
+    } catch (err) {
+      console.error(err)
+      throw getFriendlyErrorFormatted('getProjectMembers', err.message)
+    }
+  },
+
+  // listen to a single project and verify access
+  listenProject: (ownerId, projectId, callback) => {
+    const projectRef = dbAdapter.getDocRef('users', ownerId, 'projects', projectId)
+
+    return dbAdapter.listen(projectRef, (snap) => {
+      if (snap.exists()) {
+        callback({ id: snap.id, ...snap.data(), exists: true })
+      } else {
+        callback({ exists: false })
+      }
+    })
   }
 }
 

@@ -1,36 +1,22 @@
 import { useQuery } from '@tanstack/react-query'
-import { useEffect, useState } from 'react'
-
-// utils
 import { QUERY_STALE_TIME } from '@/constants'
+import projectService from '@services/project'
 
-import getProjectMembers from '@querys/getProjectMembers'
-
-export default function useProjectMembers({
-  members,
-  projectsFetched,
-  hasAccess
-}) {
-  const [projectMembers, setProjectMembers] = useState(null)
-
+export default function useProjectMembers({ members, enabled }) {
   const {
-    data: queryProjectMembers,
+    data: projectMembers = [],
     error: projectMembersError,
-    isLoading
+    isLoading: loading
   } = useQuery({
-    queryKey: ['projectMembers', { members }],
-    queryFn: getProjectMembers,
+    queryKey: ['projectMembers', members],
+    queryFn: () => projectService.getProjectMembers(members),
     staleTime: QUERY_STALE_TIME,
     refetchOnWindowFocus: false,
-    enabled: members.length > 0 && !!projectsFetched && hasAccess
+    enabled: enabled && members?.length > 0
   })
 
-  useEffect(() => {
-    if (queryProjectMembers) setProjectMembers(queryProjectMembers)
-  }, [queryProjectMembers])
-
   return {
-    loading: isLoading,
+    loading,
     projectMembers,
     projectMembersError
   }
