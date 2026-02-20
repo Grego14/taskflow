@@ -71,28 +71,33 @@ export const notificationService = {
       const projectRef =
         dbAdapter.getDocRef('users', projectOwner, 'projects', projectId)
 
+      const project = await dbAdapter.getDoc(projectRef)
+      const projectExists = project.exists()
+
+      if (projectExists) {
+        // if the user accepts, add to project and project drawer members
+        if (isAccept) {
+          const drawerRef = dbAdapter.getDocRef(
+            'users', projectOwner, 'projects', `${projectId}_drawer`
+          )
+          const memberData = { members: dbAdapter.union(user) }
+
+          batch.update(projectRef, memberData)
+          batch.update(drawerRef, memberData)
+        }
+
+        // extract the invited user
+        batch.update(projectRef, {
+          invitedUsers: dbAdapter.removeFromArray(user)
+        })
+      }
+
       // update notification state
       batch.update(notifRef, {
         accepted: isAccept,
         declined: action === 'decline',
-        read: true
-      })
-
-      // 2. Si acepta, añadir a miembros en proyecto y drawer
-      // if the user accepts, add to project and project drawer members
-      if (isAccept) {
-        const drawerRef = dbAdapter.getDocRef(
-          'users', projectOwner, 'projects', `${projectId}_drawer`
-        )
-        const memberData = { members: dbAdapter.union(user) }
-
-        batch.update(projectRef, memberData)
-        batch.update(drawerRef, memberData)
-      }
-
-      // extract the invited user
-      batch.update(projectRef, {
-        invitedUsers: dbAdapter.removeFromArray(user)
+        read: true,
+        error: projectExists ? null : 'PROJECT_NOT_FOUND'
       })
 
       await batch.commit()

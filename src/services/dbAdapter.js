@@ -14,7 +14,8 @@ import {
   collectionGroup,
   where,
   getDocs,
-  documentId
+  documentId,
+  getDoc
 } from 'firebase/firestore'
 
 const getFilters = (filters) => filters?.map(filter => where(...filter))
@@ -40,6 +41,7 @@ export const dbAdapter = {
   getQuery: (q, ...filters) => query(q, ...getFilters(filters)),
   getGroupQuery: (q, ...filters) => query(collectionGroup(db, q), ...getFilters(filters)),
   getDocs: (col) => getDocs(col),
+  getDoc: (doc) => getDoc(doc),
 
   add: async (colRef, data) => await addDoc(colRef, data),
   update: async (docRef, data) => await updateDoc(docRef, data),
