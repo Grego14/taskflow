@@ -1,4 +1,5 @@
 import { dbAdapter } from './dbAdapter'
+import { getFriendlyErrorFormatted } from '@utils/getFriendlyAuthError'
 
 const projectService = {
   getDrawerQueries: (uid) => ({
@@ -94,7 +95,50 @@ const projectService = {
       return { totalTasks, totalSubtasks }
     } catch (err) {
       console.error('Error deleting project:', err)
-      throw err
+      throw getFriendlyErrorFormatted('removeProject', err.message, 'en')
+    }
+  },
+
+  archiveProject: async (uid, projectId) => {
+    if (!uid || !projectId) throw new Error('archiveProject: Missing params')
+
+    try {
+      const projectRef = dbAdapter.getDocRef('users', uid, 'projects', projectId)
+
+      await dbAdapter.update(projectRef, {
+        isArchived: true,
+        archivedDate: new Date().toISOString()
+      })
+
+      return { success: true }
+    } catch (err) {
+      console.error('Error archiving project:', err)
+      throw getFriendlyErrorFormatted('archiveProject', err.message, 'en')
+    }
+  },
+
+  abandonProject: async (uid, projectId, ownerId) => {
+    if (!uid || !projectId || !ownerId) throw new Error('abandonProject: Missing params')
+
+    try {
+      const batch = dbAdapter.createBatch()
+      const projectRef = dbAdapter.getDocRef('users', ownerId, 'projects', projectId)
+      const projectDrawerRef = dbAdapter.getDocRef(
+        'users',
+        ownerId,
+        'projects',
+        `${projectId}_drawer`
+      )
+
+      const updateData = { members: dbAdapter.removeFromArray(uid) }
+
+      batch.update(projectRef, updateData)
+      batch.update(projectDrawerRef, updateData)
+
+      await batch.commit()
+      return { success: true }
+    } catch (err) {
+      throw getFriendlyErrorFormatted('abandonProject', err.message, 'en')
     }
   }
 }
