@@ -56,6 +56,7 @@ export default function NotificationItem({
 
   const isInvitation = type === 'invitation'
   const isProjectMissing = error === 'PROJECT_NOT_FOUND'
+  const isKicked = type === 'kicked'
   const tOptions = { projectName, invitedBy, kickedBy }
 
   // shake animation if theres an action error
@@ -97,6 +98,7 @@ export default function NotificationItem({
             opacity: 0.5,
             '&:hover': { opacity: 1, color: 'error.main' }
           }}
+          aria-label={t('actions.delete')}
         >
           <DeleteIcon fontSize='small' />
         </IconButton>
@@ -112,8 +114,15 @@ export default function NotificationItem({
             : 0
         }}>
         {t(`types.${type}.message`, tOptions)}
-        {type === 'invitation' && (
+
+        {(isInvitation || isKicked) && (
           <Typography component='span' fontWeight={500} color='info'>{' '}{projectName}</Typography>
+        )}
+
+        {isKicked && (
+          <Typography component='span'>
+            {' '}{t('types.kicked.message2', { kickedBy })}
+          </Typography>
         )}
       </Typography>
 

@@ -7,7 +7,7 @@
   "actions": {
     "accept": "Aceptar",
     "decline": "Declinar",
-    "delete": "Eliminar",
+    "delete": "Eliminar notificación",
     "markAsRead": "Marcar como leída",
     "goToProject": "Ir al proyecto"
   },
@@ -18,7 +18,8 @@
     },
     "kicked": {
       "title": "Expulsión de proyecto",
-      "message": "Has sido eliminado del proyecto {{projectName}} por {{kickedBy}}."
+      "message": "Has sido expulsado del proyecto",
+      "message2": "por {{kickedBy}}."
     },
     "invitation": {
       "title": "Invitación recibida",

@@ -74,6 +74,8 @@ export default function NotificationsProvider({ children }) {
     await notificationService.markAsRead(uid, ids)
   }, [uid])
 
+  const unreadCount = notifications.filter(notif => notif.read === false).length
+
   const value = useMemo(() => ({
     notifications,
     onAccept,
@@ -81,14 +83,15 @@ export default function NotificationsProvider({ children }) {
     deleteNotification,
     markNotificationsAsRead,
     error,
-    loading
+    loading,
+    unreadCount
   }), [notifications,
     onAccept,
     onDecline,
     deleteNotification,
     error,
     loading,
-    markNotificationsAsRead]
+    markNotificationsAsRead, unreadCount]
   )
 
   return (
