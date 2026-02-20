@@ -6,8 +6,11 @@ import DeleteIcon from '@mui/icons-material/DeleteOutline'
 import CheckIcon from '@mui/icons-material/CheckCircleOutline'
 import ClearIcon from '@mui/icons-material/HighlightOff'
 import ErrorIcon from '@mui/icons-material/ReportProblemOutlined'
+import ArrowForwardIcon from '@mui/icons-material/ArrowForwardIos'
+
 import { useTranslation } from 'react-i18next'
 import { useRef } from 'preact/compat'
+import { useNavigate } from 'react-router-dom'
 
 import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
@@ -33,6 +36,8 @@ export default function NotificationItem({
   onDelete
 }) {
   const { t } = useTranslation('notifications')
+  const navigate = useNavigate()
+
   const cardRef = useRef(null)
   const { contextSafe } = useGSAP({ scope: cardRef })
 
@@ -62,6 +67,10 @@ export default function NotificationItem({
       )
     }
   }, [error])
+
+  const goToProject = () => {
+    navigate(`/projects/${projectOwner}/${projectId}`)
+  }
 
   return (
     <Box
@@ -107,6 +116,31 @@ export default function NotificationItem({
           <Typography component='span' fontWeight={500} color='info'>{' '}{projectName}</Typography>
         )}
       </Typography>
+
+      {accepted && !isProjectMissing && (
+        <Button
+          size='small'
+          color='info'
+          onClick={goToProject}
+          // use important to override the icon default size
+          endIcon={<ArrowForwardIcon sx={{ fontSize: '10px !important' }} />}
+          sx={{
+            alignSelf: 'flex-start',
+            textTransform: 'none',
+            fontWeight: 600,
+            p: 0,
+            '&:hover': { bgcolor: 'transparent', textDecoration: 'underline' }
+          }}
+        >
+          {t('actions.goToProject')}
+        </Button>
+      )}
+
+      {declined && (
+        <Typography variant='caption' sx={{ fontStyle: 'italic', opacity: 0.6 }}>
+          {t('status.declined')}
+        </Typography>
+      )}
 
       {/* missing project (deleted before the user accept/decline the invitation) */}
       {isProjectMissing && (

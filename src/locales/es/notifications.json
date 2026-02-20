@@ -8,7 +8,8 @@
     "accept": "Aceptar",
     "decline": "Declinar",
     "delete": "Eliminar",
-    "markAsRead": "Marcar como leída"
+    "markAsRead": "Marcar como leída",
+    "goToProject": "Ir al proyecto"
   },
   "types": {
     "welcome": {
@@ -23,5 +24,8 @@
       "title": "Invitación recibida",
       "message": "{{invitedBy}} te ha invitado a colaborar en el proyecto"
     }
+  },
+  "status": {
+    "declined": "Invitación rechazada"
   }
 }
