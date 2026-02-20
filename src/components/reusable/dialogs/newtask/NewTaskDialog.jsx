@@ -40,7 +40,6 @@ import lazyImport from '@utils/lazyImport'
 
 // services
 import createTask from '@services/createTask.js'
-import updateProject from '@services/updateProject.js'
 
 import getDateByKey from '@utils/tasks/getDateByKey'
 

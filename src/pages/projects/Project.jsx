@@ -1,39 +1,28 @@
-import { Suspense, lazy, useEffect, useMemo, useState } from 'react'
-
-// components
 import GoBackButton from '@components/reusable/buttons/GoBackButton'
 import CircleLoader from '@components/reusable/loaders/CircleLoader'
 import ErrorText from '@components/reusable/texts/ErrorText'
-import AppDrawer from '@components/ui/drawer/AppDrawer'
 import Box from '@mui/material/Box'
-import Typography from '@mui/material/Typography'
 import ProjectAppBar from './ProjectAppBar'
 
-// hooks
+import { useEffect, useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import useProjectAccess from '@context/ProjectsContext/useProjectAccess'
 import useProjectMembers from '@context/ProjectsContext/useProjectMembers'
 import useAuth from '@hooks/useAuth'
 import useUser from '@hooks/useUser'
-import { useTranslation } from 'react-i18next'
-import {
-  Outlet,
-  useNavigate,
-  useParams,
-} from 'react-router-dom'
 import useLoadResources from '@hooks/useLoadResources'
 
-import updateProject from '@services/updateProject'
+import { Outlet, useNavigate, useParams } from 'react-router-dom'
 import ProjectContext from './context'
 
 export default function Project() {
   const { isOffline } = useAuth()
-  const { uid, update: updateUser, metadata } = useUser()
+  const { uid, update: updateUser } = useUser()
   const { t } = useTranslation(['common', 'projects'])
   const { projectId, projectOwner } = useParams()
+  const navigate = useNavigate()
 
   const loadingResources = useLoadResources('projects')
-
-  const navigate = useNavigate()
 
   const [metrics, setMetrics] = useState({
     totalTasks: 0,
@@ -50,48 +39,34 @@ export default function Project() {
     enabled: !!projectData && hasAccess
   })
 
+  // update last edited project on user metadata
   useEffect(() => {
-    if (hasAccess)
+    if (hasAccess) {
       updateUser({
         lastEditedProject: projectId,
-        // field used on the main page where the "go to last project" link
-        // exists
         lastEditedProjectOwner: projectOwner
       })
-  }, [hasAccess, updateUser, projectId, projectOwner])
+    }
+  }, [hasAccess, projectId, projectOwner])
 
-  const contextValue = useMemo(
-    () => ({
-      id: projectId,
-      data: projectData,
-      isArchived: projectData?.isArchived,
-      isOwner: projectOwner === uid,
-      hasAccess,
-      validating,
-      projectMembers,
-      update: data => updateProject(projectOwner, projectId, data),
-      metrics,
-      updateMetrics: data => {
-        setMetrics(data)
-      }
-    }),
-    [
-      projectId,
-      projectOwner,
-      projectData,
-      hasAccess,
-      validating,
-      projectMembers,
-      uid,
-      metrics
-    ]
-  )
+  const contextValue = useMemo(() => ({
+    id: projectId,
+    data: projectData,
+    isArchived: projectData?.isArchived,
+    isOwner: projectOwner === uid,
+    hasAccess,
+    validating,
+    projectMembers,
+    metrics,
+    updateMetrics: setMetrics,
+    update: async (data) => {
+      const { default: service } = await import('@services/project')
+      return await service.updateProject(projectOwner, projectId, data)
+    }
+  }), [projectId, projectOwner, projectData, hasAccess, validating, projectMembers, uid, metrics])
 
-  if (loadingResources)
-    return <CircleLoader text={t('loading', { ns: 'common' })} />
-
-  if (validating)
-    return <CircleLoader text={t('validating', { ns: 'projects' })} />
+  if (loadingResources) return <CircleLoader text={t('loading', { ns: 'common' })} />
+  if (validating) return <CircleLoader text={t('validating', { ns: 'projects' })} />
 
   if (!hasAccess)
     return (

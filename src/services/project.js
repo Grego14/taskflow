@@ -177,6 +177,34 @@ const projectService = {
         callback({ exists: false })
       }
     })
+  },
+
+  updateProject: async (uid, projectId, data = {}) => {
+    if (!uid || !projectId) throw new Error('updateProject: Missing params')
+    if (Object.keys(data).length < 1) throw new Error('updateProject: Data is empty')
+
+    // protected fields check
+    if (data.owner || data.createdAt) {
+      throw new Error('updateProject: Cannot change owner or creation date')
+    }
+
+    try {
+      const batch = dbAdapter.createBatch()
+      const projectRef = dbAdapter.getDocRef('users', uid, 'projects', projectId)
+
+      // sync members with drawer if updated
+      if (data.members) {
+        const drawerRef = dbAdapter.getDocRef('users', uid, 'projects', `${projectId}_drawer`)
+        batch.update(drawerRef, { members: data.members })
+      }
+
+      batch.update(projectRef, data)
+      await batch.commit()
+      return { success: true }
+    } catch (err) {
+      console.error('UpdateProject Error:', err)
+      throw getFriendlyErrorFormatted('updateProject', err.message)
+    }
   }
 }
 
