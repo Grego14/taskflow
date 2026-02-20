@@ -14,7 +14,7 @@ import useLoadResources from '@hooks/useLoadResources'
 import projectService from '@services/project'
 import gsap from 'gsap'
 
-export default function DeleteProject({ id }) {
+export default function DeleteProject({ id, owner }) {
   const { uid, update, metadata } = useUser()
   const { t, i18n } = useTranslation(['dialog', 'ui'])
   const { appNotification } = useApp()
@@ -59,7 +59,10 @@ export default function DeleteProject({ id }) {
       })
       setOpen(false)
 
-      update({ lastEditedProject: '', lastEditedProjectOwner: '' })
+      // update only if the last edited project is the one being removed
+      if (id === metadata.lastEditedProject && owner === metadata.lastEditedProjectOwner) {
+        update({ lastEditedProject: '', lastEditedProjectOwner: '' })
+      }
     } catch (err) {
       appNotification({
         message: t('alerts.projects.errorDeleting', { ns: 'ui' }),
@@ -81,7 +84,7 @@ export default function DeleteProject({ id }) {
       return useDialogT('projects.status.subtasks', count)
 
     if (stage === 'deleting')
-      return useDialogT('projects.status.deleting', totalTasks + totalSubtasks)
+      return useDialogT('projects.deleting', totalTasks + totalSubtasks)
 
     if (stage === 'project') return useDialogT('projects.status.project')
 

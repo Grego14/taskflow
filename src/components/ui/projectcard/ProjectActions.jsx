@@ -10,7 +10,7 @@ export default function ProjectActions({ id, archived, isOwner, owner }) {
     <Box py={1} role='none'>
       {isOwner && (
         <>
-          <DeleteProject id={id} />
+          <DeleteProject id={id} owner={owner} />
           {!archived && <ArchiveProject id={id} />}
         </>
       )}
