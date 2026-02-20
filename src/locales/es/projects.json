@@ -76,5 +76,8 @@
     "alreadyAdded": "Ese usuario ya esta agregado"
   },
   "loadingMetrics": "Cargando métricas",
-  "noDescription": "No se agrego una descripción..."
+  "noDescription": "No se agrego una descripción...",
+  "notifications": {
+    "savedProject": "Proyecto guardado exitosamente"
+  }
 }

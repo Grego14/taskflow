@@ -174,7 +174,6 @@
     "projectArchived": "Project successfully archived",
     "projectAbandoned": "Project successfully abandoned",
     "taskDeleted": "Task successfully deleted",
-    "savedProject": "Project successfully saved",
     "memberKicked": "Member kicked sucessfully",
     "invitation_user": "{{user}} invited you to join his project",
     "empty": "There's nothing around here",

@@ -76,5 +76,8 @@
     "alreadyAdded": "That user is already added"
   },
   "loadingMetrics": "Loading metrics",
-  "noDescription": "No description provided..."
+  "noDescription": "No description provided...",
+  "notifications": {
+    "savedProject": "Project successfully saved"
+  }
 }
