@@ -92,7 +92,7 @@ export default function Project() {
     return <CircleLoader text={t('loading', { ns: 'common' })} />
 
   if (validating)
-    return <CircleLoader text={t('projects.validating', { ns: 'projects' })} />
+    return <CircleLoader text={t('validating', { ns: 'projects' })} />
 
   if (!hasAccess)
     return (
@@ -102,18 +102,18 @@ export default function Project() {
         width='100%'>
         <ErrorText className='text-center text-balance'>
           {isOffline
-            ? t('projects.errors.noConnection', { ns: 'projects' })
-            : t('projects.errors.noAccess', { ns: 'projects' })}
+            ? t('errors.noConnection', { ns: 'projects' })
+            : t('errors.noAccess', { ns: 'projects' })}
         </ErrorText>
         <GoBackButton
           handler={() => navigate('/projects')}
-          text={t('projects.goToProjects', { ns: 'projects' })}
+          text={t('goToProjects', { ns: 'projects' })}
         />
       </Box>
     )
 
   if (projectMembersError)
-    return <ErrorText>{t('projects.errors.members', { ns: 'projects' })}</ErrorText>
+    return <ErrorText>{t('errors.members', { ns: 'projects' })}</ErrorText>
 
   return (
     <ProjectContext.Provider value={contextValue}>
