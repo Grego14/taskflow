@@ -21,7 +21,7 @@ const defaultValues = values => ({
 })
 
 export default function ProfileForm({ setSaveBtnDisabled, fields }) {
-  const { preferences, profile, setUser } = useUser()
+  const { preferences, profile, setUser, update, uid } = useUser()
   const { currentUser } = useAuth()
   const { appNotification } = useApp()
   const { t, i18n } = useTranslation('ui')
@@ -103,19 +103,24 @@ export default function ProfileForm({ setSaveBtnDisabled, fields }) {
         }
       }))
 
-      const updateUserProfile = await lazyImport(
-        '/src/services/updateUserProfile'
-      )
-      const result = await updateUserProfile({ currentUser: auth.currentUser, data })
+      try {
+        // update user firebase document
+        const docStatus = await update(data)
 
-      if (result.success) {
-        // updates the initialValue of the avatar and AvatarUploader component value
-        updateAvatar(avatar)
+        if (!docStatus.error) {
+          // update firebase auth user
+          const { updateProfile } = await import('firebase/auth')
+          const { auth } = await import('@/firebase/firebase-config')
+          await updateProfile(auth.currentUser, { displayName: data.username })
 
-        appNotification({ message: t(result.message, { ns: 'profile' }) })
-        setSaveBtnDisabled(true)
-      } else {
-        return appNotification({ message: result.message, status: 'error' })
+          // updates the initialValue of the avatar and AvatarUploader component value
+          updateAvatar(avatar)
+
+          appNotification({ message: t('profileUpdated', { ns: 'profile' }) })
+          setSaveBtnDisabled(true)
+        }
+      } catch (err) {
+        appNotification({ message: err.message, status: 'error' })
       }
     },
     [
