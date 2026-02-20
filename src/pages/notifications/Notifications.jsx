@@ -11,6 +11,7 @@ import { useGSAP } from '@gsap/react'
 import { useEffect } from 'preact/hooks'
 
 import gsap from 'gsap'
+import formatTimestamp from '@utils/formatTimestamp'
 
 export default function Notifications() {
   const { t } = useTranslation('notifications')
@@ -77,7 +78,13 @@ export default function Notifications() {
 
   const items = []
   if (notifications.length > 0) {
-    for (const notif of notifications) {
+    const sorted = notifications.toSorted((a, b) => {
+      const timeA = formatTimestamp(a.notificationDate).raw
+      const timeB = formatTimestamp(b.notificationDate).raw
+      return timeB - timeA
+    })
+
+    for (const notif of sorted) {
       items.push(
         <NotificationItem
           key={notif.id}
