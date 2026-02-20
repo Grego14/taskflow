@@ -1,6 +1,9 @@
 {
   "title": "Notifications",
   "empty": "You have no pending notifications",
+  "errors": {
+    "projectNotFound": "Project no longer available. It may have been deleted by the owner."
+  },
   "actions": {
     "accept": "Accept",
     "decline": "Decline",
@@ -18,7 +21,7 @@
     },
     "invitation": {
       "title": "Invitation Received",
-      "message": "{{invitedBy}} has invited you to collaborate on the project {{projectName}}."
+      "message": "{{invitedBy}} has invited you to collaborate on the project"
     }
   }
 }

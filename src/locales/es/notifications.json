@@ -1,6 +1,9 @@
 {
   "title": "Notificaciones",
   "empty": "No tienes notificaciones pendientes",
+  "errors": {
+    "projectNotFound": "El proyecto ya no está disponible. Es posible que el dueño lo haya eliminado."
+  },
   "actions": {
     "accept": "Aceptar",
     "decline": "Declinar",
@@ -18,7 +21,7 @@
     },
     "invitation": {
       "title": "Invitación recibida",
-      "message": "{{invitedBy}} te ha invitado a colaborar en el proyecto {{projectName}}."
+      "message": "{{invitedBy}} te ha invitado a colaborar en el proyecto"
     }
   }
 }
