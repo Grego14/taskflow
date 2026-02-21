@@ -39,6 +39,7 @@ export default function Dialog({
   sx,
   acceptBtn,
   disableButtons = false,
+  disablePortal = false
 }) {
   const { t } = useTranslation(['common', 'dialogs'])
   const { isMobile } = useApp()
@@ -52,7 +53,7 @@ export default function Dialog({
       open={open}
       onClose={onClose}
       disableRestoreFocus
-      disablePortal
+      disablePortal={disablePortal}
       maxWidth={maxWidth}
       slots={{ transition: DialogTransition }}
       slotProps={{
