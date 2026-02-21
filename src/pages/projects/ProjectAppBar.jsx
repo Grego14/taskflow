@@ -9,10 +9,9 @@ import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 
 import useApp from '@hooks/useApp'
-import useNavigateToProject from '@hooks/useNavigateToProject'
 import useProject from '@hooks/useProject'
 import { useTranslation } from 'react-i18next'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 const PROJECT_ACTIONS = ['/settings', '/metrics']
 
@@ -20,7 +19,7 @@ export default function ProjectAppBar() {
   const { t } = useTranslation('ui')
   const { isOnlyMobile, isMobile } = useApp()
   const { data, id } = useProject()
-  const navigate = useNavigateToProject()
+  const navigate = useNavigate()
 
   const location = useLocation()
   const projectRute = location.pathname?.split(id)?.[1]
@@ -28,12 +27,12 @@ export default function ProjectAppBar() {
   const isProjectSubRoute = PROJECT_ACTIONS.find(pAction => pAction === action)
 
   return (
-    <AppBar>
+    <AppBar top>
       {isProjectSubRoute ? (
         <Box className='flex flex-grow' gap={1.5} px={2}>
           <Suspense fallback={null}>
             <GoBackButton
-              handler={() => navigate(id, data?.createdBy)}
+              handler={() => navigate(`/projects/${data?.createdBy}/${id}`)}
               text={t('projects.goBack')}
               noText
             />
