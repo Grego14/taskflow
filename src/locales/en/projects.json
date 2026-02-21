@@ -6,7 +6,8 @@
     "noAccess": "Sorry. You don't have access to this project",
     "members": "Failed to get project members",
     "empty": "No projects were found",
-    "noConnection": "Sorry. We couldn't check if you have access to this project, check your internet connection."
+    "noConnection": "Sorry. We couldn't check if you have access to this project, check your internet connection.",
+    "kickFailed": "Couldn't kick the user"
   },
   "inputs": {
     "nameLabel": "Project name",
@@ -78,6 +79,7 @@
   "loadingMetrics": "Loading metrics",
   "noDescription": "No description provided...",
   "notifications": {
-    "savedProject": "Project successfully saved"
+    "savedProject": "Project successfully saved",
+    "memberKicked": "Member kicked sucessfully"
   }
 }

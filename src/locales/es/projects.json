@@ -5,7 +5,8 @@
     "noAccess": "Lo sentimos. No tienes acceso a este proyecto",
     "members": "Error al obtener los miembros del proyecto",
     "empty": "No se encontraron proyectos",
-    "noConnection": "Lo sentimos. No pudimos comprobar si tienes acceso a este proyecto, comprueba tu conexión a internet."
+    "noConnection": "Lo sentimos. No pudimos comprobar si tienes acceso a este proyecto, comprueba tu conexión a internet.",
+    "kickFailed": "No se pudo expulsar al usuario"
   },
   "inputs": {
     "nameLabel": "Nombre del proyecto",
@@ -78,6 +79,7 @@
   "loadingMetrics": "Cargando métricas",
   "noDescription": "No se agrego una descripción...",
   "notifications": {
-    "savedProject": "Proyecto guardado exitosamente"
+    "savedProject": "Proyecto guardado exitosamente",
+    "memberKicked": "Miembro expulsado con éxito"
   }
 }

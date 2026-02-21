@@ -1,91 +1,82 @@
 import { Suspense, lazy, useCallback, useState } from 'react'
-
-import Link from '@components/reusable//Link'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import ProjectMember from './ProjectMember'
 import ProjectMemberSkeleton from './ProjectMemberSkeleton'
-
-const KickMemberDialog = lazy(
-  () => import('@components/reusable/dialogs/kickMember/KickMemberDialog')
-)
 
 import useApp from '@hooks/useApp'
 import useProject from '@hooks/useProject'
 import useUser from '@hooks/useUser'
 import { useTranslation } from 'react-i18next'
 
-import lazyImport from '@utils/lazyImport'
-import { arrayRemove } from 'firebase/firestore'
+import projectService from '@services/project'
+import taskService from '@services/task'
+import { dbAdapter } from '@services/dbAdapter'
+import notificationService from '@services/notification'
+
+const KickMemberDialog = lazy(() => import('@components/reusable/dialogs/kickMember/KickMemberDialog'))
 
 export default function ProjectMembers() {
   const { uid, profile } = useUser()
   const { appNotification } = useApp()
-  const { t } = useTranslation('ui')
+  const { t } = useTranslation('projects')
   const { projectMembers, data, update } = useProject()
 
   const [open, setOpen] = useState(false)
-  const [member, setMember] = useState(null)
+  const [memberId, setMemberId] = useState(null)
 
   const isOwner = data?.createdBy === uid
   const isArchived = data?.isArchived
 
-  const getMember = useCallback(
-    e => {
-      const memberId = e.currentTarget?.dataset?.memberId
+  const handleOpenDialog = (e) => {
+    const id = e.currentTarget?.dataset?.memberId
 
-      if (!projectMembers.find(pMember => pMember.id === memberId)) return
+    if (!projectMembers.some(m => m.id === id)) return
 
-      setMember(memberId)
-      setOpen(true)
-    },
-    [projectMembers]
-  )
+    setMemberId(id)
+    setOpen(true)
+  }
 
-  const removeMember = useCallback(() => {
-    ;(async () => {
-      // remove the assigned tasks before kicking the user otherwise the
-      // operation will fail
-      const removeAssignedTasksToUser = await lazyImport(
-        '/src/services/removeAssignedTasksToUser'
-      )
-      await removeAssignedTasksToUser(member, data?.id, data?.createdBy)
+  const removeMember = async () => {
+    try {
+      await taskService.removeUserAssignments(memberId, data.createdBy, data.id)
+      await update({ members: dbAdapter.removeFromArray(memberId) })
 
-      await update({ members: arrayRemove(member) })
-
-      const sendKickedNotification = await lazyImport(
-        '/src/services/notifications/sendKickedNotification'
-      )
-
-      await sendKickedNotification(member, profile.username, data.name)
+      await notificationService.sendKicked(memberId, profile.username, data.name)
 
       appNotification({ message: t('notifications.memberKicked') })
       setOpen(false)
-    })()
-  }, [update, appNotification, t, member, data, profile?.username])
+    } catch (err) {
+      console.error('removeMember', err.message)
+      appNotification({ message: t('errors.kickFailed'), status: 'error' })
+    }
+  }
+
+  const selectedMember = projectMembers?.find(m => m.id === memberId)
 
   return (
     <Box>
-      <Typography variant='body2' color='textSecondary'>
-        {t('projects.settings.membersLabel')}
+      <Typography variant='body2' color='textSecondary' sx={{ mb: 1 }}>
+        {t('settings.membersLabel')}
       </Typography>
 
-      {Array.isArray(projectMembers)
-        ? projectMembers.map(
-            pMember =>
-              pMember?.id && (
-                <ProjectMember
-                  key={pMember.id}
-                  data={pMember}
-                  isOwner={isOwner}
-                  isArchived={isArchived}
-                  isUser={pMember.id === uid}
-                  removeMember={getMember}
-                  owner={data?.createdBy}
-                />
-              )
+      {Array.isArray(projectMembers) ? (
+        projectMembers.map(pMember => (
+          pMember?.id && (
+            <ProjectMember
+              key={pMember.id}
+              data={pMember}
+              isOwner={isOwner}
+              isArchived={isArchived}
+              isUser={pMember.id === uid}
+              removeMember={handleOpenDialog}
+              owner={data?.createdBy}
+            />
           )
-        : data?.members?.map(member => <ProjectMemberSkeleton key={member} />)}
+        ))
+      ) : (
+        data?.members?.map(mId => <ProjectMemberSkeleton key={mId} />)
+      )}
 
       {open && (
         <Suspense fallback={null}>
@@ -93,9 +84,7 @@ export default function ProjectMembers() {
             open={open}
             onClose={() => setOpen(false)}
             onAccept={removeMember}
-            username={
-              projectMembers?.find(pMember => pMember.id === member)?.username
-            }
+            username={selectedMember?.username}
           />
         </Suspense>
       )}
