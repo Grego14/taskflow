@@ -4,11 +4,12 @@ import useApp from '@hooks/useApp'
 import useUser from '@hooks/useUser'
 
 import Box from '@mui/material/Box'
-// there is a different layout for mobile and desktop so we lazy load all the
-// components
+import ViewKanbanIcon from '@mui/icons-material/ViewKanban'
+import ViewListIcon from '@mui/icons-material/ViewList'
+
+// there is a different layout for mobile and desktop so we lazy 
+// load all these components
 const VisibilityIcon = lazy(() => import('@mui/icons-material/Visibility'))
-const ViewKanbanIcon = lazy(() => import('@mui/icons-material/ViewKanban'))
-const ViewListIcon = lazy(() => import('@mui/icons-material/ViewList'))
 const Tab = lazy(() => import('@mui/material/Tab'))
 const Tabs = lazy(() => import('@mui/material/Tabs'))
 const DropdownMenu = lazy(() => import('@components/reusable/DropdownMenu'))
@@ -19,7 +20,7 @@ import getMenuLabel from '@utils/getMenuLabel'
 import { useTranslation } from 'react-i18next'
 import useLayout from '@hooks/useLayout'
 
-const menuActionStyles = (normal, selected) => ({
+const getMenuActionStyles = (normal, selected) => ({
   '& .MuiSvgIcon-root': { color: normal },
   '&.Mui-selected .MuiSvgIcon-root': { color: selected },
   '&.Mui-selected .MuiListItemText-root': {
@@ -52,51 +53,36 @@ export default memo(function PreviewSwitcher() {
     }
   }
 
-  const previewProps = useMemo(
-    () => ({
-      list: {
-        title: t('tasks.listPreview'),
-        icon: <ViewListIcon />
-      },
-      kanban: {
-        title: t('tasks.kanbanPreview'),
-        icon: <ViewKanbanIcon />
-      }
-    }),
-    [t]
-  )
+  const options = useMemo(() => [
+    { id: 'list', title: t('tasks.listPreview'), icon: <ViewListIcon />, disabled: false },
+    { id: 'kanban', title: t('tasks.kanbanPreview'), icon: <ViewKanbanIcon />, disabled: true }
+  ], [t])
+
+  const renderActions = () => isMobile ? options.map(opt => (
+    <MenuAction
+      key={opt.id}
+      handler={() => updatePreviewer(opt.id)}
+      text={opt.title}
+      icon={opt.icon}
+      styles={[previewStyles, getMenuActionStyles(normalColor, selectedColor)]}
+      selected={preview === opt.id}
+      disabled={opt.disabled}
+    />
+  )) : null
 
   return (
     // there's a bug that makes the DropdownMenu re-render and makes a layout
     // shift... so we add a wrapper with a default width
-    <Box minWidth='40px'>
+    <Box minWidth={isMobile ? '40px' : '12rem'} height='min-content' mr={{ tablet: 'auto' }}>
       <Suspense fallback={null}>
         {isMobile ? (
           <DropdownMenu
             icon={<VisibilityIcon fontSize='medium' />}
             label={state => getMenuLabel(state, 'buttons.previewLabel', 'ui')}
             tooltipPosition='top'>
-            <MenuAction
-              handler={() => updatePreviewer('list')}
-              text={previewProps.list.title}
-              icon={previewProps.list.icon}
-              styles={[
-                previewStyles,
-                menuActionStyles(normalColor, selectedColor)
-              ]}
-              selected={preview === 'list'}
-            />
-            <MenuAction
-              handler={() => updatePreviewer('kanban')}
-              text={previewProps.kanban.title}
-              icon={previewProps.kanban.icon}
-              styles={[
-                previewStyles,
-                menuActionStyles(normalColor, selectedColor)
-              ]}
-              selected={preview === 'kanban'}
-              disabled
-            />
+            <Suspense fallback={null}>
+              {renderActions()}
+            </Suspense>
           </DropdownMenu>
         ) : (
           <Tabs
@@ -106,24 +92,20 @@ export default memo(function PreviewSwitcher() {
             indicatorColor={'primary'}
             centered
             sx={{ minHeight: 0 }}>
-            <Tab
-              label={previewProps.list.title}
-              value='list'
-              icon={previewProps.list.icon}
-              iconPosition='start'
-              sx={previewStyles}
-            />
-            <Tab
-              label={previewProps.kanban.title}
-              value='kanban'
-              icon={previewProps.kanban.icon}
-              iconPosition='start'
-              sx={previewStyles}
-              disabled
-            />
+            {options.map(opt => (
+              <Tab
+                key={opt.id}
+                label={opt.title}
+                value={opt.id}
+                icon={opt.icon}
+                iconPosition='start'
+                sx={previewStyles}
+                disabled={opt.disabled}
+              />
+            ))}
           </Tabs>
         )}
       </Suspense>
-    </Box>
+    </ Box>
   )
 })
