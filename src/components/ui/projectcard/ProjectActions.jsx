@@ -15,7 +15,7 @@ export default function ProjectActions({ id, archived, isOwner, owner }) {
             {!archived && <ArchiveProject id={id} />}
           </Box>
         )}
-        {isOwner && (
+        {!isOwner && (
           <AbandonProject id={id} owner={owner} />
         )}
       </Suspense>
