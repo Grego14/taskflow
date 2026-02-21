@@ -81,5 +81,6 @@
   "notifications": {
     "savedProject": "Proyecto guardado exitosamente",
     "memberKicked": "Miembro expulsado con éxito"
-  }
+  },
+  "sidebar": "Barra lateral"
 }
