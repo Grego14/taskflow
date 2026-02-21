@@ -17,7 +17,8 @@ const selectStyles = theme => ({
   '& .MuiSelect-select': {
     ...theme.typography.subtitle2,
     fontSize: '0.825rem',
-    py: 1
+    py: 1,
+    maxWidth: '12ch'
   }
 })
 
@@ -100,19 +101,20 @@ export default function ToolbarSelect({ open, toggleDrawer }) {
   const shouldShrink = !!actualProject?.id || isFocused
 
   return (actualProject || hasProjects) ? (
-    <FormControl sx={{ minWidth: '10rem' }}>
+    <FormControl sx={{ minWidth: '10rem', '& .MuiInputBase-root': { mt: 2 } }}>
       <InputLabel
         id='select-project'
         shrink={shouldShrink}
         sx={{
           transform: 'translate(38px, 8px) scale(1)',
           '&.MuiInputLabel-shrink': {
-            transform: 'translate(14px, -8px) scale(0.75)'
+            transform: 'translate(0px, 4px) scale(0.75)'
           }
         }}>
         {label}
       </InputLabel>
       <Select
+        variant='standard'
         labelId='select-project'
         value={actualProject?.id || ''}
         label={shouldShrink ? label : ''}
@@ -124,7 +126,7 @@ export default function ToolbarSelect({ open, toggleDrawer }) {
           <FolderOpen
             sx={{
               fontSize: '1rem',
-              ml: 0.5,
+              mx: 0.75,
               color: 'action.active'
             }}
           />
