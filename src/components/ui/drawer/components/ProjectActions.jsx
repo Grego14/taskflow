@@ -8,7 +8,7 @@ import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router-dom'
 
 const items = [
-  { translation: 'projectActions.dashboard', icon: DashboardIcon, to: '#' },
+  { translation: 'projectActions.dashboard', icon: DashboardIcon, to: '' },
   { translation: 'projectActions.metrics', icon: BarChartIcon, to: 'metrics' },
   { translation: 'projectActions.settings', icon: SettingsIcon, to: 'settings' },
 ]
@@ -19,6 +19,7 @@ export default function ProjectActions({
 }) {
   const { t } = useTranslation('ui')
   const { projectOwner, projectId } = useParams()
+  const baseUrl = `/projects/${projectOwner}/${projectId}`
 
   return (
     <List
@@ -28,10 +29,12 @@ export default function ProjectActions({
       {items.map(row => {
         const { to, translation, ...other } = row
 
+        const fullPath = row.to ? `${baseUrl}/${row.to}` : baseUrl
+
         const link = {
-          to: `/projects/${projectOwner}/${projectId}/${to}`,
-          translation: t(translation),
-          ...other
+          ...row,
+          to: fullPath,
+          translation: t(row.translation)
         }
 
         return (
