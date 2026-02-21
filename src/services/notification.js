@@ -14,7 +14,7 @@ const createBaseNotification = (type, extraData = {}) => ({
   ...extraData
 })
 
-export const notificationService = {
+const notificationService = {
   getNotificationsQuery: (uid) => dbAdapter.getColRef('users', uid, 'notifications'),
 
   // --- Create ---
@@ -115,3 +115,5 @@ export const notificationService = {
     }
   }
 }
+
+export default notificationService

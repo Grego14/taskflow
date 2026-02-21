@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback, useMemo } from 'react'
 import NotificationsContext from './context'
 import useUser from '@hooks/useUser'
-import { notificationService } from '@services/notification'
+import notificationService from '@services/notification'
 import { dbAdapter } from '@services/dbAdapter'
 
 export default function NotificationsProvider({ children }) {
