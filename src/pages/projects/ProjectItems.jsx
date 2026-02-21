@@ -1,10 +1,11 @@
-import ProfileButton from '@components/reusable/buttons/ProfileButton'
+import Box from '@mui/material/Box'
 import AddButton from '@components/ui/buttons/AddButton'
 import AddMembers from '@components/ui/buttons/AddMembers'
 import FilterButton from '@components/ui/buttons/FilterButton'
 import PreviewSwitcher from '@components/ui/previewswitcher/PreviewSwitcher'
 import List from '@mui/material/List'
 import ProjectActionsMenu from '@pages/projects/components/ProjectActionsMenu'
+import ToggleProjectDrawer from './components/ToggleProjectDrawer'
 
 import useApp from '@hooks/useApp'
 import useProject from '@hooks/useProject'
@@ -15,30 +16,31 @@ export default function ProjectItems() {
   const { id } = useProject()
   const navigate = useNavigate()
 
-  return (
+  const defaultItems =
     <>
       <PreviewSwitcher />
+      <AddButton />
+      <FilterButton />
+      <AddMembers />
+    </>
 
+  return (
+    <>
       {!isMobile ? (
         <List
           disablePadding
-          sx={{ display: 'flex', justifyContent: 'right', gap: 2 }}>
-          <AddButton />
-          <FilterButton />
-          <AddMembers />
+          sx={{ display: 'flex', justifyContent: 'space-between', gap: 2, flexGrow: 1 }}>
+          <ToggleProjectDrawer />
+
+          <Box className='flex flex-grow flex-center' justifyContent='end' gap={2}>
+            {defaultItems}
+          </Box>
         </List>
       ) : (
         <>
+          <ToggleProjectDrawer />
           <ProjectActionsMenu />
-          <AddButton />
-          <FilterButton />
-          <AddMembers />
-          <ProfileButton
-            open
-            onlyIcon
-            projectId={id}
-            onClick={() => navigate('/profile')}
-          />
+          {defaultItems}
         </>
       )}
     </>

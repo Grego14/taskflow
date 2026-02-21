@@ -12,6 +12,7 @@ import useApp from '@hooks/useApp'
 import useMediaQuery from '@mui/material/useMediaQuery'
 import { useGSAP } from '@gsap/react'
 import useLoadResources from '@hooks/useLoadResources'
+import { useParams } from 'react-router-dom'
 
 import { NAV_LINKS } from '@constants/navigation'
 import gsap from 'gsap'
@@ -22,6 +23,8 @@ const LayoutAppBar = memo(function LayoutAppBar() {
   const noSpace = useMediaQuery('(max-width: 35rem)')
   const appBarRef = useRef(null)
   const loadingResources = useLoadResources('ui')
+
+  const { projectId } = useParams()
 
   const { contextSafe } = useGSAP({ scope: appBarRef })
 
@@ -41,7 +44,7 @@ const LayoutAppBar = memo(function LayoutAppBar() {
     gsap.to(appBarRef.current, { autoAlpha: 1, y: 0 })
   }, [isMobile, loadingResources])
 
-  if (!isMobile || loadingResources) return null
+  if (!isMobile || loadingResources || (isMobile && projectId)) return null
 
   const items = []
   for (const link of NAV_LINKS) {

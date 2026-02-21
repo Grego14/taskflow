@@ -25,7 +25,7 @@ const drawerPaperStyles = (open, width, shadow) => ({
   ...(!open && { boxShadow: shadow })
 })
 
-export default function AppDrawer({ children }) {
+export default function AppDrawer() {
   const { drawerWidth, appBarHeight, isMobile } = useApp()
   const { preferences } = useUser()
   const { projectId } = useParams()
@@ -86,13 +86,13 @@ export default function AppDrawer({ children }) {
     }
   }, { scope: drawerRef, dependencies: [drawerOpen, loadingResources] })
 
-  if (loadingResources) return
+  if (isMobile && !projectId || loadingResources) return
 
   return (
     <Drawer
       open={drawerOpen}
       onClose={() => toggleDrawer(false)}
-      variant='permanent'
+      variant={isMobile ? 'temporary' : 'permanent'}
       ref={drawerRef}
       sx={{
         display: 'flex',
