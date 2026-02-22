@@ -1,4 +1,4 @@
-import { useCallback, useRef } from 'react'
+import { useCallback, useRef, Suspense, lazy } from 'react'
 
 import Box from '@mui/material/Box'
 import Drawer from '@mui/material/Drawer'
@@ -6,6 +6,9 @@ import List from '@mui/material/List'
 import ProfileButton from '@components/reusable/buttons/ProfileButton'
 import DrawerActions from './components/DrawerActions'
 import Toolbar from './components/Toolbar'
+import Divider from '@mui/material/Divider'
+
+const ProjectNavFolder = lazy(() => import('./components/ProjectNavFolder'))
 
 import { useParams, useNavigate } from 'react-router-dom'
 import { useTheme, alpha } from '@mui/material/styles'
@@ -22,7 +25,8 @@ const drawerPaperStyles = (open, width, shadow) => ({
   width: open ? width.open : width.closed,
   transition: 'none',
   overflow: 'hidden',
-  ...(!open && { boxShadow: shadow })
+  ...(!open && { boxShadow: shadow }),
+  backgroundImage: 'none'
 })
 
 export default function AppDrawer() {
@@ -40,22 +44,21 @@ export default function AppDrawer() {
   const shadowColor = theme.palette.grey[userTheme === 'light' ? 300 : 800]
   const shadow = `0 ${projectId && !isMobile ? appBarHeight : 0} 3px ${shadowColor}`
 
-  const toggleDrawer = useCallback((state) => {
-    setDrawerOpen(prev => {
-      const newState = typeof state === 'boolean' ? state : !prev
-      setItem('drawerOpen', newState)
-      return newState
-    })
-  }, [])
+  const { contextSafe } = useGSAP({ scope: drawerRef })
 
-  // initial enter animation
-  useGSAP(() => {
-    if (loadingResources) return
+  const animateDrawer = contextSafe((isOpening) => {
+    if (!drawerRef.current) return
 
-    const isOpening = drawerOpen
     const targetWidth = isOpening ? drawerWidth.open : drawerWidth.closed
-    const labels = ['.nav-action-text', '.profile-btn-text']
-    const icons = '.drawer-action .MuiSvgIcon-root'
+    const labels = ['.nav-action-text']
+    const allIcons = gsap.utils.toArray('.drawer-action .MuiSvgIcon-root')
+
+    if (projectId) labels.push('.nav-folder-text')
+    labels.push('.profile-btn-text')
+
+    // get the icons that aren't inside the Collapse container
+    const icons = allIcons.filter(icon => !icon.closest('.MuiCollapse-root'))
+    icons.push('.profile-btn-avatar')
 
     const tl = gsap.timeline({
       defaults: {
@@ -65,17 +68,18 @@ export default function AppDrawer() {
       }
     })
 
-    tl.to('.MuiDrawer-paper', {
-      width: targetWidth,
-      duration: 0.4,
-      ease: 'power3.out'
-    }).addLabel('items')
+    if (!isMobile) {
+      tl.to(drawerRef.current, {
+        width: targetWidth,
+        duration: 0.4,
+        ease: 'power3.out'
+      }).addLabel('items')
+    }
 
     if (isOpening) {
       tl.fromTo(icons,
         { opacity: 0, x: -8 },
         { opacity: 1, x: 0, stagger: 0.05 }, 'items')
-
         .fromTo(labels,
           { x: -15, opacity: 0 },
           { x: 0, opacity: 1, stagger: 0.075 }, 'items-=0.2')
@@ -84,16 +88,40 @@ export default function AppDrawer() {
         { opacity: 0, x: -15, duration: 0.15, stagger: 0.03 }, 'items-=0.4')
         .to(icons, { x: 0, opacity: 1, duration: 0.3 }, 'items')
     }
-  }, { scope: drawerRef, dependencies: [drawerOpen, loadingResources] })
+  })
+
+  // trigger animation when dependencies change (for permanent drawer)
+  useGSAP(() => {
+    if (loadingResources || isMobile) return
+
+    animateDrawer(drawerOpen)
+  }, {
+    dependencies: [drawerOpen, loadingResources, projectId],
+    scope: drawerRef
+  })
+
+  const toggleDrawer = useCallback((state) => {
+    setDrawerOpen(prev => {
+      const newState = typeof state === 'boolean' ? state : !prev
+      setItem('drawerOpen', newState)
+      return newState
+    })
+  }, [])
 
   if (isMobile && !projectId || loadingResources) return
 
   return (
     <Drawer
+      slotProps={{
+        paper: { ref: drawerRef },
+        transition: {
+          // this ensures animation runs when the temporary drawer mounts
+          onEnter: () => isMobile && animateDrawer(true)
+        }
+      }}
       open={drawerOpen}
       onClose={() => toggleDrawer(false)}
       variant={isMobile ? 'temporary' : 'permanent'}
-      ref={drawerRef}
       sx={{
         display: 'flex',
         textWrap: 'nowrap',
@@ -108,6 +136,15 @@ export default function AppDrawer() {
         sx={{ gap: 1.25, height: '100%' }}
         disablePadding>
         <DrawerActions open={drawerOpen} toggleDrawer={toggleDrawer} />
+
+        {projectId && (
+          <>
+            <Divider sx={{ my: 1, opacity: 0.8, mx: 1 }} />
+            <Suspense fallback={null}>
+              <ProjectNavFolder />
+            </Suspense>
+          </>
+        )}
 
         <Box className='flex flex-column' mt='auto' gap={1.5}>
           <ProfileButton
