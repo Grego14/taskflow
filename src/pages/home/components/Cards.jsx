@@ -84,13 +84,16 @@ export default function Cards({ setAnimationEnded, bg, showAppBar }) {
     <Section
       id='cards'
       sx={{
-        gap: isLaptop ? 4 : 2,
-        padding: isLaptop ? 8 : 3,
-        backgroundImage: `linear-gradient(rgba(0,0,0,0), ${bg})`,
+        gap: { xs: 2, laptop: 4 },
+        padding: { xs: 3, laptop: 8 },
         display: 'grid',
-        gridTemplateColumns: `repeat(auto-fit, minmax(${isLaptop ? '350px' : '100%'}, 1fr))`,
+        backgroundImage: `linear-gradient(rgba(0,0,0,0), ${bg})`,
+        gridTemplateColumns:
+        {
+          xs: 'repeat(auto-fit, minmax(100%, 1fr))',
+          laptop: 'repeat(auto-fit, minmax(350px, 1fr))'
+        },
         height: 'auto',
-        minHeight: '100dvh'
       }}
     >
       {CARDS_DATA.map(({ type, icon: Icon }) => (

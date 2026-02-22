@@ -11,9 +11,12 @@ import { SplitText } from 'gsap/SplitText'
 
 const h1Styles = (theme) => ({
   ...theme.typography.h1,
+  '&.MuiTypography-root': {
+    fontSize: 'clamp(2.75rem, 2.75rem + 2vw, 3.8rem)'
+  },
   perspective: '1000px',
   mb: 2,
-  fontWeight: 700,
+  fontWeight: 800,
   opacity: 0,
   maxWidth: '15ch',
   lineHeight: 1.2,
@@ -23,7 +26,8 @@ const h1Styles = (theme) => ({
   WebkitBackgroundClip: 'text',
   backgroundClip: 'text',
   WebkitTextFillColor: 'transparent',
-  WebkitFontSmoothing: 'antialiased'
+  WebkitFontSmoothing: 'antialiased',
+  textShadow: `0 0 25px ${theme.alpha(theme.palette.primary.main, 0.35)}`,
 })
 
 const h2Styles = (theme) => ({
@@ -35,7 +39,7 @@ const h2Styles = (theme) => ({
 })
 
 const btnStyles = (theme) => ({
-  mt: 6,
+  mt: 4,
   opacity: 0,
   ...theme.typography.h6,
   py: 1.5,
@@ -146,6 +150,6 @@ export default function MainText({ setAnimationEnded, prefetchAuth }) {
         onClick={() => navigate('signup')}>
         {t('startForFree')}
       </Button>
-    </Section >
+    </Section>
   )
 }

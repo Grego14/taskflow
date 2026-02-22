@@ -36,6 +36,7 @@ const handlePrefetch = () => {
 export default function Landing() {
   const { initAuth } = useAuth()
   const { t } = useTranslation(['landing', 'common'])
+
   const theme = useTheme()
   const { isOnlyMobile } = useApp()
 
@@ -91,7 +92,17 @@ export default function Landing() {
   }
 
   return (
-    <Box sx={{ backgroundColor: landingBg }} component='main'>
+    <Box
+      sx={{
+        backgroundColor: '#0a0a0a',
+        backgroundImage: `
+        radial-gradient(circle at 15% 25%, ${theme.palette.primary.main}18 0%, transparent 60%),
+        radial-gradient(circle at 85% 75%, ${theme.palette.secondary.main}20 0%, transparent 60%)
+        `,
+        backgroundAttachment: 'fixed',
+        transition: 'background 0.5s ease'
+      }}
+      component='main'>
       {showAppBar &&
         <Suspense fallback={null}>
           <LandingAppBar />
@@ -105,7 +116,7 @@ export default function Landing() {
         />
       </ScreenWrapper>
 
-      <ScreenWrapper height={isOnlyMobile ? null : '80dvh'}>
+      <ScreenWrapper height={{ xs: 'auto', mobile: '100dvh' }}>
         {mainEnded && (
           <Cards
             setAnimationEnded={() => setCardsEnded(true)}
