@@ -8,7 +8,7 @@ import useApp from '@hooks/useApp'
 
 import { memo } from 'react'
 
-export default memo(function NavAction({ link, showText, onClick, noSpace }) {
+export default memo(function NavAction({ link, showText, onClick, noSpace, isActive, className }) {
   const { isMobile } = useApp()
   const { unreadCount } = useNotifications()
   const { icon: Icon, translation, to, isNotifications } = link
@@ -23,14 +23,14 @@ export default memo(function NavAction({ link, showText, onClick, noSpace }) {
     <NavLink
       to={to}
       onClick={onClick}
-      className={`${isMobile ? 'appbar-link' : 'drawer-action'} flex`}
+      className={`flex ${className}`}
       gap={showText ? 1.5 : 0}
       sx={{
         color: 'text.secondary',
-        '&.active': { color: 'primary.main' },
         justifyContent: showText ? 'flex-start' : 'center',
         width: '100%',
-        p: noSpace ? 0 : 1.5
+        p: noSpace ? 0 : 1.5,
+        ...(isActive && { color: 'primary.main' })
       }}
     >
       {iconElement}
