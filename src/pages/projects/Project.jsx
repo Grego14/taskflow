@@ -4,7 +4,7 @@ import ErrorText from '@components/reusable/texts/ErrorText'
 import Box from '@mui/material/Box'
 import ProjectAppBar from './ProjectAppBar'
 
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState, Suspense } from 'react'
 import { useTranslation } from 'react-i18next'
 import useProjectAccess from '@context/ProjectsContext/useProjectAccess'
 import useProjectMembers from '@context/ProjectsContext/useProjectMembers'
@@ -92,7 +92,10 @@ export default function Project() {
   return (
     <ProjectContext.Provider value={contextValue}>
       <ProjectAppBar />
-      <Outlet />
+
+      <Suspense fallback={null}>
+        <Outlet />
+      </Suspense>
     </ProjectContext.Provider>
   )
 }
