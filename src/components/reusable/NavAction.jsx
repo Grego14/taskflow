@@ -8,7 +8,16 @@ import useApp from '@hooks/useApp'
 
 import { memo } from 'react'
 
-export default memo(function NavAction({ link, showText, onClick, noSpace, isActive, className }) {
+export default memo(function NavAction({
+  link,
+  showText,
+  onClick,
+  noSpace,
+  isActive,
+  className,
+  showTooltip,
+  tooltipPlacement = 'top'
+}) {
   const { isMobile } = useApp()
   const { unreadCount } = useNotifications()
   const { icon: Icon, translation, to, isNotifications } = link
@@ -40,8 +49,8 @@ export default memo(function NavAction({ link, showText, onClick, noSpace, isAct
     </NavLink>
   )
 
-  if (isMobile && noSpace) {
-    return <Tooltip title={translation}>{content}</Tooltip>
+  if (isMobile && noSpace || showTooltip) {
+    return <Tooltip title={translation} placement={tooltipPlacement}>{content}</Tooltip>
   }
 
   return content
