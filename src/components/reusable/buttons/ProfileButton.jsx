@@ -86,7 +86,7 @@ export default function ProfileButton({
             sx={{
               alignItems: 'start',
               position: 'absolute',
-              left: '3.5rem'
+              left: { xs: '4.25rem', laptop: '3.5rem' }
             }}
             aria-hidden={!open}>
             <Typography
