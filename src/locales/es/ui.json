@@ -2,7 +2,8 @@
   "projectActions": {
     "metrics": "Métricas",
     "settings": "Configuración",
-    "dashboard": "Tablero"
+    "dashboard": "Tablero",
+    "navFolder": "Acciones"
   },
   "drawer": {
     "templates": "Plantillas",

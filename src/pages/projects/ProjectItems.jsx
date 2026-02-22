@@ -4,7 +4,6 @@ import AddMembers from '@components/ui/buttons/AddMembers'
 import FilterButton from '@components/ui/buttons/FilterButton'
 import PreviewSwitcher from '@components/ui/previewswitcher/PreviewSwitcher'
 import List from '@mui/material/List'
-import ProjectActionsMenu from '@pages/projects/components/ProjectActionsMenu'
 import ToggleProjectDrawer from './components/ToggleProjectDrawer'
 
 import useApp from '@hooks/useApp'
@@ -39,7 +38,6 @@ export default function ProjectItems() {
       ) : (
         <>
           <ToggleProjectDrawer />
-          <ProjectActionsMenu />
           {defaultItems}
         </>
       )}
