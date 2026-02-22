@@ -113,7 +113,16 @@ export default function AppDrawer() {
   return (
     <Drawer
       slotProps={{
-        paper: { ref: drawerRef },
+        paper: {
+          ref: drawerRef,
+          sx: {
+            display: 'flex',
+            textWrap: 'nowrap',
+            width: drawerOpen ? drawerWidth.open : drawerWidth.closed,
+            '& .MuiDrawer-paper': drawerPaperStyles(drawerOpen, drawerWidth, shadow),
+            overflow: 'hidden'
+          }
+        },
         transition: {
           // this ensures animation runs when the temporary drawer mounts
           onEnter: () => isMobile && animateDrawer(true)
@@ -122,12 +131,6 @@ export default function AppDrawer() {
       open={drawerOpen}
       onClose={() => toggleDrawer(false)}
       variant={isMobile ? 'temporary' : 'permanent'}
-      sx={{
-        display: 'flex',
-        textWrap: 'nowrap',
-        width: drawerOpen ? drawerWidth.open : drawerWidth.closed,
-        '& .MuiDrawer-paper': drawerPaperStyles(drawerOpen, drawerWidth, shadow)
-      }}
     >
       <Toolbar open={drawerOpen} toggleDrawer={toggleDrawer} />
 
