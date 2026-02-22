@@ -21,6 +21,8 @@ export default function DrawerActions({ open, toggleDrawer }) {
           onClick={() => toggleDrawer(false)}
           isActive={pathname === link.to}
           className='drawer-action'
+          showTooltip
+          tooltipPlacement='right'
         />
       </li>
     )
