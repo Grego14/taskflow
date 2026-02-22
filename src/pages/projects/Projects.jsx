@@ -24,7 +24,7 @@ const containerStyles = (hasProjects) => ({
   gap: 2,
   width: '100%',
   py: 2,
-  px: { xs: 2, mobile: 3, tablet: 5 },
+  px: { xs: 2, mobile: 3, tablet: 4 },
   ...(hasProjects ? {} : { height: '100%', justifyContent: 'center', my: 'auto' })
 })
 
@@ -73,7 +73,7 @@ export default function Projects() {
     if (loadingResources || loading) return
 
     gsap.set('#project-buttons', { y: 50 })
-    gsap.to('#project-buttons', { autoAlpha: 1, y: 0, ease: 'expo.out', duration: 0.75, delay: 0.5 })
+    gsap.to('#project-buttons', { autoAlpha: 1, y: 0, ease: 'expo.out', duration: 1, delay: 0.5 })
   }, [loadingResources, loading])
 
   const hasProjects = projects.length > 0
@@ -116,7 +116,7 @@ export default function Projects() {
                 alignItems: 'start'
               }
             }}
-              gap={{ xs: 1, mobile: 2 }}
+              gap={2}
               {...hidden}
               mt={4}
               id='project-buttons'>
