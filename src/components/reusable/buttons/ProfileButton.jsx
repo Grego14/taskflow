@@ -70,12 +70,7 @@ export default function ProfileButton({
           variant='dot'
           overlap='circular'
           anchorOrigin={{ vertical: 'bottom' }}
-          color={isOffline ? 'error' : 'success'}
-          sx={{
-            mr: showTexts && open ? 2 : 0,
-            scale: open ? '1.2' : '0.8',
-            transition: 'scale .25s ease-in-out'
-          }}>
+          color={isOffline ? 'error' : 'success'}>
           <Avatar
             alt={`${username} avatar`}
             src={avatar}
@@ -87,32 +82,31 @@ export default function ProfileButton({
 
         {showTexts && (
           <Box
-            className='profile-btn-text'
+            className='profile-btn-text flex flex-column'
             sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '.1rem',
               alignItems: 'start',
               position: 'absolute',
-              left: '4.75rem'
+              left: '3.5rem'
             }}
             aria-hidden={!open}>
             <Typography
-              sx={{
+              sx={[theme => ({
+                ...theme.typography.subtitle2,
                 opacity: 1,
-                fontSize: 'var(--fs-small)',
                 color: 'text.primary'
-              }}>
+              })
+              ]}>
               {username}
             </Typography>
             {email && (
               <Typography
                 variant='caption'
-                sx={{
+                sx={[theme => ({
+                  ...theme.typography.caption,
                   opacity: 1,
-                  fontSize: 'var(--fs-tiny)',
                   color: 'text.secondary'
-                }}>
+                })
+                ]}>
                 {email}
               </Typography>
             )}
