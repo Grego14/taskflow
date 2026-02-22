@@ -19,7 +19,7 @@ export default memo(function LayoutManager() {
       <LayoutAppBar />
 
       <Suspense fallback={null}>
-        {!isMobile || (isMobile && projectId) && <AppDrawer />}
+        {(!isMobile || (isMobile && projectId)) && <AppDrawer />}
       </Suspense>
 
       <Box
