@@ -1,10 +1,12 @@
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useMemo, useState, lazy, Suspense } from 'react'
 import { useColorScheme } from '@mui/material/styles'
 import useMediaQuery from '@mui/material/useMediaQuery'
 
 import UserProvider from '@context/UserContext'
 import AppContext from './context'
 import AppRoutes from '@/AppRoutes.jsx'
+
+const Notification = lazy(() => import('@components/ui/notification/Notification'))
 
 const DRAWER_CONFIG = {
   widthOpen: 260,
@@ -65,6 +67,12 @@ export default function AppProvider({ children }) {
           </div>
         </div>
       </UserProvider>
+
+      {notification?.open && (
+        <Suspense fallback={null}>
+          <Notification />
+        </Suspense>
+      )}
     </AppContext.Provider>
   )
 }

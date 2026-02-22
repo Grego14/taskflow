@@ -27,9 +27,10 @@ export default memo(function LayoutManager() {
         minHeight='100dvh'
         marginLeft={`${!isMobile ? drawerWidth?.closed : 0}px`}
         className='flex flex-column'
-        py={projectId ? 0 : 2}
         pb={isMobile ? appBarHeight : 0}>
-        <Outlet />
+        <Suspense fallback={null}>
+          <Outlet />
+        </Suspense>
       </Box>
     </Box>
   )
