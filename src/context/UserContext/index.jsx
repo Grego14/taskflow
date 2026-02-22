@@ -1,7 +1,7 @@
 // hooks
 import useAuth from '@hooks/useAuth'
 import { useColorScheme } from '@mui/material/styles'
-import { useEffect, useMemo, useState, useRef, useCallback } from 'react'
+import { useEffect, useMemo, useState, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 
 // utils
