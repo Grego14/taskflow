@@ -8,6 +8,7 @@ import ExpandLess from '@mui/icons-material/ExpandLess'
 import ExpandMore from '@mui/icons-material/ExpandMore'
 import AccountTreeIcon from '@mui/icons-material/AccountTree'
 import NavAction from '@components/reusable/NavAction'
+import Tooltip from '@mui/material/Tooltip'
 
 import { useState, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -32,7 +33,7 @@ export default function ProjectCollapsibleSection() {
   const { t } = useTranslation('ui')
   const containerRef = useRef(null)
   const [open, setOpen] = useState(true)
-  const { drawerOpen } = useLayout()
+  const { drawerOpen, setDrawerOpen } = useLayout()
 
   useGSAP(() => {
     if (open && drawerOpen) {
@@ -45,7 +46,17 @@ export default function ProjectCollapsibleSection() {
 
   if (!projectId) return null
 
-  const handleToggle = () => setOpen(!open)
+  const handleToggle = () => {
+    // open the drawer and show the items if the drawer was closed and the user
+    // clicked the button
+    if (!drawerOpen) {
+      setDrawerOpen(true)
+      setOpen(true)
+      return
+    }
+
+    setOpen(!open)
+  }
 
   const projectItems = getProjectNavigation(projectOwner, projectId)
 
@@ -69,6 +80,7 @@ export default function ProjectCollapsibleSection() {
           link={link}
           showText={drawerOpen}
           isActive={isActive}
+          onClick={() => setDrawerOpen(false)}
         />
       </Box>
     )
@@ -80,36 +92,38 @@ export default function ProjectCollapsibleSection() {
       ref={containerRef}
       disablePadding
       sx={{ mt: 0.5 }}>
-      <ListItemButton
-        onClick={handleToggle}
-        sx={{
-          px: 1.5,
-          py: 1,
-          justifyContent: drawerOpen ? 'initial' : 'center'
-        }}>
-        <ListItemIcon sx={{
-          minWidth: 0,
-          mr: drawerOpen ? 1.5 : '0',
-          justifyContent: 'center',
-          color: 'text.secondary'
-        }}>
-          <AccountTreeIcon fontSize='small' />
-        </ListItemIcon>
+      <Tooltip title={t('projectActions.navFolder')} placement='right'>
+        <ListItemButton
+          onClick={handleToggle}
+          sx={{
+            px: 1.5,
+            py: 1,
+            justifyContent: drawerOpen ? 'initial' : 'center'
+          }}>
+          <ListItemIcon sx={{
+            minWidth: 0,
+            mr: drawerOpen ? 1.5 : '0',
+            justifyContent: 'center',
+            color: 'text.secondary'
+          }}>
+            <AccountTreeIcon fontSize='small' />
+          </ListItemIcon>
 
-        {drawerOpen && (
-          <>
-            <ListItemText
-              className='nav-folder-text'
-              primary={t('projectActions.navFolder')}
-              slotProps={{ primary: TEXT_PROPS }}
-            />
-            {open
-              ? <ExpandLess fontSize='small' />
-              : <ExpandMore fontSize='small' />
-            }
-          </>
-        )}
-      </ListItemButton>
+          {drawerOpen && (
+            <>
+              <ListItemText
+                className='nav-folder-text'
+                primary={t('projectActions.navFolder')}
+                slotProps={{ primary: TEXT_PROPS }}
+              />
+              {open
+                ? <ExpandLess fontSize='small' />
+                : <ExpandMore fontSize='small' />
+              }
+            </>
+          )}
+        </ListItemButton>
+      </Tooltip>
 
       <Collapse in={open && drawerOpen} timeout='auto' unmountOnExit>
         <List sx={{ pl: 1.25 }} disablePadding>
