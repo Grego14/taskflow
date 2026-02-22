@@ -4,7 +4,7 @@ import AddMembers from '@components/ui/buttons/AddMembers'
 import FilterButton from '@components/ui/buttons/FilterButton'
 import PreviewSwitcher from '@components/ui/previewswitcher/PreviewSwitcher'
 import List from '@mui/material/List'
-import ToggleProjectDrawer from './components/ToggleProjectDrawer'
+import ToggleProjectDrawer from '@components/ui/projects/ToggleProjectDrawer'
 
 import useApp from '@hooks/useApp'
 import useProject from '@hooks/useProject'

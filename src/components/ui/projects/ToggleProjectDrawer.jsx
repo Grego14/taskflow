@@ -22,7 +22,7 @@ export default function ToggleProjectDrawer() {
         color='inherit'
         aria-label={label}
         onClick={() => setDrawerOpen(prev => !prev)}
-        sx={{ ml: 0, display: { xs: 'flex', tablet: 'none' } }}>
+        sx={{ ml: 0, alignSelf: 'center', display: { xs: 'flex', tablet: 'none' } }}>
         <GridViewIcon fontSize='medium' />
       </IconButton>
     </Tooltip>

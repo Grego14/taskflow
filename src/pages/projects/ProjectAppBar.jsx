@@ -1,9 +1,8 @@
 import { Suspense, lazy } from 'react'
 
 const ProjectItems = lazy(() => import('./ProjectItems'))
-const GoBackButton = lazy(
-  () => import('@components/reusable/buttons/GoBackButton')
-)
+const ToggleProjectDrawer = lazy(() => import('@components/ui/projects/ToggleProjectDrawer'))
+
 import AppBar from '@components/ui/appbar/AppBar'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
@@ -31,11 +30,7 @@ export default function ProjectAppBar() {
       {isProjectSubRoute ? (
         <Box className='flex flex-grow' gap={1.5} px={2}>
           <Suspense fallback={null}>
-            <GoBackButton
-              handler={() => navigate(`/projects/${data?.createdBy}/${id}`)}
-              text={t('projects.goBack')}
-              noText
-            />
+            <ToggleProjectDrawer />
           </Suspense>
 
           <Box
