@@ -20,27 +20,33 @@ const h1Styles = (theme) => ({
   opacity: 0,
   maxWidth: '15ch',
   lineHeight: 1.2,
-  background: `linear-gradient(90deg, ${theme.palette.primary.main}, 
-  ${theme.palette.secondary.main}, ${theme.palette.primary.main})`,
+  background: `linear-gradient(
+    90deg, 
+    ${theme.palette.primary.main} 0%, 
+    ${theme.palette.secondary.main} 35%, 
+    ${theme.palette.primary.light} 50%, 
+    ${theme.palette.secondary.main} 65%, 
+    ${theme.palette.primary.main}
+  )`,
   backgroundSize: '200% auto',
   WebkitBackgroundClip: 'text',
   backgroundClip: 'text',
   WebkitTextFillColor: 'transparent',
   WebkitFontSmoothing: 'antialiased',
-  textShadow: `0 0 25px ${theme.alpha(theme.palette.primary.main, 0.35)}`,
+  textShadow: `0 0 25px ${theme.palette.primary.main}59`,
 })
 
 const h2Styles = (theme) => ({
   ...theme.typography.h5,
   opacity: 0,
-  maxWidth: '40ch',
+  maxWidth: { xs: '40ch', laptop: '50ch' },
   perspective: '1000px',
   lineHeight: 1.45
 })
 
 const btnStyles = (theme) => ({
-  mt: 4,
   opacity: 0,
+  visibility: 'hidden',
   ...theme.typography.h6,
   py: 1.5,
   px: 3,
@@ -143,7 +149,7 @@ export default function MainText({ setAnimationEnded, prefetchAuth }) {
       </Box>
 
       <Button
-        sx={btnStyles}
+        sx={[theme => ({ ...btnStyles(theme), mt: { xs: 3, laptop: 6 } })]}
         variant='contained'
         onMouseEnter={prefetchAuth}
         id='startFree'
