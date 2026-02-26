@@ -94,7 +94,6 @@ export default function Landing() {
   return (
     <Box
       sx={{
-        backgroundColor: '#0a0a0a',
         backgroundImage: `
         radial-gradient(circle at 15% 25%, ${theme.palette.primary.main}18 0%, transparent 60%),
         radial-gradient(circle at 85% 75%, ${theme.palette.secondary.main}20 0%, transparent 60%)
