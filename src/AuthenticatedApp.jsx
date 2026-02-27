@@ -6,6 +6,7 @@ import LayoutProvider from '@context/LayoutContext'
 import NotificationsProvider from '@context/NotificationsContext'
 import LayoutManager from '@components/ui/layoutmanager/LayoutManager'
 
+const Verify = lazy(() => import('@pages/auth/VerifyEmail'))
 const NotFound = lazy(() => import('@pages/notfound/NotFound'))
 const Auth = lazy(() => import('@pages/auth/Auth'))
 const Home = lazy(() => import('@pages/home/Home'))
@@ -35,6 +36,8 @@ export default function AuthenticatedApp() {
       <Route element={<UserLogged />}>
         <Route path='/login' element={<Auth type='login' />} />
         <Route path='/signup' element={<Auth type='signup' />} />
+
+        <Route path='/verify' element={<Verify />} />
 
         <Route element={<UserLogged />}>
           <Route path='/profile' element={<Profile />} />

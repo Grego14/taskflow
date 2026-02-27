@@ -11,23 +11,28 @@ export default function RegisterComponent(props) {
   } = props
 
   const {
-    field,
-    formState: { errors }
+    field: { onChange, onBlur, value, ref },
+    fieldState: { error }
   } = useController({ name, control, rules })
 
-  const onChange = e => {
-    field.onChange(e.target.value)
+  const handleChange = (e) => {
+    const val = e?.target ? e.target.value : e
+    onChange(val)
     handler?.(e)
   }
 
+
   return (
     <Component
-      {...field}
       {...componentProps}
       {...other}
-      error={!!errors?.[name]}
-      helperText={errors?.[name]?.message}
-      onChange={onChange}
+      name={name}
+      value={value ?? ''}
+      onChange={handleChange}
+      onBlur={onBlur}
+      inputRef={ref}
+      error={!!error}
+      helperText={error?.message}
     />
   )
 }

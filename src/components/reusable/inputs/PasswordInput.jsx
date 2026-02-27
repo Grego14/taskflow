@@ -4,7 +4,6 @@ import IconButton from '@mui/material/IconButton'
 import InputAdornment from '@mui/material/InputAdornment'
 import TextField from '@mui/material/TextField'
 
-import useDebounce from '@hooks/useDebounce'
 import { useState, forwardRef } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -12,18 +11,9 @@ const PasswordInput = forwardRef((props, ref) => {
   const { name, onChange, ...other } = props
 
   const [showPassword, setShowPassword] = useState(false)
-  const [value, setValue] = useState('')
-  const [debounceOnChange] = useDebounce(e => onChange(e), 750)
   const { t } = useTranslation('auth')
 
   const handleClickShowPassword = e => setShowPassword(show => !show)
-
-  const handleOnChange = e => {
-    const newValue = e.target.value
-    setValue(newValue)
-
-    debounceOnChange(e)
-  }
 
   return (
     <TextField
@@ -49,8 +39,6 @@ const PasswordInput = forwardRef((props, ref) => {
       }}
       {...other}
       type={showPassword ? 'text' : 'password'}
-      value={value}
-      onChange={handleOnChange}
       inputRef={ref}
     />
   )

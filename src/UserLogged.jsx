@@ -7,10 +7,10 @@ import useAuth from '@hooks/useAuth'
 import useDebounce from '@hooks/useDebounce'
 import useGetUserFromDb from '@hooks/useGetUserFromDb'
 import useUser from '@hooks/useUser'
-
-import lazyImport from '@utils/lazyImport'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import useLoadResources from './hooks/useLoadResources'
 
 const CloudOff = lazy(() => import('@mui/icons-material/CloudOff'))
 const CloudSync = lazy(() => import('@mui/icons-material/CloudSync'))
@@ -40,14 +40,37 @@ const QueryProvider = ({ children }) => {
 
 const Services = () => {
   const { uid, setUpdatePlaceholder } = useUser()
-  const { currentUser, initAuth } = useAuth()
+  const { currentUser, refreshUser, initAuth } = useAuth()
   const { appNotification, setIsOffline, isOffline } = useApp()
+  const navigate = useNavigate()
+  const { pathname } = useLocation()
 
   const lastConnectionState = useRef(isOffline)
+
+  // load the resources before the user is able to see anything
+  const loadingResources = useLoadResources('ui')
 
   useEffect(() => {
     initAuth()
   }, [initAuth])
+
+  useEffect(() => {
+    if (!currentUser) return
+
+    // force user reload to get the emailVerified state
+    const checkVerification = async () => {
+      if (!currentUser.emailVerified) {
+        await refreshUser()
+      }
+
+      // if after refresh the user is still not verified we send him to the
+      // /verify rute
+      if (!currentUser.emailVerified && pathname !== '/verify')
+        navigate('/verify', { replace: true })
+    }
+
+    checkVerification()
+  }, [currentUser?.uid, navigate])
 
   const updateUserMutation = useMutation({
     mutationKey: ['updateUser'],
@@ -94,7 +117,7 @@ const Services = () => {
 
   const [sendInternetNotification] = useDebounce(async () => {
     const Icon = isOffline ? CloudOff : CloudSync
-    const internetNotification = await lazyImport('/src/utils/notifications/internetConnection')
+    const { default: internetNotification } = await import('@utils/notifications/internetAlert')
 
     internetNotification(isOffline, props => appNotification({
       ...props,

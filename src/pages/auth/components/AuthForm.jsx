@@ -6,156 +6,138 @@ import AuthButtons from './AuthButtons'
 import AuthInput from './AuthInput'
 import PasswordInput from '@components/reusable/inputs/PasswordInput'
 
-import useUser from '@hooks/useUser'
-import { useCallback, useMemo, useState } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
+import { useNavigate } from 'react-router-dom'
+import useUser from '@hooks/useUser'
 
-import lazyImport from '@utils/lazyImport'
+import * as authService from '@services/auth'
 
-const RULES_CONFIG = {
+const RULES = {
   username: {
-    required: { value: true, message: 'username.usernameRequired' },
-    minLength: { value: 3, message: 'username.shortUsername' },
-    maxLength: { value: 30, message: 'username.too-big' }
+    required: 'username.usernameRequired',
+    minLength: { value: 3, message: 'username.shortUsername' }
   },
   email: {
-    required: { value: true, message: 'email.emailRequired' }
+    required: 'email.emailRequired',
+    pattern: { value: /^\S+@\S+$/i, message: 'email.invalid' }
   },
   password: {
-    required: { value: true, message: 'password.passwordRequired' },
+    required: 'password.passwordRequired',
     minLength: { value: 8, message: 'password.shortPassword' }
   }
-}
-
-const getTranslatedRules = (name, t) => {
-  const rule = RULES_CONFIG[name]
-  if (!rule) return null
-
-  const translated = {}
-  for (const key of Object.keys(rule)) {
-    const val = rule[key]
-    translated[key] =
-      { ...val, message: t(val.message, { ns: 'validations' }) }
-  }
-  return translated
 }
 
 export default function AuthForm({ isSignup = false, type }) {
   const { preferences } = useUser()
   const { t } = useTranslation(['auth', 'validations'])
   const [formError, setFormError] = useState('')
-  const [disableSubmitBtn, setDisableSubmitBtn] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const navigate = useNavigate()
 
   const {
     handleSubmit,
+    getValues,
     formState: { errors },
     setError,
     clearErrors,
-    control
+    control,
+    watch,
+    reset
   } = useForm({
     defaultValues: {
       username: '',
       email: '',
       password: '',
       repeatedPassword: ''
-    }
+    },
+    mode: 'onTouched'
   })
 
-  const fieldsError = Object.keys(errors).length > 0
+  // reset when the type changes
+  useEffect(() => {
+    reset()
+  }, [isSignup, reset])
 
-  const onSubmit = useCallback(
-    async (data, e) => {
-      e.preventDefault()
-      const submit = await lazyImport('/src/pages/auth/submit')
-      const authState = await submit({ data, isSignup })
+  const onSubmit = async (data) => {
+    setLoading(true)
+    setFormError('')
 
-      // form error
-      if (authState.error) {
-        setFormError(t(authState.error))
-        return setDisableSubmitBtn(true)
+    try {
+      if (!isSignup) {
+        await authService.login(data)
+        return
       }
 
-      // fields errors
-      if (Object.keys(authState.errors).length > 0) {
-        for (const [key, error] of Object.entries(authState.errors)) {
-          setError(key, { message: error, type: 'custom' })
-        }
-        return setDisableSubmitBtn(true)
-      }
-
-      if (isSignup) {
-        const createUserDoc = await lazyImport('/src/services/createUserDoc')
-        const { locale, ...otherPrefs } = preferences
-        await createUserDoc(authState.user, otherPrefs)
-
-        const sendWelcomeNotification = await lazyImport(
-          '/src/services/notifications/sendWelcomeNotification'
-        )
-        await sendWelcomeNotification(authState.user.uid)
-      }
-    },
-    [isSignup, preferences, t, setError]
-  )
-
-  const fields = useMemo(() => {
-    const createField = (name, component, extraProps = {}) => {
-      const isPassword = name === 'repeatedPassword' || name === 'password'
-
-      return {
-        name,
-        component,
-        rules: getTranslatedRules(name === 'repeatedPassword' ? 'password' : name, t),
-        handler: () => {
-          setFormError('')
-
-          if (!errors[name]) clearErrors(name)
-
-          setDisableSubmitBtn(false)
-        },
-        ...extraProps,
-        ...(isPassword && {
-          placeholder: t('inputs.placeholders.password', { ns: 'auth' }),
-          label: t(`inputs.labels.${name}`, { ns: 'auth' })
+      if (data.password !== data.repeatedPassword) {
+        return setError('repeatedPassword', {
+          message: t('password.passwordMismatch', {
+            ns: 'validations'
+          })
         })
       }
-    }
 
-    const passwordProps = {
-      type: 'password',
-      autoComplete: isSignup ? 'new-password' : 'current-password',
+      await authService.signup({ ...data, preferences })
+    } catch (err) {
+      if (err.code === 'auth/email-already-in-use' && isSignup) {
+        // simulate success to protect user privacy.
+        // we use the redirected state to show the verify content... otherwise
+        // that rute doesn't show anything
+        navigate('/verify', { state: { email: data.email, redirected: true } })
+      } else {
+        setFormError(t('form.submit', { ns: 'validations' }))
+      }
+    } finally {
+      setLoading(false)
     }
+  }
 
+  const fields = useMemo(() => {
     const items = []
 
     if (isSignup) {
-      items.push(createField('username', AuthInput, { autoComplete: 'username' }))
+      items.push({
+        name: 'username',
+        component: AuthInput,
+        rules: { required: t(RULES.username.required, { ns: 'validations' }) }
+      })
     }
 
-    items.push(createField('email', AuthInput, { type: 'email', autoComplete: 'email' }))
-    items.push(createField('password', PasswordInput, passwordProps))
+    items.push({
+      name: 'email',
+      component: AuthInput,
+      rules: { required: t(RULES.email.required, { ns: 'validations' }) }
+    })
+
+    items.push({
+      name: 'password',
+      component: PasswordInput,
+      label: t('inputs.labels.password', { ns: 'auth' }),
+      rules: { required: t(RULES.password.required, { ns: 'validations' }) }
+    })
 
     if (isSignup) {
-      items.push(createField('repeatedPassword', PasswordInput, passwordProps))
+      items.push({
+        name: 'repeatedPassword',
+        component: PasswordInput,
+        label: t('inputs.labels.repeatedPassword', { ns: 'auth' }),
+        rules: { required: t(RULES.password.required, { ns: 'validations' }) }
+      })
     }
 
     return items
-  }, [isSignup, clearErrors, t, errors])
+  }, [isSignup, t])
+
+  console.log(errors)
 
   return (
     <form
       className='flex flex-grow flex-column'
       onSubmit={handleSubmit(onSubmit)}
-      id='authForm'
-    >
+      id='authForm'>
       {formError && (
-        <Typography
-          aria-live='assertive'
-          role='alert'
-          color='error'
-          variant='body2'
-          mb={1.25}
-        >
+        <Typography color='error' variant='body2' mb={1.25}>
           {formError}
         </Typography>
       )}
@@ -164,20 +146,23 @@ export default function AuthForm({ isSignup = false, type }) {
         className='flex flex-column flex-center flex-grow'
         gap={2}
         minWidth='18rem'
-        maxWidth='25rem'
-      >
+        maxWidth='25rem'>
         {fields.map(field => (
           <RegisterComponent
             key={field.name}
             control={control}
             {...field}
-          />
-        ))}
+            handler={() => {
+              setFormError('')
+              if (errors[field.name]) clearErrors(field.name)
+            }}
+          />)
+        )}
       </Box>
 
       <AuthButtons
         type={type}
-        disabledBtn={!!(disableSubmitBtn || fieldsError)}
+        disabledBtn={loading || Object.keys(errors).length > 0}
       />
     </form>
   )
