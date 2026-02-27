@@ -205,6 +205,56 @@ const projectService = {
       console.error('UpdateProject Error:', err)
       throw getFriendlyErrorFormatted('updateProject', err.message)
     }
+  },
+
+  createProject: async (uid, data) => {
+    if (!uid || typeof uid !== 'string') {
+      throw Error('project.createProject: Invalid uid')
+    }
+
+    if (!data || typeof data !== 'object' || Object.keys(data).length === 0) {
+      throw Error('project.createProject: No project data provided')
+    }
+
+    try {
+      const batch = dbAdapter.createBatch()
+      const projectCol = dbAdapter.getColRef('users', uid, 'projects')
+      const members = [uid, ...(data?.members || [])]
+      const timestamp = dbAdapter.getServerTimestamp()
+
+      // create the main project document
+      const projectRef = await dbAdapter.add(projectCol, {
+        ...data,
+        createdAt: timestamp,
+        updatedAt: timestamp,
+        createdBy: uid,
+        members,
+        isTemplate: data?.isTemplate || false,
+        isArchived: false,
+        drawerData: false
+      })
+
+      // add id to the newly created project
+      batch.update(projectRef, { id: projectRef.id })
+
+      // create the simplified drawer document for performance
+      const drawerRef = dbAdapter.getDocRef(projectCol, `${projectRef.id}_drawer`)
+
+      batch.set(drawerRef, {
+        id: projectRef.id,
+        name: data.name,
+        drawerData: true,
+        members,
+        owner: uid
+      })
+
+      await batch.commit()
+
+      return projectRef.id
+    } catch (err) {
+      console.error('project.createProject error:', err)
+      throw getFriendlyErrorFormatted('createProject', err.message)
+    }
   }
 }
 

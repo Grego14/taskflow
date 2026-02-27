@@ -3,6 +3,7 @@ import Button from '@mui/material/Button'
 import lazyImport from '@utils/lazyImport'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
+import projectService from 'src/services/project'
 
 // errors field only manages the errors of the name and description values
 export default function CreateProject({
@@ -17,7 +18,10 @@ export default function CreateProject({
 }) {
   const navigate = useNavigate()
   const { uid } = useUser()
-  const { t } = useTranslation('ui')
+  const { t } = useTranslation('projects')
+
+  // the only required field for a project is the name
+  const isDisabled = errors?.name || !name || name?.length < 3
 
   return (
     <Button
@@ -25,9 +29,7 @@ export default function CreateProject({
       sx={{ mt: 2, ml: 'auto', ...sx }}
       variant='contained'
       onClick={async () => {
-        const createProject = await lazyImport('/src/services/createProject')
-
-        const projectId = await createProject(uid, {
+        const projectId = await projectService.createProject(uid, {
           isTemplate,
           isPublicTemplate: publicTemplate,
           members: members?.map(member => member.id),
@@ -35,19 +37,11 @@ export default function CreateProject({
           description
         })
 
-        navigate(`/projects/${uid}/${projectId}`, {
-          state: {
-            o: uid
-          }
-        })
+        navigate(`/projects/${uid}/${projectId}`)
       }}
-      // the only required field for a project is the name
-      disabled={
-        errors?.name || errors?.description || !name || name?.length < 3
-      }
-      {...other}
-    >
-      {t('projects.new.create')}
+      disabled={isDisabled}
+      {...other}>
+      {t('new.create')}
     </Button>
   )
 }

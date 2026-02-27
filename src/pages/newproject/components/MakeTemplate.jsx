@@ -17,13 +17,13 @@ export default function MakeTemplate({
   setPublicTemplate
 }) {
   const { isMobile } = useApp()
-  const { t } = useTranslation('ui')
+  const { t } = useTranslation('projects')
 
   return (
     <Container className='flex flex-column' sx={{ gap: isMobile ? 1.25 : 2.5, px: isMobile ? 0 : 2 }}>
       <SwitcthContainer
-        title={t('projects.new.makeTemplate')}
-        subtitle={t('projects.new.makeTemplateHelpText')}
+        title={t('new.makeTemplate')}
+        subtitle={t('new.makeTemplateHelpText')}
         checked={template}
         onCheck={() => {
           const newVal = !template
@@ -39,8 +39,8 @@ export default function MakeTemplate({
       />
 
       <SwitcthContainer
-        title={t('projects.new.makeTemplatePublic')}
-        subtitle={t('projects.new.makeTemplatePublicHelpText')}
+        title={t('new.makeTemplatePublic')}
+        subtitle={t('new.makeTemplatePublicHelpText')}
         checked={publicTemplate}
         onCheck={() => setPublicTemplate(!publicTemplate)}
         icon={<PeopleIcon fontSize='medium' />}

@@ -26,8 +26,8 @@ const hidden = { opacity: 0, visibility: 'hidden' }
 
 export default function NewProject() {
   const { isMobile, isOnlyMobile } = useApp()
-  const { t } = useTranslation(['ui', 'common'])
-  const loadingResources = useLoadResources(['ui', 'projects'])
+  const { t } = useTranslation(['projects', 'common'])
+  const loadingResources = useLoadResources('projects')
   const containerRef = useRef(null)
 
   const [form, setForm] = useState({
@@ -81,7 +81,7 @@ export default function NewProject() {
   const alignment = isMobile ? 'center' : ' start'
 
   if (loadingResources)
-    return <CircleLoader text={t('loading', { ns: 'common' })} />
+    return <CircleLoader text={t('common:loading')} />
 
   return (
     <Box
@@ -105,7 +105,7 @@ export default function NewProject() {
             transformOrigin: '0 50% -50',
           })]}
           id='newProjectTitle'>
-          {t('projects.createProject', { ns: 'ui' })}
+          {t('projects:createProject')}
         </Typography>
 
         <Paper
