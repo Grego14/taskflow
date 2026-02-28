@@ -4,10 +4,11 @@ import AuthContext from './context'
 
 const mapUserData = user => {
   if (!user) return null
+  const providerData = user.providerData?.[0]
 
   return {
     uid: user.uid,
-    email: user.email,
+    email: user.email || providerData?.email,
     emailVerified: user.emailVerified,
     username: user.displayName,
     avatar: user.photoURL,
@@ -15,7 +16,7 @@ const mapUserData = user => {
       creationTime: user.metadata.creationTime,
       lastSignInTime: user.metadata.lastSignInTime
     },
-    providerId: user.providerData?.[0]?.providerId
+    providerId: providerData?.providerId
   }
 }
 
@@ -27,10 +28,11 @@ export default function AuthProvider({ children }) {
   const refreshUser = useCallback(async () => {
     try {
       const { auth } = await import('@/firebase/firebase-config.js')
+      const { reload } = await import('firebase/auth')
       const user = auth.currentUser
 
       if (user) {
-        await user.reload()
+        await reload(user)
         setCurrentUser(mapUserData(auth.currentUser))
       }
     } catch (err) {

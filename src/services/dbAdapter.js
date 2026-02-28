@@ -8,6 +8,7 @@ import {
   arrayUnion,
   deleteDoc,
   updateDoc,
+  setDoc,
   onSnapshot,
   arrayRemove,
   query,
@@ -45,10 +46,33 @@ export const dbAdapter = {
 
   add: async (colRef, data) => await addDoc(colRef, data),
   update: async (docRef, data) => await updateDoc(docRef, data),
+  set: async (docRef, data) => await setDoc(docRef, data),
   remove: async (docRef) => await deleteDoc(docRef),
 
   listen: (query, onNext, onError) => onSnapshot(query, onNext, onError),
 
   union: (...elements) => arrayUnion(...elements),
-  removeFromArray: (...elements) => arrayRemove(...elements)
+  removeFromArray: (...elements) => arrayRemove(...elements),
+
+  deleteCollection: async (collectionRef, batchSize = 50) => {
+    let snapshot
+
+    do {
+      // use internal getQuery with limit
+      const q = query(collectionRef, limit(batchSize))
+      snapshot = await getDocs(q)
+
+      if (snapshot.empty) break
+
+      const batch = writeBatch(db)
+
+      for (const d of snapshot.docs) {
+        batch.delete(d.ref)
+      }
+
+      await batch.commit()
+
+      // continue if there might be more documents
+    } while (snapshot.size >= batchSize)
+  }
 }

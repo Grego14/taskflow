@@ -42,17 +42,14 @@ export default function DeleteAccountButton() {
 
       setDeleting(true)
 
-      const [
-        { default: deleteUserDocs },
-        { deleteUser },
-        { auth }
-      ] = await Promise.all([
-        import('@services/deleteUser'),
-        import('firebase/auth'),
-        import('@/firebase/firebase-config')
-      ])
+      const [{ default: userService }, { deleteUser }, { auth }] =
+        await Promise.all([
+          import('@services/user'),
+          import('firebase/auth'),
+          import('@/firebase/firebase-config')
+        ])
 
-      await deleteUserDocs(uid)
+      await userService.delete(uid)
 
       await deleteUser(auth.currentUser)
 
@@ -67,15 +64,19 @@ export default function DeleteAccountButton() {
     }
   }, [appNotification, password, reauthenticate, t, uid])
 
+  const manageDialogClose = () => {
+    setOpen(false)
+    setError(null)
+  }
+
   return (
     <>
       <Button
         onClick={() => setOpen(true)}
         variant='outlined'
-        disabled={popup || !!error}
+        disabled={open}
         endIcon={<DeleteIcon sx={getIconSx(preferences)} />}
-        color='error'
-      >
+        color='error'>
         {t('deleteAccount')}
       </Button>
 
@@ -83,7 +84,7 @@ export default function DeleteAccountButton() {
         <Suspense fallback={null}>
           <DeleteUserDialog
             onAccept={deleteAccount}
-            onClose={() => setOpen(false)}
+            onClose={manageDialogClose}
             open={open}
             setPassword={setPassword}
             password={password}

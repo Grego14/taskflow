@@ -1,82 +1,45 @@
 import GithubIcon from '@mui/icons-material/GitHub'
 import GoogleIcon from '@mui/icons-material/Google'
-
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
-import IconButton from '@mui/material/IconButton'
 import Typography from '@mui/material/Typography'
 
-import useUser from '@hooks/useUser'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import useUser from '@hooks/useUser'
+import { useNavigate } from 'react-router-dom'
 
-import {
-  signInWithPopup,
-  GoogleAuthProvider,
-  GithubAuthProvider
-} from 'firebase/auth'
-import { auth } from '@/firebase/firebase-config'
-import lazyImport from '@utils/lazyImport'
+import * as authService from '@services/auth'
 
 export default function AuthButtons({ type, disabledBtn }) {
   const { t } = useTranslation('auth')
-  const [popup, setPopup] = useState(false)
-  const [error, setError] = useState(null)
   const { preferences } = useUser()
+  const navigate = useNavigate()
+
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState(null)
 
   const handleAuthProvider = async e => {
-    const provider = e.currentTarget?.id
+    const providerId = e.currentTarget?.id
+    if (!providerId) return
 
-    if (provider !== 'google' && provider !== 'github') return
+    setLoading(true)
+    setError(null)
 
-    const handleError = () => {
-      setError(t('errors.providerError'))
-      setPopup(false)
+    try {
+      const user = await authService.loginWithProvider(providerId, preferences)
+
+      // manual redirection based on verification state
+      navigate(user.emailVerified ? '/home' : '/verify', { replace: true })
+    } catch (err) {
+      console.error(err)
+      // only show error if it's not the user closing the popup
+      if (err.code !== 'auth/popup-closed-by-user') {
+        setError(t('errors.providerError'))
+      }
+    } finally {
+      setLoading(false)
     }
-
-    setPopup(true)
-
-    const googleProvider = new GoogleAuthProvider()
-    googleProvider.addScope('email')
-
-    const githubProvider = new GithubAuthProvider()
-    githubProvider.addScope('email')
-
-    await signInWithPopup(
-      auth,
-      provider === 'google' ? googleProvider : githubProvider
-    )
-      .then(async result => {
-        const { locale, ...otherPrefs } = preferences
-
-        const user = result.user
-
-        const creationTimestamp = new Date(user.metadata.creationTime).getTime()
-        const lastSignInTimestamp = new Date(
-          user.metadata.lastSignInTime
-        ).getTime()
-
-        const isNewUser =
-          Math.abs(creationTimestamp - lastSignInTimestamp) < 5000
-
-        if (isNewUser) {
-          const createUserDoc = await lazyImport('/src/services/createUserDoc')
-
-          // Create the user document
-          await createUserDoc(
-            { ...user, email: user?.email || user?.providerData?.[0]?.email },
-            otherPrefs
-          )
-
-          const sendWelcomeNotification = await lazyImport(
-            '/src/services/notifications/sendWelcomeNotification'
-          )
-          await sendWelcomeNotification(result.user.uid)
-        }
-
-        setPopup(false)
-      })
-      .catch(handleError)
   }
 
   return (
@@ -84,7 +47,7 @@ export default function AuthButtons({ type, disabledBtn }) {
       <Button
         type='submit'
         form='authForm'
-        disabled={disabledBtn || popup}
+        disabled={disabledBtn || loading}
         variant='contained'
         sx={{ width: '100%' }}>
         {t(`${type}.authButton`)}
@@ -100,7 +63,7 @@ export default function AuthButtons({ type, disabledBtn }) {
       <Button
         startIcon={<GithubIcon />}
         variant='outlined'
-        disabled={popup}
+        disabled={loading}
         onClick={handleAuthProvider}
         id='github'>
         {t('githubButton')}
@@ -109,7 +72,7 @@ export default function AuthButtons({ type, disabledBtn }) {
         startIcon={<GoogleIcon />}
         variant='outlined'
         onClick={handleAuthProvider}
-        disabled={popup}
+        disabled={loading}
         id='google'>
         {t('googleButton')}
       </Button>

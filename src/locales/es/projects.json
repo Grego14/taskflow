@@ -19,10 +19,10 @@
       "descriptionIsInvalid": "La descripción del proyecto contiene caracteres invalidos"
     }
   },
-  "new": {
+  "newProject": {
     "makeTemplate": "Hacer que este proyecto sea una plantilla",
     "makeTemplateHelpText": "Las plantillas se pueden reutilizar para nuevos proyectos",
-    "makeTemplatePublic": "Plantilla publica",
+    "makeTemplatePublic": "Hacer que esta plantilla sea publica",
     "makeTemplatePublicHelpText": "Las plantillas publicas podrán ser usadas por cualquier usuario",
     "create": "Crear proyecto"
   },

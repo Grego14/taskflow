@@ -26,7 +26,6 @@ const spinningIconSx = {
 export default function DeleteUserDialog(props) {
   const {
     onAccept,
-    popup,
     setPassword,
     setError,
     password,
@@ -39,6 +38,8 @@ export default function DeleteUserDialog(props) {
   const { preferences } = useUser()
   const { t } = useTranslation(['common', 'dialogs', 'profile'])
   const loadingResources = useLoadResources(['dialogs'])
+
+  const isPasswordProvider = currentUser?.providerId === 'password'
 
   const handleChange = e => {
     setPassword(e.target.value)
@@ -53,21 +54,17 @@ export default function DeleteUserDialog(props) {
       acceptBtn={
         <Button
           onClick={onAccept}
-          disabled={popup}
+          disabled={isPasswordProvider ? !!error || deleting : deleting}
           variant='contained'
-          endIcon={
-            deleting && <HourglassBottomIcon sx={spinningIconSx} />
-          }
-        >
+          endIcon={deleting && <HourglassBottomIcon sx={spinningIconSx} />}>
           {t('delete_x', { x: '', ns: 'common' })}
         </Button>
-      }
-    >
+      }>
       <Typography color={`warning.${preferences.theme}`}>
         {t('deleteUser.text', { ns: 'dialogs' })}
       </Typography>
 
-      {currentUser?.providerId === 'password' && (
+      {isPasswordProvider && (
         <Suspense fallback={null}>
           <PasswordInput
             onChange={handleChange}

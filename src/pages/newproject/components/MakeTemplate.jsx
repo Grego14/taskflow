@@ -8,7 +8,6 @@ import FileCopyIcon from '@mui/icons-material/FileCopy'
 import PeopleIcon from '@mui/icons-material/People'
 
 import { useTranslation } from 'react-i18next'
-import useApp from '@hooks/useApp'
 
 export default function MakeTemplate({
   template,
@@ -16,14 +15,18 @@ export default function MakeTemplate({
   publicTemplate,
   setPublicTemplate
 }) {
-  const { isMobile } = useApp()
   const { t } = useTranslation('projects')
 
   return (
-    <Container className='flex flex-column' sx={{ gap: isMobile ? 1.25 : 2.5, px: isMobile ? 0 : 2 }}>
+    <Container
+      className='flex flex-column'
+      sx={{
+        gap: { xs: 1.25, tablet: 2.5 },
+        px: { xs: 0, tablet: 2 }
+      }}>
       <SwitcthContainer
-        title={t('new.makeTemplate')}
-        subtitle={t('new.makeTemplateHelpText')}
+        title={t('newProject.makeTemplate')}
+        subtitle={t('newProject.makeTemplateHelpText')}
         checked={template}
         onCheck={() => {
           const newVal = !template
@@ -39,8 +42,8 @@ export default function MakeTemplate({
       />
 
       <SwitcthContainer
-        title={t('new.makeTemplatePublic')}
-        subtitle={t('new.makeTemplatePublicHelpText')}
+        title={t('newProject.makeTemplatePublic')}
+        subtitle={t('newProject.makeTemplatePublicHelpText')}
         checked={publicTemplate}
         onCheck={() => setPublicTemplate(!publicTemplate)}
         icon={<PeopleIcon fontSize='medium' />}
@@ -71,11 +74,15 @@ function SwitcthContainer({
         <Typography variant='body2' fontWeight={600}>
           {title}
         </Typography>
-        <Typography variant='caption' color='textSecondary' sx={[theme => ({ lineHeight: 1.25 })]}>
+        <Typography
+          variant='caption'
+          color='textSecondary'
+          sx={[theme => ({ lineHeight: 1.25 })]}>
           {subtitle}
         </Typography>
       </Box>
       <Switch
+        aria-label={title}
         checked={checked}
         onChange={onCheck}
         sx={{ ml: 'auto' }}

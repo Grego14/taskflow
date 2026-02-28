@@ -20,10 +20,10 @@
       "descriptionIsInvalid": "Project description contains invalid characters"
     }
   },
-  "new": {
+  "newProject": {
     "makeTemplate": "Make this project a template",
     "makeTemplateHelpText": "Templates can be reused for new projects",
-    "makeTemplatePublic": "Public template",
+    "makeTemplatePublic": "Make this template public",
     "makeTemplatePublicHelpText": "Public templates can be used by any user",
     "create": "Create project"
   },

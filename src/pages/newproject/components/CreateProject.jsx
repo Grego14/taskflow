@@ -3,7 +3,7 @@ import Button from '@mui/material/Button'
 import lazyImport from '@utils/lazyImport'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
-import projectService from 'src/services/project'
+import projectService from '@services/project'
 
 // errors field only manages the errors of the name and description values
 export default function CreateProject({
@@ -41,7 +41,7 @@ export default function CreateProject({
       }}
       disabled={isDisabled}
       {...other}>
-      {t('new.create')}
+      {t('newProject.create')}
     </Button>
   )
 }

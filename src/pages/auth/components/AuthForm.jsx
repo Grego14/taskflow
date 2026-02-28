@@ -66,11 +66,14 @@ export default function AuthForm({ isSignup = false, type }) {
 
     try {
       if (!isSignup) {
-        await authService.login(data)
+        const user = await authService.login(data)
+
+        navigate(user.emailVerified ? '/home' : '/verify', { replace: true })
         return
       }
 
       if (data.password !== data.repeatedPassword) {
+        setLoading(false)
         return setError('repeatedPassword', {
           message: t('password.passwordMismatch', {
             ns: 'validations'
@@ -78,13 +81,14 @@ export default function AuthForm({ isSignup = false, type }) {
         })
       }
 
-      await authService.signup({ ...data, preferences })
+      const user = await authService.signup({ ...data, preferences })
+
+      // after signup the user is always unverified
+      navigate('/verify', { replace: true })
     } catch (err) {
       if (err.code === 'auth/email-already-in-use' && isSignup) {
         // simulate success to protect user privacy.
-        // we use the redirected state to show the verify content... otherwise
-        // that rute doesn't show anything
-        navigate('/verify', { state: { email: data.email, redirected: true } })
+        navigate('/verify')
       } else {
         setFormError(t('form.submit', { ns: 'validations' }))
       }
@@ -128,8 +132,6 @@ export default function AuthForm({ isSignup = false, type }) {
 
     return items
   }, [isSignup, t])
-
-  console.log(errors)
 
   return (
     <form

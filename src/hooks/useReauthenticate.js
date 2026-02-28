@@ -49,7 +49,7 @@ export default function useReauthenticate() {
 
       return { error: null, success: true }
     } catch (err) {
-      console.error('reauthenticate error:', err)
+      // console.error('reauthenticate error:', err)
       return { error: 'authenticating', success: false }
     } finally {
       setPopup(false)

@@ -8,7 +8,7 @@ import { useState, forwardRef } from 'react'
 import { useTranslation } from 'react-i18next'
 
 const PasswordInput = forwardRef((props, ref) => {
-  const { name, onChange, ...other } = props
+  const { name, ...other } = props
 
   const [showPassword, setShowPassword] = useState(false)
   const { t } = useTranslation('auth')

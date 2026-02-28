@@ -11,10 +11,13 @@ import useApp from '@hooks/useApp'
 
 import * as authService from '@services/auth'
 import playSound from '@services/audio'
+import { auth } from '@/firebase/firebase-config'
+import useUser from '@hooks/useUser'
 
 export default function VerifyEmail() {
   const { t } = useTranslation(['auth', 'common'])
   const { currentUser, refreshUser } = useAuth()
+  const { profile } = useUser()
   const { appNotification } = useApp()
   const navigate = useNavigate()
 
@@ -65,8 +68,16 @@ export default function VerifyEmail() {
       await authService.resendVerification()
       appNotification({ message: t('verify.emailSend', { ns: 'auth' }) })
     } catch (err) {
-      if (err.message === 'NO_USER')
-        navigate('/login')
+      if (err.message === 'NO_USER') navigate('/login')
+
+      if (err.message === 'REAUTHENTICATE_REQUIRED') {
+        // force logout and redirect to login so the user gets a "fresh" session
+        await authService.logout()
+        navigate('/login', {
+          state: { message: t('verify.sessionExpired', { ns: 'auth' }) },
+          replace: true
+        })
+      }
     } finally {
       setResending(false)
     }
@@ -111,6 +122,11 @@ export default function VerifyEmail() {
               ? `${t('verify.resend', { ns: 'auth' })} (${countdown}s)` :
               t('verify.resend', { ns: 'auth' })
           }
+        </Button>
+        <Button
+          sx={{ maxWidth: 'fit-content', mx: 'auto' }}
+          onClick={() => authService.logout().then(() => navigate('/login'))}>
+          {t('common:logout')}
         </Button>
       </Box>
     </Box>

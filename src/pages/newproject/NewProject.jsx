@@ -15,7 +15,6 @@ import { useTranslation } from 'react-i18next'
 import useLoadResources from '@hooks/useLoadResources'
 import { useGSAP } from '@gsap/react'
 import { useRef } from 'preact/hooks'
-import useApp from '@hooks/useApp'
 
 import gsap from 'gsap'
 import { SplitText } from 'gsap/SplitText'
@@ -25,7 +24,6 @@ gsap.registerPlugin(SplitText)
 const hidden = { opacity: 0, visibility: 'hidden' }
 
 export default function NewProject() {
-  const { isMobile, isOnlyMobile } = useApp()
   const { t } = useTranslation(['projects', 'common'])
   const loadingResources = useLoadResources('projects')
   const containerRef = useRef(null)
@@ -78,7 +76,7 @@ export default function NewProject() {
       )
   }, { scope: containerRef, dependencies: [loadingResources] })
 
-  const alignment = isMobile ? 'center' : ' start'
+  const alignment = { xs: 'center', tablet: 'start' }
 
   if (loadingResources)
     return <CircleLoader text={t('common:loading')} />
@@ -89,7 +87,7 @@ export default function NewProject() {
       width='100%'
       alignItems={alignment}
       py={5}
-      px={isOnlyMobile ? 1.5 : 4}
+      px={{ xs: 1.5, mobile: 4 }}
       gap={5}
       ref={containerRef}>
       <Box
@@ -112,8 +110,8 @@ export default function NewProject() {
           className='flex flex-column'
           variant='outlined'
           sx={{
-            px: isOnlyMobile ? 1 : 3,
-            py: isOnlyMobile ? 2 : 4,
+            px: { xs: 1, mobile: 3 },
+            py: { xs: 2, mobile: 4 },
             gap: 3,
             ...hidden
           }}
@@ -149,19 +147,14 @@ export default function NewProject() {
         </Paper>
 
         <Box className='flex flex-column'
-          flexDirection={isMobile ? 'column' : 'row'}
-          justifyContent={isMobile ? 'start' : 'space-between'}
+          flexDirection={{ xs: 'column', tablet: 'row' }}
+          justifyContent={{ xs: 'start', tablet: 'space-between' }}
           alignItems='center'
           minWidth='100%'
           id='newProjectCreate'
           {...hidden}
           gap={2}>
-          <CreateProject
-            {...form}
-            errors={errors}
-            sx={{ m: 0 }}
-          />
-
+          <CreateProject {...form} errors={errors} sx={{ m: 0 }} />
           <CreateFromTemplate sx={{ flexDirection: 'inherit' }} />
         </Box>
       </Box>
