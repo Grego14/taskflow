@@ -83,7 +83,7 @@ const Services = () => {
   })
 
   useEffect(() => {
-    setUpdatePlaceholder(() => async (data) => {
+    setUpdatePlaceholder?.(() => async (data) => {
       try {
         const result = await updateUserMutation.mutateAsync(data)
         return result
