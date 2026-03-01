@@ -63,7 +63,7 @@ const btnStyles = (theme) => ({
     background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent)',
     transform: 'skewX(-20deg)'
   },
-  boxShadow: theme.palette.mode === 'light' ? `0 10px 20px -10px ${theme.palette.primary.main}80` : 'none'
+  boxShadow: `0 3px 18px ${theme.palette.primary.main}80`
 })
 
 export default function MainText({ setAnimationEnded, prefetchAuth }) {
@@ -149,7 +149,7 @@ export default function MainText({ setAnimationEnded, prefetchAuth }) {
       </Box>
 
       <Button
-        sx={[theme => ({ ...btnStyles(theme), mt: { xs: 3, laptop: 6 } })]}
+        sx={[theme => ({ ...btnStyles(theme), mt: { xs: 4, tablet: 6, laptop: 8 } })]}
         variant='contained'
         onMouseEnter={prefetchAuth}
         id='startFree'
