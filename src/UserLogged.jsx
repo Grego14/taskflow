@@ -77,7 +77,7 @@ const Services = () => {
     mutationFn: async (data) => {
       if (!uid) return
       const { default: userService } = await import('@services/user')
-      return await userService(uid, data)
+      return await userService.update(uid, data)
     },
     onError: err => console.error('UpdateUser:', err)
   })
