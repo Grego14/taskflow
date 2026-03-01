@@ -21,7 +21,20 @@ import { SplitText } from 'gsap/SplitText'
 
 gsap.registerPlugin(SplitText)
 
+// used on the animations
 const hidden = { opacity: 0, visibility: 'hidden' }
+
+const alignment = { xs: 'center', tablet: 'start' }
+
+// used on the enter animation box and the container box
+const containerStyles = {
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: { xs: 'center', laptop: 'start' },
+  width: '100%',
+  alignItems: alignment,
+  flexGrow: 1
+}
 
 export default function NewProject() {
   const { t } = useTranslation(['projects', 'common'])
@@ -76,24 +89,17 @@ export default function NewProject() {
       )
   }, { scope: containerRef, dependencies: [loadingResources] })
 
-  const alignment = { xs: 'center', tablet: 'start' }
-
   if (loadingResources)
     return <CircleLoader text={t('common:loading')} />
 
   return (
     <Box
-      className='flex-grow flex flex-column flex-center'
-      width='100%'
-      alignItems={alignment}
+      sx={containerStyles}
       py={5}
       px={{ xs: 1.5, mobile: 4 }}
       gap={5}
       ref={containerRef}>
-      <Box
-        className='flex flex-column flex-center'
-        alignItems={alignment}
-        gap={3}>
+      <Box sx={containerStyles} gap={3}>
         <Typography
           variant='h1'
           sx={[theme => ({
@@ -113,42 +119,48 @@ export default function NewProject() {
             px: { xs: 1, mobile: 3 },
             py: { xs: 2, mobile: 4 },
             gap: 3,
-            ...hidden
+            ...hidden,
+            flexDirection: { xs: 'column', laptop: 'row' },
+            width: '100%'
           }}
           id='newProjectForm'>
-          <NameInput
-            isOwner
-            name={form.name}
-            setName={val => updateField('name', val)}
-            setErrors={setErrors}
-          />
+          <Box className='flex flex-column flex-grow' gap='inherit'>
+            <NameInput
+              isOwner
+              name={form.name}
+              setName={val => updateField('name', val)}
+              setErrors={setErrors}
+            />
 
-          <DescriptionInput
-            isOwner
-            description={form.description}
-            setDescription={val => updateField('description', val)}
-            setErrors={setErrors}
-          />
+            <DescriptionInput
+              isOwner
+              description={form.description}
+              setDescription={val => updateField('description', val)}
+              setErrors={setErrors}
+            />
+          </Box>
 
-          <MakeTemplate
-            template={form.isTemplate}
-            setTemplate={val => updateField('isTemplate', val)}
-            publicTemplate={form.publicTemplate}
-            setPublicTemplate={val => updateField('publicTemplate', val)}
-          />
+          <Box className='flex flex-column' gap='inherit'>
+            <MakeTemplate
+              template={form.isTemplate}
+              setTemplate={val => updateField('isTemplate', val)}
+              publicTemplate={form.publicTemplate}
+              setPublicTemplate={val => updateField('publicTemplate', val)}
+            />
 
-          <Divider sx={{ borderBottomWidth: '2px' }} />
+            <Divider sx={{ borderBottomWidth: '2px' }} />
 
-          <AddMembers
-            members={form.members}
-            setMembers={val => updateField('members', val)}
-            isOwner
-          />
+            <AddMembers
+              members={form.members}
+              setMembers={val => updateField('members', val)}
+              isOwner
+            />
+          </Box>
         </Paper>
 
         <Box className='flex flex-column'
           flexDirection={{ xs: 'column', tablet: 'row' }}
-          justifyContent={{ xs: 'start', tablet: 'space-between' }}
+          justifyContent={{ xs: 'start', mobile: 'space-between', tablet: 'start' }}
           alignItems='center'
           minWidth='100%'
           id='newProjectCreate'
