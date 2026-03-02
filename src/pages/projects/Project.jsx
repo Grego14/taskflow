@@ -3,6 +3,7 @@ import CircleLoader from '@components/reusable/loaders/CircleLoader'
 import ErrorText from '@components/reusable/texts/ErrorText'
 import Box from '@mui/material/Box'
 import ProjectAppBar from './ProjectAppBar'
+import TasksProvider from '@context/TasksContext'
 
 import { useEffect, useMemo, useState, Suspense } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -14,6 +15,7 @@ import useLoadResources from '@hooks/useLoadResources'
 
 import { Outlet, useNavigate, useParams } from 'react-router-dom'
 import ProjectContext from './context'
+import setPageTitle from '@utils/setPageTitle'
 
 export default function Project() {
   const { isOffline } = useAuth()
@@ -22,7 +24,7 @@ export default function Project() {
   const { projectId, projectOwner } = useParams()
   const navigate = useNavigate()
 
-  const loadingResources = useLoadResources('projects')
+  const loadingResources = useLoadResources(['projects', 'tasks'])
 
   const [metrics, setMetrics] = useState({
     totalTasks: 0,
@@ -48,6 +50,11 @@ export default function Project() {
       })
     }
   }, [hasAccess, projectId, projectOwner])
+
+  useEffect(() => {
+    const projectName = projectData?.name
+    if (projectName) setPageTitle(projectName)
+  }, [projectData])
 
   const contextValue = useMemo(() => ({
     id: projectId,
@@ -91,11 +98,13 @@ export default function Project() {
 
   return (
     <ProjectContext.Provider value={contextValue}>
-      <ProjectAppBar />
+      <TasksProvider>
+        <ProjectAppBar />
 
-      <Suspense fallback={null}>
-        <Outlet />
-      </Suspense>
+        <Suspense fallback={null}>
+          <Outlet />
+        </Suspense>
+      </TasksProvider>
     </ProjectContext.Provider>
   )
 }
