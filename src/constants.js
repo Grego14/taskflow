@@ -1,12 +1,14 @@
 import {
-  blue,
-  grey,
-  lightBlue,
-  lightGreen,
+  red,
   orange,
   purple,
-  red,
-  yellow
+  blue,
+  blueGrey,
+  grey,
+  lightBlue,
+  yellow,
+  lightGreen,
+  green
 } from '@mui/material/colors'
 
 export const QUERY_STALE_TIME = 1 * 60 * 1000
@@ -15,13 +17,14 @@ export const priorities = ['urgent', 'high', 'medium', 'low', 'none']
 export const statuses = ['todo', 'done', 'doing', 'cancelled']
 
 export const priorityColors = (() => {
-  const getColor = color => [color?.[900], color?.[50]]
+  const getColor = (color) => [color[200], color[50]]
+
   return {
     urgent: getColor(red),
     high: getColor(orange),
-    medium: getColor(purple),
+    medium: getColor(green),
     low: getColor(blue),
-    none: getColor(grey)
+    none: [blueGrey[200], blueGrey[50]]
   }
 })()
 
@@ -67,5 +70,6 @@ export const RESOURCES = [
   'landing',
   'metrics',
   'notifications',
-  'projects'
+  'projects',
+  'tasks'
 ]
