@@ -1,9 +1,10 @@
+import { memo, useState } from 'preact/compat'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import IconButton from '@mui/material/IconButton'
 import Menu from '@mui/material/Menu'
 import Tooltip from '@mui/material/Tooltip'
-import { memo, useEffect, useRef, useState } from 'react'
+import AnimatedMenu from '@components/reusable/animated/AnimatedMenu'
 
 export default memo(function DropdownMenu(props) {
   const {
@@ -18,13 +19,15 @@ export default memo(function DropdownMenu(props) {
     text,
     forceClose,
     disabled,
+    disableTooltip,
     ...other
   } = props
 
   const [anchorEl, setAnchorEl] = useState(null)
-  const open = Boolean(anchorEl)
+  const isMenuOpen = Boolean(anchorEl) && !forceClose
 
-  const handleOnClose = () => {
+  // final cleanup after GSAP finishes
+  const handleFinalClose = () => {
     setAnchorEl(null)
     onClose?.()
   }
@@ -34,39 +37,49 @@ export default memo(function DropdownMenu(props) {
     onClick?.(e)
   }
 
+  const tooltipTitle = typeof label === 'function' ? label(isMenuOpen) : label
+
+  const button = !text ? (
+    <IconButton
+      sx={buttonStyles}
+      onClick={handleOnClick}
+      disabled={disabled}>
+      {icon}
+    </IconButton>
+  ) : (
+    <Button
+      sx={buttonStyles}
+      onClick={handleOnClick}
+      startIcon={icon}
+      disabled={disabled}>
+      {text}
+    </Button>
+  )
+
   return (
     <>
-      <Tooltip
-        title={typeof label === 'function' ? label?.(open) : label}
-        placement={tooltipPosition}>
-        {/* the tooltip needs the span if the button is disabled */}
-        <span className='flex'>
-          {!text ? (
-            <IconButton
-              sx={buttonStyles}
-              onClick={handleOnClick}
-              disabled={disabled}>
-              {icon}
-            </IconButton>
-          ) : (
-            <Button
-              sx={buttonStyles}
-              onClick={handleOnClick}
-              startIcon={icon}
-              disabled={disabled}>
-              {text}
-            </Button>
-          )}
-        </span>
-      </Tooltip>
-      <Menu
-        anchorEl={anchorEl}
-        open={forceClose ? false : open}
-        onClose={handleOnClose}
-        className={menuClass}
-        {...other}>
-        {children}
-      </Menu>
+      {!disableTooltip ? (
+        <Tooltip title={tooltipTitle} placement={tooltipPosition}>
+          <Box component='span' sx={{ display: 'flex' }}>
+            {button}
+          </Box>
+        </Tooltip>
+      ) : button}
+
+      <AnimatedMenu open={isMenuOpen} onExitComplete={handleFinalClose}>
+        {(renderOpen, setMenuRef, triggerExit) => (
+          <Menu
+            {...other}
+            anchorEl={anchorEl}
+            open={renderOpen}
+            onClose={triggerExit}
+            className={menuClass}
+            slotProps={{ transition: null, list: { ref: setMenuRef }, ...other.slotProps }}
+            transitionDuration={0}>
+            {typeof children === 'function' ? children(triggerExit) : children}
+          </Menu>
+        )}
+      </AnimatedMenu>
     </>
   )
 })
