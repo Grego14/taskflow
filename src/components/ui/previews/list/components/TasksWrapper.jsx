@@ -15,7 +15,7 @@ const TasksWrapper = forwardRef(function TasksWrapper(props, ref) {
   const {
     variant = 'body1',
     title,
-    tasks,
+    tasks = [],
     tasksStyles,
     containerStyles,
     divider = false,
@@ -24,6 +24,7 @@ const TasksWrapper = forwardRef(function TasksWrapper(props, ref) {
     show = true
   } = props
 
+  const isOver = dragState === 'is-over'
   const hasTasks = tasks?.length > 0
 
   return (
@@ -40,47 +41,52 @@ const TasksWrapper = forwardRef(function TasksWrapper(props, ref) {
           ...containerStyles
         }
       }}>
-      <Accordion elevation={0} defaultExpanded>
+      <Accordion
+        elevation={0}
+        defaultExpanded
+        disableGutters
+        sx={{
+          backgroundColor: 'transparent',
+          backgroundImage: 'none'
+        }}>
         <AccordionSummary
           sx={{
-            '& .MuiAccordionSummary-content': {
-              flexGrow: 0,
-              mr: 2
-            },
+            // push the icon more to the right
+            '& .MuiAccordionSummary-content': { mr: 2 },
             width: 'fit-content',
             mx: 'auto'
           }}
           className='text-center'
           expandIcon={
-            <ChevronLeftIcon fontSize='small' sx={{ rotate: '-90deg' }} />
+            tasks?.length !== 0 ?
+              <ChevronLeftIcon fontSize='small' sx={{ rotate: '-90deg' }} />
+              : null
           }>
-          <Typography variant={variant}>{title}</Typography>
+          <Typography variant={variant} fontWeight={500} color='textSecondary'>{title}</Typography>
         </AccordionSummary>
         <AccordionDetails
-          sx={[
+          className='flex flex-column'
+          sx={[theme => (
             {
-              display: 'flex',
-              flexDirection: 'column',
               gap: 4,
               p: 2,
-              mx: isMobile ? 0.75 : 2
-            },
-            {
-              border:
-                dragState === 'is-over'
-                  ? '3px dashed lightblue'
-                  : '3px dashed transparent'
-            },
+              mx: { xs: 0.75, mobile: 2 },
+              borderRadius: '12px',
+              transition: 'all 0.2s ease',
+              border: '2px dashed',
+              borderColor: isOver ? 'primary.main' : 'transparent',
+              backgroundColor: isOver ? theme.alpha('#fff', 0.03) : 'transparent'
+            }),
             tasksStyles
           ]}>
-          <Box className='flex flex-column' gap={2.5}>
+          <Box className='flex flex-column' gap={3.5}>
             {show &&
               tasks?.map(task => (
                 <ListTask key={task.id} data={task} subtask={task?.isSubtask} />
               ))}
             {children}
           </Box>
-          {divider && (
+          {(divider && hasTasks) && (
             <Divider sx={{ mx: 4, width: '80%', alignSelf: 'center' }} />
           )}
         </AccordionDetails>

@@ -5,7 +5,7 @@ import CreateTask from './buttons/createTask'
 import { useTranslation } from 'react-i18next'
 
 export default function NoTodayTasks() {
-  const { t } = useTranslation('ui')
+  const { t } = useTranslation('tasks')
 
   return (
     <Box className='flex flex-column flex-center' maxWidth='mobile' mx='auto'>
@@ -14,7 +14,7 @@ export default function NoTodayTasks() {
         mb={2}
         color='textSecondary'
         variant='body2'>
-        {t('tasks.noTodayTasks')}
+        {t('noTodayTasks')}
       </Typography>
       <CreateTask />
     </Box>

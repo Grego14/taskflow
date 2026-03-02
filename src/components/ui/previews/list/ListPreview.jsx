@@ -1,99 +1,85 @@
 import { Suspense, lazy, memo } from 'react'
-
-// component
 import Box from '@mui/material/Box'
-import Button from '@mui/material/Button'
 import Typography from '@mui/material/Typography'
 import TasksContainer from './components/TasksContainer'
 
-const CreateProject = lazy(() => import('./components/buttons/createProject'))
 const CreateTask = lazy(() => import('./components/buttons/createTask'))
 const Retry = lazy(() => import('./components/buttons/retry'))
-const ProjectPercentage = lazy(
-  () => import('@components/ui/tasks/ProjectPercentage')
-)
+const ProjectPercentage = lazy(() => import('@components/ui/tasks/ProjectPercentage'))
 
-import useApp from '@hooks/useApp'
-// hooks
 import useAuth from '@hooks/useAuth'
-import useProject from '@hooks/useProject'
 import useTasks from '@hooks/useTasks'
 import useUser from '@hooks/useUser'
 import { useTranslation } from 'react-i18next'
 import useTaskProcessing from './useTaskProcessing'
 import useLayout from '@hooks/useLayout'
 
+const SecondaryCenteredH6 = ({ text }) => (
+  <Typography
+    variant='h6'
+    color='textSecondary'
+    textAlign='center'
+    sx={{ my: 4 }}>
+    {text}
+  </Typography>
+)
+
 export default memo(function ListPreview() {
   const { isOffline } = useAuth()
-  const { t } = useTranslation(['ui', 'common'])
-
-  const { uid, metadata } = useUser()
+  const { t } = useTranslation('tasks')
+  const { uid } = useUser()
   const { filter } = useLayout()
-
   const { tasks, error } = useTasks()
-  const { id, data } = useProject()
 
-  const isOwner = data?.createdBy === uid
-  const errorTranslation = error && t(`tasks.errors.${error}`)
-
-  const { tasksForContainer, overdueTasks, filteredTasks, isDefaultFilter } =
+  const { tasksForContainer, overdueTasks, filteredTasks } =
     useTaskProcessing(tasks, filter, uid)
 
-  const hasTasks = tasksForContainer?.length > 0 || overdueTasks?.length > 0
+  const hasContent = tasksForContainer?.length > 0 || overdueTasks?.length > 0
+  const isFilterEmpty = filter !== 'default' && filteredTasks.length < 1
+  const showTasks = (hasContent && !isFilterEmpty) ||
+    filter === 'default' && tasksForContainer?.length < 1
 
-  const noTasksWithFilter =
-    !isDefaultFilter && filteredTasks.length < 1
-      ? t('tasks.noTasksWithFilter_filter', {
-        filter,
-        count: filteredTasks.length
-      })
-      : ''
+  const getErrorMessage = () => {
+    if (error) return t(`errors.${error}`)
+    if (isFilterEmpty) return t('noTasksWithFilter_filter', { filter, count: 0 })
+    return null
+  }
+
+  const errorMessage = getErrorMessage()
 
   return (
     <Box
       className='flex flex-column'
       width='100%'
       minHeight='100%'
-      alignItems={!tasks?.length ? 'center' : 'auto'}
+      alignItems={!hasContent ? 'center' : 'auto'}
       py={2}>
-      {!noTasksWithFilter && (
+      {showTasks && (
         <TasksContainer
           tasks={tasksForContainer}
           overdueTasks={overdueTasks}
           filter={filter}
         />
       )}
-      {(error || !!noTasksWithFilter) && (
-        <>
-          <SecondaryCenteredH6 text={errorTranslation || noTasksWithFilter} />
-          {errorTranslation && <Retry />}
-        </>
-      )}
-      <Suspense fallback={null}>
-        {/* button to let the user retry the query */}
-        {error === 'query' && !tasks?.length && (
-          <>
-            <SecondaryCenteredH6 text={t('tasks.retryQuery')} />
-            <Retry />
-          </>
-        )}
 
+      {errorMessage && (
+        <Box textAlign='center'>
+          <SecondaryCenteredH6 text={errorMessage} />
+          {(error || error === 'query') && (
+            <Suspense fallback={null}>
+              <Retry />
+            </Suspense>
+          )}
+        </Box>
+      )}
+
+      <Suspense fallback={null}>
+        {/* project is empty */}
         {!isOffline && error === 'empty' && <CreateTask />}
 
-        {hasTasks && <ProjectPercentage />}
+        {/* non empty project so we show percentage to complete */}
+        {hasContent && <ProjectPercentage />}
       </Suspense>
     </Box>
   )
 })
-
-function SecondaryCenteredH6({ text }) {
-  return (
-    <Typography
-      variant='h6'
-      color='textSecondary'
-      textAlign='center'
-      sx={{ my: 4 }}>
-      {text}
-    </Typography>
-  )
-}
