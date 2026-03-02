@@ -15,7 +15,7 @@ import { useNavigate } from 'react-router-dom'
 import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
 
-const itemStyles = (theme) => ({
+const itemStyles = theme => ({
   display: 'flex',
   flexDirection: 'column',
   p: 2,
@@ -62,7 +62,8 @@ export default function NotificationItem({
   // shake animation if theres an action error
   useGSAP(() => {
     if (error) {
-      gsap.fromTo(cardRef.current,
+      gsap.fromTo(
+        cardRef.current,
         { x: -4 },
         { x: 0, duration: 0.1, repeat: 3, yoyo: true, ease: 'linear' }
       )
@@ -73,13 +74,20 @@ export default function NotificationItem({
     navigate(`/projects/${projectOwner}/${projectId}`)
   }
 
+  const actionProps = { projectId, projectOwner, id }
+
   return (
     <Box
       ref={cardRef}
       id={`notif-${id}`}
       className='notification-card'
       sx={itemStyles}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'flex-start'
+        }}>
         <Typography
           variant='caption'
           color='primary'
@@ -98,8 +106,7 @@ export default function NotificationItem({
             opacity: 0.5,
             '&:hover': { opacity: 1, color: 'error.main' }
           }}
-          aria-label={t('actions.delete')}
-        >
+          aria-label={t('actions.delete')}>
           <DeleteIcon fontSize='small' />
         </IconButton>
       </Box>
@@ -108,20 +115,22 @@ export default function NotificationItem({
         variant='body2'
         color='text.secondary'
         sx={{
-          mt: 1, mb: isInvitation
-            ? isProjectMissing
-              ? 1 : 2
-            : 0
+          mt: 1,
+          mb: isInvitation ? (isProjectMissing ? 1 : 2) : 0
         }}>
         {t(`types.${type}.message`, tOptions)}
 
         {(isInvitation || isKicked) && (
-          <Typography component='span' fontWeight={500} color='info'>{' '}{projectName}</Typography>
+          <Typography component='span' fontWeight={500} color='info'>
+            {' '}
+            {projectName}
+          </Typography>
         )}
 
         {isKicked && (
           <Typography component='span'>
-            {' '}{t('types.kicked.message2', { kickedBy })}
+            {' '}
+            {t('types.kicked.message2', { kickedBy })}
           </Typography>
         )}
       </Typography>
@@ -139,30 +148,32 @@ export default function NotificationItem({
             fontWeight: 600,
             p: 0,
             '&:hover': { bgcolor: 'transparent', textDecoration: 'underline' }
-          }}
-        >
+          }}>
           {t('actions.goToProject')}
         </Button>
       )}
 
       {declined && (
-        <Typography variant='caption' sx={{ fontStyle: 'italic', opacity: 0.6 }}>
+        <Typography
+          variant='caption'
+          sx={{ fontStyle: 'italic', opacity: 0.6 }}>
           {t('status.declined')}
         </Typography>
       )}
 
       {/* missing project (deleted before the user accept/decline the invitation) */}
       {isProjectMissing && (
-        <Box sx={{
-          mt: 2,
-          display: 'flex',
-          alignItems: 'center',
-          gap: 1,
-          color: 'error.main',
-          bgcolor: theme => theme.alpha(theme.palette.error.main, 0.05),
-          p: 1,
-          borderRadius: '8px'
-        }}>
+        <Box
+          sx={{
+            mt: 2,
+            display: 'flex',
+            alignItems: 'center',
+            gap: 1,
+            color: 'error.main',
+            bgcolor: theme => theme.alpha(theme.palette.error.main, 0.05),
+            p: 1,
+            borderRadius: '8px'
+          }}>
           <ErrorIcon fontSize='small' />
           <Typography variant='caption' sx={{ fontWeight: 600 }}>
             {t('errors.projectNotFound')}
@@ -170,13 +181,13 @@ export default function NotificationItem({
         </Box>
       )}
 
-      {isInvitation && !accepted && !declined &&
-        (<Box sx={{ display: 'flex', gap: 1 }}>
+      {isInvitation && !accepted && !declined && (
+        <Box sx={{ display: 'flex', gap: 1 }}>
           <Button
             variant='contained'
             size='small'
             startIcon={<CheckIcon />}
-            onClick={onAccept}
+            onClick={() => onAccept(actionProps)}
             data-notification-id={id}
             data-project-owner={projectOwner}
             data-project-id={projectId}
@@ -192,16 +203,15 @@ export default function NotificationItem({
             size='small'
             color='inherit'
             startIcon={<ClearIcon />}
-            onClick={onDecline}
+            onClick={() => onDecline(actionProps)}
             data-notification-id={id}
             data-project-owner={projectOwner}
             data-project-id={projectId}
-            sx={{ borderRadius: '8px', textTransform: 'none' }}
-          >
+            sx={{ borderRadius: '8px', textTransform: 'none' }}>
             {t('actions.decline')}
           </Button>
         </Box>
-        )}
+      )}
     </Box>
   )
 }

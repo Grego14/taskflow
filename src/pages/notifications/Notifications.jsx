@@ -67,10 +67,7 @@ export default function Notifications() {
       paddingBottom: 0,
       duration: 0.4,
       ease: 'power2.inOut',
-      onComplete: () => {
-        // fake event-like object because the Provider expects it
-        deleteNotification({ currentTarget: { dataset: { notificationId: id } } })
-      }
+      onComplete: () => deleteNotification(id)
     })
   })
 
