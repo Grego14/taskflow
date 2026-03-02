@@ -7,7 +7,7 @@
     "taskStatus": "Estado",
     "taskPriority": "Prioridad",
     "taskMembersSelectLabel": "Asignar a",
-    "taskDateLabel": "Fecha",
+    "taskDateLabel": "Asignar fecha",
     "noMembers": "Tarea asignada a nadie",
     "dates": {
       "nodate": "No establecida",

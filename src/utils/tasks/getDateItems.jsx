@@ -6,29 +6,46 @@ import { DATES } from '@/constants'
 import i18n from '@/i18n'
 import upperCaseInitialLetter from '@utils/upperCaseInitialLetter.js'
 
-const getDateTranslation = date => {
+const getTranslatedText = (date) => {
   const t = i18n.getFixedT(i18n.language, 'dialogs')
-  return t(`newtask.dates.${date}`)
+  return upperCaseInitialLetter(t(`newtask.dates.${date}`))
 }
-// rawDate is the task date without the conversion (one of the DATES array)
-export default function getDateItems(rawDate, list = false) {
-  return DATES.map(date => {
-    const text = upperCaseInitialLetter(getDateTranslation(date))
 
-    if (list)
+export default function getDateItems(currentDate, isList = false, onItemClick) {
+  return DATES.map(date => {
+    const text = getTranslatedText(date)
+    const isSelected = date === currentDate
+
+    const handleClick = () => onItemClick?.(date)
+    const color = isSelected ? 'secondary.main' : 'text.primary'
+
+    if (isList) {
       return (
-        // ListItemButton renders a div instead of a button so we use data-value
-        // instead of value otherwise it will not work
         <ListItemButton
           key={date}
-          data-value={date}
-          selected={date === rawDate}>
-          <ListItemText>{text}</ListItemText>
+          onClick={handleClick}
+          selected={isSelected}>
+          <ListItemText
+            slotProps={{
+              primary: {
+                sx: [theme => ({
+                  ...theme.typography.body2,
+                  color
+                })]
+              }
+            }}>
+            {text}
+          </ListItemText>
         </ListItemButton>
       )
+    }
 
     return (
-      <MenuItem key={date} value={date} selected={date === rawDate}>
+      <MenuItem
+        sx={[theme => ({ ...theme.typography.body2, color })]}
+        key={date}
+        onClick={handleClick}
+        selected={isSelected}>
         {text}
       </MenuItem>
     )

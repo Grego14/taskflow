@@ -1,37 +1,51 @@
-import OptionalSelector from '@components/reusable/selectors/OptionalSelector'
 import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
+import DropdownMenu from '@components/reusable/DropdownMenu'
 
 import useLoadResources from '@hooks/useLoadResources'
 import useTaskDateUpdater from '@hooks/useTaskDateUpdater'
 import { useTranslation } from 'react-i18next'
-
 import getDateItems from '@utils/tasks/getDateItems'
 
 export default function ReassignDate({ rawDate, id, subtask }) {
-  const { t } = useTranslation('ui')
-
+  const { t } = useTranslation(['tasks', 'dialogs'])
   const { date, updateDateHandler } = useTaskDateUpdater(rawDate)
+  const loading = useLoadResources('dialogs')
 
-  // in case the TaskCalendar doesn't load (the device is mobile)
-  const loadingResources = useLoadResources('dialogs')
+  if (loading) return null
 
-  if (loadingResources) return null
-
-  const handleDateChange = async e => {
-    const newDate = e.target.value
-    await updateDateHandler(newDate, id, subtask)
+  const handleDateChange = async (newValue, triggerExit) => {
+    triggerExit()
+    await updateDateHandler(newValue, id, subtask)
   }
+
+  // find current label to show in the "Select" button
+  const currentLabel = t(`newtask.dates.${date}`, { defaultValue: date, ns: 'dialogs' })
 
   return (
     <Box p={1.25}>
-      <OptionalSelector
-        defaultValue='nodate'
-        label={t('tasks.changeDate')}
-        title={t('tasks.changeDate')}
-        handler={handleDateChange}
-        value={date}>
-        {getDateItems(rawDate)}
-      </OptionalSelector>
+      <DropdownMenu
+        text={currentLabel}
+        icon={<ExpandMoreIcon />}
+        label={t('changeDate')}
+        buttonStyles={[theme => ({
+          justifyContent: 'space-between',
+          width: '100%',
+          border: '1px solid',
+          borderColor: 'divider',
+          py: 1,
+          color: 'secondary.dark',
+          ...(theme.applyStyles('dark', { color: 'secondary.light' })),
+          '& .MuiButton-startIcon': { order: 2, ml: 1, mr: 0 },
+          ...theme.typography.body2
+        })
+        ]}
+      >
+        {(triggerExit) => (
+          getDateItems(date, false, (val) => handleDateChange(val, triggerExit))
+        )}
+      </DropdownMenu>
     </Box>
   )
 }
