@@ -1,6 +1,6 @@
-import { Suspense, lazy, memo, useEffect, useRef, useState } from 'react'
+import { Suspense, lazy } from 'react'
 
-// components
+import TaskActionsProvider from '@context/TaskActionsContext'
 import CircleLoader from '@components/reusable/loaders/CircleLoader'
 import Box from '@mui/material/Box'
 
@@ -10,22 +10,21 @@ const ListPreview = lazy(
 const KanbanPreview = lazy(
   () => import('@components/ui/previews/kanban/KanbanPreview')
 )
-import TaskActionsProvider from '@context/TaskActionsContext'
 
-// hooks
-import useTasks from '@hooks/useTasks'
 import { useTranslation } from 'react-i18next'
+import useTasks from '@hooks/useTasks'
+import useUser from '@hooks/useUser'
 
-// utils
-import tasksActionsHandler from './tasksActionsHandler.js'
-
-export default memo(function TasksPreviewer({ actualPreview }) {
-  const { t } = useTranslation('ui')
+export default function TasksPreviewer() {
+  const { t } = useTranslation('tasks')
+  const { preferences } = useUser()
   const { loading } = useTasks()
+
+  const actualPreview = preferences?.previewer
 
   return (
     <Box className='flex flex-grow'>
-      {loading && <CircleLoader text={t('tasks.loading')} height='auto' />}
+      {loading && <CircleLoader text={t('loading')} height='auto' />}
 
       <TaskActionsProvider>
         <Suspense fallback={null}>
@@ -35,4 +34,4 @@ export default memo(function TasksPreviewer({ actualPreview }) {
       </TaskActionsProvider>
     </Box>
   )
-})
+}
