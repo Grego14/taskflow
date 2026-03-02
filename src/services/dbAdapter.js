@@ -16,7 +16,8 @@ import {
   where,
   getDocs,
   documentId,
-  getDoc
+  getDoc,
+  limit
 } from 'firebase/firestore'
 
 const getFilters = (filters) => filters?.map(filter => where(...filter))
