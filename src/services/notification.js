@@ -16,6 +16,7 @@ const createBaseNotification = (type, extraData = {}) => ({
 
 const notificationService = {
   getNotificationsQuery: (uid) => dbAdapter.getColRef('users', uid, 'notifications'),
+  getNotifRef: (uid, id) => dbAdapter.getDocRef('users', uid, 'notifications', id),
 
   // --- Create ---
   sendWelcome: async (uid) => {
@@ -46,7 +47,7 @@ const notificationService = {
     try {
       const batch = dbAdapter.createBatch()
       for (const id of notificationIds) {
-        const ref = dbAdapter.getDocRef('users', uid, 'notifications', id)
+        const notifRef = notificationService.getNotifRef(uid, id)
         batch.update(ref, { read: true })
       }
       await batch.commit()
@@ -66,8 +67,8 @@ const notificationService = {
       const batch = dbAdapter.createBatch()
       const isAccept = action === 'accept'
 
-      const notifRef =
-        dbAdapter.getDocRef('users', user, 'notifications', notification)
+      const notifRef = notificationService.getNotifRef(user, notification)
+
       const projectRef =
         dbAdapter.getDocRef('users', projectOwner, 'projects', projectId)
 
@@ -107,9 +108,9 @@ const notificationService = {
   },
   // --- Update / Actions End ---
 
-  delete: async (uid, notificationId) => {
+  delete: async (uid, notifId) => {
     try {
-      await dbAdapter.remove(dbAdapter.getNotifRef(uid, notificationId))
+      await dbAdapter.remove(notificationService.getNotifRef(uid, notifId))
     } catch (err) {
       console.error('Error deleting notification:', err)
     }
