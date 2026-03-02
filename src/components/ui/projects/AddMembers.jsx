@@ -13,12 +13,12 @@ import useLoadResources from '@hooks/useLoadResources'
 import { memo, useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import getUserByEmail from '@services/getUserByEmail'
 import getInteraction from '@utils/getInteraction'
 import validateEmail from '@utils/validateEmail.js'
+import userService from '@services/user'
 
 export default memo(function AddMembers({ members, setMembers, isOwner }) {
-  const { t } = useTranslation(['ui', 'validations'])
+  const { t } = useTranslation(['projects', 'validations'])
   const { isMobile } = useApp()
   const { currentUser } = useAuth()
   const loadingResources = useLoadResources('validations')
@@ -43,22 +43,22 @@ export default memo(function AddMembers({ members, setMembers, isOwner }) {
       return setError(t(`email.${emailValidation.key}`, { ns: 'validations' }))
 
     if (value === userEmail)
-      return setError(t('projects.addMembers.sameUser'))
+      return setError(t('projects:addMembers.sameUser'))
 
     try {
       setLoading(true)
       setError('')
 
-      const newMember = await getUserByEmail(value)
+      const newMember = await userService.getByEmail(value)
 
       if (!newMember?.username) {
-        setError(t('projects.addMembers.userNotFound'))
+        setError(t('projects:addMembers.userNotFound'))
         return
       } else {
 
         // check for duplicates
         if (members?.some(m => m.email === value)) {
-          setError(t('projects.addMembers.alreadyAdded'))
+          setError(t('projects:addMembers.alreadyAdded'))
           return
         }
 
@@ -66,7 +66,7 @@ export default memo(function AddMembers({ members, setMembers, isOwner }) {
         setEmail('')
       }
     } catch (err) {
-      setError(t('projects.addMembers.couldNotGetTheUser'))
+      setError(t('projects:addMembers.couldNotGetTheUser'))
     } finally {
       setLoading(false)
     }
@@ -93,8 +93,8 @@ export default memo(function AddMembers({ members, setMembers, isOwner }) {
       >
         <ProjectInput
           id='member-search'
-          label={t('projects.addMembers.label')}
-          placeholder={t('projects.addMembers.placeholder')}
+          label={t('projects:addMembers.label')}
+          placeholder={t('projects:addMembers.placeholder')}
           disabled={!isOwner || loading}
           value={email}
           setValue={setEmail}
@@ -122,7 +122,7 @@ export default memo(function AddMembers({ members, setMembers, isOwner }) {
           onClick={() => handleSearch(email)}
           disabled={!isOwner || loading || !email}
         >
-          {t('projects.addMembers.search')}
+          {t('projects:addMembers.search')}
         </Button>
       </Box>
 

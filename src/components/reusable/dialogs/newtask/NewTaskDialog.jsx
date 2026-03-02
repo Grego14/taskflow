@@ -1,4 +1,3 @@
-// components
 import CircleLoader from '@components/reusable/loaders/CircleLoader'
 import Box from '@mui/material/Box'
 import FormControl from '@mui/material/FormControl'
@@ -14,9 +13,7 @@ import TaskPriority from './components/TaskPriority'
 import TaskTitle from './components/TaskTitle'
 
 import useApp from '@hooks/useApp'
-// hooks
 import useAuth from '@hooks/useAuth'
-import useLoadResources from '@hooks/useLoadResources'
 import useProject from '@hooks/useProject'
 import useUser from '@hooks/useUser'
 import {
@@ -30,20 +27,13 @@ import {
 import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router-dom'
 
-// utils
 import { priorities } from '@/constants'
 import {
   getFriendlyAuthError,
   getFriendlyErrorFormatted
 } from '@utils/getFriendlyAuthError.js'
-import lazyImport from '@utils/lazyImport'
-
-// services
-import createTask from '@services/createTask.js'
-
+import taskService from '@services/task'
 import getDateByKey from '@utils/tasks/getDateByKey'
-
-// unique
 import { initialValue, tasksReducer } from './tasksReducer.js'
 
 export default memo(function NewTaskDialog({
@@ -61,11 +51,10 @@ export default memo(function NewTaskDialog({
   const { t } = useTranslation(['dialogs', 'ui'])
   const { isOffline } = useAuth()
   const { preferences } = useUser()
-  const { appNotification, isMobile } = useApp()
+  const { appNotification } = useApp()
   const { id, data: projectData } = useProject()
   const [titleError, setTitleError] = useState(null)
 
-  const loadingResources = useLoadResources('dialogs')
   const [task, dispatch] = useReducer(tasksReducer, initialValue)
 
   const setTaskTitle = useCallback(
@@ -109,9 +98,9 @@ export default memo(function NewTaskDialog({
 
       const selectedDate = getDateByKey(taskData.dueDate)
 
-      const task = await createTask({
-        user: projectData?.createdBy,
-        project: id,
+      const task = await taskService.createTask({
+        ownerId: projectData?.createdBy,
+        projectId: id,
         data: {
           ...taskData,
           // convert the selected date to a iso string
@@ -122,7 +111,7 @@ export default memo(function NewTaskDialog({
               : selectedDate,
           rawDate: taskData.dueDate
         },
-        subtask
+        subtaskId: taskId
       })
 
       onCreate?.()
@@ -130,7 +119,6 @@ export default memo(function NewTaskDialog({
       const lang = preferences.lang || 'en'
       const msg = e.message
 
-      // console.error(e.message)
       appNotification({
         message: getFriendlyAuthError(msg, lang).message,
         status: 'error'
@@ -169,13 +157,8 @@ export default memo(function NewTaskDialog({
           py: '.75rem',
           alignItems: 'center'
         },
-        '& .form': { gap: '1.25rem' },
-        // date and priority selectors
-        '& .MuiFormControl-root:not(".MuiTextField-root")': {
-          mt: '.5rem'
-        }
-      }}
-      titleLoaded={!loadingResources}>
+        '& .form': { gap: '1.25rem' }
+      }}>
       <form className='form flex flex-column'>
         <TaskTitle
           updateTitle={setTaskTitle}
@@ -183,7 +166,7 @@ export default memo(function NewTaskDialog({
           updateError={setTitleError}
         />
 
-        <Box display='flex' gap={isMobile ? 2 : 4}>
+        <Box display='flex' gap={2}>
           <TaskPriority
             priority={task.priority}
             updatePriority={setTaskPriority}

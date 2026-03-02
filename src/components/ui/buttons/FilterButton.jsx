@@ -23,14 +23,14 @@ const getFilterLabel = (label, t) => {
     // we pass the count: 1 to get the _one translation
     // the other special counts are used on the creation of the TasksWrappers
     // titles
-    t(`buttons.filterOptions.${label}`, { count: 1, ns: 'ui' })
+    t(`buttons.filterOptions.${label}`, { count: 1 })
   )
 }
 
 export default function FilterButton() {
   const { metadata } = useUser()
   const { setFilter, updateFilter } = useLayout()
-  const { t } = useTranslation(['ui', 'common'])
+  const { t } = useTranslation('tasks')
   const [selected, setSelected] = useState(metadata?.lastUsedFilter)
 
   useEffect(() => {
@@ -63,7 +63,7 @@ export default function FilterButton() {
   return (
     <DropdownMenu
       icon={<FilterAltIcon fontSize='medium' />}
-      label={state => getMenuLabel(state, 'buttons.filter', 'ui')}
+      label={state => getMenuLabel(state, 'buttons.filter', 'tasks')}
       tooltipPosition='bottom'
       buttonStyles={{
         borderRadius: '50%',

@@ -17,7 +17,7 @@ const NewTaskDialog = lazy(
 )
 
 export default function AddButton() {
-  const { t } = useTranslation('ui')
+  const { t } = useTranslation('tasks')
   const { isMobile } = useApp()
   const [taskDialogOpen, setTaskDialogOpen] = useState(false)
   const { projectId } = useParams()

@@ -30,7 +30,7 @@ const getMenuActionStyles = (normal, selected) => ({
 })
 
 export default memo(function PreviewSwitcher() {
-  const { t } = useTranslation('ui')
+  const { t } = useTranslation('tasks')
   const { isMobile } = useApp()
   const { preferences } = useUser()
   const { updatePreviewer } = useLayout()
@@ -54,8 +54,8 @@ export default memo(function PreviewSwitcher() {
   }
 
   const options = useMemo(() => [
-    { id: 'list', title: t('tasks.listPreview'), icon: <ViewListIcon />, disabled: false },
-    { id: 'kanban', title: t('tasks.kanbanPreview'), icon: <ViewKanbanIcon />, disabled: true }
+    { id: 'list', title: t('listPreview'), icon: <ViewListIcon />, disabled: false },
+    { id: 'kanban', title: t('kanbanPreview'), icon: <ViewKanbanIcon />, disabled: true }
   ], [t])
 
   const renderActions = () => isMobile ? options.map(opt => (
@@ -88,7 +88,7 @@ export default memo(function PreviewSwitcher() {
           <Tabs
             value={preview}
             onChange={(_, preview) => updatePreviewer(preview)}
-            aria-label={t('tasks.previewSwitcher')}
+            aria-label={t('previewSwitcher')}
             indicatorColor={'primary'}
             centered
             sx={{ minHeight: 0 }}>
