@@ -68,7 +68,6 @@ export default function ProjectCard({ data, isRecent }) {
 
   return (
     <Card
-      data-id={data?.id}
       className='flex flex-column card'
       ref={cardRef}
       onMouseEnter={() => onHover(true)}
