@@ -2,6 +2,7 @@ import Box from '@mui/material/Box'
 import AddButton from '@components/ui/buttons/AddButton'
 import AddMembers from '@components/ui/buttons/AddMembers'
 import FilterButton from '@components/ui/buttons/FilterButton'
+import ArchiveButton from '@components/ui/buttons/ArchiveButton'
 import PreviewSwitcher from '@components/ui/previewswitcher/PreviewSwitcher'
 import List from '@mui/material/List'
 import ToggleProjectDrawer from '@components/ui/projects/ToggleProjectDrawer'
@@ -18,6 +19,7 @@ export default function ProjectItems() {
   const defaultItems =
     <>
       <PreviewSwitcher />
+      <ArchiveButton />
       <AddButton />
       <FilterButton />
       <AddMembers />
