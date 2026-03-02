@@ -1,15 +1,9 @@
-// components
 import TextField from '@mui/material/TextField'
-
 import useApp from '@hooks/useApp'
-// hooks
 import useAuth from '@hooks/useAuth'
-import useDebounce from '@hooks/useDebounce.js'
 import useProject from '@hooks/useProject'
 import useTasks from '@hooks/useTasks'
-import { useTheme } from '@mui/material/styles'
-import lazyImport from '@utils/lazyImport'
-import { useRef, useState } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 
 export default function UpdatableTaskTitle({
@@ -21,91 +15,95 @@ export default function UpdatableTaskTitle({
   isChecked,
   isCancelled
 }) {
-  const { t } = useTranslation('ui')
-  const { currentUser, isOffline } = useAuth()
+  const { t } = useTranslation('tasks')
+  const { isOffline } = useAuth()
   const { appNotification } = useApp()
-  const { id, isArchived } = useProject()
-  const theme = useTheme()
+  const { isArchived } = useProject()
   const { actions } = useTasks()
 
   const [taskTitle, setTaskTitle] = useState(title)
-  const lastUpdatedTitle = useRef(taskTitle)
+  const lastUpdatedTitle = useRef(title)
   const inputRef = useRef(null)
 
-  const [debounceUpdate] = useDebounce(async e => {
-    // update the task title if the user press the enter key or on blur
-    if ((e.type === 'keydown' && e.keyCode === 13) || e.type === 'blur') {
-      const trimmedTitle = e.target.value.trim()
+  // sync internal state if title prop changes from outside
+  useEffect(() => {
+    setTaskTitle(title)
+    lastUpdatedTitle.current = title
+  }, [title])
 
-      setTaskTitle(isOffline ? title : trimmedTitle)
+  const handleUpdate = async (val) => {
+    const trimmedTitle = val.trim()
 
-      if (trimmedTitle === lastUpdatedTitle.current || isArchived) return
-
-      // reset the title if the user is offline
-      if (isOffline) {
-        appNotification({ message: t('tasks.noUpdate'), status: 'error' })
-
-        // remove the input focus so we avoid sending another notification if
-        // the user blurs the input
-        inputRef.current.blur()
-        return
-      }
-
-      await actions?.updateTask({
-        id: taskId,
-        data: { title: trimmedTitle },
-        subtask
-      })
-      lastUpdatedTitle.current = trimmedTitle
+    // no changes, empty or archived
+    if (!trimmedTitle || trimmedTitle === lastUpdatedTitle.current || isArchived) {
+      setTaskTitle(lastUpdatedTitle.current)
+      return
     }
-  }, 1000)
+
+    if (isOffline) {
+      appNotification({ message: t('noUpdate'), status: 'error' })
+      setTaskTitle(lastUpdatedTitle.current)
+      inputRef.current?.blur()
+      return
+    }
+
+    await actions?.updateTask({
+      id: taskId,
+      data: { title: trimmedTitle },
+      subtask
+    })
+
+    lastUpdatedTitle.current = trimmedTitle
+  }
+
+  const onKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      inputRef.current?.blur() // this triggers handleUpdate via onBlur
+    }
+
+    if (e.key === 'Escape') {
+      setTaskTitle(lastUpdatedTitle.current)
+      setShow(false)
+      inputRef.current?.blur()
+    }
+  }
 
   return (
     <TextField
-      fullWidth
+      fullWidth={show}
+      inputRef={inputRef}
+      value={taskTitle}
       disabled={isArchived}
-      onChange={e => setTaskTitle(e.target.value)}
       onClick={() => setShow(true)}
+      onChange={e => setTaskTitle(e.target.value)}
+      onKeyDown={onKeyDown}
       onBlur={e => {
         setShow(false)
-        debounceUpdate(e)
+        handleUpdate(e.target.value)
       }}
-      inputRef={inputRef}
-      onKeyDown={debounceUpdate}
       slotProps={{
         htmlInput: {
-          sx: [
-            theme => ({
-              py: !subtask ? 1 : 0.5,
-              pl: 1,
-              fontSize: !subtask ? theme.typography.h6.fontSize : '.9rem',
-              textOverflow: 'ellipsis',
-              ...(isChecked
-                ? {
-                    textDecoration: 'line-through',
-                    textDecorationColor: isCancelled
-                      ? theme.palette.error.main
-                      : 'initial',
-                    textDecorationThickness: isCancelled ? 2 : 1,
-                    fontStyle: isCancelled ? 'italic' : 'inherit',
-                    color: !isCancelled ? theme.palette.info.main : 'inherit'
-                  }
-                : {})
+          sx: theme => ({
+            py: !subtask ? 1 : 0.5,
+            pl: 1,
+            fontSize: !subtask ? theme.typography.h6.fontSize : '.9rem',
+            textOverflow: 'ellipsis',
+            transition: 'color 0.3s ease',
+            ...(isChecked && {
+              textDecoration: 'line-through',
+              textDecorationColor: isCancelled ? theme.palette.error.main : 'initial',
+              textDecorationThickness: isCancelled ? 2 : 1,
+              fontStyle: isCancelled ? 'italic' : 'inherit',
+              color: !isCancelled ? theme.palette.info.main : 'text.secondary'
             })
-          ]
+          })
         }
       }}
-      value={taskTitle}
       sx={{
         '& .MuiOutlinedInput-notchedOutline': {
-          ...(show
-            ? {
-                transition:
-                  'box-shadow .25s ease-in-out, border-color .25s ease-in-out',
-                boxShadow: `0 0 6px 2px ${theme.palette.action.focus}`,
-                border: 1
-              }
-            : { border: 'transparent' })
+          border: show ? 1 : '1px solid transparent',
+          transition: 'box-shadow .25s ease-in-out, border-color .25s ease-in-out',
+          boxShadow: show ? theme => `0 0 6px 2px ${theme.palette.action.focus}` : 'none'
         }
       }}
     />
