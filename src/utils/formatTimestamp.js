@@ -1,4 +1,4 @@
-export default function formatTimestamp({ seconds, nanoseconds }, locale) {
+export default function formatTimestamp({ seconds, nanoseconds }, locale = 'en') {
   if (!seconds || !nanoseconds) return null
 
   const date = new Date(seconds * 1000 + nanoseconds / 1000000)
