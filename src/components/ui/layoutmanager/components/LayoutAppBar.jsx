@@ -12,7 +12,7 @@ import useApp from '@hooks/useApp'
 import useMediaQuery from '@mui/material/useMediaQuery'
 import { useGSAP } from '@gsap/react'
 import useLoadResources from '@hooks/useLoadResources'
-import { useParams } from 'react-router-dom'
+import { useLocation, useParams } from 'react-router-dom'
 
 import { NAV_LINKS } from '@constants/navigation'
 import gsap from 'gsap'
@@ -25,6 +25,7 @@ const LayoutAppBar = memo(function LayoutAppBar() {
   const loadingResources = useLoadResources('ui')
 
   const { projectId } = useParams()
+  const { pathname } = useLocation()
 
   const { contextSafe } = useGSAP({ scope: appBarRef })
 
@@ -55,6 +56,8 @@ const LayoutAppBar = memo(function LayoutAppBar() {
         showText={!noSpace}
         link={{ ...link, translation: t(link.translation) }}
         onClick={handleLinkClick}
+        className='appbar-link'
+        isActive={pathname === link.to}
       />
     )
   }
