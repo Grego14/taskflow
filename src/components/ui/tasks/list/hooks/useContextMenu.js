@@ -33,16 +33,17 @@ export default function useContextMenu({ isArchived, tasks }) {
       setContextMenu(prev =>
         prev === null
           ? {
-              mouseX: e.clientX + 2,
-              mouseY: e.clientY - 6,
-              actionsData: {
-                id: taskData.id,
-                isSubtask: taskData.isSubtask,
-                subtask: taskData.subtask,
-                members: taskData.assignedTo,
-                rawDate: taskData.rawDate
-              }
+            mouseX: e.clientX + 2,
+            mouseY: e.clientY - 6,
+            actionsData: {
+              id: taskData.id,
+              isSubtask: taskData.isSubtask,
+              subtask: taskData.subtask,
+              members: taskData.assignedTo,
+              rawDate: taskData.rawDate,
+              priority: taskData.priority
             }
+          }
           : null
       )
 
