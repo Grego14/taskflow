@@ -4,11 +4,12 @@ export default function getTaskMetadata(element) {
 
     const selector = '[data-task-id]'
 
-    if (element.closest(selector)?.dataset?.taskId)
-      return element.closest(selector)?.dataset
+    const closest = element.closest(selector)?.dataset
+    if (closest?.taskId) return closest
 
-    if (element.querySelector(selector)?.dataset?.taskId)
-      return element.querySelector(selector)?.dataset
+    const qS = element.querySelector(selector)?.dataset
+    if (qS?.taskId)
+      return qS
 
     return {}
   })()
