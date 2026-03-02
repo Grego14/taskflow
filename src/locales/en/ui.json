@@ -17,73 +17,7 @@
     },
     "notifications": "Notifications"
   },
-  "tasks": {
-    "createTask": "Create a new task",
-    "listPreview": "List",
-    "kanbanPreview": "Kanban",
-    "previewSwitcher": "Change the task preview",
-    "noTasksWithFilter_filter": "There are no tasks with the filter ($t(buttons.filterOptions.{{filter}}))",
-    "errors": {
-      "query": "Failed to get tasks for this project",
-      "empty": "No tasks found for this project",
-      "connection": "Failed to get the tasks. Check your internet connection"
-    },
-    "loading": "Getting tasks",
-    "retryQuery": "Couldn't get the tasks",
-    "actions": {
-      "deleteTask": "$t(common:delete) task",
-      "createSubtask": "$t(common:create) subtask",
-      "assignMembers": "Assign members"
-    },
-    "priorities": {
-      "low": "low",
-      "medium": "medium",
-      "high": "high",
-      "urgent": "urgent",
-      "none": "none",
-      "priority_p": "{{p}} Priority",
-      "noPriority": "Set priority"
-    },
-    "statuses": {
-      "todo": "todo",
-      "doing": "in progress",
-      "done": "done",
-      "cancelled": "cancelled",
-      "overdue": "overdue"
-    },
-    "changePriority": "Change priority",
-    "changeStatus": "Change status",
-    "overdueTasks_quantity": "Overdue tasks ({{quantity}})",
-    "todayTasks_zero": "No tasks for today",
-    "todayTasks_one": "Today task",
-    "todayTasks_other": "Today tasks ({{count}})",
-    "filterTasks_filter_one": "$t(buttons.filterOptions.{{filter}}) task",
-    "filterTasks_filter_other": "$t(buttons.filterOptions.{{filter}}) tasks ({{count}})",
-    "filterTasks_assignedToMe_one": "Task assigned to me",
-    "filterTasks_assignedToMe_other": "Tasks assigned to me ({{count}})",
-    "noTodayTasks": "No tasks scheduled for today. Plan your day by creating new tasks or dragging overdue ones here",
-    "subtasks_one": "Sub task",
-    "subtasks_other": "Sub tasks ({{count}})",
-    "created_date": "Created {{date}}",
-    "completed_date": "Completed {{date}}",
-    "cancelled_date": "Cancelled {{date}}",
-    "taskActionsLabel": "task actions",
-    "archiveTask": "Archive task",
-    "changeDate": "Reschedule date"
-  },
   "buttons": {
-    "filter": "filter menu",
-    "filterHelpText": "Filter tasks by:",
-    "filterOptions": {
-      "todo": "Todo",
-      "doing": "Doing",
-      "done": "Done",
-      "cancelled": "Cancelled",
-      "overdue": "Overdue",
-      "default": "Default",
-      "assignedToMe": "Assigned to me"
-    },
-    "add": "Add task or sub task",
     "addMembers": "Add members",
     "previewLabel": "previews menu",
     "previewTooltip": "Change tasks preview",
@@ -171,10 +105,10 @@
     "noDescription": "No description provided..."
   },
   "notifications": {
+    "new": "You have new notifications!",
     "projectDeleted": "Project successfully deleted",
     "projectArchived": "Project successfully archived",
     "projectAbandoned": "Project successfully abandoned",
-    "taskDeleted": "Task successfully deleted",
     "memberKicked": "Member kicked sucessfully",
     "invitation_user": "{{user}} invited you to join his project",
     "empty": "There's nothing around here",
