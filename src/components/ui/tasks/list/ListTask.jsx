@@ -12,6 +12,7 @@ const OverdueContent = lazy(() => import('./OverdueContent'))
 
 import useProject from '@hooks/useProject'
 import useTasks from '@hooks/useTasks'
+import useLayout from '@hooks/useLayout'
 
 import useContextMenu from './hooks/useContextMenu'
 import useTaskDropTarget from './hooks/useTaskDropTarget'
@@ -20,6 +21,7 @@ import useTaskDraggable from './hooks/useTaskDraggable'
 import taskIsOverdue from '@utils/tasks/taskIsOverdue'
 import { priorityColors } from '@/constants'
 import sortTasks from '@utils/tasks/sortTasks'
+import taskIsPending from '@utils/tasks/taskIsPending'
 
 const taskStyles = (t, priority) => ({
   backgroundColor: t.alpha(t.palette.background.paper, 0.5),
@@ -46,13 +48,17 @@ const taskStyles = (t, priority) => ({
 export default memo(function ListTask({ data }) {
   const { isArchived } = useProject()
   const { tasks, actions } = useTasks()
+  const { filter } = useLayout()
+
   const internalRef = useRef(null)
   const element = data?.ref || internalRef
+  const isOverdue = taskIsOverdue(data)
 
   const { isDragging } = useTaskDraggable({
     data: { ...data, ref: element },
     isArchived,
-    type: 'task'
+    type: 'task',
+    extraData: { isOverdue }
   })
 
   const { isTopVisible, isBottomVisible } = useTaskDropTarget({
@@ -63,7 +69,6 @@ export default memo(function ListTask({ data }) {
       actions.handleReorder(source, target.id, edge)
   })
 
-  const isOverdue = taskIsOverdue(data)
   const [contextMenu, handler] = useContextMenu({ isArchived, tasks })
   const [fg] = priorityColors[data.priority || 'none']
   const status = data?.status
@@ -80,6 +85,10 @@ export default memo(function ListTask({ data }) {
 
   if (!data) return null
 
+  const isOverdueLabelVisible = filter !== 'default' &&
+    taskIsPending(status) &&
+    taskIsOverdue(data)
+
   return (
     <Box className='relative flex flex-center flex-column'>
       <DropIndicator visible={isTopVisible} maxWidth='25rem' isTop />
@@ -91,7 +100,8 @@ export default memo(function ListTask({ data }) {
         sx={[theme => ({
           ...taskStyles(theme, data.priority),
           borderLeftColor: fg,
-          opacity: isDragging ? 0.5 : data.status === 'cancelled' ? 0.75 : 1
+          opacity: isDragging || isOverdueLabelVisible
+            ? 0.5 : data.status === 'cancelled' ? 0.75 : 1
         })]}>
         <Box
           className='flex flex-column'
@@ -103,7 +113,11 @@ export default memo(function ListTask({ data }) {
           </Box>
 
           <Suspense fallback={null}>
-            {isOverdue && <OverdueContent data={data} status={status} />}
+            {isOverdue && <OverdueContent
+              data={data}
+              status={status}
+              isOverdueLabelVisible={isOverdueLabelVisible} />
+            }
           </Suspense>
         </Box>
 
