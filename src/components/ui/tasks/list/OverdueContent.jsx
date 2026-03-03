@@ -11,16 +11,17 @@ import { useTranslation } from 'react-i18next'
 import taskIsOverdue from '@utils/tasks/taskIsOverdue'
 import taskIsPending from '@utils/tasks/taskIsPending'
 
-export default function OverdueContent({ data, insideTask = false, status }) {
+export default function OverdueContent({
+  data,
+  insideTask = false,
+  status,
+  isOverdueLabelVisible
+}) {
   const { t } = useTranslation('ui')
   const { metadata } = useUser()
   const filter = metadata?.lastUsedFilter
 
-  const isOverdueLabelVisible = filter !== 'default' &&
-    taskIsPending(status) &&
-    taskIsOverdue(data)
-
-  if(!isOverdueLabelVisible) return
+  if (!isOverdueLabelVisible) return
 
   return (
     <CardContent
