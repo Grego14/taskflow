@@ -27,6 +27,7 @@ import {
 } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router-dom'
+import useTasks from '@hooks/useTasks'
 
 import { priorities } from '@/constants'
 import {
@@ -55,6 +56,7 @@ export default memo(function NewTaskDialog({
   const { appNotification } = useApp()
   const { id, data: projectData } = useProject()
   const [titleError, setTitleError] = useState(null)
+  const { actions } = useTasks()
 
   const [task, dispatch] = useReducer(tasksReducer, initialValue)
 
@@ -99,20 +101,19 @@ export default memo(function NewTaskDialog({
 
       const selectedDate = getDateByKey(taskData.dueDate)
 
-      const task = await taskService.createTask({
-        ownerId: projectData?.createdBy,
-        projectId: id,
-        data: {
-          ...taskData,
-          // convert the selected date to a iso string
-          dueDate:
-            // "nodate" date returns null so we don't ISOString it
-            selectedDate instanceof Date
-              ? selectedDate?.toISOString()
-              : selectedDate,
-          rawDate: taskData.dueDate
-        },
-        subtaskId: taskId
+      const taskDataFormatted = {
+        ...taskData,
+        dueDate: selectedDate,
+        rawDate: taskData.dueDate
+      }
+
+      // close before the creation so it looks "faster"
+      setOpen(false)
+
+      // Just call the action, the Provider handles the position math
+      await actions.createTask({
+        data: taskDataFormatted,
+        subtaskId: subtask ? taskId : null
       })
 
       onCreate?.()
@@ -125,8 +126,6 @@ export default memo(function NewTaskDialog({
         status: 'error'
       })
       throw getFriendlyErrorFormatted('NewTaskDialog:', msg, lang).message
-    } finally {
-      setOpen(false)
     }
   }, [
     id,

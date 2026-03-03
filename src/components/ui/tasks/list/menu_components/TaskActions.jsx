@@ -32,7 +32,7 @@ export default function TaskActions({
       <ReassignDate id={id} subtask={subtask} rawDate={rawDate}
       />
 
-      <DeleteTask id={id} subtask={subtask} />
+      <DeleteTask id={id} subtask={subtask} showMenu={menuHandler} />
     </>
   )
 }

@@ -10,12 +10,13 @@ const getColor = (theme) => ({
   ...theme.applyStyles('dark', { color: theme.palette.error.dark })
 })
 
-export default function DeleteTask({ id, subtask }) {
+export default function DeleteTask({ id, subtask, showMenu }) {
   const { deleteTask } = useTaskActions()
   const { t } = useTranslation('common')
   const { preferences } = useUser()
 
   const handleDelete = async (e) => {
+    showMenu(false)
     await deleteTask({ id, subtask })
   }
 
