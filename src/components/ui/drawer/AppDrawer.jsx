@@ -24,7 +24,6 @@ import gsap from 'gsap'
 const drawerPaperStyles = (open, width, shadow) => ({
   width: open ? width.open : width.closed,
   transition: 'none',
-  overflow: 'hidden',
   ...(!open && { boxShadow: shadow }),
   backgroundImage: 'none'
 })
@@ -120,7 +119,7 @@ export default function AppDrawer() {
             textWrap: 'nowrap',
             width: drawerOpen ? drawerWidth.open : drawerWidth.closed,
             '& .MuiDrawer-paper': drawerPaperStyles(drawerOpen, drawerWidth, shadow),
-            overflow: 'hidden'
+            overflowX: 'hidden'
           }
         },
         transition: {
@@ -149,7 +148,7 @@ export default function AppDrawer() {
           </>
         )}
 
-        <Box className='flex flex-column' mt='auto' gap={1.5}>
+        <Box className='flex flex-column' mt='auto' gap={1.5} minHeight='10rem'>
           <ProfileButton
             open={drawerOpen}
             showTexts
@@ -159,7 +158,8 @@ export default function AppDrawer() {
               p: 1.5,
               mr: drawerOpen ? 0 : 'auto',
               justifyContent: drawerOpen ? 'start' : 'center',
-              maxWidth: '100%'
+              maxWidth: '100%',
+              mt: 'auto'
             }}
             tooltipPosition='right'
           />
