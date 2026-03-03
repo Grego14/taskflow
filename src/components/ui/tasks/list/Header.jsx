@@ -68,7 +68,11 @@ export default function Header({ data, insideTask = false, status }) {
             <TaskMembers assignedTo={data.assignedTo} subtasks={data.subtasks} />
 
             {!isOnlyMobile && (
-              <TaskCalendar rawDate={data?.rawDate} />
+              <TaskCalendar
+                rawDate={data?.rawDate}
+                taskId={data.id}
+                parentId={data.subtask}
+              />
             )}
 
             <DropdownMenu
