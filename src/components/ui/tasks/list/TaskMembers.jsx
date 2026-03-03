@@ -18,13 +18,15 @@ export default function TaskMembers({ assignedTo = [], subtasks = [] }) {
 
   if (taskMembers.length === 0) return null
 
+  const avatarSize = { xs: 32, mobile: 24 }
+
   // helper to render the full list inside the Tooltip
   const membersPreview = (
     <Box sx={{ p: 0.5 }}>
       <AvatarGroup max={4} spacing='small'>
         {taskMembers.map(id => {
           const m = projectMembers?.find(pm => pm.id === id)
-          return <Avatar key={id} src={m?.avatar} sx={{ width: 24, height: 24 }} />
+          return <Avatar key={id} src={m?.avatar} sx={{ width: avatarSize, height: avatarSize }} />
         })}
       </AvatarGroup>
     </Box>
@@ -33,18 +35,24 @@ export default function TaskMembers({ assignedTo = [], subtasks = [] }) {
   const firstMember = projectMembers?.find(m => m.id === taskMembers[0])
 
   return (
-    <Tooltip title={membersPreview} arrow placement='top'>
+    <Tooltip
+      title={membersPreview}
+      arrow
+      placement='top'>
       <Box sx={{
-        display: 'flex',
+        display: { xs: 'none', mobile: 'flex' },
         alignItems: 'center',
         cursor: 'pointer',
-        ml: 'auto',
-        mr: 1
+        ml: 'auto'
       }}>
         {taskMembers.length === 1 ? (
           <Avatar
             src={firstMember?.avatar}
-            sx={{ width: 20, height: 20, border: '1px solid currentColor' }}
+            sx={{
+              width: avatarSize,
+              height: avatarSize,
+              border: '1px solid currentColor'
+            }}
           />
         ) : (
           <Box className='relative flex flex-center'>
@@ -58,7 +66,7 @@ export default function TaskMembers({ assignedTo = [], subtasks = [] }) {
                 width: 20,
                 height: 20,
                 borderRadius: '50%',
-                bgcolor: 'primary.main',
+                backgroundColor: 'primary.main',
                 color: 'white',
                 fontSize: '0.65rem',
                 border: '2px solid white',

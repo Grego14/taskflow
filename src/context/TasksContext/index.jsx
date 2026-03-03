@@ -1,30 +1,19 @@
-import { createRef, memo, useCallback, useEffect, useMemo } from 'react'
-
-import Button from '@mui/material/Button'
-
-// hooks
-import useApp from '@hooks/useApp'
+import { createRef, memo, useMemo } from 'react'
 import useProject from '@hooks/useProject'
-import { useMutation, useQuery } from '@tanstack/react-query'
-import { useTranslation } from 'react-i18next'
 
-// services
-import mutations from './mutations.js'
-import useProjectTasks from './useProjectTasks.js'
+import useProjectTasks from './hooks/useProjectTasks'
+import useTaskAnimations from './hooks/useTaskAnimations'
+import useTaskMutations from './hooks/useTaskMutations'
+import useTaskReorder from './hooks/useTaskReorder'
+import useTaskMetrics from './hooks/useTaskMetrics'
 
-import lazyImport from '@utils/lazyImport'
+import taskService from '@services/task'
 import TasksContext from './context'
+import playSound from '@services/audio'
 
 export default memo(function TasksProvider({ children }) {
-  const { t } = useTranslation(['ui', 'common'])
-  const { appNotification } = useApp()
-  const {
-    id: projectId,
-    data,
-    hasAccess,
-    updateMetrics,
-    metrics
-  } = useProject()
+  const { id: projectId, data: projectData, hasAccess } = useProject()
+
   const {
     tasks: projectTasks,
     isLoading,
@@ -32,155 +21,116 @@ export default memo(function TasksProvider({ children }) {
     deletedTaskData,
     setDeletedTaskData
   } = useProjectTasks({
-    user: data?.createdBy,
+    user: projectData?.createdBy,
     project: projectId,
     hasAccess
   })
 
-  // actions shortcuts
-  const user = data?.createdBy
-  const project = projectId
+  const ownerId = projectData?.createdBy
 
-  // we don't add refs to the subtasks because only parent tasks are going
-  // to be able to be focused
-  const tasks = useMemo(
-    () =>
-      Array.isArray(projectTasks)
-        ? projectTasks.map(task => ({ ...task, ref: createRef() }))
-        : null,
-    [projectTasks]
-  )
+  const tasksWithRefs = useMemo(() => {
+    if (!Array.isArray(projectTasks)) return null
 
-  const deleteTask = useMutation({
-    mutationKey: ['deleteTask'],
-    mutationFn: async ({ id, subtask, deleteSubtasks }) => {
-      await mutations.deleteTask({
-        user,
-        project,
-        task: id,
-        subtask,
-        deleteSubtasks
-      })
+    return projectTasks.map(task => ({
+      ...task,
+      ref: createRef(),
+      // map subtasks to add their own refs
+      subtasks: Array.isArray(task.subtasks)
+        ? task.subtasks.map(subtask => ({
+          ...subtask,
+          ref: createRef()
+        }))
+        : []
+    }))
+  }, [projectTasks])
+
+  const { animateOut } = useTaskAnimations(tasksWithRefs)
+
+  const { deleteTaskMutation, updateTaskMutation } =
+    useTaskMutations({
+      deletedTaskData,
+      setDeletedTaskData
+    })
+
+  const handleReorder = useTaskReorder({
+    tasks: tasksWithRefs,
+    updateTask: updateTaskMutation.mutate
+  })
+
+  // logic hook
+  useTaskMetrics(projectTasks)
+
+  // --- Actions ---
+
+  const actions = useMemo(() => ({
+    updateTask: props => {
+      if (props.data?.status === 'done') playSound('complete')
+      updateTaskMutation.mutate(props)
     },
-    onSuccess: (data, taskId, context) => {
-      const undoTaskRemoval = async () => {
-        const createTask = await lazyImport('/src/services/createTask')
-        await createTask({
-          user,
-          project,
-          data: deletedTaskData,
-          isUndoingRemoval: true,
-          subtask: deletedTaskData?.isSubtask
-        })
 
-        setDeletedTaskData(null)
+    deleteTask: async (props) => {
+      const { id, subtask } = props
+
+      // animate only if the task isn't a subtask
+      if (!subtask) {
+        playSound('delete')
+        await animateOut([id], 'delete')
       }
 
-      appNotification({
-        message: t('notifications.taskDeleted', { ns: 'ui' }),
-        onClose: () => {
-          setDeletedTaskData(null)
-        },
-        action: !deletedTaskData?.isSubtask ? (
-          <Button
-            sx={[theme => ({ ...theme.typography.body2 })]}
-            onClick={undoTaskRemoval}>
-            {t('undo', { ns: 'common' })}
-          </Button>
-        ) : null
+      deleteTaskMutation.mutate(props)
+    },
+
+    archiveTasks: async (taskIds) => {
+      playSound('archive')
+      await animateOut(taskIds, 'archive')
+      await taskService.archiveTasks({
+        ownerId,
+        projectId,
+        taskIds
       })
     },
-    onError: err => console.error(err)
-  })
 
-  const updateTask = useMutation({
-    mutationKey: ['updateTask'],
-    mutationFn: async ({ id, data: mutationData, subtask }) => {
-      await mutations.updateTask({
-        user: data?.createdBy,
-        project: projectId,
-        task: id,
-        data: mutationData,
-        subtask
-      })
-    },
-    onError: err => console.error(err)
-  })
+    handleReorder
+  }), [
+    deleteTaskMutation,
+    updateTaskMutation,
+    animateOut,
+    ownerId,
+    projectId,
+    handleReorder
+  ])
 
-  // actions are the functions used on the Task menu
-  const actions = useMemo(
-    () => ({
-      deleteTask: async props => deleteTask.mutate(props),
-      updateTask: async props => updateTask.mutate(props)
-    }),
-    [deleteTask.mutate, updateTask.mutate]
-  )
-
-  const scrollIntoTask = useCallback(
-    e => {
-      const target =
-        e.target.dataset?.parenttask ||
-        e.target?.closest('[data-parenttask]')?.dataset?.parenttask
+  const value = useMemo(() => ({
+    tasks: tasksWithRefs,
+    actions,
+    error,
+    loading: isLoading,
+    scrollIntoTask: (e) => {
+      const target = e.target.dataset?.parenttask
+        || e.target?.closest('[data-parenttask]')?.dataset?.parenttask
 
       if (!target) return
 
-      const task = tasks?.find(task => task.id === target)
-      const element = task?.ref?.current
-
-      if (!element) return
-
-      element.scrollIntoView({ behavior: 'smooth' })
+      const task = tasksWithRefs?.find(t => t.id === target)
+      task?.ref?.current?.scrollIntoView({ behavior: 'smooth' })
     },
-    [tasks]
-  )
+    getTaskData: (target, isSubtask) => {
+      if (!tasksWithRefs) return null
 
-  useEffect(() => {
-    const isNotCancelled = status => status !== 'cancelled'
+      if (!isSubtask) {
+        return tasksWithRefs.find(t => t.id === target) || null
+      }
 
-    const pendingSubtasks = projectTasks
-      ?.flatMap(task => task.subtasks)
-      ?.filter(task => isNotCancelled(task.status))
-
-    const pendingTasks = projectTasks?.filter(task =>
-      isNotCancelled(task.status)
-    )
-
-    const totalTasks =
-      (pendingSubtasks?.length || 0) + (pendingTasks?.length || 0)
-
-    const completedTasks = pendingTasks?.filter(task => task.status === 'done')
-    const completedSubtasks = pendingSubtasks?.filter(
-      task => task.status === 'done'
-    )
-    const totalCompletedTasks =
-      (completedSubtasks?.length || 0) + (completedTasks?.length || 0)
-
-    updateMetrics(prev => {
-      if (
-        prev?.totalTasks !== totalTasks ||
-        prev?.totalCompletedTasks !== totalCompletedTasks
-      ) {
-        return {
-          ...prev,
-          totalTasks,
-          totalCompletedTasks
+      for (const task of tasksWithRefs) {
+        if (Array.isArray(task.subtasks)) {
+          const subtask = task.subtasks.find(s => s.id === target)
+          if (subtask) return subtask
         }
       }
 
-      return prev
-    })
-  }, [projectTasks, updateMetrics])
-
-  const value = useMemo(
-    () => ({
-      tasks,
-      actions,
-      error,
-      loading: isLoading,
-      scrollIntoTask
-    }),
-    [actions, error, isLoading, tasks, scrollIntoTask]
-  )
+      return null
+    }
+  }), [actions, error, isLoading, tasksWithRefs])
 
   return <TasksContext.Provider value={value}>{children}</TasksContext.Provider>
 })

@@ -1,96 +1,148 @@
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
-import Accordion from '@mui/material/Accordion'
-import AccordionDetails from '@mui/material/AccordionDetails'
-import AccordionSummary from '@mui/material/AccordionSummary'
+import { useState, useEffect, lazy, Suspense } from 'preact/compat'
+
 import Box from '@mui/material/Box'
 import Card from '@mui/material/Card'
-import Divider from '@mui/material/Divider'
 import CompleteButton from './CompleteButton'
-import Content from './Content'
 import Header from './Header'
+import DropIndicator from './DropIndicator'
 
-import { useEffect, useRef, useState } from 'react'
-import { useTranslation } from 'react-i18next'
+const OverdueContent = lazy(() => import('./OverdueContent'))
 
-export default function Subtasks({ data, contextMenuHandler }) {
-  const { t } = useTranslation('ui')
+import useProject from '@hooks/useProject'
+import taskIsOverdue from '@utils/tasks/taskIsOverdue'
+import { priorityColors } from '@/constants'
 
-  if (data?.length < 1) return null
+import useTaskDropTarget from './hooks/useTaskDropTarget'
+import useTaskDraggable from './hooks/useTaskDraggable'
+import useTasks from '@hooks/useTasks'
+
+const subtaskStyles = (theme, priority) => {
+  const priorityColor = priorityColors[priority][0]
+
+  return {
+    width: '100%',
+    p: 1,
+    pr: 2,
+    backgroundColor: 'transparent',
+    borderRadius: 0,
+    overflow: 'visible',
+    position: 'relative',
+    transition: 'opacity 0.3s ease-out',
+    '&:hover': {
+      backgroundColor: 'action.hover',
+      '&::after': {
+        opacity: 1,
+        transform: 'translateY(-50%) scale(1)' // bullet pop effect
+      },
+      '&::before': {
+        opacity: 1,
+        transform: 'scaleY(1)'
+      }
+    },
+    '&::after': {
+      content: '""',
+      position: 'absolute',
+      left: -16,
+      top: '50%',
+      transform: 'translateY(-50%) scale(0.3)',
+      width: 8,
+      height: 8,
+      borderRadius: '50%',
+      backgroundColor: priorityColor,
+      opacity: 0,
+      transition:
+        'opacity 0.3s ease, transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+      pointerEvents: 'none'
+    },
+    '&:hover::before': { backgroundColor: priorityColor },
+    '&::before': {
+      content: '""',
+      position: 'absolute',
+      left: 0,
+      top: 0,
+      bottom: 0,
+      width: '2px',
+      backgroundColor: 'transparent',
+      transition: 'background-color .25s ease-out',
+      borderRadius: '4px',
+      transform: 'scaleY(0)',
+      transformOrigin: 'center',
+      transition: 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease'
+    }
+  }
+}
+
+const SubtaskItem = ({ data, list, onContextMenu, isParentOverdue }) => {
+  const { isArchived } = useProject()
+  const { actions } = useTasks()
+
+  const { isDragging } = useTaskDraggable({
+    data,
+    isArchived,
+    type: 'subtask',
+    extraData: { parentId: data.subtask }
+  })
+
+  const { isTopVisible, isBottomVisible } = useTaskDropTarget({
+    data,
+    list,
+    type: 'subtask',
+    onDrop: (source, target, edge) =>
+      actions.handleReorder(source, target.id, edge)
+  })
+
+  const status = data?.status
+  const isChecked = status === 'done' || status === 'cancelled'
 
   return (
-    <Accordion sx={{ '&.Mui-expanded': { m: 0 } }} elevation={3}>
-      <AccordionSummary
-        expandIcon={
-          <ChevronLeftIcon fontSize='small' sx={{ rotate: '-90deg' }} />
-        }
-        sx={{
-          '& .MuiAccordionSummary-content': {
-            flexGrow: 0,
-            '&.Mui-expanded': { my: 2 }
-          },
-          '&.MuiAccordionSummary-root': {
-            minHeight: 0,
-            gap: 2
-          }
-        }}>
-        {t('tasks.subtasks', { count: data?.length })}
-      </AccordionSummary>
-      <AccordionDetails
-        sx={{
-          pt: 0,
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 2
-        }}>
-        {data?.map(subtask =>
-          subtask?.id ? (
-            <Subtask
-              key={subtask.id}
-              data={subtask}
-              onContextMenu={contextMenuHandler}
-            />
-          ) : null
-        )}
-      </AccordionDetails>
-    </Accordion>
+    <Box className='relative'>
+      <DropIndicator visible={isTopVisible} maxWidth='100%' isTop />
+
+      <Card
+        ref={data.ref}
+        elevation={0}
+        onContextMenu={onContextMenu}
+        sx={[theme => ({
+          ...subtaskStyles(theme, data.priority),
+          opacity: isDragging ? 0.4 : (isChecked ? 0.6 : 1),
+          cursor: 'grab'
+        })]}>
+        {data.id}
+        <Box className='flex flex-center' width='100%'>
+          <CompleteButton id={data.id} subtask={data.subtask} status={status} />
+          <Header data={data} menuHandler={onContextMenu} status={status} insideTask />
+        </Box>
+
+        <Suspense fallback={null}>
+          {!taskIsOverdue(data) && isParentOverdue && (
+            <Box sx={{ pl: 5.2 }}>
+              <OverdueContent data={data} insideTask status={status} />
+            </Box>
+          )}
+        </Suspense>
+      </Card>
+      <DropIndicator visible={isBottomVisible} maxWidth='100%' />
+    </Box>
   )
 }
 
-function Subtask(props) {
-  const { data, ...other } = props
-  const [status, setStatus] = useState(data?.status)
-
-  if (!data?.id || !data?.subtask) return null
-
-  const isChecked = data?.status === 'done' || data?.status === 'cancelled'
-
-  // if a member updates a task status this synchronizes it
-  useEffect(() => {
-    if (data?.status && status !== data?.status) {
-      setStatus(data.status)
-    }
-  }, [status, data?.status])
+export default function Subtasks({ data, contextMenuHandler, isParentOverdue }) {
+  if (!data?.length) return null
 
   return (
-    <Card
-      className='flex flex-column'
-      sx={{
-        width: '100%',
-        '&.MuiCard-root:last-child': { mt: 0 },
-        p: 2,
-        py: 1.5,
-        opacity: isChecked ? 0.75 : 1
-      }}
-      data-task-id={data?.id}
-      data-is-subtask={true}
-      data-parent-id={data?.subtask}
-      elevation={4}
-      {...other}>
-      <Box className='flex' sx={{ width: '100%' }}>
-        <CompleteButton id={data?.id} status={status} setStatus={setStatus} />
-        <Header data={data} insideTask={true} status={status} />
-      </Box>
-      <Content data={data} insideTask={true} status={status} />
-    </Card>
+    <Box
+      className='flex flex-column relative'
+      pb={1}
+      sx={{ ml: 4, mb: 1 }}>
+      {data.map(subtask => (
+        <SubtaskItem
+          key={subtask.id}
+          data={subtask}
+          onContextMenu={contextMenuHandler}
+          isParentOverdue={isParentOverdue}
+          list={data}
+        />
+      ))}
+    </Box>
   )
 }

@@ -1,17 +1,12 @@
 const sortTasks = tasks => {
-  const getPriority = task => {
-    if (task.status !== 'cancelled' && task.status !== 'done') return 1
+  if (!Array.isArray(tasks)) return []
 
-    if (task.status === 'done') return 2
+  return tasks.toSorted((a, b) => {
+    const posA = a.position ?? 0
+    const posB = b.position ?? 0
 
-    if (task.status === 'cancelled') return 3
-  }
-
-  return tasks.sort((a, b) => {
-    const priorityA = getPriority(a)
-    const priorityB = getPriority(b)
-
-    return priorityA - priorityB
+    // smallest position goes to the top
+    return posA - posB
   })
 }
 

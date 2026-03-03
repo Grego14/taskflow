@@ -88,7 +88,7 @@ export default memo(function TasksContainer({
         tasks={overdueTasks}
         show={showOverdueTasks}
         title={t('overdueTasks_quantity', { quantity: overdueTasks?.length })}
-        tasksStyles={{ opacity: 0.7 }}
+        tasksStyles={{ opacity: 0.5 }}
       />
     </>
   )
