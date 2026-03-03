@@ -74,7 +74,11 @@ export default memo(function DropdownMenu(props) {
             open={renderOpen}
             onClose={triggerExit}
             className={menuClass}
-            slotProps={{ transition: null, list: { ref: setMenuRef }, ...other.slotProps }}
+            slotProps={{
+              transition: null,
+              list: { ref: setMenuRef, sx: { overflow: 'hidden' } },
+              ...other.slotProps
+            }}
             transitionDuration={0}>
             {typeof children === 'function' ? children(triggerExit) : children}
           </Menu>
