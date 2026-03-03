@@ -37,8 +37,8 @@ export default function TaskTitle({ updateTitle, updateError, error = false }) {
         id='task-title'
         defaultValue={localTitle}
         size='small'
-        aria-label='hola'
         hiddenLabel
+        autoFocus
         placeholder={t('newtask.taskTitlePlaceholder')}
         onChange={handleChange}
         aria-errormessage='task-title-error'
