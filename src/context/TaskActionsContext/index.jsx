@@ -52,19 +52,8 @@ export default function TaskActionsProvider({ children }) {
     }
 
     actions.updateTask({
-      id: isSub ? parent : taskId,
-      subtask: isSub ? taskId : null,
-      data: {
-        status: nextStatus,
-        completedBy: isDone ? uid : null,
-        cancelledBy: isCanc ? uid : null,
-        ...(nextStatus === 'todo' || (isCanc && { wasOnTime: null }))
-      }
-    })
-
-    actions.updateTask({
-      id: isSub ? parent : taskId,
-      subtask: isSub ? taskId : null,
+      id: taskId,
+      subtask: parent,
       data: {
         status: nextStatus,
         completedBy: isDone ? uid : null,
@@ -98,8 +87,8 @@ export default function TaskActionsProvider({ children }) {
     }
 
     await actions.deleteTask({
-      id: isSub ? taskData?.subtask : taskId,
-      subtask: isSub ? taskId : null,
+      id: taskId,
+      subtask: parent,
       deleteSubtasks: shouldDeleteAll
     })
     setShowContainSubtasksMenu(false)
