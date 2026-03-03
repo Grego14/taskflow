@@ -7,7 +7,12 @@ export default function useTaskAnimations(tasks) {
   const getElements = (taskIds) => {
     const elements = []
     for (const id of taskIds) {
-      const task = tasks?.find(t => t.id === id)
+      let task = tasks?.find(t => t.id === id)
+
+      if (!task) {
+        task = tasks.flatMap(t => t.subtasks)?.find(s => s.id === id)
+      }
+
       if (task?.ref?.current) elements.push(task.ref.current)
     }
     return elements

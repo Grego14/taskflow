@@ -63,21 +63,19 @@ export default memo(function TasksProvider({ children }) {
   // --- Actions ---
 
   const actions = useMemo(() => ({
-    updateTask: props => {
+    updateTask: async props => {
+      await updateTaskMutation.mutate(props)
       if (props.data?.status === 'done') playSound('complete')
-      updateTaskMutation.mutate(props)
     },
 
     deleteTask: async (props) => {
-      const { id, subtask } = props
+      const { id } = props
 
       // animate only if the task isn't a subtask
-      if (!subtask) {
-        playSound('delete')
-        await animateOut([id], 'delete')
-      }
+      await animateOut([id], 'delete')
 
       deleteTaskMutation.mutate(props)
+      playSound('delete')
     },
 
     archiveTasks: async (taskIds) => {
