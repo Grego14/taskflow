@@ -1,9 +1,10 @@
-import useDebounce from '@hooks/useDebounce'
-import useUser from '@hooks/useUser'
 import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
+
+import useDebounce from '@hooks/useDebounce'
+import useUser from '@hooks/useUser'
 import { useTheme } from '@mui/material/styles'
-import { useCallback, useState } from 'react'
+import { useState, useCallback } from 'preact/hooks'
 import { useTranslation } from 'react-i18next'
 
 export default function TaskTitle({ updateTitle, updateError, error = false }) {
@@ -38,7 +39,6 @@ export default function TaskTitle({ updateTitle, updateError, error = false }) {
         defaultValue={localTitle}
         size='small'
         hiddenLabel
-        autoFocus
         placeholder={t('newtask.taskTitlePlaceholder')}
         onChange={handleChange}
         aria-errormessage='task-title-error'
