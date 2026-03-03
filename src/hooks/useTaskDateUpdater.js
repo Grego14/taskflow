@@ -1,36 +1,30 @@
-import { DATES } from '@/constants'
+import { useState, useEffect, useCallback } from 'preact/hooks'
 import useTasks from '@hooks/useTasks'
-import getDateByKey from '@utils/tasks/getDateByKey'
-import { useState } from 'react'
 
-/**
- * Hook to handle updating the date of a task or subtask.
- * @param {string} initialRawDate - The initial raw date string.
- * @returns {{
- * date: string,
- * updateDateHandler: (newDate: string, taskId: string, subtaskId: string|null) => Promise<void>
- * }}
- */
+import { DATES } from '@/constants'
+import getDateByKey from '@utils/tasks/getDateByKey'
+
 export default function useTaskDateUpdater(initialRawDate) {
   const [date, setDate] = useState(initialRawDate)
   const { actions } = useTasks()
 
-  const updateDateHandler = async (newDate, taskId, parentId = null) => {
-    if (!DATES.includes(newDate)) {
-      console.error(`Invalid date: ${newDate}`)
-      return
-    }
+  // sync internal state if the prop changes externally
+  useEffect(() => {
+    setDate(initialRawDate)
+  }, [initialRawDate])
 
-    setDate(newDate)
+  const updateDateHandler = useCallback(
+    async (newDate, taskId, parentId = null) => {
+      if (!DATES.includes(newDate)) return
 
-    const isSubtask = !!parentId
+      setDate(newDate)
 
-    await actions.updateTask({
-      id: isSubtask ? parentId : taskId, // If it's a subtask, the id is subtaskId (the parent)
-      subtask: isSubtask ? taskId : null, // If it's a subtask, the id is taskId (the child)
-      data: { rawDate: newDate, dueDate: getDateByKey(newDate) }
-    })
-  }
+      await actions.updateTask({
+        id: taskId,
+        subtask: parentId,
+        data: { rawDate: newDate, dueDate: getDateByKey(newDate) }
+      })
+    }, [actions])
 
   return { date, setDate, updateDateHandler }
 }
