@@ -8,6 +8,9 @@ import useProject from '@hooks/useProject'
 import useTasks from '@hooks/useTasks'
 import { useTranslation } from 'react-i18next'
 
+import getFirstPosition from '@utils/tasks/getFirstPosition'
+import taskIsOverdue from '@utils/tasks/taskIsOverdue'
+
 const TASKS_DROP_ID = 'todayTasks'
 
 // get today's midnight date
@@ -25,7 +28,7 @@ export default memo(function TasksContainer({
 }) {
   const { t } = useTranslation('tasks')
   const { id: projectId, data } = useProject()
-  const { actions } = useTasks()
+  const { actions, tasks: projectTasks } = useTasks()
 
   const isDefaultFilter = filter === 'default'
   const hasTodayTasks = tasks?.length > 0
@@ -44,13 +47,18 @@ export default memo(function TasksContainer({
     const { id, isOverdue } = source?.data || {}
     if (!id || !isOverdue) return
 
+    // get current active tasks to calculate the new first position
+    const activeTasks = projectTasks.filter(t => !taskIsOverdue(t))
+    const position = getFirstPosition(activeTasks)
+
     await actions.updateTask({
       user: data?.createdBy,
       project: projectId,
       id,
       data: {
         dueDate: getTodayMidnight(),
-        rawDate: 'today'
+        rawDate: 'today',
+        position
       }
     })
   }

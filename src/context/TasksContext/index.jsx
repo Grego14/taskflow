@@ -11,6 +11,9 @@ import taskService from '@services/task'
 import TasksContext from './context'
 import playSound from '@services/audio'
 
+import getFirstPosition from '@utils/tasks/getFirstPosition'
+import taskIsOverdue from '@utils/tasks/taskIsOverdue'
+
 export default memo(function TasksProvider({ children }) {
   const { id: projectId, data: projectData, hasAccess } = useProject()
 
@@ -63,6 +66,24 @@ export default memo(function TasksProvider({ children }) {
   // --- Actions ---
 
   const actions = useMemo(() => ({
+    createTask: async (values) => {
+      const { subtaskId, data } = values
+
+      // get the correct list to find the current top task/subtask
+      const list = subtaskId
+        ? tasksWithRefs.find(t => t.id === subtaskId)?.subtasks
+        : tasksWithRefs.filter(t => !taskIsOverdue(t))
+
+      const position = getFirstPosition(list)
+
+      return await taskService.createTask({
+        ownerId,
+        projectId,
+        subtaskId,
+        data: { ...data, position }
+      })
+    },
+
     updateTask: async props => {
       await updateTaskMutation.mutate(props)
       if (props.data?.status === 'done') playSound('complete')
