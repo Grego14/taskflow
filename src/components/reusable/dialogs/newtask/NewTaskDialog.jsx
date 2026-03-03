@@ -11,6 +11,7 @@ import TaskLabels from './components/TaskLabels'
 import TaskMembers from './components/TaskMembers'
 import TaskPriority from './components/TaskPriority'
 import TaskTitle from './components/TaskTitle'
+import Grow from '@mui/material/Grow'
 
 import useApp from '@hooks/useApp'
 import useAuth from '@hooks/useAuth'
@@ -149,6 +150,7 @@ export default memo(function NewTaskDialog({
       disableAcceptBtn={!task.title}
       maxWidth='tablet'
       title={t('newtask.title', { ns: 'dialogs' })}
+      transitionComponent={Grow}
       sx={{
         '& .MuiSelect-select': {
           display: 'flex',
