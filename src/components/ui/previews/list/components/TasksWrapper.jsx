@@ -72,10 +72,10 @@ const TasksWrapper = forwardRef(function TasksWrapper(props, ref) {
               p: 2,
               mx: { xs: 0.75, mobile: 2 },
               borderRadius: '12px',
-              transition: 'all 0.2s ease',
               border: '2px dashed',
               borderColor: isOver ? 'primary.main' : 'transparent',
-              backgroundColor: isOver ? theme.alpha('#fff', 0.03) : 'transparent'
+              backgroundColor: isOver ? theme.alpha('#fff', 0.075) : 'transparent',
+              transition: 'border-color 0.3 ease, background-color 0.3 ease'
             }),
             tasksStyles
           ]}>
