@@ -93,6 +93,7 @@ const SubtaskItem = ({ data, list, onContextMenu, isParentOverdue }) => {
 
   const status = data?.status
   const isChecked = status === 'done' || status === 'cancelled'
+  const isOverdue = taskIsOverdue(data)
 
   return (
     <Box className='relative'>
@@ -104,17 +105,16 @@ const SubtaskItem = ({ data, list, onContextMenu, isParentOverdue }) => {
         onContextMenu={onContextMenu}
         sx={[theme => ({
           ...subtaskStyles(theme, data.priority),
-          opacity: isDragging ? 0.4 : (isChecked ? 0.6 : 1),
+          opacity: isDragging || isOverdue ? 0.4 : (isChecked ? 0.6 : 1),
           cursor: 'grab'
         })]}>
-        {data.id}
         <Box className='flex flex-center' width='100%'>
           <CompleteButton id={data.id} subtask={data.subtask} status={status} />
           <Header data={data} menuHandler={onContextMenu} status={status} insideTask />
         </Box>
 
         <Suspense fallback={null}>
-          {!taskIsOverdue(data) && isParentOverdue && (
+          {!isOverdue && isParentOverdue && (
             <Box sx={{ pl: 5.2 }}>
               <OverdueContent data={data} insideTask status={status} />
             </Box>
