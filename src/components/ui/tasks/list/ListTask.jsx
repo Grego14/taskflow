@@ -22,7 +22,7 @@ import { priorityColors } from '@/constants'
 import sortTasks from '@utils/tasks/sortTasks'
 
 const taskStyles = (t, priority) => ({
-  backgroundColor: 'transparent',
+  backgroundColor: t.alpha(t.palette.background.paper, 0.5),
   backgroundImage:
     `linear-gradient(90deg, ${priorityColors[priority][0]}40 60%, ${t.alpha(t.palette.background.paper, 0.5)})`,
   borderRadius: '12px',
@@ -37,7 +37,6 @@ const taskStyles = (t, priority) => ({
   mx: 'auto',
   borderLeftWidth: 4,
   transitionProperty: 'opacity, background-color, border-color, box-shadow',
-  transition: '0.2s ease-in-out',
   cursor: 'grab',
   // the user clicks the task link on a non-overdue subtask and sets the
   // focused dataset
@@ -67,6 +66,7 @@ export default memo(function ListTask({ data }) {
   const isOverdue = taskIsOverdue(data)
   const [contextMenu, handler] = useContextMenu({ isArchived, tasks })
   const [fg] = priorityColors[data.priority || 'none']
+  const status = data?.status
 
   // memoize subtasks to avoid re-filtering on every render
   const filteredSubtasks = useMemo(() => {
