@@ -76,7 +76,6 @@
     "couldNotGetTheUser": "Couldn't get the user. Try again",
     "alreadyAdded": "That user is already added"
   },
-  "loadingMetrics": "Loading metrics",
   "noDescription": "No description provided...",
   "notifications": {
     "savedProject": "Project successfully saved",
