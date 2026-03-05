@@ -12,7 +12,6 @@ import { useGSAP } from '@gsap/react'
 import useUser from '@hooks/useUser'
 import useApp from '@hooks/useApp'
 import useAuth from '@hooks/useAuth'
-import { useNavigate } from 'react-router-dom'
 
 const appBarStyles = {
   flexDirection: 'row',
@@ -29,7 +28,6 @@ export default function LandingAppBar() {
   const { currentUser } = useAuth()
   const { appBarHeight } = useApp()
   const { preferences } = useUser()
-  const navigate = useNavigate()
 
   const userTheme = preferences?.theme === 'light' ? 'light' : 'dark'
 
@@ -72,12 +70,7 @@ export default function LandingAppBar() {
       <Box className='flex flex-center nav-item' sx={{ display: 'flex', gap: 2 }}>
         <ThemeUpdater />
         <LangUpdater reloadOnChange />
-        {currentUser && (
-          <ProfileButton
-            onlyIcon
-            onClick={() => navigate('profile')}
-          />
-        )}
+        {currentUser && (<ProfileButton onlyIcon />)}
       </Box>
     </AppBar>
   )
