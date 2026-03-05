@@ -6,6 +6,7 @@ import AuthForm from './components/AuthForm'
 import AuthTexts from './components/AuthTexts'
 import Footer from './components/Footer'
 
+import useUser from '@hooks/useUser'
 import { useTranslation } from 'react-i18next'
 import { useLocation, useNavigate } from 'react-router-dom'
 import useLoadResources from '@hooks/useLoadResources'
@@ -17,6 +18,7 @@ const resources = ['validations', 'auth', 'common']
 
 export default function Auth({ type = 'login' }) {
   const { t } = useTranslation(resources)
+  const { uid } = useUser()
   const navigate = useNavigate()
   const location = useLocation()
   const sesionExpired = location.state?.message
@@ -25,6 +27,10 @@ export default function Auth({ type = 'login' }) {
   const loadingResources = useLoadResources(resources)
 
   const localType = isSignup ? 'signup' : 'login'
+
+  useEffect(() => {
+    if (uid) navigate('/home')
+  }, [uid])
 
   useEffect(() => {
     setPageTitle(t(localType, { ns: 'common' }))
