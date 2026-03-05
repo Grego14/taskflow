@@ -37,25 +37,6 @@ export default defineConfig({
       output: {
         manualChunks(id) {
           if (id.includes('i18next')) return 'vendor-i18n'
-
-          // extract GSAP basics to use on the landing
-          if (/node_modules\/gsap\/(index|gsap-core|CSSPlugin|SplitText)/.test(id))
-            return 'gsap-landing'
-
-          if (id.includes('node_modules/gsap/')) return 'gsap-app-extras'
-
-          if (id.includes('@mui/material')) {
-            if (id.includes('x-charts')) return 'ui-charts'
-
-            return 'vendor-mui'
-          }
-
-          // if (id.includes('src/pages/landing')) {
-          //   if (id.includes('MainText')) return 'landing-main-content'
-          //   if (id.includes('Cards')) return 'landing-cards-section'
-          //   if (id.includes('LoginSection')) return 'landing-login-section'
-          //   return 'landing-common'
-          // }
         }
       }
     }
