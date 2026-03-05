@@ -119,9 +119,15 @@ const taskService = {
 
     try {
       const ref = taskService._getTaskRef(ownerId, projectId, taskId, subtaskId)
+      const isDone = data.status === 'done'
+      const isCancelled = data.status === 'cancelled'
+      const date = dbAdapter.getServerTimestamp()
+
       await dbAdapter.update(ref, {
         ...data,
-        updatedAt: dbAdapter.getServerTimestamp()
+        updatedAt: date,
+        completedDate: isDone ? date : null,
+        cancelledDate: isCancelled ? date : null
       })
     } catch (e) {
       console.error('Task Service (update):', e.message)
@@ -153,29 +159,6 @@ const taskService = {
     } catch (e) {
       console.error('Task Service (delete):', e.message)
       throw getFriendlyErrorFormatted('deleteTask', e.message).message
-    }
-  },
-
-  updateTaskStatus: async ({ ownerId, projectId, taskId, subtaskId, status, userId }) => {
-    try {
-      const isDone = status === 'done'
-      const isCanc = status === 'cancelled'
-
-      const statusData = {
-        status,
-        completedDate: isDone ? dbAdapter.getServerTimestamp() : null,
-        completedBy: isDone ? userId : null,
-        cancelledDate: isCanc ? dbAdapter.getServerTimestamp() : null,
-        cancelledBy: isCanc ? userId : null,
-        ...(status === 'todo' || (isCanc && { wasOnTime: null }))
-      }
-
-      return taskService.updateTask({
-        ownerId, projectId, taskId, subtaskId, data: statusData
-      })
-    } catch (e) {
-      console.error('Task Service (status):', e.message)
-      throw getFriendlyErrorFormatted('updateTaskStatus', e.message).message
     }
   },
 
@@ -214,11 +197,17 @@ const taskService = {
         ref = dbAdapter.getColRef(projectRef, 'tasks')
       }
 
+      const timestamp = dbAdapter.getServerTimestamp()
+
       return await dbAdapter.add(ref, {
         ...data,
         position: data.position ?? initialPosition,
-        createdAt: dbAdapter.getServerTimestamp(),
-        updatedAt: dbAdapter.getServerTimestamp(),
+        createdAt: timestamp,
+        updatedAt: timestamp,
+        cancelledDate: null,
+        completedBy: null,
+        completedDate: null,
+        cancelledBy: null,
         projectOwner: ownerId,
         projectId: projectId,
         isArchived: false,
@@ -277,11 +266,10 @@ const taskService = {
         updatedAt: dbAdapter.getServerTimestamp()
       }
 
-      // if moving between columns in Kanban, update status as well
+      // if moving between columns in Kanban, update status and metadata as well
       if (newStatus) {
         updates.status = newStatus
 
-        // handle metadata if status is done/cancelled
         const isDone = newStatus === 'done'
         const isCanc = newStatus === 'cancelled'
 
@@ -297,7 +285,7 @@ const taskService = {
       console.error('Task Service (reorder):', e.message)
       throw getFriendlyErrorFormatted('reorderTask', e.message).message
     }
-  },
+  }
 }
 
 export default taskService
