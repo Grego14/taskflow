@@ -38,14 +38,6 @@ export default defineConfig({
         manualChunks(id) {
           if (id.includes('i18next')) return 'vendor-i18n'
 
-          // styles engine, theme system and emotion
-          if (
-            id.includes('@mui/system') ||
-            id.includes('@mui/material/styles') ||
-            id.includes('@emotion/styled') ||
-            id.includes('@emotion/react')
-          ) return 'vendor-mui-system'
-
           // extract GSAP basics to use on the landing
           if (/node_modules\/gsap\/(index|gsap-core|CSSPlugin|SplitText)/.test(id))
             return 'gsap-landing'
@@ -53,51 +45,17 @@ export default defineConfig({
           if (id.includes('node_modules/gsap/')) return 'gsap-app-extras'
 
           if (id.includes('@mui/material')) {
-            // (Card, CardHeader, CardContent, etc.)
-            if (id.includes('Card') || id.includes('Paper'))
-              return 'ui-cards'
+            if (id.includes('x-charts')) return 'ui-charts'
 
-            // (List, ListItem, ListItemText, etc.)
-            if (id.includes('List'))
-              return 'ui-lists'
-
-            // Buttons
-            if (id.includes('Button') || id.includes('IconButton'))
-              return 'ui-buttons'
-
-            // Form elements (TextField, Select)
-            if (
-              id.includes('Input') ||
-              id.includes('TextField') ||
-              id.includes('Select')) {
-              return 'ui-form-elements'
-            }
-
-            const sharedComponents = [
-              'Box',
-              'Typography',
-              'Container',
-              'Avatar',
-              'Tooltip'
-            ]
-
-            if (sharedComponents.some(comp => id.includes(comp))) {
-              return 'mui-shared-essentials'
-            }
+            return 'vendor-mui'
           }
 
-          if (id.includes('src/pages/landing')) {
-            if (id.includes('MainText'))
-              return 'landing-main-content'
-
-            if (id.includes('Cards'))
-              return 'landing-cards-section'
-
-            if (id.includes('LoginSection'))
-              return 'landing-login-section'
-
-            return 'landing-common'
-          }
+          // if (id.includes('src/pages/landing')) {
+          //   if (id.includes('MainText')) return 'landing-main-content'
+          //   if (id.includes('Cards')) return 'landing-cards-section'
+          //   if (id.includes('LoginSection')) return 'landing-login-section'
+          //   return 'landing-common'
+          // }
         }
       }
     }
