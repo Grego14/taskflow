@@ -2,12 +2,12 @@ import Button from '@mui/material/Button'
 import Typography from '@mui/material/Typography'
 import Section from './Section'
 import Box from '@mui/material/Box'
-import { useRef } from 'react'
 import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import { SplitText } from 'gsap/SplitText'
+import useUser from '@hooks/useUser'
 
 const h1Styles = (theme) => ({
   ...theme.typography.h1,
@@ -67,55 +67,74 @@ const btnStyles = (theme) => ({
 })
 
 export default function MainText({ setAnimationEnded, prefetchAuth }) {
-  const { t } = useTranslation('landing')
+  const { t, i18n } = useTranslation('landing')
+  const { preferences } = useUser()
+  const lang = preferences?.lang
   const navigate = useNavigate()
-  const mainRef = useRef(null)
 
-  useGSAP(() => {
-    document.fonts.ready.then(() => {
-      const tl = gsap.timeline({ defaults: { ease: 'power2.out' } })
+  const resourceExists = i18n.hasResourceBundle(lang, 'landing')
 
-      const bigSplit = SplitText.create('#bigText', { type: 'words' })
-      const shortSplit = SplitText.create('#shortText', { type: 'chars', smartWrap: true })
+  useGSAP((context) => {
+    if (!resourceExists) return
 
-      gsap.set(['#bigText', '#shortText'], { opacity: 1 })
-      gsap.set('#startFree', { y: 40, scale: 0.9 })
-
-      tl.from(bigSplit.words, {
-        y: 50,
-        autoAlpha: 0,
-        stagger: 0.6 / bigSplit.words.length,
-        ease: 'back.out(2.5)',
-        rotate: 45,
-        transformOrigin: '0 50% -50',
-        delay: 0.25
-      })
-        .from(shortSplit.chars, {
-          opacity: 0,
-          y: 15,
-          rotateX: -80,
-          stagger: 0.85 / shortSplit.chars.length,
-
-          // start loading the cards
-          onComplete: setAnimationEnded
-        }, '-=0.3')
-        .to('#startFree', {
-          autoAlpha: 1, y: 0, scale: 1,
-          onComplete: () => {
-            gsap.to('#startFree', { '--shine-left': '200%', duration: 2.5, repeat: -1, ease: 'power1.inOut', repeatDelay: 1 })
-            gsap.to('#bigText', { backgroundPosition: '200% center', duration: 5, repeat: -1, ease: 'none' })
-          }
-        }, '-=0.3')
+    const bigSplit = new SplitText('#bigText', { type: 'words' })
+    const shortSplit = new SplitText('#shortText', {
+      type: 'chars',
+      smartWrap: true
     })
-  }, { scope: mainRef })
+
+    const tl = gsap.timeline({
+      defaults: { ease: 'power2.out' },
+      onComplete: () => {
+        gsap.to('#startBtn', {
+          '--shine-left': '200%',
+          duration: 2.5,
+          repeat: -1,
+          ease: 'power1.inOut',
+          repeatDelay: 1
+        })
+        gsap.to('#bigText', {
+          backgroundPosition: '200% center',
+          duration: 5,
+          repeat: -1,
+          ease: 'none'
+        })
+      }
+    })
+
+    gsap.set(['#bigText', '#shortText'], { opacity: 1 })
+    gsap.set('#startBtn', { y: 40, scale: 0.9 })
+
+    tl.from(bigSplit.words, {
+      y: 50,
+      autoAlpha: 0,
+      stagger: 0.6 / bigSplit.words.length,
+      ease: 'back.out(2.5)',
+      rotate: 45,
+      transformOrigin: '0 50% -50',
+      delay: 0.2
+    })
+      .from(shortSplit.chars, {
+        opacity: 0,
+        y: 15,
+        rotateX: -80,
+        stagger: 0.85 / shortSplit.chars.length,
+        onComplete: setAnimationEnded
+      }, '-=0.4')
+      .to('#startBtn', {
+        autoAlpha: 1,
+        y: 0,
+        scale: 1
+      }, '-=0.5')
+  }, { dependencies: [resourceExists] })
 
   return (
-    <Section className='text-center' sx={{ px: 2 }} id='main-text' ref={mainRef}>
+    <Section className='text-center' sx={{ px: 2 }} id='main-text'>
       <Typography
         className='text-balance'
+        id='bigText'
         variant='h1'
-        sx={h1Styles}
-        id='bigText'>
+        sx={h1Styles}>
         {t('title0')}
       </Typography>
 
@@ -152,7 +171,7 @@ export default function MainText({ setAnimationEnded, prefetchAuth }) {
         sx={[theme => ({ ...btnStyles(theme), mt: { xs: 4, tablet: 6, laptop: 8 } })]}
         variant='contained'
         onMouseEnter={prefetchAuth}
-        id='startFree'
+        id='startBtn'
         onClick={() => navigate('signup')}>
         {t('startForFree')}
       </Button>
