@@ -3,103 +3,66 @@ import taskIsOverdue from '@utils/tasks/taskIsOverdue'
 import getMetricPeriod from './getMetricPeriod'
 import getMetricsToUpdate from './getMetricsToUpdate'
 
-export default function getMetrics(tasks) {
-  if (!tasks || tasks?.length === 0) return
+const INITIAL_PERIODS = {
+  total: 0,
+  today: 0,
+  yesterday: 0,
+  lastWeek: 0,
+  thisWeek: 0,
+  thisMonth: 0
+}
 
-  const subtasks = tasks.flatMap(task => task.subtasks)
+const createMetricObj = () => ({ ...INITIAL_PERIODS })
+
+export default function getMetrics(tasks) {
+  if (!tasks?.length) return null
 
   const metrics = {
     pendingTasks: 0,
     overdueTasks: 0,
-    completedTasks: {
-      total: 0,
-      today: 0,
-      yesterday: 0,
-      lastWeek: 0,
-      thisWeek: 0,
-      thisMonth: 0,
-      thisQuarterly: 0,
-      thisYear: 0
-    },
-    completedOnTime: {
-      total: 0,
-      today: 0,
-      yesterday: 0,
-      lastWeek: 0,
-      thisWeek: 0,
-      thisMonth: 0,
-      thisQuarterly: 0,
-      thisYear: 0
-    },
-    cancelledTasks: {
-      total: 0,
-      today: 0,
-      yesterday: 0,
-      lastWeek: 0,
-      thisWeek: 0,
-      thisMonth: 0,
-      thisQuarterly: 0,
-      thisYear: 0
-    }
+    completedTasks: createMetricObj(),
+    completedOnTime: createMetricObj(),
+    cancelledTasks: createMetricObj()
   }
 
-  for (const task of [...tasks, ...subtasks]) {
-    const isOverdue = taskIsOverdue(task)
-    const isDone = task.status === 'done'
-    const isCancelled = task.status === 'cancelled'
-    const onTime = task.wasOnTime
+  const allItems = tasks.reduce((acc, task) => {
+    acc.push(task)
+    if (task.subtasks?.length) {
+      for (const subtask of task.subtasks) acc.push(subtask)
+    }
+    return acc
+  }, [])
 
-    if (task.dueDate && !isDone && !isCancelled) {
-      if (isOverdue) {
-        // overdueTasks
-        metrics.overdueTasks++
-      } else {
-        // pendingTasks
-        metrics.pendingTasks++
-      }
+  for (const item of allItems) {
+    const { status, wasOnTime, dueDate, completedDate, cancelledDate } = item
+    const isDone = status === 'done'
+    const isCancelled = status === 'cancelled'
+
+    // overdue & pending
+    if (dueDate && !isDone && !isCancelled) {
+      taskIsOverdue(item) ? metrics.overdueTasks++ : metrics.pendingTasks++
+      continue
     }
 
-    // completedTasks
-    if (isDone) {
-      const completedDate = task?.completedDate
-        ? formatTimestamp(task.completedDate)?.raw
-        : null
-      const completedPeriod = getMetricPeriod(completedDate)
+    // completed & completed on time & cancelled
+    if ((isDone && completedDate) || (isCancelled && cancelledDate)) {
+      const timestamp = isDone ? completedDate : cancelledDate
+      const rawDate = formatTimestamp(timestamp).raw
 
-      if (completedPeriod) {
-        const fieldsToIncrement = getMetricsToUpdate(completedPeriod)
+      const period = getMetricPeriod(rawDate)
 
-        for (const field of fieldsToIncrement) {
-          metrics.completedTasks[field] += 1
+      if (!period) continueR
 
-          if (onTime) {
-            metrics.completedOnTime[field] += 1
-          }
-        }
+      const target = isDone ? metrics.completedTasks : metrics.cancelledTasks
+      const periodsToUpdate = getMetricsToUpdate(period)
 
-        metrics.completedTasks.total += 1
-
-        if (onTime) {
-          metrics.completedOnTime.total += 1
-        }
+      for (const field of periodsToUpdate) {
+        target[field]++
+        if (isDone && wasOnTime) metrics.completedOnTime[field]++
       }
-    }
 
-    if (isCancelled) {
-      const cancelledDate = task?.cancelledDate
-        ? formatTimestamp(task.cancelledDate)?.raw
-        : null
-      const cancelledPeriod = getMetricPeriod(cancelledDate)
-
-      if (cancelledPeriod) {
-        const fieldsToIncrement = getMetricsToUpdate(cancelledPeriod)
-
-        for (const field of fieldsToIncrement) {
-          metrics.cancelledTasks[field] += 1
-        }
-
-        metrics.cancelledTasks.total += 1
-      }
+      target.total++
+      if (isDone && wasOnTime) metrics.completedOnTime.total++
     }
   }
 

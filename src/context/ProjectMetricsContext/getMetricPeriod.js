@@ -1,8 +1,6 @@
 /**
- * Determines the time metric field (today, yesterday, thisWeek, thisMonth, thisQuarterly, thisYear)
- * to which a given date belongs, using fixed quadmesters (4-month quarters).
- *
- * Fixed Quadmesters: Q1 (Jan-Apr), Q2 (May-Aug), Q3 (Sep-Dec).
+ * Determines the time metric field (today, yesterday, thisWeek, thisMonth)
+ * to which a given date belongs.
  *
  * @param {Date} targetDate - The date object to check.
  * @returns {string|null} The name of the field (e.g., 'today'), or null if it falls outside the current year.
@@ -55,29 +53,6 @@ export default function getMetricPeriod(targetDate) {
   const endOfMonth = new Date(currentYear, now.getMonth() + 1, 0)
 
   if (targetDay >= startOfMonth && targetDay <= endOfMonth) return 'thisMonth'
-
-  // (Fixed Quadmesters: Jan-Apr, May-Aug, Sep-Dec)
-  const currentMonth = now.getMonth()
-
-  // Determine the current quadmester index (0, 1, or 2) by dividing month index by 4
-  const quarterIndex = Math.floor(currentMonth / 4)
-
-  const startQuarterMonth = quarterIndex * 4 // 0, 4, or 8 (Jan, May, Sep)
-  const endQuarterMonth = startQuarterMonth + 3 // 3, 7, or 11 (Apr, Aug, Dec)
-
-  const startOfQuarter = new Date(currentYear, startQuarterMonth, 1)
-  // The end of the quadmester is the last day of the 'endQuarterMonth'
-  const endOfQuarter = new Date(currentYear, endQuarterMonth + 1, 0)
-
-  if (targetDay >= startOfQuarter && targetDay <= endOfQuarter)
-    return 'thisQuarterly'
-
-  // If the date is not captured by any specific period (Day, Week, Month, Quadmester)
-  // but we know it's within the current year (checked at the start), it belongs to thisYear.
-  const startOfYear = new Date(currentYear, 0, 1) // January 1st
-  const endOfYear = new Date(currentYear, 11, 31) // December 31st
-
-  if (targetDay >= startOfYear && targetDay <= endOfYear) return 'thisYear'
 
   return null
 }

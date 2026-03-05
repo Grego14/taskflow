@@ -14,8 +14,6 @@ export default function getMembersTemplate() {
       lastWeek: 0,
       thisWeek: 0,
       thisMonth: 0,
-      thisQuarterly: 0,
-      thisYear: 0,
       total: 0
     },
     completedOnTime: {
@@ -24,9 +22,7 @@ export default function getMembersTemplate() {
       yesterday: 0,
       lastWeek: 0,
       thisWeek: 0,
-      thisMonth: 0,
-      thisQuarterly: 0,
-      thisYear: 0
+      thisMonth: 0
     },
     cancelledTasks: {
       total: 0,
@@ -34,9 +30,7 @@ export default function getMembersTemplate() {
       yesterday: 0,
       lastWeek: 0,
       thisWeek: 0,
-      thisMonth: 0,
-      thisQuarterly: 0,
-      thisYear: 0
+      thisMonth: 0
     }
   }
 }

@@ -5,109 +5,95 @@ import getMetricsToUpdate from './getMetricsToUpdate.js'
 import getMembersTemplate from './membersTemplate'
 
 export default function getMembersMetrics(tasks, members) {
-  if (!tasks || tasks?.length === 0 || !members || members?.length === 0) return
-
-  const subtasks = tasks.flatMap(task => task.subtasks)
+  if (!tasks?.length || !members?.length) return []
 
   const metrics = new Map()
 
+  // initialize Map with current members
   for (const member of members) {
-    if (metrics.get(member)) continue
-
     metrics.set(member.id, { ...getMembersTemplate(), id: member.id })
   }
 
-  for (const task of [...tasks, ...subtasks]) {
-    const isDone = task.status === 'done'
-    const completedBy = task.completedBy
+  const allItems = tasks.reduce((acc, task) => {
+    acc.push(task)
+    if (task.subtasks?.length) {
+      for (const subtask of task.subtasks) acc.push(subtask)
+    }
+    return acc
+  }, [])
 
-    const isCancelled = task.status === 'cancelled'
-    const cancelledBy = task.cancelledBy
+  for (const item of allItems) {
+    const {
+      status,
+      completedBy,
+      cancelledBy,
+      wasOnTime,
+      assignedTo = [],
+      dueDate,
+      completedDate,
+      cancelledDate
+    } = item
 
-    const onTime = task.wasOnTime
-    const isOverdue = taskIsOverdue(task)
-    const assignedTo = task.assignedTo
+    const isDone = status === 'done'
+    const isCancelled = status === 'cancelled'
+    const performerId = completedBy || cancelledBy
 
-    // we use this ids to get the assigned tasks metrics
-    const memberId = completedBy || cancelledBy
-
-    // the member was kicked from the project but he worked on some tasks
-    if (!metrics.get(memberId) && memberId) {
-      metrics.set(memberId, { ...getMembersTemplate(), id: memberId })
+    // ensure performer exists in metrics (even if they were removed from the project)
+    if (performerId && !metrics.has(performerId)) {
+      metrics.set(performerId, { ...getMembersTemplate(), id: performerId })
     }
 
-    if (task.dueDate && !isDone && !isCancelled) {
-      for (const member of assignedTo) {
-        const updatedMetrics = { ...metrics.get(member) }
+    // process ASSIGNED tasks (pending & overdue)
+    if (dueDate && !isDone && !isCancelled) {
+      const field = taskIsOverdue(item) ? 'overdue' : 'pending'
 
-        updatedMetrics.assignedTasks[isOverdue ? 'overdue' : 'pending'] += 1
-        metrics.set(member, updatedMetrics)
+      for (const mId of assignedTo) {
+        const m = metrics.get(mId)
+        if (m) m.assignedTasks[field]++
       }
+      continue
     }
 
-    if (isDone && completedBy) {
-      const completedDate = task?.completedDate
-        ? formatTimestamp(task.completedDate).raw
-        : null
-      const completedPeriod = getMetricPeriod(completedDate)
-      const fieldsToIncrement = getMetricsToUpdate(completedPeriod)
+    // process COMPLETED or CANCELLED tasks
+    if ((isDone && completedDate) || (isCancelled && cancelledDate)) {
+      const dateRaw = isDone
+        ? formatTimestamp(completedDate)?.raw
+        : formatTimestamp(cancelledDate)?.raw
 
-      if (fieldsToIncrement.length) {
-        const updatedMetrics = { ...metrics.get(memberId) }
+      const period = getMetricPeriod(dateRaw)
+      const performer = metrics.get(performerId)
 
-        for (const field of fieldsToIncrement) {
-          updatedMetrics.completedTasks[field] += 1
+      if (!period || !performer) continue
 
-          if (onTime) {
-            updatedMetrics.completedOnTime[field] += 1
-          }
+      const fieldsToUpdate = getMetricsToUpdate(period)
+      const targetSubKey = isDone ? 'completedTasks' : 'cancelledTasks'
+
+      // update time-based metrics
+      for (const field of fieldsToUpdate) {
+        performer[targetSubKey][field]++
+        if (isDone && wasOnTime) {
+          performer.completedOnTime[field]++
         }
-
-        updatedMetrics.completedTasks.total += 1
-
-        if (onTime) {
-          updatedMetrics.completedOnTime.total += 1
-        }
-
-        // get assigned tasks completed by the user
-        if (assignedTo.includes(completedBy) || completedBy === memberId) {
-          updatedMetrics.assignedTasks.completed += 1
-          updatedMetrics.assignedTasks.total += 1
-
-          if (onTime) {
-            updatedMetrics.assignedTasks.completedOnTime += 1
-          }
-        }
-
-        metrics.set(completedBy, updatedMetrics)
       }
-    }
 
-    if (isCancelled && cancelledBy) {
-      const cancelledDate = task?.cancelledDate
-        ? formatTimestamp(task.cancelledDate).raw
-        : null
-      const cancelledPeriod = getMetricPeriod(cancelledDate)
-      const fieldsToIncrement = getMetricsToUpdate(cancelledPeriod)
+      // update totals
+      performer[targetSubKey].total++
 
-      if (fieldsToIncrement.length) {
-        const updatedMetrics = { ...metrics.get(memberId) }
+      if (isDone && wasOnTime) performer.completedOnTime.total++
 
-        for (const field of fieldsToIncrement) {
-          updatedMetrics.cancelledTasks[field] += 1
-        }
+      if (assignedTo.length === 0 || !assignedTo.includes(performerId)) continue
 
-        updatedMetrics.cancelledTasks.total += 1
+      // update assigned stats if the performer was also an assignee
+      const assigned = performer.assignedTasks
+      assigned.total++
 
-        if (assignedTo.includes(cancelledBy) || cancelledBy === memberId) {
-          updatedMetrics.assignedTasks.cancelled += 1
-          updatedMetrics.assignedTasks.total += 1
-        }
+      assigned[isDone ? 'completed' : 'cancelled']++
 
-        metrics.set(cancelledBy, updatedMetrics)
-      }
+      // wasOnTime can only be true if the task is completed so we don't check
+      // if the task isn't done
+      if (wasOnTime) assigned.completedOnTime++
     }
   }
 
-  return [...metrics.values()]
+  return Array.from(metrics.values())
 }
