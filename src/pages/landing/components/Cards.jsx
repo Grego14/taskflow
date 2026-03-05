@@ -8,18 +8,14 @@ import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
 import CardHeader from '@mui/material/CardHeader'
 import Typography from '@mui/material/Typography'
-import useMediaQuery from '@mui/material/useMediaQuery'
 import Box from '@mui/material/Box'
 import Section from './Section'
+
 import { useGSAP } from '@gsap/react'
 import useUser from '@hooks/useUser'
 import { useTranslation } from 'react-i18next'
-import gsap from 'gsap'
-import { alpha } from '@mui/material/styles'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { useEffect } from 'react'
 
-gsap.registerPlugin(ScrollTrigger)
+import gsap from 'gsap'
 
 const CARDS_DATA = [
   { type: 'cloud', icon: Cloud },
@@ -30,33 +26,33 @@ const CARDS_DATA = [
   { type: 'metrics', icon: BarChart }
 ]
 
-const cardStyles = (theme, isDark) => ({
+const cardStyles = (t, isDark) => ({
   overflow: 'visible',
   backgroundColor: isDark
-    ? alpha(theme.palette.background.paper, 0.4)
-    : alpha('#fff', 0.6),
-  border: `1px solid ${alpha(theme.palette.secondary.main, 0.3)}`,
+    ? t.alpha(t.palette.background.paper, 0.4)
+    : t.alpha('#fff', 0.6),
+  border: `1px solid ${t.alpha(t.palette.secondary.main, 0.3)}`,
   borderRadius: '16px',
   height: '100%',
+  transition: 'transform 0.3s ease-in-out',
   '&:hover': {
     transform: 'translateY(-8px)',
-    border: `1px solid ${theme.palette.secondary.main}`,
-    transition: 'transform 0.3s ease',
+    border: `1px solid ${t.palette.secondary.main}`
   },
-  backgroundImage: 'none'
+  backgroundImage: 'none',
+  width: '100%',
+  maxWidth: { xs: '100%', tablet: '40rem' },
+  mx: 'auto'
 })
 
 export default function Cards({ setAnimationEnded, bg, showAppBar }) {
   const { t } = useTranslation('landing')
   const { preferences } = useUser()
   const isDark = preferences?.theme === 'dark'
-  const isLaptop = useMediaQuery(theme => theme.breakpoints.up('laptop'))
-
-  useEffect(() => {
-    showAppBar()
-  }, [])
 
   useGSAP(() => {
+    showAppBar()
+
     document.fonts.ready.then(() => {
       gsap.set('.card', { autoAlpha: 0, scale: 0.8, y: 40 })
 
@@ -75,10 +71,11 @@ export default function Cards({ setAnimationEnded, bg, showAppBar }) {
         stagger: 0.25,
         duration: 1.2,
         ease: 'elastic.out(1, 0.8)',
-        onComplete: setAnimationEnded
+        onComplete: setAnimationEnded,
+        clearProps: 'all'
       })
     })
-  }, [isLaptop])
+  }, [])
 
   return (
     <Section
@@ -94,23 +91,31 @@ export default function Cards({ setAnimationEnded, bg, showAppBar }) {
           laptop: 'repeat(auto-fit, minmax(350px, 1fr))'
         },
         height: 'auto',
-      }}
-    >
+      }}>
       {CARDS_DATA.map(({ type, icon: Icon }) => (
-        <Card key={type} sx={t => cardStyles(t, isDark)} className='card' elevation={0}>
+        <Card
+          key={type}
+          sx={t => cardStyles(t, isDark)}
+          className='card'
+          elevation={0}>
           <CardHeader
             avatar={
               <Box sx={{
                 p: 1.5,
                 borderRadius: '50%',
-                background: t => alpha(t.palette.primary.main, 0.1),
+                background: t => t.alpha(t.palette.primary.main, 0.1),
                 display: 'flex'
               }}>
                 <Icon color='primary' fontSize='large' />
               </Box>
             }
             title={
-              <Typography variant='h2' sx={[theme => ({ ...theme.typography.h5, fontWeight: 600, })]}>
+              <Typography
+                variant='h2'
+                sx={[theme => ({
+                  ...theme.typography.h5,
+                  fontWeight: 600,
+                })]}>
                 {t(`cards.${type}.title`)}
               </Typography>
             }

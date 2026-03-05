@@ -3,7 +3,7 @@ import useApp from '@hooks/useApp'
 import { Suspense, lazy } from 'react'
 import { Route, Routes, BrowserRouter as Router } from 'react-router-dom'
 
-import Landing from '@pages/home/Landing'
+import Landing from '@pages/landing/Landing'
 const AuthenticatedApp = lazy(() => import('./AuthenticatedApp'))
 
 export default function AppRoutes() {
