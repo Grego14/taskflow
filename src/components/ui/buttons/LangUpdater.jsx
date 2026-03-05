@@ -39,7 +39,7 @@ export default function LangUpdater({ longText = true }) {
     <Button
       onClick={updateLang}
       aria-label={t('selectors.langs.update_lang', { lang: langs[lang] })}
-      color='textPrimary'>
+      color='inherit'>
       {(longText ? langs[lang] : lang).toUpperCase()}
     </Button>
   )
