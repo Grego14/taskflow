@@ -63,11 +63,11 @@ const subtaskStyles = (theme, priority) => {
       bottom: 0,
       width: '2px',
       backgroundColor: 'transparent',
-      transition: 'background-color .25s ease-out',
       borderRadius: '4px',
       transform: 'scaleY(0)',
       transformOrigin: 'center',
-      transition: 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease'
+      transition:
+        'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease, background-color 0.3s ease'
     }
   }
 }

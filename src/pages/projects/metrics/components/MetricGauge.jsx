@@ -30,7 +30,6 @@ export default function MetricGauge({
           value={displayValue}
           innerRadius='80%'
           outerRadius='100%'
-          text={`${displayValue}%`}
           text={size > 100 ? `${displayValue}%` : ''}
           sx={theme => ({
             [`& .${gaugeClasses.valueText}`]: {
