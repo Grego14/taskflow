@@ -47,6 +47,7 @@ export default function Landing() {
   const [mainEnded, setMainEnded] = useState(false)
   const [cardsEnded, setCardsEnded] = useState(false)
   const [getPlugins, setGetPlugins] = useState(false)
+  const [pluginsReady, setPluginsReady] = useState(false)
 
   const landingBg = theme.alpha(theme.palette.primary.main, 0.05)
 
@@ -68,6 +69,7 @@ export default function Landing() {
       ])
 
       gsap.registerPlugin(ScrollTrigger, ScrollSmoother)
+      setPluginsReady(true)
 
       smoother = ScrollSmoother.create({
         smooth: 1,
@@ -121,6 +123,7 @@ export default function Landing() {
             setAnimationEnded={() => setCardsEnded(true)}
             showAppBar={() => setShowAppBar(true)}
             bg={landingBg}
+            pluginsReady={pluginsReady}
           />
         )}
       </ScreenWrapper>

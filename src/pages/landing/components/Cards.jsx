@@ -45,7 +45,7 @@ const cardStyles = (t, isDark) => ({
   mx: 'auto'
 })
 
-export default function Cards({ setAnimationEnded, bg, showAppBar }) {
+export default function Cards({ setAnimationEnded, bg, showAppBar, pluginsReady }) {
   const { t } = useTranslation('landing')
   const { preferences } = useUser()
   const isDark = preferences?.theme === 'dark'
@@ -53,29 +53,29 @@ export default function Cards({ setAnimationEnded, bg, showAppBar }) {
   useGSAP(() => {
     showAppBar()
 
-    document.fonts.ready.then(() => {
-      gsap.set('.card', { autoAlpha: 0, scale: 0.8, y: 40 })
+    gsap.set('.card', { autoAlpha: 0, scale: 0.8, y: 40 })
 
-      const tween = gsap.to('.card', {
-        scrollTrigger: {
-          trigger: '#cards',
-          start: 'top 50%',
-          toggleActions: 'play none none none',
-          end: 'bottom 75%',
-          once: true,
-          scrub: true
-        },
-        autoAlpha: 1,
-        scale: 1,
-        y: 0,
-        stagger: 0.25,
-        duration: 1.2,
-        ease: 'elastic.out(1, 0.8)',
-        onComplete: setAnimationEnded,
-        clearProps: 'all'
-      })
+    if (!pluginsReady) return
+
+    const tween = gsap.to('.card', {
+      scrollTrigger: {
+        trigger: '#cards',
+        start: 'top 50%',
+        toggleActions: 'play none none none',
+        end: 'bottom 75%',
+        once: true,
+        scrub: true
+      },
+      autoAlpha: 1,
+      scale: 1,
+      y: 0,
+      stagger: 0.25,
+      duration: 1.2,
+      ease: 'elastic.out(1, 0.8)',
+      onComplete: setAnimationEnded,
+      clearProps: 'all'
     })
-  }, [])
+  }, [pluginsReady])
 
   return (
     <Section
