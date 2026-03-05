@@ -1,4 +1,8 @@
-export default function formatTimestamp({ seconds, nanoseconds }, locale = 'en') {
+import i18n from '@/i18n'
+
+export default function formatTimestamp({ seconds, nanoseconds }) {
+  const locale = i18n.language === 'es' ? 'es' : 'en'
+
   if (!seconds || !nanoseconds) return null
 
   const date = new Date(seconds * 1000 + nanoseconds / 1000000)
