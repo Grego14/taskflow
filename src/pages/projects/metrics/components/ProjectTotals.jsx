@@ -1,15 +1,11 @@
-import { TotalRow } from './MetricUtils.jsx'
+import StatCard from './StatCard'
 
-// pending tasks
-import AccessTimeIcon from '@mui/icons-material/AccessTime'
-// cancelled
+import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 import CancelIcon from '@mui/icons-material/Cancel'
-// icons for the total tasks
-//
-// completed and completed on time
-import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline'
-// overdue
+import PendingActionsIcon from '@mui/icons-material/PendingActions'
 import ErrorIcon from '@mui/icons-material/Error'
+import TimerIcon from '@mui/icons-material/Timer'
+import Box from '@mui/material/Box'
 
 import useProjectMetrics from '@hooks/useProjectMetrics'
 import { useTranslation } from 'react-i18next'
@@ -26,33 +22,55 @@ export default function ProjectTotals() {
   } = projectMetrics
 
   return (
-    <>
-      <TotalRow
-        text={t('projectMetrics.totalCompleted')}
+    <Box
+      sx={{
+        display: 'flex',
+        flexWrap: 'wrap',
+        gap: 2,
+        width: '100%',
+        justifyContent: 'center',
+        '& > *': {
+          flex: {
+            xs: '1 1 calc(50% - 16px)',
+            laptop: '1 1 180px'
+          },
+          maxWidth: {
+            xs: 'calc(50% - 8px)',
+            laptop: '300px'
+          }
+        }
+      }}>
+      <StatCard
+        label={t('metrics.completed')}
         total={completedTasks.total}
-        icon={<CheckCircleOutlineIcon color='success' fontSize='small' />}
+        icon={<CheckCircleIcon />}
+        color='success'
       />
-      <TotalRow
-        text={t('projectMetrics.totalCompletedOnTime')}
+      <StatCard
+        label={t('metrics.completedOnTime')}
         total={completedOnTime.total}
-        icon={<CheckCircleOutlineIcon color='secondary' fontSize='small' />}
+        icon={<TimerIcon />}
+        color='secondary'
       />
-      <TotalRow
-        text={t('projectMetrics.totalCancelled')}
-        total={cancelledTasks.total}
-        icon={<CancelIcon color='error' fontSize='small' />}
-      />
-      <TotalRow
-        text={t('projectMetrics.totalPending')}
+      <StatCard
+        label={t('metrics.pending')}
         total={pendingTasks}
-        icon={<AccessTimeIcon color='info' fontSize='small' />}
+        icon={<PendingActionsIcon />}
+        color='info'
+        pulse
       />
-      <TotalRow
-        text={t('projectMetrics.totalOverdue')}
+      <StatCard
+        label={t('metrics.overdue')}
         total={overdueTasks}
-        icon={<ErrorIcon color='warning' fontSize='small' />}
-        isLast
+        icon={<ErrorIcon />}
+        color='error'
       />
-    </>
+      <StatCard
+        label={t('metrics.cancelled')}
+        total={cancelledTasks.total}
+        icon={<CancelIcon />}
+        color='warning'
+      />
+    </Box>
   )
 }

@@ -1,37 +1,37 @@
 {
   "selectorText": "Mostrando métricas para:",
-  "filters": {
-    "today": "Hoy",
-    "yesterday": "Ayer",
-    "thisWeek": "Esta semana",
-    "thisMonth": "Este mes",
-    "thisQuarterly": "Este cuatrimestre",
-    "thisYear": "Este año"
-  },
   "tabs": {
     "project": "Métricas del proyecto",
     "members": "Métricas por miembros"
   },
   "averageCompletedOnTime": "Promedio de tareas completadas a tiempo",
-  "projectMetrics": {
-    "totalCompleted": "Total de tareas completadas",
-    "totalCompletedOnTime": "Total de tareas completadas a tiempo",
-    "totalCancelled": "Total de tareas canceladas",
-    "totalPending": "Total de tareas pendientes",
-    "totalOverdue": "Total de tareas vencidas",
+  "metrics": {
+    "completed": "Completadas",
+    "completedOnTime": "Completadas a tiempo",
+    "cancelled": "Canceladas",
+    "pending": "Pendientes",
+    "overdue": "Vencidas",
     "distributionPerStatus": "Distribución de tareas por estado"
   },
   "labels": {
-    "done": "Completadas ({{amount}})",
-    "cancelled": "Canceladas ({{amount}})",
-    "pending": "Pendientes ({{amount}})",
-    "overdue": "Vencidas ({{amount}})"
+    "done": "Completadas ({{count}})",
+    "cancelled": "Canceladas ({{count}})",
+    "pending": "Pendientes ({{count}})",
+    "overdue": "Vencidas ({{count}})"
   },
   "loadingMembers": "Obteniendo miembros",
-  "assignedTasks": "Tareas asignadas",
-  "completedTasks": "Tareas completadas",
   "completedOnTimeTasks": "Tareas completadas a tiempo",
-  "cancelledTasks": "Tareas canceladas",
-  "overdueTasks": "Tareas vencidas",
-  "emptyMetrics": "No hay métricas. Primero crea algunas tareas"
+  "emptyMetrics": "No hay métricas. Primero crea algunas tareas",
+  "dateRange": "Rango de fecha",
+  "filters": {
+    "allTime": "Todo el tiempo",
+    "today": "Hoy",
+    "lastWeek": "Últimos 7 días",
+    "lastMonth": "Último mes"
+  },
+  "filterMembers": "Filtrar por miembros",
+  "emptyMetricsPeriod": "No hay datos para mostrar en este periodo",
+  "loadingMetrics": "Cargando estadísticas..." ,
+  "ownerLabel": "Dueño del proyecto",
+  "memberLabel": "Miembro"
 }

@@ -1,15 +1,11 @@
 import CircleLoader from '@components/reusable/loaders/CircleLoader'
+import MemberStatCard from './MemberStatCard'
 import Box from '@mui/material/Box'
-import MemberMetric from './MemberMetric'
 
 import useProjectMembers from '@context/ProjectsContext/useProjectMembers'
 import useProjectMetrics from '@hooks/useProjectMetrics'
 import useUser from '@hooks/useUser'
 import { useTranslation } from 'react-i18next'
-
-const memberExists = (members, member) => {
-  return !!members?.find(m => m.id === member)
-}
 
 export default function MembersMetrics() {
   const { uid } = useUser()
@@ -25,21 +21,18 @@ export default function MembersMetrics() {
   if (loading) return <CircleLoader text={t('loadingMembers')} />
 
   return (
-    <Box className='flex flex-center' gap={4} flexWrap='wrap'>
-      {projectMembers
-        // show the user metric first
-        ?.sort((a, b) => (a.id === uid ? 0 : 1))
-        ?.map(member =>
-          memberExists(membersMetrics, member.id) ? (
-            <MemberMetric
-              key={member.id}
-              data={member}
-              metric={membersMetrics?.find(
-                metricMember => metricMember.id === member.id
-              )}
-            />
-          ) : null
-        )}
+    <Box sx={{ width: '100%', maxWidth: 'laptop', mx: 'auto', p: 1 }}>
+      {membersMetrics.map((metrics) => {
+        const memberInfo = projectMembers.find(m => m.id === metrics.id)
+
+        return (
+          <MemberStatCard
+            key={metrics.id}
+            member={memberInfo}
+            metrics={metrics}
+          />
+        )
+      })}
     </Box>
   )
 }

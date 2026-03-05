@@ -1,37 +1,37 @@
 {
   "selectorText": "Showing metrics for:",
-  "filters": {
-    "today": "Today",
-    "yesterday": "Yesterday",
-    "thisWeek": "This week",
-    "thisMonth": "This month",
-    "thisQuarterly": "This quarterly",
-    "thisYear": "This year"
-  },
   "tabs": {
     "project": "Project metrics",
     "members": "Members metrics"
   },
   "averageCompletedOnTime": "Average tasks completed on time",
-  "projectMetrics": {
-    "totalCompleted": "Total completed tasks",
-    "totalCompletedOnTime": "Total completed tasks on time",
-    "totalCancelled": "Total cancelled tasks",
-    "totalPending": "Total pending tasks",
-    "totalOverdue": "Total overdue tasks",
-    "distributionPerStatus": "Task distribution by status"
+  "metrics": {
+    "completed": "Completed",
+    "completedOnTime": "Completed on time",
+    "cancelled": "Cancelled",
+    "pending": "Pending",
+    "overdue": "Overdue",
+    "distributionPerStatus": "Distribución de tareas por estado"
   },
   "labels": {
-    "done": "Done ({{amount}})",
-    "cancelled": "Cancelled ({{amount}})",
-    "pending": "Pending ({{amount}})",
-    "overdue": "Overdue ({{amount}})"
+    "done": "Done ({{count}})",
+    "cancelled": "Cancelled ({{count}})",
+    "pending": "Pending ({{count}})",
+    "overdue": "Overdue ({{count}})"
   },
   "loadingMembers": "Loading members",
-  "assignedTasks": "Assigned tasks",
-  "completedTasks": "Completed tasks",
   "completedOnTimeTasks": "Tasks completed on time",
-  "cancelledTasks": "Cancelled tasks",
-  "overdueTasks": "Overdue tasks",
-  "emptyMetrics": "There's no metrics. Try creating some tasks"
+  "emptyMetrics": "There's no metrics. Try creating some tasks",
+  "dateRange": "Date range",
+  "filters": {
+    "allTime": "All time",
+    "today": "Today",
+    "lastWeek": "Last 7 days",
+    "lastMonth": "Last month"
+  },
+  "filterMembers": "Filter by members",
+  "emptyMetricsPeriod": "No data to display in this period",
+  "loadingMetrics": "Loading statistics...",
+  "ownerLabel": "Project owner",
+  "memberLabel": "Member"
 }
