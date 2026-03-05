@@ -1,7 +1,6 @@
 import { useEffect, useState, Suspense, lazy } from 'react'
 
 // components
-import CircleLoader from '@components/reusable/loaders/CircleLoader'
 import Box from '@mui/material/Box'
 import MainText from './components/MainText'
 
@@ -83,8 +82,6 @@ export default function Landing() {
 
     return () => smoother?.kill?.()
   }, [loadingResources, getPlugins])
-
-  if (loadingResources) return <CircleLoader height='100dvh' />
 
   const handleMainAnim = () => {
     setMainEnded(true)
