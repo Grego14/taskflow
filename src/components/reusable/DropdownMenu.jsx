@@ -38,12 +38,14 @@ export default memo(function DropdownMenu(props) {
   }
 
   const tooltipTitle = typeof label === 'function' ? label(isMenuOpen) : label
+  const { button: buttonProps, otherSlots } = other?.slotProps || {}
 
   const button = !text ? (
     <IconButton
       sx={buttonStyles}
       onClick={handleOnClick}
-      disabled={disabled}>
+      disabled={disabled}
+      {...buttonProps}>
       {icon}
     </IconButton>
   ) : (
@@ -51,7 +53,8 @@ export default memo(function DropdownMenu(props) {
       sx={buttonStyles}
       onClick={handleOnClick}
       startIcon={icon}
-      disabled={disabled}>
+      disabled={disabled}
+      {...buttonProps}>
       {text}
     </Button>
   )
@@ -77,7 +80,7 @@ export default memo(function DropdownMenu(props) {
             slotProps={{
               transition: null,
               list: { ref: setMenuRef, sx: { overflow: 'hidden' } },
-              ...other.slotProps
+              ...otherSlots
             }}
             transitionDuration={0}>
             {typeof children === 'function' ? children(triggerExit) : children}
