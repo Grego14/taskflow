@@ -1,17 +1,14 @@
-import CircleLoader from '@components/reusable/loaders/CircleLoader'
 import Box from '@mui/material/Box'
-import FormControl from '@mui/material/FormControl'
-import InputLabel from '@mui/material/InputLabel'
-import MenuItem from '@mui/material/MenuItem'
-import Select from '@mui/material/Select'
-import Skeleton from '@mui/material/Skeleton'
+import Grow from '@mui/material/Grow'
+import Typography from '@mui/material/Typography'
+
 import Dialog from '../Dialog'
 import TaskDate from './components/TaskDate'
 import TaskLabels from './components/TaskLabels'
-import TaskMembers from './components/TaskMembers'
 import TaskPriority from './components/TaskPriority'
 import TaskTitle from './components/TaskTitle'
-import Grow from '@mui/material/Grow'
+import AssignMembers from '@components/reusable/tasks/AssignMembers'
+import AssignedMembers from './components/AssignedMembers'
 
 import useApp from '@hooks/useApp'
 import useAuth from '@hooks/useAuth'
@@ -26,7 +23,6 @@ import {
   useState
 } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useParams } from 'react-router-dom'
 import useTasks from '@hooks/useTasks'
 
 import { priorities } from '@/constants'
@@ -35,8 +31,25 @@ import {
   getFriendlyErrorFormatted
 } from '@utils/getFriendlyAuthError.js'
 import taskService from '@services/task'
-import getDateByKey from '@utils/tasks/getDateByKey'
+
 import { initialValue, tasksReducer } from './tasksReducer.js'
+
+const TITLE_REGEX = /^[\p{L}\d_()\s!@#%^&*+|\]\[;,.<>:?¿-]{3,}/u
+
+const formatTaskData = async (task, subtask, taskId) => {
+  const { default: getDateByKey } = await import('@utils/tasks/getDateByKey')
+
+  const { members, ...data } = task
+  const selectedDate = getDateByKey(data.dueDate)
+
+  return {
+    ...data,
+    assignedTo: members,
+    subtask: subtask ? taskId : null,
+    dueDate: selectedDate,
+    rawDate: data.dueDate
+  }
+}
 
 export default memo(function NewTaskDialog({
   open,
@@ -50,67 +63,36 @@ export default memo(function NewTaskDialog({
   // below hook calls
   if (isArchived) return null
 
-  const { t } = useTranslation(['dialogs', 'ui'])
+  const { t } = useTranslation(['dialogs', 'tasks'])
   const { isOffline } = useAuth()
   const { preferences } = useUser()
   const { appNotification } = useApp()
-  const { id, data: projectData } = useProject()
-  const [titleError, setTitleError] = useState(null)
+  const { id, data: projectData, projectMembers } = useProject()
   const { actions } = useTasks()
 
+  const [titleError, setTitleError] = useState(null)
   const [task, dispatch] = useReducer(tasksReducer, initialValue)
 
-  const setTaskTitle = useCallback(
-    payload => dispatch({ type: 'update_title', payload }),
-    []
-  )
-  const setTaskDueDate = useCallback(
-    payload => dispatch({ type: 'update_dueDate', payload }),
-    []
-  )
-  const setTaskPriority = useCallback(
-    payload => dispatch({ type: 'update_priority', payload }),
-    []
-  )
-  const setTaskLabels = useCallback(
-    payload => dispatch({ type: 'update_labels', payload }),
-    []
-  )
-  const setTaskMembers = useCallback(
-    payload => dispatch({ type: 'update_members', payload }),
-    []
-  )
+  const updateField = (field) => (payload) => dispatch({ type: field, payload })
 
   const handleAccept = useCallback(async () => {
-    if (!id || !projectData?.createdBy || isOffline) return
+    if (
+      !id ||
+      !projectData?.createdBy ||
+      isOffline ||
+      !priorities.includes(task.priority)
+    ) return
 
-    if (!priorities.some(priority => priority === task.priority)) return
-
-    if (!/^[\p{L}\d_()\s!@#%^&*+|\]\[;,.<>:?¿-]{3,}/u.test(task.title)) {
-      setTitleError(t('newtask.errors.title', { ns: 'dialogs' }))
+    if (!TITLE_REGEX.test(task.title)) {
+      setTitleError(t('dialogs:newtask.errors.title'))
       return
     }
 
-    const { members: _, ...data } = task
-
     try {
-      // if the user is creating a subtask append the task parent id
-      const taskData = subtask
-        ? { ...data, assignedTo: _, subtask: taskId }
-        : { ...data, assignedTo: _ }
+      const taskDataFormatted = await formatTaskData(task, subtask, taskId)
 
-      const selectedDate = getDateByKey(taskData.dueDate)
+      setOpen(false) // optimistic close
 
-      const taskDataFormatted = {
-        ...taskData,
-        dueDate: selectedDate,
-        rawDate: taskData.dueDate
-      }
-
-      // close before the creation so it looks "faster"
-      setOpen(false)
-
-      // Just call the action, the Provider handles the position math
       await actions.createTask({
         data: taskDataFormatted,
         subtaskId: subtask ? taskId : null
@@ -119,13 +101,10 @@ export default memo(function NewTaskDialog({
       onCreate?.()
     } catch (e) {
       const lang = preferences.lang || 'en'
-      const msg = e.message
-
       appNotification({
-        message: getFriendlyAuthError(msg, lang).message,
+        message: getFriendlyAuthError(e.message, lang).message,
         status: 'error'
       })
-      throw getFriendlyErrorFormatted('NewTaskDialog:', msg, lang).message
     }
   }, [
     id,
@@ -141,6 +120,11 @@ export default memo(function NewTaskDialog({
     t
   ])
 
+  const handleMemberRemoval = (memberId) => {
+    const newMembers = task.members.filter(id => id !== memberId)
+    updateField('members')(newMembers)
+  }
+
   return (
     <Dialog
       open={open}
@@ -148,7 +132,7 @@ export default memo(function NewTaskDialog({
       onAccept={handleAccept}
       disableAcceptBtn={!task.title}
       maxWidth='tablet'
-      title={t('newtask.title', { ns: 'dialogs' })}
+      title={t('dialogs:newtask.title')}
       transitionComponent={Grow}
       sx={{
         '& .MuiSelect-select': {
@@ -162,7 +146,7 @@ export default memo(function NewTaskDialog({
       }}>
       <form className='form flex flex-column'>
         <TaskTitle
-          updateTitle={setTaskTitle}
+          updateTitle={updateField('title')}
           error={titleError}
           updateError={setTitleError}
         />
@@ -170,13 +154,42 @@ export default memo(function NewTaskDialog({
         <Box display='flex' gap={2}>
           <TaskPriority
             priority={task.priority}
-            updatePriority={setTaskPriority}
+            updatePriority={updateField('priority')}
           />
-          <TaskDate date={task.dueDate} setDate={setTaskDueDate} />
+          <TaskDate date={task.dueDate} setDate={updateField('dueDate')} />
         </Box>
 
-        <TaskLabels actualLabels={task.labels} changeLabels={setTaskLabels} />
-        <TaskMembers members={task.members} updateMembers={setTaskMembers} />
+        <TaskLabels
+          actualLabels={task.labels}
+          changeLabels={updateField('labels')}
+        />
+
+        <Box
+          className='flex'
+          gap={1}
+          alignItems={task.members.length <= 0 ? 'center' : 'start'}
+          justifyContent='space-between' >
+          <Box className='flex flex-column' gap={1.5}>
+            {task.members.length > 0 && (
+              <Typography variant='subtitle1'>
+                {t('tasks:assignedMembers')}
+              </Typography>
+            )}
+
+            <AssignedMembers
+              actualMembers={task.members}
+              projectMembers={projectMembers}
+              removeMember={handleMemberRemoval}
+            />
+          </Box>
+
+          <AssignMembers
+            sx={{ maxWidth: 'max-content' }}
+            members={task.members}
+            setMembers={updateField('members')}
+            creatingTask
+          />
+        </Box>
       </form>
     </Dialog>
   )

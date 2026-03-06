@@ -64,10 +64,12 @@
       "assignedToMe": "Assigned to me"
     },
     "archive": "Archive completed",
-    "archiveCount": "Archive {{count}} tasks"
+    "archiveCount": "Archive {{count}} tasks",
+    "removeMember_member": "Remove member {{member}} from the task"
   },
   "notifications": {
     "taskDeleted": "Task successfully deleted",
     "tasksArchived": "Tasks archived successfully"
-  }
+  },
+  "assignedMembers": "Assigned members"
 }

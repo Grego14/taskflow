@@ -70,10 +70,12 @@
       "assignedToMe_other": "asignadas para mi"
     },
     "archive": "Archivar completadas",
-    "archiveCount": "Archivar {{count}} tareas"
+    "archiveCount": "Archivar {{count}} tareas",
+    "removeMember_member": "Eliminar miembro {{member}} de la tarea"
   },
   "notifications": {
     "taskDeleted": "Tarea eliminada exitosamente",
     "tasksArchived": "Tareas archivadas correctamente"
-  }
+  },
+  "assignedMembers": "Miembros asignados"
 }

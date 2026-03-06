@@ -7,7 +7,7 @@ import PersonIcon from '@mui/icons-material/PersonOutline'
 import { useState, useMemo } from 'react'
 import useProject from '@hooks/useProject'
 
-export default function TaskMembers({ assignedTo = [], subtasks = [] }) {
+export default function TaskMembers({ assignedTo = [], subtasks = [], insideTask }) {
   const { projectMembers } = useProject()
 
   const taskMembers = useMemo(() => {
@@ -18,7 +18,7 @@ export default function TaskMembers({ assignedTo = [], subtasks = [] }) {
 
   if (taskMembers.length === 0) return null
 
-  const avatarSize = { xs: 32, mobile: 24 }
+  const avatarSize = !insideTask ? 24 : 20
 
   // helper to render the full list inside the Tooltip
   const membersPreview = (
@@ -39,12 +39,19 @@ export default function TaskMembers({ assignedTo = [], subtasks = [] }) {
       title={membersPreview}
       arrow
       placement='top'>
-      <Box sx={{
-        display: { xs: 'none', mobile: 'flex' },
-        alignItems: 'center',
-        cursor: 'pointer',
-        ml: 'auto'
-      }}>
+      <Box
+        className='flex-center'
+        sx={theme => ({
+          display: { xs: 'none', mobile: 'flex' },
+          cursor: 'pointer',
+          ml: 'auto',
+          p: 1,
+          transition: 'background-color .3s ease-in-out',
+          borderRadius: 50,
+          '&:hover': {
+            backgroundColor: theme.palette.action.hover
+          }
+        })}>
         {taskMembers.length === 1 ? (
           <Avatar
             src={firstMember?.avatar}
