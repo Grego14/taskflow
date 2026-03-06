@@ -15,7 +15,8 @@
       "lastProject": "Proyecto anterior",
       "newProject": "Crear proyecto"
     },
-    "notifications": "Notificaciones"
+    "notifications": "Notificaciones",
+    "projects": "Proyectos"
   },
   "buttons": {
     "addMembers": "Añadir miembros",
@@ -24,85 +25,6 @@
     "actionsTooltip": "Acciones del proyecto",
     "profileButtonLabel": "Ir a mi perfil",
     "changeTheme_theme": "Cambiar al modo $t(selectors.themes.{{theme}})"
-  },
-  "projects": {
-    "errors": {
-      "notFound": "No pudimos encontrar el proyecto.",
-      "noAccess": "Lo sentimos. No tienes acceso a este proyecto",
-      "members": "Error al obtener los miembros del proyecto",
-      "empty": "No se encontraron proyectos",
-      "noConnection": "Lo sentimos. No pudimos comprobar si tienes acceso a este proyecto, comprueba tu conexión a internet."
-    },
-    "inputs": {
-      "nameLabel": "Nombre del proyecto",
-      "namePlaceholder": "Introduce un nombre para tu proyecto",
-      "descriptionLabel": "Descripción del proyecto",
-      "descriptionPlaceholder": "Proporcione un breve resumen del proyecto",
-      "errors": {
-        "nameIsEmpty": "El nombre del proyecto es requerido",
-        "nameIsInvalid": "El nombre del proyecto contiene caracteres invalidos",
-        "descriptionIsInvalid": "La descripción del proyecto contiene caracteres invalidos"
-      }
-    },
-    "new": {
-      "makeTemplate": "Hacer que este proyecto sea una plantilla",
-      "makeTemplateHelpText": "Las plantillas se pueden reutilizar para nuevos proyectos",
-      "makeTemplatePublic": "Plantilla publica",
-      "makeTemplatePublicHelpText": "Las plantillas publicas podrán ser usadas por cualquier usuario",
-      "create": "Crear proyecto"
-    },
-    "text": "Proyectos",
-    "goToProjects": "Ir a mis proyectos",
-    "recentProject": "Editados recientemente",
-    "lastProjects": "Proyectos anteriores",
-    "lastEditedProject": "Ir al último proyecto editado",
-    "createProject": "$t(common:create) un nuevo proyecto",
-    "loading": "Obteniendo proyectos",
-    "loadingProject": "Obteniendo datos del proyecto",
-    "validating": "Validando acceso",
-    "goToProject": "Ir al proyecto",
-    "title_quantity": "Proyectos ({{quantity}})",
-    "template": "Plantilla",
-    "archived": "Archivado",
-    "created_date": "Creado {{date}}",
-    "delete": "$t(common:delete) proyecto",
-    "members_one": "{{count}} miembro",
-    "members": "{{count}} miembros",
-    "projectCardMenuLabel": "acciones del proyecto",
-    "myProjects": "Mis proyectos",
-    "goBack": "Regresar al proyecto",
-    "deleteProject": "Eliminar proyecto",
-    "archiveProject": "Archivar proyecto",
-    "settings": {
-      "labelsLabel": "Etiquetas",
-      "labelsInfo": "Las etiquetas mostradas aquí están siendo usadas por tareas o sub-tareas actuales",
-      "membersLabel": "Miembros",
-      "goToMembers": "Configurar miembros del proyecto",
-      "createdBy": "Creado por",
-      "createdAt": "Fecha de creación",
-      "archivedAt": "Fecha de archivado",
-      "isTemplate": "Es una plantilla",
-      "dangerTitle": "Zona de peligro",
-      "dangerSubtitle": "Gestionar acciones irreversibles para este proyecto",
-      "saveProject": "Guardar cambios",
-      "onlyOwnerCanChange": "Solo el creador del proyecto puede hacer cambios",
-      "removeMember": "Expulsar miembro"
-    },
-    "cantUpdateArchived": "El proyecto esta archivado, ya no puede recibir cambios",
-    "abandoneProject": "Abandonar proyecto",
-    "projectPercentageActual": "Progreso del proyecto",
-    "projectPercentageLeft": "Porcentaje restante",
-    "addMembers": {
-      "sameUser": "No puedes agregarte como miembro!",
-      "userNotFound": "Usuario no encontrado",
-      "label": "Agregar miembros",
-      "placeholder": "Buscar por correo electrónico...",
-      "search": "Buscar miembro",
-      "couldNotGetTheUser": "No se pudo obtener al usuario. Intente nuevamente",
-      "alreadyAdded": "Ese usuario ya esta agregado"
-    },
-    "loadingMetrics": "Cargando métricas",
-    "noDescription": "No se agrego una descripción..."
   },
   "notifications": {
     "new": "Tienes nuevas notiticaciones!",

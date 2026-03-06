@@ -6,7 +6,7 @@ import useProject from '@hooks/useProject'
 import { useTranslation } from 'react-i18next'
 
 export default function ProjectPercentage() {
-  const { t } = useTranslation('ui')
+  const { t } = useTranslation('projects')
   const { appBarHeight, isMobile } = useApp()
   const { metrics } = useProject()
   const { totalTasks, totalCompletedTasks } = metrics
@@ -23,12 +23,12 @@ export default function ProjectPercentage() {
       mt='auto'
       flexDirection={isMobile ? 'column' : 'row'}>
       <PercentageText
-        text={t('projects.projectPercentageActual')}
+        text={t('projectPercentageActual')}
         amount={actualPercentage}
         id='actual'
       />
       <PercentageText
-        text={t('projects.projectPercentageLeft')}
+        text={t('projectPercentageLeft')}
         amount={percentageToComplete}
         id='remaining'
       />

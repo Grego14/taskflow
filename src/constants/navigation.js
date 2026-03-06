@@ -9,7 +9,7 @@ import SettingsIcon from '@mui/icons-material/Settings'
 
 export const NAV_LINKS = [
   { key: 'home', icon: HouseIcon, to: '/home', translation: 'drawer.home' },
-  { key: 'projects', icon: FolderOpen, to: '/projects', translation: 'projects.text' },
+  { key: 'projects', icon: FolderOpen, to: '/projects', translation: 'drawer.projects' },
   { key: 'templates', icon: ArticleIcon, to: '/templates', translation: 'drawer.templates' },
   {
     id: 'notifications', icon: NotificationsIcon, to: '/notifications',
