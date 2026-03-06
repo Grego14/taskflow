@@ -65,18 +65,23 @@ export default function Header({ data, insideTask = false, status }) {
       action={
         !showTitle && (
           <Box display='flex' gap={1}>
-            <TaskMembers assignedTo={data.assignedTo} subtasks={data.subtasks} />
+            <TaskMembers
+              assignedTo={data.assignedTo}
+              subtasks={data.subtasks}
+              insideTask={insideTask}
+            />
 
             {!isOnlyMobile && (
               <TaskCalendar
                 rawDate={data?.rawDate}
                 taskId={data.id}
                 parentId={data.subtask}
+                insideTask={insideTask}
               />
             )}
 
             <DropdownMenu
-              icon={<MoreVertIcon />}
+              icon={<MoreVertIcon fontSize={insideTask ? 'small' : 'medium'} />}
               forceClose={!open}
               tooltipPosition='top'
               disabled={isArchived}

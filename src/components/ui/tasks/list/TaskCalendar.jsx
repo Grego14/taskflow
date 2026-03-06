@@ -8,7 +8,7 @@ import useTaskDateUpdater from '@hooks/useTaskDateUpdater'
 
 import getDateItems from '@utils/tasks/getDateItems'
 
-export default function TaskCalendar({ rawDate, taskId, parentId }) {
+export default function TaskCalendar({ rawDate, taskId, parentId, insideTask }) {
   const { t } = useTranslation('tasks')
   const { date, updateDateHandler } = useTaskDateUpdater(rawDate)
   const { isArchived } = useProject()
@@ -25,7 +25,8 @@ export default function TaskCalendar({ rawDate, taskId, parentId }) {
     <DropdownMenu
       label={t('changeDate')}
       tooltipPosition='top'
-      icon={<CalendarIcon />}
+      buttonStyles={{ p: 1 }}
+      icon={<CalendarIcon fontSize={insideTask ? 'small' : 'medium'} />}
       disabled={isArchived}>
       {(triggerExit) => (
         getDateItems(

@@ -1,4 +1,4 @@
-import AssignMembers from './AssignMembers'
+import AssignMembers from '@components/reusable/tasks/AssignMembers'
 import CreateSubtask from './CreateSubtask'
 import DeleteTask from './DeleteTask'
 import ReassignDate from './ReassignDate'
@@ -22,12 +22,7 @@ export default function TaskActions({
 
       {!isSubtask && <CreateSubtask id={id} showMenu={menuHandler} />}
 
-      <AssignMembers
-        id={id}
-        members={members}
-        subtask={subtask}
-        showMenu={menuHandler}
-      />
+      <AssignMembers id={id} members={members} subtask={subtask} />
 
       <ReassignDate id={id} subtask={subtask} rawDate={rawDate}
       />
