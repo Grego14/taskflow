@@ -14,8 +14,6 @@ export default function TaskCalendar({ rawDate, taskId, parentId, insideTask }) 
   const { isArchived } = useProject()
   const loadingResources = useLoadResources('dialogs')
 
-  if (loadingResources) return null
-
   const handleDateChange = async (newDate, triggerExit) => {
     triggerExit()
     await updateDateHandler(newDate, taskId, parentId)

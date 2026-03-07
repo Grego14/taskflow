@@ -8,7 +8,8 @@ import Divider from '@mui/material/Divider'
 import Typography from '@mui/material/Typography'
 
 import useApp from '@hooks/useApp'
-import { forwardRef, memo, useState } from 'preact/compat'
+import { forwardRef, memo, useRef, useState } from 'preact/compat'
+import useTaskEntranceAnimation from '@hooks/useTaskEntranceAnimation'
 
 const TasksWrapper = forwardRef(function TasksWrapper(props, ref) {
   const { isMobile } = useApp()
@@ -25,10 +26,14 @@ const TasksWrapper = forwardRef(function TasksWrapper(props, ref) {
     expand = true
   } = props
 
+  const wrapperRef = useRef(null)
+
   const isOver = dragState === 'is-over'
   const hasTasks = tasks?.length > 0
 
   const [expanded, setExpanded] = useState(expand)
+
+  useTaskEntranceAnimation(wrapperRef, tasks)
 
   return (
     <Box
@@ -83,10 +88,10 @@ const TasksWrapper = forwardRef(function TasksWrapper(props, ref) {
             }),
             tasksStyles
           ]}>
-          <Box className='flex flex-column' gap={3.5}>
+          <Box className='flex flex-column' ref={wrapperRef}>
             {show &&
               tasks?.map(task => (
-                <ListTask key={task.id} data={task} subtask={task?.isSubtask} />
+                <ListTask key={task.id} data={task} subtask={task.subtask} />
               ))}
             {children}
           </Box>

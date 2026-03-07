@@ -1,4 +1,4 @@
-import { useState, useEffect, lazy, Suspense } from 'preact/compat'
+import { useState, useEffect, lazy, Suspense, memo, useRef } from 'preact/compat'
 
 import Box from '@mui/material/Box'
 import Card from '@mui/material/Card'
@@ -15,6 +15,7 @@ import { priorityColors } from '@/constants'
 import useTaskDropTarget from './hooks/useTaskDropTarget'
 import useTaskDraggable from './hooks/useTaskDraggable'
 import useTasks from '@hooks/useTasks'
+import useTaskEntranceAnimation from '@hooks/useTaskEntranceAnimation'
 
 const subtaskStyles = (theme, priority) => {
   const priorityColor = priorityColors[priority][0]
@@ -76,11 +77,13 @@ const SubtaskItem = ({ data, list, onContextMenu, isParentOverdue }) => {
   const { isArchived } = useProject()
   const { actions } = useTasks()
 
+  const { status, id, ref, priority, subtask, isOverdue } = data
+
   const { isDragging } = useTaskDraggable({
     data,
     isArchived,
     type: 'subtask',
-    extraData: { parentId: data.subtask }
+    extraData: { parentId: subtask }
   })
 
   const { isTopVisible, isBottomVisible } = useTaskDropTarget({
@@ -91,25 +94,24 @@ const SubtaskItem = ({ data, list, onContextMenu, isParentOverdue }) => {
       actions.handleReorder(source, target.id, edge)
   })
 
-  const status = data?.status
   const isChecked = status === 'done' || status === 'cancelled'
-  const isOverdue = taskIsOverdue(data)
 
   return (
     <Box className='relative'>
       <DropIndicator visible={isTopVisible} maxWidth='100%' isTop />
 
       <Card
-        ref={data.ref}
+        ref={ref}
         elevation={0}
-        onContextMenu={(e) => onContextMenu(e, data.id)}
+        onContextMenu={(e) => onContextMenu(e, id)}
         sx={[theme => ({
-          ...subtaskStyles(theme, data.priority),
-          opacity: isDragging || isOverdue ? 0.4 : (isChecked ? 0.6 : 1),
+          ...subtaskStyles(theme, priority),
+          opacity: isChecked ? 0.6 : 1,
+          ...((isDragging || isOverdue) && { opacity: 0.4 }),
           cursor: 'grab'
         })]}>
         <Box className='flex flex-center' width='100%'>
-          <CompleteButton id={data.id} subtask={data.subtask} status={status} />
+          <CompleteButton id={id} subtask={subtask} status={status} />
           <Header data={data} status={status} insideTask />
         </Box>
 
@@ -126,11 +128,16 @@ const SubtaskItem = ({ data, list, onContextMenu, isParentOverdue }) => {
   )
 }
 
-export default function Subtasks({ data, contextMenuHandler, isParentOverdue }) {
+export default memo(function Subtasks({ data, contextMenuHandler, isParentOverdue }) {
+  const wrapperRef = useRef(null)
+
   if (!data?.length) return null
+
+  useTaskEntranceAnimation(wrapperRef, data, true)
 
   return (
     <Box
+      ref={wrapperRef}
       className='flex flex-column relative'
       pb={1}
       sx={{ ml: 4, mb: 1 }}>
@@ -145,4 +152,4 @@ export default function Subtasks({ data, contextMenuHandler, isParentOverdue }) 
       ))}
     </Box>
   )
-}
+})

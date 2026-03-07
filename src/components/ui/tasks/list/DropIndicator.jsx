@@ -16,6 +16,7 @@ export default function DropIndicator({ visible, maxWidth, isTop }) {
         pointerEvents: 'none',
         maxWidth
       }}
+      role='none'
     />
   )
 }

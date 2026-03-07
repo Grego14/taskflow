@@ -5,8 +5,8 @@ import Card from '@mui/material/Card'
 import CompleteButton from './CompleteButton'
 import Header from './Header'
 import DropIndicator from './DropIndicator'
+import Subtasks from './Subtasks'
 
-const Subtasks = lazy(() => import('./Subtasks'))
 const TaskContextMenu = lazy(() => import('./TaskContextMenu'))
 const OverdueContent = lazy(() => import('./OverdueContent'))
 
@@ -50,9 +50,18 @@ export default memo(function ListTask({ data }) {
   const { tasks, actions } = useTasks()
   const { filter } = useLayout()
 
+  const {
+    isOverdue,
+    priority = 'none',
+    status,
+    subtasks,
+    createdAt,
+    ref,
+    id
+  } = data
+
   const internalRef = useRef(null)
-  const element = data?.ref || internalRef
-  const isOverdue = taskIsOverdue(data)
+  const element = ref || internalRef
 
   const { isDragging } = useTaskDraggable({
     data: { ...data, ref: element },
@@ -69,38 +78,41 @@ export default memo(function ListTask({ data }) {
       actions.handleReorder(source, target.id, edge)
   })
 
-  const [contextMenu, handler] = useContextMenu({ isArchived, tasks })
-  const [fg, bg] = priorityColors[data.priority || 'none']
-  const status = data?.status
+  const [contextMenu, handler] = useContextMenu(isArchived, tasks)
+  const [fg, bg] = priorityColors[priority]
 
   // memoize subtasks to avoid re-filtering on every render
   const filteredSubtasks = useMemo(() => {
-    if (!data?.subtasks?.length) return []
+    if (!subtasks?.length) return []
 
-    return sortTasks(data.subtasks.filter(s =>
+    return sortTasks(subtasks.filter(s =>
       isOverdue
         ? taskIsOverdue(s)
         : true))
-  }, [data?.subtasks, isOverdue])
+  }, [subtasks, isOverdue])
 
-  const taskDate = data.createdAt?.seconds
-    ? formatTimestamp(data.createdAt).raw
+  const taskDate = createdAt?.seconds
+    ? formatTimestamp(createdAt).raw
     : new Date()
   const diff = new Date() - taskDate
   const isNewTask = diff < 10000
 
+  // new task animation
   useGSAP(() => {
-    const element = data?.ref || internalRef
+    const element = ref || internalRef
+    const cardContainer = element?.current?.parentElement
 
-    if (!element?.current || !isNewTask) return
+    if (!cardContainer || !isNewTask) return
 
-    gsap.fromTo(element.current, {
+    gsap.fromTo(cardContainer, {
       autoAlpha: 0,
-      y: -25,
-      ease: 'power3.out'
+      y: -10,
+      x: -25,
+      ease: 'power2.out'
     }, {
       autoAlpha: 1,
-      y: 0
+      y: 0,
+      x: 0
     })
   })
 
@@ -110,49 +122,62 @@ export default memo(function ListTask({ data }) {
     taskIsPending(status) &&
     taskIsOverdue(data)
 
-  const taskOpacity = isNewTask ? 0
-    : isDragging || isOverdueLabelVisible ? 0.5
-      : data.status === 'cancelled' ? 0.75 : 1
-
   return (
-    <Box className='relative flex flex-center flex-column'>
+    <Box
+      className='task relative flex flex-center flex-column'
+      sx={{
+        // the TaskWrapper is going to animate the card so we avoid the flash of
+        // the dropIndicators
+        opacity: 0,
+        visibility: 'hidden',
+
+        transition: 'margin-bottom 0.3s ease-in 0.3s',
+        marginBottom: 3.5,
+        '&:last-child, &.removing': { marginBottom: 0 },
+      }}>
       <DropIndicator visible={isTopVisible} maxWidth='25rem' isTop />
 
       <Card
         className='flex flex-column'
-        ref={data?.ref || internalRef}
+        ref={ref || internalRef}
         elevation={3}
         sx={[theme => ({
-          ...taskStyles(theme, data.priority),
+          ...taskStyles(theme, priority),
           borderLeftColor: fg,
-          opacity: taskOpacity
+          ...((isDragging || isOverdueLabelVisible) && { opacity: 0.5 }),
+          ...(status === 'cancelled' && { opacity: 0.75 })
         })]}>
         <Box
           className='flex flex-column'
-          onContextMenu={(e) => handler(e, data.id)}
+          onContextMenu={(e) => handler(e, id)}
           sx={{ p: 2, py: 1.5 }}>
-          <Box className='flex' sx={{ width: '100%', alignItems: 'center', gap: 1 }}>
-            <CompleteButton id={data.id} status={status} />
+          <Box className='flex'
+            sx={{
+              width: '100%',
+              alignItems: 'center',
+              gap: 1
+            }}>
+            <CompleteButton id={id} status={status} />
             <Header data={data} status={status} />
           </Box>
 
           <Suspense fallback={null}>
-            {isOverdue && <OverdueContent
-              data={data}
-              status={status}
-              isOverdueLabelVisible={isOverdueLabelVisible} />
+            {isOverdue &&
+              <OverdueContent
+                data={data}
+                status={status}
+                isOverdueLabelVisible={isOverdueLabelVisible}
+              />
             }
           </Suspense>
         </Box>
 
         {filteredSubtasks.length > 0 && (
-          <Suspense fallback={null}>
-            <Subtasks
-              data={filteredSubtasks}
-              contextMenuHandler={handler}
-              isParentOverdue={isOverdue}
-            />
-          </Suspense>
+          <Subtasks
+            data={filteredSubtasks}
+            contextMenuHandler={handler}
+            isParentOverdue={isOverdue}
+          />
         )}
       </Card>
 

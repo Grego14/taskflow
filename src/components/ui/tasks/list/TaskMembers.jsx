@@ -55,6 +55,7 @@ export default function TaskMembers({ assignedTo = [], subtasks = [], insideTask
         {taskMembers.length === 1 ? (
           <Avatar
             src={firstMember?.avatar}
+            slotProps={{ img: { fetchPriority: 'high' } }}
             sx={{
               width: avatarSize,
               height: avatarSize,
