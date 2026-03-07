@@ -40,13 +40,25 @@
     "kicked2": "por",
     "cannotGetUserNoInternet": "No se pudo obtener los datos del usuario. Verifique su conexión"
   },
+  "home": {
+    "goToProjects": "Ir a mis proyectos",
+    "lastEditedProject": "Ir al último proyecto editado",
+    "createProject": "$t(common:create) un nuevo proyecto"
+  },
   "loadingUser": "Obteniendo datos del usuario",
   "ruteNotFound": "Lo sentimos. No pudimos encontrar esa ruta",
   "menuLabel_state": "$t(common:{{state}}) menú de acciones",
   "dates": {
     "today": "Hoy",
     "tomorrow": "Mañana",
-    "overdue": "Vencida"
+    "overdue": "Vencida",
+    "monday": "Lun",
+    "tuesday": "Mar",
+    "wednesday": "Mié",
+    "thursday": "Jue",
+    "friday": "Vie",
+    "saturday": "Sáb",
+    "sunday": "Dom"
   },
   "selectors": {
     "members": {

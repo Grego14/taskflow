@@ -40,13 +40,25 @@
     "kicked2": "by",
     "cannotGetUserNoInternet": "Couldn't get the user data. Check your connection"
   },
+  "home": {
+    "createProject": "$t(common:create) a new project",
+    "goToProjects": "Go to my projects",
+    "lastEditedProject": "Go to my last edited project"
+  },
   "loadingUser": "Getting user data",
   "ruteNotFound": "Sorry. We couldn't find that route",
   "menuLabel_state": "$t(common:{{state}}) actions menu",
   "dates": {
     "today": "Today",
     "tomorrow": "Tomorrow",
-    "overdue": "Overdue"
+    "overdue": "Overdue",
+    "monday": "Mon",
+    "tuesday": "Tue",
+    "wednesday": "Wed",
+    "thursday": "Thu",
+    "friday": "Fri",
+    "saturday": "Sat",
+    "sunday": "Sun"
   },
   "selectors": {
     "members": {

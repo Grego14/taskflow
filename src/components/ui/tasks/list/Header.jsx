@@ -6,8 +6,8 @@ import Typography from '@mui/material/Typography'
 import TaskCalendar from './TaskCalendar'
 import UpdatableTaskTitle from './UpdatableTaskTitle'
 import TaskActions from './menu_components/TaskActions'
-import AnimatedMenu from '@components/reusable/animated/AnimatedMenu'
 import TaskMembers from './TaskMembers'
+import SmartDateLabel from './SmartDateLabel'
 
 import useApp from '@hooks/useApp'
 import useProject from '@hooks/useProject'
@@ -65,6 +65,8 @@ export default function Header({ data, insideTask = false, status }) {
       action={
         !showTitle && (
           <Box display='flex' gap={1}>
+            {data.dueDate && <SmartDateLabel date={data.dueDate} />}
+
             <TaskMembers
               assignedTo={data.assignedTo}
               subtasks={data.subtasks}
