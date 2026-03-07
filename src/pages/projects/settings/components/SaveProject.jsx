@@ -54,12 +54,12 @@ export default function SaveProject({
       sx={{
         mx: 'auto',
         borderRadius: 2,
-        mb: `calc(${appBarHeight} * 1.2)`
+        mb: `calc(${appBarHeight} * 1.2)`,
+        mt: 4
       }}
       variant='contained'
       disabled={isButtonDisabled}
-      onClick={updateNewValues}
-    >
+      onClick={updateNewValues}>
       {t('settings.saveProject')}
     </Button>
   )

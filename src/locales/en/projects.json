@@ -49,8 +49,6 @@
   "deleteProject": "Delete project",
   "archiveProject": "Archive project",
   "settings": {
-    "labelsLabel": "Labels",
-    "labelsInfo": "The tags shown here are being used by current tasks or sub-tasks",
     "membersLabel": "Members",
     "goToMembers": "Manage project members",
     "createdBy": "Created by",

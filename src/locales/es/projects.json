@@ -49,8 +49,6 @@
   "deleteProject": "Eliminar proyecto",
   "archiveProject": "Archivar proyecto",
   "settings": {
-    "labelsLabel": "Etiquetas",
-    "labelsInfo": "Las etiquetas mostradas aquí están siendo usadas por tareas o sub-tareas actuales",
     "membersLabel": "Miembros",
     "goToMembers": "Configurar miembros del proyecto",
     "createdBy": "Creado por",

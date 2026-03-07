@@ -4,7 +4,6 @@ import Typography from '@mui/material/Typography'
 
 import ProjectDangerZone from './components/ProjectDangerZone'
 import ProjectDescription from './components/ProjectDescription'
-import ProjectLabels from './components/ProjectLabels'
 import ProjectMembers from './components/ProjectMembers'
 import ProjectMetadata from './components/ProjectMetadata'
 import ProjectName from './components/ProjectName'
@@ -23,7 +22,8 @@ const BOX_STYLING = {
   display: 'flex',
   flexDirection: 'column',
   flexGrow: 1,
-  maxWidth: '35rem',
+  width: '100%',
+  maxWidth: 'tablet',
   mx: 'auto'
 }
 
@@ -83,9 +83,7 @@ export default function ProjectSettings() {
         opacity: 0
       }}
       p={isMobile ? 4 : 3}
-      gap={3}
-    >
-      {/* Warning messages */}
+      gap={3}>
       {!isOwner && (
         <Typography variant='body2' color='orange' className='font-medium'>
           {t('settings.onlyOwnerCanChange')}
@@ -109,8 +107,6 @@ export default function ProjectSettings() {
         setDescription={setDescription}
         {...commonProps}
       />
-
-      <ProjectLabels labels={data?.labels} />
 
       <ProjectMembers />
 

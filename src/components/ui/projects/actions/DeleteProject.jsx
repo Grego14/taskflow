@@ -93,10 +93,9 @@ export default function DeleteProject({ id, owner, asButton, disabled, onDelete 
           startIcon={<Delete fontSize='small' />}
           color='error'
           variant='outlined'
-          fullWidth
           disabled={disabled}
-          onClick={() => setOpen(true)}
-        >
+          sx={{ width: { xs: '100%', tablet: 'auto' } }}
+          onClick={() => setOpen(true)}>
           {t('deleteProject', { ns: 'projects' })}
         </Button>
       ) : (

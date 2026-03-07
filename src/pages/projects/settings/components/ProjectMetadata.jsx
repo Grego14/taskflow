@@ -11,7 +11,7 @@ import formatTimestamp from '@utils/formatTimestamp'
 
 export default function ProjectMetadata() {
   const { preferences } = useUser()
-  const { t } = useTranslation('ui')
+  const { t } = useTranslation('projects')
   const { data, projectMembers, isArchived } = useProject()
 
   const projectOwnerData = projectMembers?.find(
@@ -20,18 +20,18 @@ export default function ProjectMetadata() {
 
   return (
     <Box>
-      <Metadata text={t('projects.settings.createdBy')}>
+      <Metadata text={t('settings.createdBy')}>
         <Typography variant='caption' sx={{ font: 'inherit', fontWeight: 600 }}>
           {projectOwnerData?.username}
         </Typography>
       </Metadata>
-      <Metadata text={t('projects.settings.createdAt')}>
+      <Metadata text={t('settings.createdAt')}>
         <Typography variant='caption' sx={{ font: 'inherit', fontWeight: 600 }}>
           {formatTimestamp(data?.createdAt)?.shortDate}
         </Typography>
       </Metadata>
       {isArchived && (
-        <Metadata text={t('projects.settings.archivedAt')}>
+        <Metadata text={t('settings.archivedAt')}>
           <Typography
             variant='caption'
             sx={{ font: 'inherit', fontWeight: 600 }}>
@@ -39,7 +39,7 @@ export default function ProjectMetadata() {
           </Typography>
         </Metadata>
       )}
-      <Metadata text={t('projects.settings.isTemplate')}>
+      <Metadata text={t('settings.isTemplate')}>
         <Switch disabled checked={data?.isTemplate} />
       </Metadata>
     </Box>

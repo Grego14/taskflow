@@ -32,7 +32,10 @@ export default function ProjectDangerZone({ isOwner, isArchived }) {
       <Box className='flex flex-column' sx={{ gap: 2, mt: 2 }}>
         <Suspense fallback={null}>
           {isOwner && (
-            <Box className='flex flex-column' gap={2}>
+            <Box
+              className='flex'
+              gap={2}
+              flexDirection={{ xs: 'column', tablet: 'row' }}>
               <DeleteProject
                 id={id}
                 owner={owner}
