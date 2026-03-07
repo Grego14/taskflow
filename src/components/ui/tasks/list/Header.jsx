@@ -57,7 +57,7 @@ export default function Header({ data, insideTask = false, status }) {
           taskId={id}
           isChecked={isDone || isCancelled}
           isCancelled={isCancelled}
-          subtask={insideTask}
+          subtask={data.subtask}
           show={showTitle}
           setShow={setShowTitle}
         />
