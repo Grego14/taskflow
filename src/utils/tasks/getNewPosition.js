@@ -1,4 +1,4 @@
-const DEFAULT_GAP = 1000
+const DEFAULT_GAP = 10000
 const PRECISION = 4
 
 export default function getNewPosition(prevPos = 0, nextPos = 0) {

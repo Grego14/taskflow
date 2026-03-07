@@ -173,7 +173,7 @@ const taskService = {
 
     try {
       let ref
-      const initialPosition = lastPosition + 1000
+      const initialPosition = lastPosition + 10000
 
       if (subtaskId) {
         // it's a subtask
