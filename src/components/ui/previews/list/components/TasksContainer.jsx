@@ -24,6 +24,7 @@ const getTodayMidnight = () => {
 export default memo(function TasksContainer({
   tasks = [],
   overdueTasks = [],
+  toArchive = [],
   filter
 }) {
   const { t } = useTranslation('tasks')
@@ -98,6 +99,15 @@ export default memo(function TasksContainer({
         title={t('overdueTasks_quantity', { quantity: overdueTasks?.length })}
         tasksStyles={{ opacity: 0.5 }}
       />
+
+      {toArchive.length > 0 && (
+        <TasksWrapper
+          tasks={toArchive}
+          title={t('toArchiveTasks', { quantity: toArchive?.length })}
+          tasksStyles={{ opacity: 0.75 }}
+          expand={false}
+        />
+      )}
     </>
   )
 })

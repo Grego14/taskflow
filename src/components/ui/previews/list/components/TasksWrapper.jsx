@@ -8,7 +8,7 @@ import Divider from '@mui/material/Divider'
 import Typography from '@mui/material/Typography'
 
 import useApp from '@hooks/useApp'
-import { forwardRef, memo } from 'react'
+import { forwardRef, memo, useState } from 'preact/compat'
 
 const TasksWrapper = forwardRef(function TasksWrapper(props, ref) {
   const { isMobile } = useApp()
@@ -21,11 +21,14 @@ const TasksWrapper = forwardRef(function TasksWrapper(props, ref) {
     divider = false,
     dragState,
     children = null,
-    show = true
+    show = true,
+    expand = true
   } = props
 
   const isOver = dragState === 'is-over'
   const hasTasks = tasks?.length > 0
+
+  const [expanded, setExpanded] = useState(expand)
 
   return (
     <Box
@@ -43,8 +46,9 @@ const TasksWrapper = forwardRef(function TasksWrapper(props, ref) {
       }}>
       <Accordion
         elevation={0}
-        defaultExpanded
+        expanded={expanded}
         disableGutters
+        onChange={(e, newValue) => setExpanded(newValue)}
         sx={{
           backgroundColor: 'transparent',
           backgroundImage: 'none'

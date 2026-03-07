@@ -31,7 +31,7 @@ export default memo(function ListPreview() {
   const { filter } = useLayout()
   const { tasks, error } = useTasks()
 
-  const { tasksForContainer, overdueTasks, filteredTasks } =
+  const { tasksForContainer, overdueTasks, filteredTasks, othersToArchive } =
     useTaskProcessing(tasks, filter, uid)
 
   const hasContent = tasksForContainer?.length > 0 || overdueTasks?.length > 0
@@ -58,6 +58,7 @@ export default memo(function ListPreview() {
         <TasksContainer
           tasks={tasksForContainer}
           overdueTasks={overdueTasks}
+          toArchive={othersToArchive}
           filter={filter}
         />
       )}

@@ -38,6 +38,7 @@
   "todayTasks_zero": "No hay tareas para hoy",
   "todayTasks_one": "Tarea para hoy",
   "todayTasks_other": "Tareas para hoy ({{count}})",
+  "toArchiveTasks": "Otras tareas por archivar ({{quantity}})",
   "filterTasks_filter_one": "Tarea $t(buttons.filterOptions.{{filter}})",
   "filterTasks_filter_other": "Tareas $t(buttons.filterOptions.{{filter}}) ({{count}})",
   "filterTasks_assignedToMe_one": "$t(filterTasks_filter_one)",

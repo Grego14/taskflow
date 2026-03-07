@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next'
 import Typography from '@mui/material/Typography'
 import formatTimestamp from '@utils/formatTimestamp'
 
-const ONE_DAY_MS = 86400000
+import { ONE_DAY_MS } from '@/constants'
 
 const days =
   [

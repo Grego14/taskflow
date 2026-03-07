@@ -38,6 +38,7 @@
   "todayTasks_zero": "No tasks for today",
   "todayTasks_one": "Today task",
   "todayTasks_other": "Today tasks ({{count}})",
+  "toArchiveTasks": "Others tasks to archive ({{quantity}})",
   "filterTasks_filter_one": "$t(buttons.filterOptions.{{filter}}) task",
   "filterTasks_filter_other": "$t(buttons.filterOptions.{{filter}}) tasks ({{count}})",
   "filterTasks_assignedToMe_one": "Task assigned to me",

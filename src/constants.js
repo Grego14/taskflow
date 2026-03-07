@@ -73,3 +73,5 @@ export const RESOURCES = [
   'projects',
   'tasks'
 ]
+
+export const ONE_DAY_MS = 86400000

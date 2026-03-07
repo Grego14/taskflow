@@ -1,7 +1,11 @@
+import { useMemo } from 'preact/hooks'
+
 import sortTasks from '@utils/tasks/sortTasks'
 import taskIsOverdue from '@utils/tasks/taskIsOverdue'
-import { useMemo } from 'react'
 import taskIsPending from '@utils/tasks/taskIsPending'
+import formatTimestamp from '@utils/formatTimestamp'
+
+import { ONE_DAY_MS } from '@/constants'
 
 /**
  * Generates a filtering function based on the current filter criteria.
@@ -55,18 +59,35 @@ export default function useTaskProcessing(tasks, filter, uid) {
     const result = tasks.reduce((acc, task) => {
       const isTaskOverdue = taskIsOverdue(task)
       const passesFilter = filterFn(task)
+      const isPending = taskIsPending(task.status)
 
-      // handle overdue tasks (only for default filter view)
-      if (isDefaultFilter && isTaskOverdue && taskIsPending(task.status)) {
-        acc.overdueTasks.push(task)
-      }
-
-      // handle main container tasks (default and non-default filter)
       if (isDefaultFilter) {
+
+        // handle overdue tasks (only for default filter view)
+        if (isTaskOverdue && isPending) acc.overdueTasks.push(task)
+
+        // handle main container tasks (default and non-default filter)
         if (!isTaskOverdue) acc.mainFiltered.push(task)
-      } else if (passesFilter) {
-        acc.mainFiltered.push(task)
-      }
+
+        if (!isPending && task.dueDate) {
+          const dueDate = task.dueDate.seconds
+            ? formatTimestamp(task.dueDate).raw
+            : new Date(task.dueDate)
+
+          const now = new Date()
+
+          const diffInMs = dueDate.getTime() - now.getTime()
+          const diffInDays = Math.round(diffInMs / ONE_DAY_MS)
+
+          // add the others tasks to archive only if they were
+          // completed/cancelled and not archived after 1 day (will be on the
+          // mainFiltered if they were completed/cancelled earlier)
+          if (diffInDays < 0) {
+            acc.othersToArchive.push(task)
+          }
+        }
+
+      } else if (passesFilter) acc.mainFiltered.push(task)
 
       // handle subtasks
       if (task.subtasks?.length) {
@@ -88,7 +109,12 @@ export default function useTaskProcessing(tasks, filter, uid) {
       }
 
       return acc
-    }, { overdueTasks: [], mainFiltered: [], promotedSubtasks: [] })
+    }, {
+      overdueTasks: [],
+      mainFiltered: [],
+      promotedSubtasks: [],
+      othersToArchive: []
+    })
 
     const tasksForContainer = sortTasks([
       ...result.mainFiltered,
@@ -99,6 +125,7 @@ export default function useTaskProcessing(tasks, filter, uid) {
       tasksForContainer,
       overdueTasks: isDefaultFilter ? sortTasks(result.overdueTasks) : null,
       filteredTasks: result.mainFiltered, // used for 'no results' UI
+      othersToArchive: result.othersToArchive,
       isDefaultFilter
     }
   }, [tasks, filter, uid])
