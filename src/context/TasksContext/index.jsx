@@ -41,9 +41,11 @@ export default memo(function TasksProvider({ children }) {
       subtasks: Array.isArray(task.subtasks)
         ? task.subtasks.map(subtask => ({
           ...subtask,
-          ref: createRef()
+          ref: createRef(),
+          isOverdue: taskIsOverdue(subtask)
         }))
-        : []
+        : [],
+      isOverdue: taskIsOverdue(task)
     }))
   }, [projectTasks])
 
