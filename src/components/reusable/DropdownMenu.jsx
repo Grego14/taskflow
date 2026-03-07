@@ -38,7 +38,7 @@ export default memo(function DropdownMenu(props) {
   }
 
   const tooltipTitle = typeof label === 'function' ? label(isMenuOpen) : label
-  const { button: buttonProps, otherSlots } = other?.slotProps || {}
+  const { button: buttonProps, ...otherSlots } = other?.slotProps || {}
 
   const button = !text ? (
     <IconButton
@@ -60,7 +60,7 @@ export default memo(function DropdownMenu(props) {
   )
 
   return (
-    <>
+    <Box role='none'>
       {!disableTooltip ? (
         <Tooltip title={tooltipTitle} placement={tooltipPosition}>
           <Box component='span' sx={{ display: 'flex' }}>
@@ -77,9 +77,20 @@ export default memo(function DropdownMenu(props) {
             open={renderOpen}
             onClose={triggerExit}
             className={menuClass}
+            autoFocusItem
+            ref={setMenuRef}
             slotProps={{
               transition: null,
-              list: { ref: setMenuRef, sx: { overflow: 'hidden' } },
+              list: {
+                sx: {
+                  overflow: 'hidden',
+                  ...otherSlots?.list?.sx
+                }
+              },
+              backdrop: {
+                sx: { bgcolor: 'rgba(0,0,0,0.3)' },
+                onClick: triggerExit
+              },
               ...otherSlots
             }}
             transitionDuration={0}>
@@ -87,6 +98,6 @@ export default memo(function DropdownMenu(props) {
           </Menu>
         )}
       </AnimatedMenu>
-    </>
+    </Box>
   )
 })
