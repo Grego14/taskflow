@@ -1,8 +1,6 @@
 import { useCallback, useState } from 'react'
 
-import getTaskMetadata from '@utils/tasks/getTaskMetadata'
-
-export default function useContextMenu({ isArchived, tasks }) {
+export default function useContextMenu(isArchived, tasks) {
   const [contextMenu, setContextMenu] = useState(null)
 
   const handler = useCallback((e, taskId) => {
@@ -51,9 +49,7 @@ export default function useContextMenu({ isArchived, tasks }) {
         selection.addRange(range)
       })
     }
-  },
-    [tasks, isArchived]
-  )
+  }, [tasks, isArchived])
 
   return [contextMenu, handler]
 }
