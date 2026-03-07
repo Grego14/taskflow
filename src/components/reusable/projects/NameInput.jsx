@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 export default function ProjectName({ name, setName, setErrors, isOwner }) {
-  const { t } = useTranslation('ui')
+  const { t } = useTranslation('projects')
   const [error, setError] = useState('')
 
   const validateName = e => {
@@ -14,13 +14,8 @@ export default function ProjectName({ name, setName, setErrors, isOwner }) {
       newName
     )
 
-    if (isEmpty) {
-      setError(t('projects.inputs.errors.nameIsEmpty'))
-    }
-
-    if (isInvalid && !error) {
-      setError(t('projects.inputs.errors.nameIsInvalid'))
-    }
+    if (isEmpty) setError(t('inputs.errors.nameIsEmpty'))
+    if (isInvalid && !error) setError(t('inputs.errors.nameIsInvalid'))
 
     if (isEmpty || isInvalid) {
       setErrors(prev => ({ ...prev, name: true }))
@@ -35,8 +30,8 @@ export default function ProjectName({ name, setName, setErrors, isOwner }) {
   return (
     <Input
       id='project-name'
-      label={t('projects.inputs.nameLabel')}
-      placeholder={t('projects.inputs.namePlaceholder')}
+      label={t('inputs.nameLabel')}
+      placeholder={t('inputs.namePlaceholder')}
       error={error}
       value={name}
       setValue={setName}

@@ -9,14 +9,14 @@ export default memo(function ProjectDescription({
   setErrors,
   isOwner
 }) {
-  const { t } = useTranslation('ui')
+  const { t } = useTranslation('projects')
   const [error, setError] = useState('')
 
   const validateDescription = e => {
     const value = e.target.value.trim()
 
     if (!/^[a-zA-Z0-9!@#$()[\]{}<>~:"';.,/\\=+_\-*\s]+$/.test(value)) {
-      setError(t('projects.inputs.errors.descriptionIsInvalid'))
+      setError(t('inputs.errors.descriptionIsInvalid'))
       setErrors(prev => ({ ...prev, description: true }))
       return false
     }
@@ -29,11 +29,11 @@ export default memo(function ProjectDescription({
   return (
     <Input
       id='project-description'
-      label={t('projects.inputs.descriptionLabel')}
+      label={t('inputs.descriptionLabel')}
       value={description}
       setValue={setDescription}
       onChange={validateDescription}
-      placeholder={t('projects.inputs.descriptionPlaceholder')}
+      placeholder={t('inputs.descriptionPlaceholder')}
       error={error}
       multiline
       rows={5}
