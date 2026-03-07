@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'preact/hooks'
+import { useState, useEffect } from 'preact/hooks'
 import { gsap } from 'gsap'
 import { useGSAP } from '@gsap/react'
 
@@ -15,10 +15,27 @@ const getDynamicStagger = (count) => {
   return 0.05
 }
 
+const getAnimatableItems = (root) => {
+  if (!root) return []
+
+  const selector = `
+    li, 
+    button, 
+    [role="menuitem"], 
+    [role="button"], 
+    .MuiButton-root, 
+    .MuiMenuItem-root
+  `
+  const items = root.querySelectorAll(selector)
+
+  if (items.length > 0) return Array.from(items)
+
+  return Array.from(root.children)
+}
+
 export default function AnimatedMenu({ children, open, onExitComplete }) {
   const [menuElement, setMenuElement] = useState(null)
   const [shouldRender, setShouldRender] = useState(open)
-  const isInitialRender = useRef(true)
 
   useEffect(() => {
     if (open) setShouldRender(true)
@@ -29,7 +46,7 @@ export default function AnimatedMenu({ children, open, onExitComplete }) {
   const triggerExit = contextSafe(() => {
     if (!menuElement) return
 
-    const targets = menuElement.children
+    const targets = getAnimatableItems(menuElement)
     const stagger = getDynamicStagger(targets.length)
 
     const tl = gsap.timeline({
@@ -47,7 +64,7 @@ export default function AnimatedMenu({ children, open, onExitComplete }) {
       ease: 'power2.in'
     })
 
-    tl.to(menuElement.parentElement, {
+    tl.to(menuElement, {
       opacity: 0,
       duration: 0.2,
       ease: 'power1.in'
@@ -55,13 +72,15 @@ export default function AnimatedMenu({ children, open, onExitComplete }) {
   })
 
   useGSAP(() => {
-    if (!menuElement || !menuElement?.children?.length || !open) return
+    if (!menuElement || !open) return
 
-    const targets = menuElement.children
+    const targets = getAnimatableItems(menuElement)
+    if (!targets?.length) return
+
     const stagger = getDynamicStagger(targets.length)
     const tl = gsap.timeline()
 
-    tl.fromTo(menuElement.parentElement,
+    tl.fromTo(menuElement,
       { opacity: 0 },
       { opacity: 1, duration: 0.3 }
     )
@@ -77,10 +96,8 @@ export default function AnimatedMenu({ children, open, onExitComplete }) {
         stagger,
         overwrite: 'auto'
       },
-      '>'
+      '<0.1'
     )
-
-    isInitialRender.current = false
   }, { scope: menuElement, dependencies: [open, menuElement] })
 
   return children(shouldRender, setMenuElement, triggerExit)
