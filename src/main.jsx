@@ -10,12 +10,6 @@ import { theme } from './theme.js'
 
 history.scrollRestoration = 'manual'
 
-if (import.meta.env.DEV) {
-  import('react-scan').then(({ scan }) => {
-    scan({ enabled: true })
-  })
-}
-
 render(
   <StrictMode>
     <Suspense fallback={null}>
