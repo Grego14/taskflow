@@ -5,12 +5,12 @@ import AnimatedMenu from '@components/reusable/animated/AnimatedMenu'
 export default function TaskContextMenu({ data, open, setOpen }) {
   return (
     <AnimatedMenu open={open} onExitComplete={() => setOpen(null)}>
-      {(renderOpen, listRef, triggerExit) => (
+      {(renderOpen, setRef, triggerExit) => (
         <Menu
           open={renderOpen}
           onClose={triggerExit}
           anchorReference='anchorPosition'
-          slotProps={{ list: { ref: listRef } }}
+          ref={setRef}
           anchorPosition={
             data ? { top: data.mouseY, left: data.mouseX } : undefined
           }>

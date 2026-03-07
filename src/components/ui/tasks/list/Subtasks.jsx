@@ -102,7 +102,7 @@ const SubtaskItem = ({ data, list, onContextMenu, isParentOverdue }) => {
       <Card
         ref={data.ref}
         elevation={0}
-        onContextMenu={onContextMenu}
+        onContextMenu={(e) => onContextMenu(e, data.id)}
         sx={[theme => ({
           ...subtaskStyles(theme, data.priority),
           opacity: isDragging || isOverdue ? 0.4 : (isChecked ? 0.6 : 1),
@@ -110,7 +110,7 @@ const SubtaskItem = ({ data, list, onContextMenu, isParentOverdue }) => {
         })]}>
         <Box className='flex flex-center' width='100%'>
           <CompleteButton id={data.id} subtask={data.subtask} status={status} />
-          <Header data={data} menuHandler={onContextMenu} status={status} insideTask />
+          <Header data={data} status={status} insideTask />
         </Box>
 
         <Suspense fallback={null}>

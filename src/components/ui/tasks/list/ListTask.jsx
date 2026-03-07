@@ -13,20 +13,20 @@ const OverdueContent = lazy(() => import('./OverdueContent'))
 import useProject from '@hooks/useProject'
 import useTasks from '@hooks/useTasks'
 import useLayout from '@hooks/useLayout'
+import { useGSAP } from '@gsap/react'
 
 import useContextMenu from './hooks/useContextMenu'
 import useTaskDropTarget from './hooks/useTaskDropTarget'
 import useTaskDraggable from './hooks/useTaskDraggable'
 
 import taskIsOverdue from '@utils/tasks/taskIsOverdue'
+import formatTimestamp from '@utils/formatTimestamp'
 import { priorityColors } from '@/constants'
 import sortTasks from '@utils/tasks/sortTasks'
 import taskIsPending from '@utils/tasks/taskIsPending'
+import gsap from 'gsap'
 
 const taskStyles = (t, priority) => ({
-  backgroundColor: t.alpha(t.palette.background.paper, 0.5),
-  backgroundImage:
-    `linear-gradient(90deg, ${priorityColors[priority][0]}40 60%, ${t.alpha(t.palette.background.paper, 0.5)})`,
   borderRadius: '12px',
   border: '1px solid',
   borderColor: 'divider',
@@ -70,7 +70,7 @@ export default memo(function ListTask({ data }) {
   })
 
   const [contextMenu, handler] = useContextMenu({ isArchived, tasks })
-  const [fg] = priorityColors[data.priority || 'none']
+  const [fg, bg] = priorityColors[data.priority || 'none']
   const status = data?.status
 
   // memoize subtasks to avoid re-filtering on every render
@@ -83,11 +83,36 @@ export default memo(function ListTask({ data }) {
         : true))
   }, [data?.subtasks, isOverdue])
 
+  const taskDate = data.createdAt?.seconds
+    ? formatTimestamp(data.createdAt).raw
+    : new Date()
+  const diff = new Date() - taskDate
+  const isNewTask = diff < 10000
+
+  useGSAP(() => {
+    const element = data?.ref || internalRef
+
+    if (!element?.current || !isNewTask) return
+
+    gsap.fromTo(element.current, {
+      autoAlpha: 0,
+      y: -25,
+      ease: 'power3.out'
+    }, {
+      autoAlpha: 1,
+      y: 0
+    })
+  })
+
   if (!data) return null
 
   const isOverdueLabelVisible = filter !== 'default' &&
     taskIsPending(status) &&
     taskIsOverdue(data)
+
+  const taskOpacity = isNewTask ? 0
+    : isDragging || isOverdueLabelVisible ? 0.5
+      : data.status === 'cancelled' ? 0.75 : 1
 
   return (
     <Box className='relative flex flex-center flex-column'>
@@ -100,16 +125,15 @@ export default memo(function ListTask({ data }) {
         sx={[theme => ({
           ...taskStyles(theme, data.priority),
           borderLeftColor: fg,
-          opacity: isDragging || isOverdueLabelVisible
-            ? 0.5 : data.status === 'cancelled' ? 0.75 : 1
+          opacity: taskOpacity
         })]}>
         <Box
           className='flex flex-column'
-          onContextMenu={handler}
+          onContextMenu={(e) => handler(e, data.id)}
           sx={{ p: 2, py: 1.5 }}>
           <Box className='flex' sx={{ width: '100%', alignItems: 'center', gap: 1 }}>
             <CompleteButton id={data.id} status={status} />
-            <Header data={data} menuHandler={handler} status={status} />
+            <Header data={data} status={status} />
           </Box>
 
           <Suspense fallback={null}>
