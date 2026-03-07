@@ -37,6 +37,12 @@ const linkStyles = {
   }
 }
 
+const homeLinks = (owner, lastEdited) => [
+  { to: '/projects', keyTranslation: 'goToProjects' },
+  { to: '/projects/new', keyTranslation: 'createProject' },
+  { to: `/projects/${owner}/${lastEdited}`, keyTranslation: 'lastEditedProject' }
+]
+
 export default function Home() {
   const { t } = useTranslation(['common', 'ui'])
   const { profile, metadata, userLoaded } = useUser()
@@ -46,14 +52,7 @@ export default function Home() {
   const lastEdited = metadata?.lastEditedProject
   const owner = metadata?.lastEditedProjectOwner
 
-  const navLinks = [
-    { to: '/projects', text: t('projects.goToProjects', { ns: 'ui' }) },
-    { to: '/projects/new', text: t('projects.createProject', { ns: 'ui' }) },
-    ...(lastEdited ? [{
-      to: `/projects/${owner}/${lastEdited}`,
-      text: t('projects.lastEditedProject', { ns: 'ui' })
-    }] : [])
-  ]
+  const links = homeLinks(owner, lastEdited)
 
   const { contextSafe } = useGSAP({ scope: containerRef })
 
@@ -98,15 +97,30 @@ export default function Home() {
       className='flex flex-column flex-center text-center'
       m='auto'
       ref={containerRef}>
-      <Typography variant='h4' sx={{ opacity: 0, visibility: 'hidden' }} id='welcome'>
+      <Typography
+        variant='h4'
+        sx={{ opacity: 0, visibility: 'hidden' }}
+        id='welcome'
+        aria-hidden='true'>
         {t('welcome', { ns: 'common' })}{' '}
-        <Typography variant='span' sx={{ color: 'primary.main', fontWeight: 700 }} id='username'>
+        <Typography
+          variant='span'
+          sx={theme => ({
+            color: 'primary.main',
+            fontWeight: 700,
+            textShadow: `0 0 10px ${theme.palette.primary.main}75`,
+          })}
+          id='username'>
           {username}
         </Typography>
       </Typography>
 
+      <span className='sr-only'>
+        {t('common:welcome')}{' '}{username}
+      </span>
+
       <Box className='flex flex-column flex-center' gap={2} mt={3}>
-        {navLinks.map((link) => (
+        {links.map((link) => (
           <Link
             key={link.to}
             to={link.to}
@@ -114,7 +128,9 @@ export default function Home() {
             sx={linkStyles}
             onMouseEnter={(e) => handleHover(e, true)}
             onMouseLeave={(e) => handleHover(e, false)}>
-            <Typography>{link.text}</Typography>
+            <Typography>
+              {t(`home.${link.keyTranslation}`, { ns: 'ui' })}
+            </Typography>
           </Link>
         ))}
       </Box>

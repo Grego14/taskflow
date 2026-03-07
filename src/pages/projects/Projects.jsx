@@ -73,14 +73,20 @@ export default function Projects() {
     if (loadingResources || loading) return
 
     gsap.set('#project-buttons', { y: 50 })
-    gsap.to('#project-buttons', { autoAlpha: 1, y: 0, ease: 'expo.out', duration: 1, delay: 0.5 })
+    gsap.to('#project-buttons', {
+      autoAlpha: 1,
+      y: 0,
+      ease: 'expo.out',
+      duration: 1,
+      delay: 0.75
+    })
   }, [loadingResources, loading])
 
   const hasProjects = projects.length > 0
   const btnStyles = { alignSelf: hasProjects ? 'start' : 'center' }
 
-  if (loadingResources) return <CircleLoader text={t('loading', { ns: 'common' })} />
-  if (loading) return <CircleLoader text={t('loading', { ns: 'projects' })} />
+  if (loadingResources) return <CircleLoader text={t('common:loading')} />
+  if (loading) return <CircleLoader text={t('projects:loading')} />
 
   return (
     <Box sx={containerStyles(hasProjects)}>
@@ -88,7 +94,7 @@ export default function Projects() {
         {!hasProjects ? (
           <Box>
             <Typography variant='h5' textAlign='center'>
-              {t('errors.empty', { ns: 'projects' })}
+              {t('errors.empty')}
             </Typography>
             <Box
               className='flex flex-center flex-column'
@@ -106,7 +112,7 @@ export default function Projects() {
               variant='h1'
               textAlign={{ xs: 'center', tablet: 'start' }}
               sx={[theme => ({ ...theme.typography.h4, fontWeight: 700 })]}>
-              {t('title_quantity', { quantity: projects.length, ns: 'projects' })}
+              {t('title_quantity', { quantity: projects.length })}
             </Typography>
 
             <ProjectsCards data={projects} />

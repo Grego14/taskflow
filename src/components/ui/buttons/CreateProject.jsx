@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 
 export default function CreateProject({ sx }) {
-  const { t } = useTranslation('ui')
+  const { t } = useTranslation('projects')
   const navigate = useNavigate()
 
   return (
@@ -11,7 +11,7 @@ export default function CreateProject({ sx }) {
       variant='contained'
       onClick={() => navigate('/projects/new')}
       sx={sx}>
-      {t('projects.createProject')}
+      {t('createProject')}
     </Button>
   )
 }

@@ -26,7 +26,7 @@ const ProjectsSection = ({ title, children }) => (
 )
 
 export default function ProjectsCards({ data }) {
-  const { t } = useTranslation('ui')
+  const { t } = useTranslation('projects')
   const { isMobile } = useApp()
   const { metadata, userLoaded } = useUser()
   const containerRef = useRef(null)
@@ -125,10 +125,9 @@ export default function ProjectsCards({ data }) {
       className={`flex flex-column ${isMobile ? 'flex-center' : ''}`}
       gap={4}
       my={3}
-      id='cards'
-    >
+      id='cards'>
       {projects.last && (
-        <ProjectsSection title={t('projects.recentProject')}>
+        <ProjectsSection title={t('recentProject')}>
           <ProjectCard data={projects.last} isRecent />
           {projects.other.length > 0 &&
             <Divider
@@ -144,14 +143,13 @@ export default function ProjectsCards({ data }) {
       )}
 
       {projects.other.length > 0 && (
-        <ProjectsSection title={t('projects.lastProjects')}>
+        <ProjectsSection title={t('lastProjects')}>
           <Box
             sx={{
               display: 'grid',
               gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
               gap: 3
-            }}
-          >
+            }}>
             {projects.other.map(project => (
               <ProjectCard data={project} key={project.id} />
             ))}

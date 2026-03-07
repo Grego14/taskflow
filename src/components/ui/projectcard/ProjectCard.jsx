@@ -8,6 +8,7 @@ import CardActions from '@mui/material/CardActions'
 import CardContent from '@mui/material/CardContent'
 import CardHeader from '@mui/material/CardHeader'
 import Chip from '@mui/material/Chip'
+import Tooltip from '@mui/material/Tooltip'
 import Typography from '@mui/material/Typography'
 import DropdownMenu from '@components/reusable/DropdownMenu'
 
@@ -18,7 +19,7 @@ const ProjectActions = lazy(() => import('./ProjectActions'))
 import useAuth from '@hooks/useAuth'
 import useNavigateToProject from '@hooks/useNavigateToProject'
 import useUser from '@hooks/useUser'
-import { alpha, useTheme } from '@mui/material/styles'
+import { useTheme } from '@mui/material/styles'
 import { useTranslation } from 'react-i18next'
 import { useRef } from 'preact/hooks'
 import { useGSAP } from '@gsap/react'
@@ -33,7 +34,7 @@ import gsap from 'gsap'
 const hidden = { opacity: 0, visibility: 'hidden' }
 
 export default function ProjectCard({ data, isRecent }) {
-  const { t } = useTranslation('ui')
+  const { t } = useTranslation('projects')
   const theme = useTheme()
   const { uid } = useUser()
   const { isMobile } = useApp()
@@ -44,16 +45,20 @@ export default function ProjectCard({ data, isRecent }) {
   const { contextSafe } = useGSAP({ scope: cardRef })
 
   const onHover = contextSafe((active) => {
-    const borderColor = theme.palette.primary.main
+    const primaryColor = theme.palette.primary.main
 
     gsap.to(cardRef.current, {
-      y: active ? -6 : 0,
-      duration: 0.3,
+      backgroundImage: active ?
+        `linear-gradient(${theme.alpha(primaryColor, 0.25)}, 
+        ${theme.alpha(theme.palette.background.paper, 0.25)})`
+        : 'var(--Paper-overlay)',
+      duration: 0.5,
       boxShadow: active ? '0 10px 20px rgba(0,0,0,0.1)' : '0 1px 3px rgba(0,0,0,0.05)',
       borderColor: active ?
-        borderColor :
+        primaryColor :
         // keep the border color if the card is recent
-        isRecent ? borderColor : 'transparent'
+        isRecent ? primaryColor : 'transparent',
+      overwrite: 'auto'
     })
   })
 
@@ -62,9 +67,10 @@ export default function ProjectCard({ data, isRecent }) {
       preferences?.locale)?.raw || new Date(),
     preferences?.locale)
 
-  const noDescription = !data?.description
-
   if (!data || !date) return null
+
+  const noDescription = !data?.description
+  const goToProject = t('goToProject')
 
   return (
     <Card
@@ -72,29 +78,25 @@ export default function ProjectCard({ data, isRecent }) {
       ref={cardRef}
       onMouseEnter={() => onHover(true)}
       onMouseLeave={() => onHover(false)}
-      sx={{
+      sx={theme => ({
         borderRadius: 2,
-        border: isRecent ? `1px solid ${theme.palette.primary.main}` : '1px solid transparent',
-        bgcolor: 'background.paper',
+        border: isRecent ?
+          `1px solid ${theme.palette.primary.main}` :
+          '1px solid transparent',
         maxWidth: '35rem',
         ...hidden
-      }}
-    >
+      })}>
       <CardHeader
         disableTypography
         action={
           <DropdownMenu
             icon={<MoreVertIcon />}
-            label={s => getMenuLabel(s, 'projects.projectCardMenuLabel', 'ui')}
+            label={s => getMenuLabel(s, 'projectCardMenuLabel', 'projects')}
             slotProps={{
-              list: { sx: { py: 0 } }, paper: {
-                sx: {
-                  minWidth: 0,
-                  minHeight: 0
-                }
-              }
-            }}
-          >
+              list: { sx: { py: 0 } },
+              paper: { sx: { minWidth: 'auto', minHeight: 'auto' } },
+              transition: null
+            }}>
             <Suspense fallback={null}>
               <ProjectActions
                 id={data?.id}
@@ -116,19 +118,24 @@ export default function ProjectCard({ data, isRecent }) {
             variant='h6'
             fontWeight={700}>
             {data?.name}
-          </Typography>}
+          </Typography>
+        }
         subheader={
           <Box className='flex' gap={1} mt={0.5} flexWrap='wrap'>
             <Typography
               className='project-id'
               variant='caption'
-              sx={hidden}
+              sx={{
+                ...hidden,
+                // align the text with the chips
+                lineHeight: 2
+              }}
               color='textSecondary'>
               {data?.id}
             </Typography>
             {data?.isTemplate &&
               <StatusChip
-                label={t('projects.template')}
+                label={t('template')}
                 color='primary'
                 theme={theme}
                 type={preferences?.theme}
@@ -136,7 +143,7 @@ export default function ProjectCard({ data, isRecent }) {
             }
             {data?.isArchived &&
               <StatusChip
-                label={t('projects.archived')}
+                label={t('archived')}
                 color='warning'
                 theme={theme}
               />
@@ -152,25 +159,28 @@ export default function ProjectCard({ data, isRecent }) {
             fontStyle: noDescription ? 'italic' : 'normal',
             color: `text.${noDescription ? 'secondary' : 'primary'}`
           }}>
-          {data?.description || t('projects.noDescription')}
+          {data?.description || t('noDescription')}
         </Typography>
       </CardContent >
       <CardActions sx={{ p: 2, justifyContent: 'space-between', mt: 'auto' }}>
         <Typography variant='caption' color='textSecondary'>
-          {t('projects.created_date', { date })}
+          {t('created_date', { date })}
         </Typography>
-        <Button
-          size='small'
-          endIcon={<GoToProjectIcon />}
-          onClick={() => navigate(data?.id, data?.createdBy)}
-          aria-label={isMobile ? t('projects.goToProject') : null}
-          sx={{
-            fontWeight: 700, '& .MuiButton-endIcon': {
-              ...(isMobile && { ml: 0, p: 1 })
-            }
-          }}>
-          {!isMobile && t('projects.goToProject')}
-        </Button>
+
+        <Tooltip title={goToProject} placement='left'>
+          <Button
+            size='small'
+            endIcon={<GoToProjectIcon />}
+            onClick={() => navigate(data?.id, data?.createdBy)}
+            aria-label={isMobile ? goToProject : null}
+            sx={{
+              fontWeight: 700, '& .MuiButton-endIcon': {
+                ...(isMobile && { ml: 0, p: 1 })
+              }
+            }}>
+            {!isMobile && goToProject}
+          </Button>
+        </Tooltip>
       </CardActions>
     </Card>
   )
@@ -184,7 +194,7 @@ const StatusChip = ({ label, color, theme, type }) => (
     sx={{
       fontSize: '0.65rem',
       fontWeight: 900,
-      bgcolor: alpha(theme.palette[color].main, 0.08),
+      bgcolor: theme.alpha(theme.palette[color].main, 0.08),
       color: theme.palette[color].main,
       border: 'none'
     }}
