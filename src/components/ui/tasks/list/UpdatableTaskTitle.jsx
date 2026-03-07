@@ -90,11 +90,13 @@ export default function UpdatableTaskTitle({
             textOverflow: 'ellipsis',
             transition: 'color 0.3s ease',
             ...(isChecked && {
-              textDecoration: 'line-through',
+              textDecoration: isCancelled ? 'line-through' : 'none',
               textDecorationColor: isCancelled ? theme.palette.error.main : 'initial',
               textDecorationThickness: isCancelled ? 2 : 1,
               fontStyle: isCancelled ? 'italic' : 'inherit',
-              color: !isCancelled ? theme.palette.info.main : 'text.secondary'
+              color: !isCancelled ?
+                theme.lighten(theme.palette.success.main, 0.25)
+                : 'text.secondary'
             })
           })
         }
