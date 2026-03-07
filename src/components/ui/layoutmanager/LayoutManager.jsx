@@ -5,8 +5,8 @@ import useApp from '@hooks/useApp'
 import useLoadResources from '@hooks/useLoadResources'
 
 import Box from '@mui/material/Box'
-import LayoutAppBar from '@components/ui/layoutmanager/components/LayoutAppBar'
 
+const LayoutAppBar = lazy(() => import('./components/LayoutAppBar'))
 const AppDrawer = lazy(() => import('@components/ui/drawer/AppDrawer'))
 
 export default memo(function LayoutManager() {
@@ -16,7 +16,9 @@ export default memo(function LayoutManager() {
 
   return (
     <Box>
-      <LayoutAppBar />
+      <Suspense fallback={null}>
+        {!projectId && <LayoutAppBar />}
+      </Suspense>
 
       <Suspense fallback={null}>
         {(!isMobile || (isMobile && projectId)) && <AppDrawer />}
