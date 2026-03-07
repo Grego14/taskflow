@@ -21,7 +21,7 @@ export default function TaskPriority({ priority, updatePriority }) {
       disableTooltip
       label={t('changePriority')}
       text={getPriorityLabel(priority)}
-      buttonStyles={(theme) => ({ ...getPriorityStyles(theme, { fg, bg }), maxWidth: '50%' })}>
+      buttonStyles={(theme) => ({ ...getPriorityStyles(theme, { fg, bg }) })}>
       {(triggerExit) =>
         renderPriorityMenu(priority, (val) => {
           triggerExit()
