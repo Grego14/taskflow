@@ -95,7 +95,7 @@ export default function Notifications() {
   }
 
   return (
-    <Container maxWidth='sm' sx={{ py: 6, minHeight: '100vh' }}>
+    <Container maxWidth='sm' sx={{ py: 6 }}>
       <Typography
         className='text-center'
         variant='h4'
