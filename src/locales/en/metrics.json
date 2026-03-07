@@ -11,7 +11,7 @@
     "cancelled": "Cancelled",
     "pending": "Pending",
     "overdue": "Overdue",
-    "distributionPerStatus": "Distribución de tareas por estado"
+    "distributionPerStatus": "Tasks distribution per status"
   },
   "labels": {
     "done": "Done ({{count}})",
