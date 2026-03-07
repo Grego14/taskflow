@@ -1,18 +1,19 @@
+
 import DropdownMenu from '@components/reusable/DropdownMenu'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
 import Box from '@mui/material/Box'
 import CardHeader from '@mui/material/CardHeader'
 import Typography from '@mui/material/Typography'
-import TaskCalendar from './TaskCalendar'
 import UpdatableTaskTitle from './UpdatableTaskTitle'
 import TaskActions from './menu_components/TaskActions'
 import TaskMembers from './TaskMembers'
 import SmartDateLabel from './SmartDateLabel'
+import TaskCalendar from './TaskCalendar'
 
+import { useMemo, useState } from 'preact/compat'
 import useApp from '@hooks/useApp'
 import useProject from '@hooks/useProject'
 import useUser from '@hooks/useUser'
-import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import formatTimeAgo from '@utils/formatTimeAgo'
@@ -50,7 +51,12 @@ export default function Header({ data, insideTask = false, status }) {
       className='flex-center'
       sx={{ p: 0, width: '100%' }}
       disableTypography
-      slotProps={{ action: { sx: { my: 'auto' } } }}
+      slotProps={{
+        action: {
+          sx: { my: 'auto', display: 'flex', gap: 1 },
+          className: !insideTask ? 'task' : 'subtask'
+        }
+      }}
       title={
         <UpdatableTaskTitle
           title={data.title}
@@ -64,7 +70,7 @@ export default function Header({ data, insideTask = false, status }) {
       }
       action={
         !showTitle && (
-          <Box display='flex' gap={1}>
+          <>
             {data.dueDate && <SmartDateLabel date={data.dueDate} />}
 
             <TaskMembers
@@ -93,7 +99,7 @@ export default function Header({ data, insideTask = false, status }) {
                 <TaskActions {...actionsData} menuHandler={triggerExit} />
               )}
             </DropdownMenu>
-          </Box>
+          </>
         )
       }
     />
