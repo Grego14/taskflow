@@ -10,11 +10,12 @@ import useProject from '@hooks/useProject'
 import { useTranslation } from 'react-i18next'
 import { useMemo } from 'react'
 import useApp from '@hooks/useApp'
+import { Button } from '@mui/material'
 
 export default function ArchiveButton() {
   const { t } = useTranslation('tasks')
   const { tasks, actions } = useTasks()
-  const { appNotification } = useApp()
+  const { appNotification, isMobile } = useApp()
   const { id: projectId, data: projectData } = useProject()
 
   const tasksToArchive = useMemo(() => {
@@ -49,47 +50,68 @@ export default function ArchiveButton() {
 
   if (count === 0) return
 
-  return (
-    <Tooltip title={t('buttons.archiveCount', { count })}>
-      <Box sx={{ display: 'flex', alignItems: 'center', ml: 1 }}>
-        <IconButton
-          onClick={handleArchive}
-          sx={theme => ({
-            color: theme.lighten(theme.palette.warning.main, 0.125),
-            ...(theme.applyStyles('dark', {
-              color: theme.darken(theme.palette.warning.main, 0.125)
-            })),
-            borderRadius: '50%',
-            p: 1
-          })}
-          disabled={projectData?.isArchived}>
-          <Badge
-            badgeContent={count}
-            color='error'
-            sx={{
-              '& .MuiBadge-badge': {
-                fontSize: '0.65rem',
-                height: 16,
-                minWidth: 16
-              }
-            }}>
-            <ArchiveIcon fontSize='medium' />
-          </Badge>
-        </IconButton>
+  const buttonProps = {
+    onClick: handleArchive,
+    sx: theme => ({
+      color: theme.lighten(theme.palette.warning.main, 0.125),
+      ...(theme.applyStyles('dark', {
+        color: theme.darken(theme.palette.warning.main, 0.125)
+      })),
+      borderRadius: !isMobile ? '50%' : 1,
+      borderColor: isMobile ?
+        theme.darken(theme.palette.warning.main, 0.25)
+        : 'none',
+      p: 1
+    }),
+    disabled: projectData?.isArchived,
+    variant: isMobile ? 'outlined' : 'text'
+  }
 
-        <Typography
-          variant='caption'
+  const button = isMobile ?
+    (
+      <Button {...buttonProps}>
+        {t('buttons.archiveCount', { count })}
+      </Button>
+    )
+    : (
+      <IconButton {...buttonProps}>
+        <Badge
+          badgeContent={count}
+          color='error'
           sx={{
-            display: { xs: 'none', md: 'block' },
-            ml: 0.5,
-            fontWeight: 'bold',
-            color: 'text.secondary',
-            textTransform: 'uppercase',
-            fontSize: '0.65rem'
+            '& .MuiBadge-badge': {
+              fontSize: '0.65rem',
+              height: 16,
+              minWidth: 16
+            }
           }}>
-          {t('buttons.archive')}
-        </Typography>
-      </Box>
+          <ArchiveIcon fontSize='medium' />
+        </Badge>
+      </IconButton>
+    )
+
+  return !isMobile ? (
+    <Tooltip title={t('buttons.archiveCount', { count })}>
+      {button}
     </Tooltip>
-  )
+  ) : button
+
+  // return (
+  //   <Box sx={{ display: 'flex', alignItems: 'center', ml: 1 }}>
+  //     {button}
+  //
+  //     <Typography
+  //       variant='caption'
+  //       sx={{
+  //         display: { xs: 'none', md: 'block' },
+  //         ml: 0.5,
+  //         fontWeight: 'bold',
+  //         color: 'text.secondary',
+  //         textTransform: 'uppercase',
+  //         fontSize: '0.65rem'
+  //       }}>
+  //       {t('buttons.archive')}
+  //     </Typography>
+  //   </Box>
+  // )
 }

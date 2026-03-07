@@ -1,3 +1,5 @@
+import { lazy, Suspense } from 'preact/compat'
+
 import Link from '@components/reusable/Link'
 import CircleLoader from '@components/reusable/loaders/CircleLoader'
 import TasksPreviewer from '@components/ui/tasks/TasksPreviewer'
@@ -7,12 +9,15 @@ import Breadcrumbs from '@mui/material/Breadcrumbs'
 import Chip from '@mui/material/Chip'
 import Typography from '@mui/material/Typography'
 
-// hooks
+const ArchiveButton = lazy(() => import('@components/ui/buttons/ArchiveButton'))
+
 import useProject from '@hooks/useProject'
 import { useTranslation } from 'react-i18next'
 import useLoadResources from '@hooks/useLoadResources'
+import useApp from '@hooks/useApp'
 
 const ProjectHeader = ({ projectName, isArchived }) => {
+  const { isMobile } = useApp()
   const { t } = useTranslation('projects')
 
   return (
@@ -37,6 +42,12 @@ const ProjectHeader = ({ projectName, isArchived }) => {
           </Typography>
         )}
       </Breadcrumbs>
+
+      {isMobile && (
+        <Suspense fallback={null}>
+          <ArchiveButton />
+        </Suspense>
+      )}
 
       {isArchived && (
         <Chip

@@ -19,7 +19,7 @@ export default function ProjectItems() {
   const defaultItems =
     <>
       <PreviewSwitcher />
-      <ArchiveButton />
+      {!isMobile && <ArchiveButton />}
       <AddButton />
       <FilterButton />
       <AddMembers />
