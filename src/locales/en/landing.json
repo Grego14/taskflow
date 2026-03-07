@@ -6,27 +6,55 @@
   "cards": {
     "cloud": {
       "title": "Cloud Sync",
-      "text": "All your projects and tasks are securely saved on the cloud, allowing you to access them from anywhere, at any time."
+      "text": "Access your projects and tasks from any device, anywhere, instantly."
     },
     "management": {
       "title": "Task Management",
-      "text": "Effortlessly organize and prioritize your tasks, and stay on top of your projects with our intuitive and user-friendly interface."
+      "text": "Organize, prioritize, and master your workflow with an intuitive interface."
     },
     "collaborate": {
       "title": "Collaboration",
-      "text": "Invite team members to collaborate on projects, assign tasks, and track progress in real-time."
+      "text": "Invite your team, assign tasks, and track real-time progress together."
     },
     "public_templates": {
       "title": "Community Library",
-      "text": "Explore and use templates created by other users to jumpstart your projects instantly."
+      "text": "Jumpstart your projects using templates shared by the community."
     },
     "private_templates": {
       "title": "Private Templates",
-      "text": "Standardize your processes by saving your own workflows as personal reusable templates."
+      "text": "Standardize your own processes with personal reusable workflows."
     },
     "metrics": {
       "title": "Smart Metrics",
-      "text": "Visualize your team's performance and project progress with intuitive charts."
+      "text": "Visualize performance and project health with real-time charts."
     }
+  },
+  "faq": {
+    "title": "Common Questions",
+    "free": {
+      "q": "Is it really free?",
+      "a": "Yes. The core features for personal project management are and will remain free."
+    },
+    "security": {
+      "q": "How safe is my data?",
+      "a": "We use strict security rules and encryption to ensure that only you can access your information. Your privacy is our priority."
+    },
+    "mobile": {
+      "q": "Can I use it on my phone?",
+      "a": "Absolutely. The platform is fully responsive, so you can manage your tasks from any mobile browser."
+    },
+    "export": {
+      "q": "Can I export my data?",
+      "a": "Yes. Your data belongs to you. You can export your tasks and projects in JSON or Markdown format whenever you need."
+    },
+    "author": {
+      "q": "Who built this?",
+      "a": "I'm a frontend developer who needed a cleaner, faster way to organize my life. This app is built by a dev, for devs and creators."
+    }
+  },
+  "contact": {
+    "title": "Ready to boost your productivity?",
+    "text": "Designed specifically for freelancers and small teams looking for a fast, no-nonsense project manager.",
+    "button": "Get in touch"
   }
 }

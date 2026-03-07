@@ -6,27 +6,55 @@
   "cards": {
     "cloud": {
       "title": "Sincronización en la nube",
-      "text": "Todos tus proyectos y tareas se guardan de forma segura en la nube, lo que te permite acceder a ellos desde cualquier lugar y en cualquier momento."
+      "text": "Accede a tus proyectos y tareas desde cualquier dispositivo, al instante."
     },
     "management": {
-      "title": "Gestión de tareas",
-      "text": "Organiza y prioriza tus tareas con facilidad, y mantén el control de tus proyectos con nuestra interfaz intuitiva y fácil de usar."
+      "title": "Gestión de Tareas",
+      "text": "Organiza, prioriza y domina tu flujo de trabajo con una interfaz intuitiva."
     },
     "collaborate": {
       "title": "Colaboración",
-      "text": "Invita a miembros del equipo a colaborar en proyectos, asignar tareas y seguir el progreso en tiempo real."
+      "text": "Invita a tu equipo, asigna tareas y sigue el progreso en tiempo real."
     },
     "public_templates": {
       "title": "Biblioteca Comunitaria",
-      "text": "Explora y utiliza plantillas creadas por otros usuarios para acelerar el inicio de tus proyectos."
+      "text": "Impulsa tus proyectos usando plantillas compartidas por otros usuarios."
     },
     "private_templates": {
       "title": "Plantillas Privadas",
-      "text": "Estandariza tus procesos guardando tus propios flujos de trabajo como plantillas personales."
+      "text": "Estandariza tus procesos con flujos de trabajo personales y reutilizables."
     },
     "metrics": {
       "title": "Métricas Inteligentes",
-      "text": "Visualiza el rendimiento de tu equipo y el progreso del proyecto con gráficos intuitivos."
+      "text": "Visualiza el rendimiento y la salud del proyecto con gráficos en vivo."
     }
+  },
+  "faq": {
+    "title": "Preguntas Frecuentes",
+    "free": {
+      "q": "¿Es realmente gratis?",
+      "a": "Sí. Las funciones principales para la gestión de proyectos personales son y seguirán siendo gratuitas."
+    },
+    "security": {
+      "q": "¿Qué tan seguros están mis datos?",
+      "a": "Implementamos reglas de seguridad estrictas y cifrado para garantizar que solo tú tengas acceso a tu información."
+    },
+    "mobile": {
+      "q": "¿Puedo usarlo en mi móvil?",
+      "a": "Totalmente. La plataforma es 100% responsiva para que gestiones tus tareas desde cualquier navegador móvil."
+    },
+    "export": {
+      "q": "¿Puedo exportar mis datos?",
+      "a": "Sí. Tus datos son tuyos. Puedes exportar tus tareas y proyectos en formato JSON o Markdown siempre que lo necesites."
+    },
+    "author": {
+      "q": "¿Quién creó esto?",
+      "a": "Soy un desarrollador Frontend que buscaba una forma más limpia y rápida de organizarse. Esta app está hecha por un dev, para devs y creadores."
+    }
+  },
+  "contact": {
+    "title": "¿Listo para potenciar tu productividad?",
+    "text": "Diseñado específicamente para freelancers y pequeños equipos que buscan un gestor de proyectos rápido y sin complicaciones.",
+    "button": "Contactar conmigo"
   }
 }

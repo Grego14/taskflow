@@ -1,14 +1,14 @@
 import { useEffect, useState, Suspense, lazy } from 'react'
 
-// components
 import Box from '@mui/material/Box'
 import MainText from './components/MainText'
 
 const LandingAppBar = lazy(() => import('./components/LandingAppBar'))
 const Cards = lazy(() => import('./components/Cards'))
 const LoginSection = lazy(() => import('./components/LoginSection'))
+const FaqSection = lazy(() => import('./components/FaqSection'))
+const ContactSection = lazy(() => import('./components/ContactSection'))
 
-// hooks
 import useLoadResources from '@hooks/useLoadResources'
 import { useTranslation } from 'react-i18next'
 import { useGSAP } from '@gsap/react'
@@ -45,6 +45,8 @@ export default function Landing() {
   const [showAppBar, setShowAppBar] = useState(false)
   const [mainEnded, setMainEnded] = useState(false)
   const [cardsEnded, setCardsEnded] = useState(false)
+  const [faqEnded, setFaqEnded] = useState(false)
+  const [contactEnded, setContactEnded] = useState(false)
   const [getPlugins, setGetPlugins] = useState(false)
   const [pluginsReady, setPluginsReady] = useState(false)
 
@@ -90,6 +92,8 @@ export default function Landing() {
     setGetPlugins(true)
   }
 
+  const bgColor = { backgroundColor: landingBg }
+
   return (
     <Box
       sx={{
@@ -124,8 +128,20 @@ export default function Landing() {
           />
         )}
       </ScreenWrapper>
-      <ScreenWrapper sx={{ backgroundColor: landingBg }}>
-        {cardsEnded &&
+      <ScreenWrapper sx={bgColor} height='75dvh'>
+        {cardsEnded && (
+          <FaqSection setAnimationEnded={() => setFaqEnded(true)} />
+        )}
+      </ScreenWrapper>
+
+      <ScreenWrapper sx={bgColor} height='50dvh'>
+        {faqEnded && (
+          <ContactSection setAnimationEnded={() => setContactEnded(true)} />
+        )}
+      </ScreenWrapper>
+
+      <ScreenWrapper sx={bgColor} height='115dvh'>
+        {contactEnded &&
           <LoginSection
             prefetchAuth={handlePrefetch}
           />

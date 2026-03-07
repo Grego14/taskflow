@@ -9,7 +9,37 @@ import useUser from '@hooks/useUser'
 import gsap from 'gsap'
 import { SplitText } from 'gsap/SplitText'
 import { useTranslation } from 'react-i18next'
-import { alpha } from '@mui/material/styles'
+
+const loginBtnStyles = (t) => ({
+  borderRadius: '12px',
+  px: 4,
+  py: 1.5,
+  textTransform: 'none',
+  fontWeight: 600,
+  borderColor: t.palette.divider,
+  color: t.palette.text.primary,
+  '&:hover': {
+    backgroundColor: t.alpha(t.palette.primary.main, 0.05),
+    borderColor: t.palette.primary.main
+  }
+})
+
+const signUpBtnStyles = (t) => ({
+  borderRadius: '12px',
+  px: 4,
+  py: 1.5,
+  textTransform: 'none',
+  fontWeight: 700,
+  boxShadow: `0 6px 16px ${t.alpha(t.palette.primary.main, 0.3)}`,
+  background:
+    `linear-gradient(45deg, ${t.palette.primary.main}, ${t.palette.primary.dark})`,
+  '&:hover': {
+    boxShadow: `0 10px 20px ${t.alpha(t.palette.primary.main, 0.4)}`,
+    transform: 'translateY(-2px)'
+  },
+  transition: 'transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out',
+  textRendering: 'optimizeLegibility'
+})
 
 export default function LoginSection({ prefetchAuth }) {
   const { isOnlyMobile } = useApp()
@@ -20,45 +50,58 @@ export default function LoginSection({ prefetchAuth }) {
       const loginText = SplitText.create('#login-text', { type: 'words' })
 
       gsap.set('#login-text', { opacity: 1 })
-      gsap.set(['#login-btn', '#signup-btn'], { autoAlpha: 0, y: 40 })
+      gsap.set(['#login-btn', '#signup-btn'], { autoAlpha: 0, y: 30 })
+      gsap.set('.blur-circle', { opacity: 0, scale: 0.8 })
 
-      gsap.to('.blur-circle', { opacity: 1 })
+      gsap.to('.blur-circle', {
+        opacity: 0.6,
+        scale: 1.2,
+        y: '+=40',
+        x: '+=20',
+        duration: 'random(4, 6)',
+        repeat: -1,
+        yoyo: true,
+        ease: 'sine.inOut',
+        stagger: {
+          each: 0.8,
+          from: 'random'
+        }
+      })
 
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: '#login',
-          end: '50% 55%',
-          start: 'top+=25% 75%',
-          scrub: true,
-          toggleActions: 'play none none none',
+          start: 'top 50%',
+          end: 'bottom-=20% 80%',
+          scrub: 1,
           once: true
         }
       })
 
       tl.from(loginText.words, {
-        y: 20,
-        scale: 0.9,
-        stagger: 0.15,
+        y: 40,
+        rotationX: -40,
         autoAlpha: 0,
+        stagger: 0.1,
         ease: 'power3.out',
+        duration: 1
       })
         .to(['#login-btn', '#signup-btn'], {
           y: 0,
           autoAlpha: 1,
-          stagger: 0.25,
-          ease: 'back.out(1.7)',
-          duration: 0.8
-        }, '-=0.2')
-
-      // Subtle float animation for background circles
-      gsap.to('.blur-circle', {
-        y: '+=50',
-        duration: 3,
-        repeat: -1,
-        yoyo: true,
-        ease: 'sine.inOut',
-        stagger: 0.5
-      })
+          stagger: 0.2,
+          ease: 'back.out(1.2)',
+          duration: 0.8,
+          onComplete() {
+            gsap.to('#signup-btn', {
+              scale: 1.05,
+              duration: 0.8,
+              repeat: -1,
+              yoyo: true,
+              ease: 'sine.inOut'
+            })
+          }
+        }, '-=0.3')
     })
   })
 
@@ -84,22 +127,39 @@ export default function LoginSection({ prefetchAuth }) {
             fontWeight: 700,
             lineHeight: 1.2,
             perspective: '1000px',
-            transformOrigin: '0 50% -50'
+            transformOrigin: '0 50% -50',
           }}
           id='login-text'>
           {t('login')}
         </Typography>
         <Box
           className={isOnlyMobile ? 'flex flex-column' : 'flex'}
-          gap={isOnlyMobile ? 2 : 3}
+          gap={{ xs: 2, mobile: 3 }}
           mt={6}>
-          <LoginButton variant='outlined' id='login-btn' onMouseEnter={prefetchAuth} />
-          <SignUpButton id='signup-btn' onMouseEnter={prefetchAuth} />
+          <LoginButton
+            variant='outlined'
+            id='login-btn'
+            onMouseEnter={prefetchAuth}
+            sx={loginBtnStyles}
+          />
+          <SignUpButton
+            id='signup-btn'
+            onMouseEnter={prefetchAuth}
+            sx={signUpBtnStyles}
+          />
         </Box>
       </div>
 
-      <BlurredCircle className='blur-circle' positions={{ bottom: '10%', left: '-5%' }} color='primary' />
-      <BlurredCircle className='blur-circle' positions={{ top: '10%', right: '-5%' }} color='secondary' />
+      <BlurredCircle
+        className='blur-circle'
+        positions={{ bottom: '10%', left: '-5%' }}
+        color='primary'
+      />
+      <BlurredCircle
+        className='blur-circle'
+        positions={{ top: '10%', right: '-5%' }}
+        color='secondary'
+      />
     </Section>
   )
 }
@@ -115,7 +175,8 @@ function BlurredCircle({ positions, color = 'secondary', blur = 80, className })
         width: 250,
         height: 250,
         borderRadius: '50%',
-        backgroundColor: alpha(theme.palette[color].main, isDark ? 0.2 : 0.15),
+        backgroundColor:
+          theme.alpha(theme.palette[color].main, isDark ? 0.3 : 0.18),
         position: 'absolute',
         filter: `blur(${blur}px)`,
         zIndex: 1,

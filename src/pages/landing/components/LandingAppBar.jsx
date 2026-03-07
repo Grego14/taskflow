@@ -21,7 +21,8 @@ const appBarStyles = {
   width: '100%',
   border: 'none',
   position: 'fixed',
-  top: 0
+  top: 0,
+  backgroundColor: 'transparent'
 }
 
 export default function LandingAppBar() {
@@ -53,9 +54,12 @@ export default function LandingAppBar() {
           display: 'flex',
           alignItems: 'center',
           gap: 1
-        })}
-      >
-        <Box sx={[theme => ({ color: theme.palette.common[theme.palette.mode === 'light' ? 'white' : 'black'] })]}>
+        })}>
+        <Box sx={[theme => ({
+          color: theme.palette.common[theme.palette.mode === 'light'
+            ? 'white'
+            : 'black']
+        })]}>
           <img
             width='40'
             height='40'
@@ -70,7 +74,16 @@ export default function LandingAppBar() {
       <Box className='flex flex-center nav-item' sx={{ display: 'flex', gap: 2 }}>
         <ThemeUpdater />
         <LangUpdater reloadOnChange />
-        {currentUser && (<ProfileButton onlyIcon />)}
+        {currentUser && (<ProfileButton
+          onlyIcon
+          sx={{
+            '& .MuiAvatar-root': {
+              width: 30,
+              height: 30
+            }
+          }}
+          tooltipPosition='bottom-start'
+        />)}
       </Box>
     </AppBar>
   )

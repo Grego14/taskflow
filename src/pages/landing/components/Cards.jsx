@@ -14,16 +14,41 @@ import Section from './Section'
 import { useGSAP } from '@gsap/react'
 import useUser from '@hooks/useUser'
 import { useTranslation } from 'react-i18next'
+import useApp from '@hooks/useApp'
 
 import gsap from 'gsap'
 
 const CARDS_DATA = [
-  { type: 'cloud', icon: Cloud },
-  { type: 'management', icon: ListAlt },
-  { type: 'collaborate', icon: People },
-  { type: 'public_templates', icon: Public },
-  { type: 'private_templates', icon: Lock },
-  { type: 'metrics', icon: BarChart }
+  {
+    type: 'cloud',
+    icon: Cloud,
+    gridArea: { xs: 'auto', tablet: '1 / 1 / 3 / 2' }
+  },
+  {
+    type: 'management',
+    icon: ListAlt,
+    gridArea: { xs: 'auto', tablet: '1 / 2 / 2 / 4' }
+  },
+  {
+    type: 'collaborate',
+    icon: People,
+    gridArea: { xs: 'auto', tablet: '2 / 2 / 3 / 3' }
+  },
+  {
+    type: 'public_templates',
+    icon: Public,
+    gridArea: { xs: 'auto', tablet: '2 / 3 / 3 / 4' }
+  },
+  {
+    type: 'private_templates',
+    icon: Lock,
+    gridArea: { xs: 'auto', tablet: '3 / 1 / 4 / 3' }
+  },
+  {
+    type: 'metrics',
+    icon: BarChart,
+    gridArea: { xs: 'auto', tablet: '3 / 3 / 4 / 4' }
+  }
 ]
 
 const cardStyles = (t, isDark) => ({
@@ -32,7 +57,7 @@ const cardStyles = (t, isDark) => ({
     ? t.alpha(t.palette.background.paper, 0.4)
     : t.alpha('#fff', 0.6),
   border: `1px solid ${t.alpha(t.palette.secondary.main, 0.3)}`,
-  borderRadius: '16px',
+  borderRadius: 3,
   height: '100%',
   transition: 'transform 0.3s ease-in-out',
   '&:hover': {
@@ -47,35 +72,32 @@ const cardStyles = (t, isDark) => ({
 
 export default function Cards({ setAnimationEnded, bg, showAppBar, pluginsReady }) {
   const { t } = useTranslation('landing')
+  const { isMobile } = useApp()
   const { preferences } = useUser()
   const isDark = preferences?.theme === 'dark'
 
   useGSAP(() => {
-    showAppBar()
-
-    gsap.set('.card', { autoAlpha: 0, scale: 0.8, y: 40 })
-
     if (!pluginsReady) return
 
-    const tween = gsap.to('.card', {
+    showAppBar()
+
+    gsap.from('.card', {
       scrollTrigger: {
         trigger: '#cards',
-        start: 'top 50%',
+        start: `top ${isMobile ? '40%' : '60%'}`,
+        end: isMobile ? 'bottom+=10% bottom-=40%' : 'bottom+=15% bottom-=35%',
         toggleActions: 'play none none none',
-        end: 'bottom 75%',
-        once: true,
-        scrub: true
+        scrub: 0.1,
+        once: true
       },
-      autoAlpha: 1,
-      scale: 1,
-      y: 0,
-      stagger: 0.25,
-      duration: 1.2,
-      ease: 'elastic.out(1, 0.8)',
-      onComplete: setAnimationEnded,
-      clearProps: 'all'
+      autoAlpha: 0,
+      y: 30,
+      stagger: 0.15,
+      duration: 0.8,
+      ease: 'power2.out',
+      onComplete: setAnimationEnded
     })
-  }, [pluginsReady])
+  }, [pluginsReady, isMobile])
 
   return (
     <Section
@@ -85,24 +107,23 @@ export default function Cards({ setAnimationEnded, bg, showAppBar, pluginsReady 
         padding: { xs: 3, laptop: 8 },
         display: 'grid',
         backgroundImage: `linear-gradient(rgba(0,0,0,0), ${bg})`,
-        gridTemplateColumns:
-        {
-          xs: 'repeat(auto-fit, minmax(100%, 1fr))',
-          laptop: 'repeat(auto-fit, minmax(350px, 1fr))'
+        gridTemplateColumns: {
+          xs: '1fr',
+          tablet: 'repeat(3, 1fr)'
         },
-        height: 'auto',
+        height: 'auto'
       }}>
-      {CARDS_DATA.map(({ type, icon: Icon }) => (
+      {CARDS_DATA.map(({ type, icon: Icon, gridArea }) => (
         <Card
           key={type}
-          sx={t => cardStyles(t, isDark)}
+          sx={t => ({ ...cardStyles(t, isDark), gridArea })}
           className='card'
           elevation={0}>
           <CardHeader
             avatar={
               <Box sx={{
                 p: 1.5,
-                borderRadius: '50%',
+                borderRadius: '12px',
                 background: t => t.alpha(t.palette.primary.main, 0.1),
                 display: 'flex'
               }}>
