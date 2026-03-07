@@ -138,19 +138,7 @@ export default function MainText({ setAnimationEnded, prefetchAuth }) {
         {t('title0')}
       </Typography>
 
-      <Box className='relative' sx={{
-        '& .sr-only': {
-          position: 'absolute',
-          width: '1px',
-          height: '1px',
-          padding: 0,
-          margin: '-1px',
-          overflow: 'hidden',
-          clip: 'rect(0, 0, 0, 0)',
-          whiteSpace: 'nowrap',
-          borderWwidth: 0
-        }
-      }}>
+      <Box className='relative'>
         <Typography
           color='textSecondary'
           variant='body1'

@@ -87,18 +87,29 @@ const baseTheme = createTheme({
       }
     },
     MuiCssBaseline: {
-      styleOverrides: `
-        @font-face {
-          font-family: 'Rubik';
-          src: url(/fonts/Rubik-VariableFont_wght.woff2) format('woff2');
-          font-style: normal;
-          font-weight: 400 700;
-          font-display: swap;
+      styleOverrides: {
+        '@font-face': {
+          fontFamily: 'Rubik',
+          src: 'url(/fonts/Rubik-VariableFont_wght.woff2) format("woff2")',
+          fontStyle: 'normal',
+          fontWeight: '400 700',
+          fontDisplay: 'swap'
+        },
+        body: {
+          fontSize: 'inherit'
+        },
+        '.sr-only': {
+          position: 'absolute',
+          width: '1px',
+          height: '1px',
+          padding: 0,
+          margin: '-1px',
+          overflow: 'hidden',
+          clip: 'rect(0, 0, 0, 0)',
+          whiteSpace: 'nowrap',
+          borderWidth: 0
         }
-        body{
-          font-size: inherit;
-        }
-      `
+      }
     },
     MUITypography: {
       styleOverrides: {
