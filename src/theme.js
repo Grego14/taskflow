@@ -1,25 +1,92 @@
-import { createTheme, responsiveFontSizes } from '@mui/material/styles'
+import {
+  createTheme,
+  responsiveFontSizes,
+  darken,
+  lighten,
+  alpha
+} from '@mui/material/styles'
 import Zoom from '@mui/material/Zoom'
+
+const primary = {
+  light: '#7C5DFA',
+  dark: '#A592E8'
+}
+
+const secondary = {
+  light: '#A592E8',
+  dark: '#D29AEE'
+}
 
 const baseTheme = createTheme({
   colorSchemes: {
     light: {
       palette: {
         primary: {
-          main: '#7C5DFA'
+          main: primary.light,
+          contrast: darken('#7C5DFA', 0.25)
         },
-        secondary: {
-          main: '#A592E8'
+        secondary: { main: secondary.light },
+        background: {
+          app: `
+          linear-gradient(
+            ${alpha(secondary.light, 0.05)},
+            ${alpha(primary.light, 0.15)}),
+          linear-gradient(
+            225deg, ${alpha('#fff', 0.5)}, 
+            ${alpha(primary.light, 0.25)})`,
+
+          drawer: `
+          linear-gradient(
+            ${alpha(secondary.light, 0.03)},
+            ${alpha(primary.light, 0.45)})`,
+
+          appbar: {
+            bottom: `linear-gradient(
+            ${alpha(secondary.light, 0.03)},
+            ${alpha(primary.light, 0.3)})`,
+
+            // the top style matchs with the drawer 
+            // (appbar is on top on laptop/desktop devices, when the drawer is
+            // temporary)
+            top: `linear-gradient(45deg,
+            ${alpha(secondary.light, 0.03)},
+            ${alpha(primary.light, 0.45)})`
+          }
         }
       }
     },
     dark: {
       palette: {
         primary: {
-          main: '#A592E8'
+          main: primary.dark,
+          contrast: lighten('#A592E8', 0.35)
         },
-        secondary: {
-          main: '#D29AEE'
+        secondary: { main: secondary.dark },
+        background: {
+          app: `
+          linear-gradient(
+            ${alpha(secondary.dark, 0.05)},
+            ${alpha(primary.dark, 0.25)}),
+          linear-gradient(
+            225deg, ${alpha('#121212', 0.1)}, 
+            ${alpha(primary.dark, 0.2)})`,
+
+          drawer: `linear-gradient(
+              ${alpha(secondary.light, 0.1)},
+              ${alpha(primary.light, 0.18)})`,
+
+          appbar: {
+            bottom: `linear-gradient(
+            ${alpha(secondary.light, 0.03)},
+            ${alpha(primary.light, 0.45)})`,
+
+            top: `linear-gradient(45deg,
+            ${alpha(secondary.light, 0.1)},
+            ${alpha(primary.light, 0.18)})`
+          }
+        },
+        action: {
+          selected: 'rgba(255, 255, 255, 0.65)'
         }
       }
     }
