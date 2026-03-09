@@ -3,6 +3,7 @@ import LogoLoader from '@components/reusable/loaders/LogoLoader'
 import Container from '@mui/material/Container'
 import Box from '@mui/material/Box'
 import NotificationItem from './NotificationItem'
+import AnimatedTitle from '@components/reusable/texts/AnimatedTitle'
 
 import useNotifications from '@hooks/useNotifications'
 import useLoadResources from '@hooks/useLoadResources'
@@ -94,23 +95,32 @@ export default function Notifications() {
     }
   }
 
+  const hasNotifications = notifications.length > 0
+
   return (
-    <Container maxWidth='sm' sx={{ py: 6 }}>
-      <Typography
-        className='text-center'
-        variant='h4'
+    <Container
+      className='flex flex-column'
+      maxWidth='sm'
+      sx={{ pt: 6, flexGrow: 1 }}>
+      <AnimatedTitle
+        id='notifications-title'
+        textAlign='center'
         sx={{
-          mb: 5,
+          mb: hasNotifications ? 5 : 0,
           fontWeight: 900,
           letterSpacing: '-0.5px'
         }}>
         {t('title')}
-      </Typography>
+      </AnimatedTitle>
 
-      {notifications.length === 0 ? (
-        <Box sx={{ textAlign: 'center', mt: 12, opacity: 0.4 }}>
-          <Typography variant='body1'>{t('empty')}</Typography>
-        </Box>
+      {!hasNotifications ? (
+        <Typography
+          variant='body1'
+          color='text.secondary'
+          sx={{ my: 'auto' }}
+          textAlign='center'>
+          {t('empty')}
+        </Typography>
       ) : (
         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           {items}

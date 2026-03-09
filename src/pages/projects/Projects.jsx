@@ -4,11 +4,14 @@ import Typography from '@mui/material/Typography'
 import CircleLoader from '@components/reusable/loaders/CircleLoader'
 import CreateFromTemplate from '@components/reusable/projects/CreateFromTemplate'
 
-import { useEffect, useState, useMemo, Suspense, lazy } from 'preact/compat'
+import { useEffect, useState, useMemo, Suspense, lazy, useRef } from 'preact/compat'
 import { useTranslation } from 'react-i18next'
 import useUser from '@hooks/useUser'
 import useLoadResources from '@hooks/useLoadResources'
 import { useGSAP } from '@gsap/react'
+import AnimatedTitle from '@components/reusable/texts/AnimatedTitle'
+
+import useCounterAnimation from '@hooks/animations/useCounterAnimation'
 
 const CreateProject = lazy(() => import('@components/ui/buttons/CreateProject'))
 const ProjectsCards = lazy(() => import('@components/ui/projectcard/ProjectsCards'))
@@ -37,11 +40,14 @@ export default function Projects() {
   const [loading, setLoading] = useState(true)
   const loadingResources = useLoadResources('projects')
 
+  const projectsRef = useRef(null)
+
   // get the user projects and external projects he is working on
   useEffect(() => {
     if (!uid) return
 
-    const { userProjects, externalProjects } = projectService.getProjectsQueries(uid)
+    const { userProjects, externalProjects } =
+      projectService.getProjectsQueries(uid)
     const projectMap = new Map()
 
     const handleSnapshot = (snap) => {
@@ -69,6 +75,11 @@ export default function Projects() {
     }
   }, [uid])
 
+  const animatedCount = useCounterAnimation(projects?.length, {
+    trigger: projectsRef,
+    revert: true
+  })
+
   useGSAP(() => {
     if (loadingResources || loading) return
 
@@ -89,7 +100,7 @@ export default function Projects() {
   if (loading) return <CircleLoader text={t('projects:loading')} />
 
   return (
-    <Box sx={containerStyles(hasProjects)}>
+    <Box sx={containerStyles(hasProjects)} ref={projectsRef}>
       <Suspense fallback={null}>
         {!hasProjects ? (
           <Box>
@@ -108,12 +119,14 @@ export default function Projects() {
           </Box>
         ) : (
           <Box>
-            <Typography
-              variant='h1'
-              textAlign={{ xs: 'center', tablet: 'start' }}
-              sx={[theme => ({ ...theme.typography.h4, fontWeight: 700 })]}>
-              {t('title_quantity', { quantity: projects.length })}
-            </Typography>
+            <Box className='flex' gap={1}>
+              <AnimatedTitle id='projects-title' textAlign='start'>
+                {t('text')}
+              </AnimatedTitle>
+              <Typography component='span' variant='h4' fontWeight={700}>
+                {`(${animatedCount})`}
+              </Typography>
+            </Box>
 
             <ProjectsCards data={projects} />
             <Box className='flex' sx={{
