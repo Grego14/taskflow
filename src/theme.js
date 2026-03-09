@@ -7,14 +7,16 @@ import {
 } from '@mui/material/styles'
 import Zoom from '@mui/material/Zoom'
 
-const primary = {
-  light: '#7C5DFA',
-  dark: '#A592E8'
+const lightColors = {
+  primary: '#7C5DFA',
+  secondary: '#A592E8',
+  error: '#BA0000'
 }
 
-const secondary = {
-  light: '#A592E8',
-  dark: '#D29AEE'
+const darkColors = {
+  primary: '#A592E8',
+  secondary: '#D29AEE',
+  error: '#FFA3A3'
 }
 
 const baseTheme = createTheme({
@@ -22,72 +24,74 @@ const baseTheme = createTheme({
     light: {
       palette: {
         primary: {
-          main: primary.light,
-          contrast: darken('#7C5DFA', 0.25)
+          main: lightColors.primary,
+          contrast: darken(lightColors.primary, 0.25)
         },
-        secondary: { main: secondary.light },
+        secondary: { main: lightColors.secondary },
         background: {
           app: `
           linear-gradient(
-            ${alpha(secondary.light, 0.05)},
-            ${alpha(primary.light, 0.15)}),
+            ${alpha(lightColors.secondary, 0.05)},
+            ${alpha(lightColors.primary, 0.15)}),
           linear-gradient(
             225deg, ${alpha('#fff', 0.5)}, 
-            ${alpha(primary.light, 0.25)})`,
+            ${alpha(lightColors.primary, 0.25)})`,
 
           drawer: `
           linear-gradient(
-            ${alpha(secondary.light, 0.03)},
-            ${alpha(primary.light, 0.45)})`,
+            ${alpha(lightColors.secondary, 0.03)},
+            ${alpha(lightColors.primary, 0.45)})`,
 
           appbar: {
             bottom: `linear-gradient(
-            ${alpha(secondary.light, 0.03)},
-            ${alpha(primary.light, 0.3)})`,
+            ${alpha(lightColors.secondary, 0.03)},
+            ${alpha(lightColors.primary, 0.3)})`,
 
             // the top style matchs with the drawer 
             // (appbar is on top on laptop/desktop devices, when the drawer is
             // temporary)
             top: `linear-gradient(45deg,
-            ${alpha(secondary.light, 0.03)},
-            ${alpha(primary.light, 0.45)})`
+            ${alpha(lightColors.secondary, 0.03)},
+            ${alpha(lightColors.primary, 0.45)})`
           }
-        }
+        },
+        error: { main: lightColors.error }
       }
     },
     dark: {
       palette: {
         primary: {
-          main: primary.dark,
-          contrast: lighten('#A592E8', 0.35)
+          main: darkColors.primary,
+          contrast: lighten(darkColors.primary, 0.35)
         },
-        secondary: { main: secondary.dark },
+        secondary: { main: darkColors.secondary },
         background: {
           app: `
           linear-gradient(
-            ${alpha(secondary.dark, 0.05)},
-            ${alpha(primary.dark, 0.25)}),
+            ${alpha(darkColors.secondary, 0.05)},
+            ${alpha(darkColors.primary, 0.25)}),
           linear-gradient(
             225deg, ${alpha('#121212', 0.1)}, 
-            ${alpha(primary.dark, 0.2)})`,
+            ${alpha(darkColors.primary, 0.2)})`,
 
           drawer: `linear-gradient(
-              ${alpha(secondary.light, 0.1)},
-              ${alpha(primary.light, 0.18)})`,
+              ${alpha(darkColors.secondary, 0.1)},
+              ${alpha(darkColors.primary, 0.18)})`,
 
           appbar: {
             bottom: `linear-gradient(
-            ${alpha(secondary.light, 0.03)},
-            ${alpha(primary.light, 0.45)})`,
+            ${alpha(darkColors.secondary, 0.03)},
+            ${alpha(darkColors.primary, 0.45)})`,
 
             top: `linear-gradient(45deg,
-            ${alpha(secondary.light, 0.1)},
-            ${alpha(primary.light, 0.18)})`
+            ${alpha(darkColors.secondary, 0.1)},
+            ${alpha(darkColors.primary, 0.18)})`
           }
         },
         action: {
           selected: 'rgba(255, 255, 255, 0.65)'
-        }
+        },
+        error: { main: darkColors.error }
       }
     }
   },

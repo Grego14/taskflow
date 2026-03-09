@@ -89,8 +89,7 @@ export default memo(function AddMembers({ members, setMembers, isOwner }) {
       <Box
         className={`flex${isMobile ? ' flex-column' : ''}`}
         alignItems={isMobile ? 'initial' : 'flex-end'}
-        gap={2}
-      >
+        gap={2}>
         <ProjectInput
           id='member-search'
           label={t('projects:addMembers.label')}
@@ -120,8 +119,7 @@ export default memo(function AddMembers({ members, setMembers, isOwner }) {
           startIcon={<SearchIcon fontSize='small' />}
           variant='contained'
           onClick={() => handleSearch(email)}
-          disabled={!isOwner || loading || !email}
-        >
+          disabled={!isOwner || loading || !email}>
           {t('projects:addMembers.search')}
         </Button>
       </Box>

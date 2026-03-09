@@ -9,6 +9,7 @@ import CreateProject from './components/CreateProject'
 import MakeTemplate from './components/MakeTemplate'
 import CircleLoader from '@components/reusable/loaders/CircleLoader'
 import CreateFromTemplate from '@components/reusable/projects/CreateFromTemplate'
+import AnimatedTitle from '@components/reusable/texts/AnimatedTitle'
 
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -30,7 +31,6 @@ const alignment = { xs: 'center', tablet: 'start' }
 const containerStyles = {
   display: 'flex',
   flexDirection: 'column',
-  justifyContent: { xs: 'center', laptop: 'start' },
   width: '100%',
   alignItems: alignment,
   flexGrow: 1
@@ -50,44 +50,25 @@ export default function NewProject() {
   })
 
   const [errors, setErrors] = useState(null)
+  const [animateForm, setAnimateForm] = useState(false)
 
   const updateField = (field, value) => {
     setForm(prev => ({ ...prev, [field]: value }))
   }
 
   useGSAP(() => {
-    if (loadingResources) return
+    if (loadingResources || !animateForm) return
 
-    const title = SplitText.create('#newProjectTitle', {
-      type: 'chars',
-      smartWrap: true
-    })
-
-    gsap.set('#newProjectTitle', { autoAlpha: 1 })
     gsap.set('#newProjectForm', { x: -300 })
     gsap.set('#newProjectCreate', { y: 75 })
 
-    const tl = gsap.timeline({
-      defaults: {
-        ease: 'back.out(2)',
-        duration: 1
-      }
-    })
+    const tl = gsap.timeline()
 
-    tl.from(title.chars, {
-      opacity: 0,
-      x: -25,
-      y: -40,
-      rotateZ: -90,
-      stagger: 0.3 / title.chars.length,
-      duration: 1.5,
-    }).to('#newProjectForm', { autoAlpha: 1, x: 0, ease: 'expo.out' }, '<0.5')
-      .to(
-        '#newProjectCreate',
-        { autoAlpha: 1, y: 0 },
-        '-=0.5'
-      )
-  }, { scope: containerRef, dependencies: [loadingResources] })
+    tl.fromTo('#newProjectForm',
+      { rotateX: -35 },
+      { autoAlpha: 1, x: 0, ease: 'power4.out', rotateX: 0 })
+      .to('#newProjectCreate', { autoAlpha: 1, y: 0 })
+  }, { scope: containerRef, dependencies: [loadingResources, animateForm] })
 
   if (loadingResources)
     return <CircleLoader text={t('common:loading')} />
@@ -98,33 +79,34 @@ export default function NewProject() {
       py={5}
       px={{ xs: 1.5, mobile: 4 }}
       gap={5}
+      justifyContent={{ xs: 'center', laptop: 'start' }}
       ref={containerRef}>
-      <Box sx={containerStyles} gap={3}>
-        <Typography
-          variant='h1'
-          sx={[theme => ({
-            ...theme.typography.h3,
-            ...hidden,
-            perspective: '1000px',
-            transformOrigin: '0 50% -50',
-          })]}
-          id='newProjectTitle'>
+      <Box sx={containerStyles} gap={3} justifyContent='start'>
+        <AnimatedTitle
+          id='new-project-title'
+          onComplete={() => setAnimateForm(true)}>
           {t('projects:createProject')}
-        </Typography>
+        </AnimatedTitle>
 
         <Paper
           className='flex flex-column'
           variant='outlined'
-          sx={{
+          sx={t => ({
             px: { xs: 1, mobile: 3 },
             py: { xs: 2, mobile: 4 },
-            gap: 3,
+            gap: { xs: 2, tablet: 3 },
             ...hidden,
-            flexDirection: { xs: 'column', laptop: 'row' },
-            width: '100%'
-          }}
+            width: '100%',
+            backgroundColor: 'transparent',
+            backgroundImage: `linear-gradient(135deg, 
+              ${t.alpha(t.palette.primary.main, 0.1)}, 
+              ${t.alpha(t.palette.secondary.main, 0.2)})`,
+            perspective: '1000px',
+            transformOrigin: '25% 100%',
+            maxWidth: 'fit-content'
+          })}
           id='newProjectForm'>
-          <Box className='flex flex-column flex-grow' gap='inherit'>
+          <Box className='flex flex-grow flex-column' gap='inherit'>
             <NameInput
               isOwner
               name={form.name}

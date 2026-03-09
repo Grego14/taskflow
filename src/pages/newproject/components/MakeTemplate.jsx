@@ -66,7 +66,17 @@ function SwitcthContainer({
       <Paper
         className='flex flex-center'
         elevation={2}
-        sx={{ width: 'fit-content', p: 1 }}>
+        sx={t => ({
+          width: 'fit-content',
+          p: 1,
+          backgroundColor: 'transparent',
+          backgroundImage: `linear-gradient(-45deg,
+            ${t.alpha(t.palette.secondary.main, 0.075)},
+            ${t.alpha(t.palette.primary.main, 0.5)}
+          )`,
+          transition: 'scale 0.2s ease-out',
+          '&:hover': { scale: 0.9 }
+        })}>
         {icon}
       </Paper>
 

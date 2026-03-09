@@ -32,6 +32,7 @@ export default function ProjectName({ name, setName, setErrors, isOwner }) {
       id='project-name'
       label={t('inputs.nameLabel')}
       placeholder={t('inputs.namePlaceholder')}
+      shrink
       error={error}
       value={name}
       setValue={setName}

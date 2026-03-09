@@ -11,12 +11,15 @@ export default function CreateFromTemplate({ sx }) {
     <Box
       gap={{ xs: 1, mobile: 2 }}
       className='flex flex-column flex-center'
-      sx={sx}
-    >
-      <Typography color='textSecondary' sx={[theme => ({ ...theme.typography.subtitle2 })]}>
-        {t('or', { ns: 'common' })}
+      sx={sx}>
+      <Typography
+        color='textSecondary'
+        sx={[theme => ({ ...theme.typography.subtitle2 })]}>
+        {t('common:or')}
       </Typography>
-      <Link to='/templates'>{t('createFromTemplate', { ns: 'projects' })}</Link>
+      <Link to='/templates' color='primary.contrast'>
+        {t('projects:createFromTemplate')}
+      </Link>
     </Box>
   )
 }

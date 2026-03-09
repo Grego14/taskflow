@@ -36,8 +36,9 @@ export default memo(function ProjectDescription({
       placeholder={t('inputs.descriptionPlaceholder')}
       error={error}
       multiline
-      rows={5}
+      rows={3}
       disabled={!isOwner}
+      shrink
     />
   )
 })

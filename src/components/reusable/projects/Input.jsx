@@ -5,8 +5,19 @@ import useDebounce from '@hooks/useDebounce'
 import { memo, useState } from 'react'
 
 export default memo(function ProjectInput(props) {
-  const { id, label, value, setValue, onChange, placeholder, error, ...other } =
-    props
+  const {
+    id,
+    label,
+    value,
+    setValue,
+    onChange,
+    placeholder,
+    error,
+    shrink,
+    fullWidth = false,
+    ...other
+  } = props
+
   const [localValue, setLocalValue] = useState(value)
   const [debounceChange] = useDebounce(newValue => setValue(newValue), 750)
 
@@ -21,26 +32,20 @@ export default memo(function ProjectInput(props) {
   }
 
   return (
-    <div>
-      <InputLabel
-        error={!!error}
-        htmlFor={id}
-        sx={[theme => ({ ...theme.typography.subtitle1, fontWeight: 600 })]}>
-        {label}
-      </InputLabel>
-      <TextField
-        size='small'
-        id={id}
-        fullWidth
-        value={localValue}
-        onChange={handleChange}
-        placeholder={placeholder}
-        error={!!error}
-        helperText={error}
-        spellCheck={false}
-        sx={{ mt: 1 }}
-        {...other}
-      />
-    </div>
+    <TextField
+      label={label}
+      size='small'
+      id={id}
+      fullWidth={fullWidth}
+      slotProps={{ inputLabel: { shrink } }}
+      value={localValue}
+      onChange={handleChange}
+      placeholder={placeholder}
+      error={!!error}
+      helperText={error}
+      spellCheck={false}
+      sx={{ mt: 1 }}
+      {...other}
+    />
   )
 })
