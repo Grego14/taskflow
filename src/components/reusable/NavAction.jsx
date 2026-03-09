@@ -34,19 +34,30 @@ export default memo(function NavAction({
       onClick={onClick}
       className={`flex ${className}`}
       gap={showText ? 1.5 : 0}
-      sx={{
-        color: 'text.secondary',
-        justifyContent: showText ? 'flex-start' : 'center',
-        width: '100%',
-        p: noSpace ? 0 : 1.5,
-        ...(isActive && { color: 'primary.main' })
-      }}
-    >
+      sx={theme => {
+        const contrast = theme.palette.primary.contrast
+        const isDark = theme.palette.mode === 'dark'
+
+        return {
+          color: isDark ? 'action.selected' : 'text.secondary',
+          '&:hover': { opacity: 0.75 },
+          justifyContent: showText ? 'flex-start' : 'center',
+          width: '100%',
+          p: noSpace ? 0 : 1.5,
+          ...(isActive && {
+            color: isDark
+              ? '#fff'
+              : theme.darken(contrast, 0.1),
+            '& .nav-action-text': { fontWeight: 500 }
+          }),
+          textDecoration: 'none'
+        }
+      }}>
       {iconElement}
       {showText && (
         <Typography className='nav-action-text' variant='body2'>{translation}</Typography>
       )}
-    </NavLink>
+    </NavLink >
   )
 
   if (isMobile && noSpace || showTooltip) {
