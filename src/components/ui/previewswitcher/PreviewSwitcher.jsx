@@ -29,6 +29,21 @@ const getMenuActionStyles = (normal, selected) => ({
   }
 })
 
+const OPTIONS = [
+  {
+    id: 'list',
+    keyTitle: 'listPreview',
+    icon: ViewListIcon,
+    disabled: false
+  },
+  {
+    id: 'kanban',
+    keyTitle: 'kanbanPreview',
+    icon: ViewKanbanIcon,
+    disabled: true
+  }
+]
+
 export default memo(function PreviewSwitcher() {
   const { t } = useTranslation('tasks')
   const { isMobile } = useApp()
@@ -53,27 +68,13 @@ export default memo(function PreviewSwitcher() {
     }
   }
 
-  const options = useMemo(() => [
-    { id: 'list', title: t('listPreview'), icon: <ViewListIcon />, disabled: false },
-    { id: 'kanban', title: t('kanbanPreview'), icon: <ViewKanbanIcon />, disabled: true }
-  ], [t])
-
-  const renderActions = () => isMobile ? options.map(opt => (
-    <MenuAction
-      key={opt.id}
-      handler={() => updatePreviewer(opt.id)}
-      text={opt.title}
-      icon={opt.icon}
-      styles={[previewStyles, getMenuActionStyles(normalColor, selectedColor)]}
-      selected={preview === opt.id}
-      disabled={opt.disabled}
-    />
-  )) : null
-
   return (
     // there's a bug that makes the DropdownMenu re-render and makes a layout
     // shift... so we add a wrapper with a default width
-    <Box minWidth={isMobile ? '40px' : '12rem'} height='min-content' mr={{ tablet: 'auto' }}>
+    <Box
+      minWidth={isMobile ? '40px' : '12rem'}
+      height='min-content'
+      mr={{ tablet: 'auto' }}>
       <Suspense fallback={null}>
         {isMobile ? (
           <DropdownMenu
@@ -81,7 +82,17 @@ export default memo(function PreviewSwitcher() {
             label={state => getMenuLabel(state, 'buttons.previewLabel', 'ui')}
             tooltipPosition='top'>
             <Suspense fallback={null}>
-              {renderActions()}
+              {OPTIONS.map(opt => (
+                <MenuAction
+                  key={opt.id}
+                  handler={() => updatePreviewer(opt.id)}
+                  text={t(opt.keyTitle)}
+                  icon={<opt.icon />}
+                  styles={[previewStyles, getMenuActionStyles(normalColor, selectedColor)]}
+                  selected={preview === opt.id}
+                  disabled={opt.disabled}
+                />
+              ))}
             </Suspense>
           </DropdownMenu>
         ) : (
@@ -92,12 +103,12 @@ export default memo(function PreviewSwitcher() {
             indicatorColor={'primary'}
             centered
             sx={{ minHeight: 0 }}>
-            {options.map(opt => (
+            {OPTIONS.map(opt => (
               <Tab
                 key={opt.id}
-                label={opt.title}
+                label={t(opt.keyTitle)}
                 value={opt.id}
-                icon={opt.icon}
+                icon={<opt.icon />}
                 iconPosition='start'
                 sx={previewStyles}
                 disabled={opt.disabled}
