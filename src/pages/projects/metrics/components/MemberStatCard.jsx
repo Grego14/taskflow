@@ -6,7 +6,7 @@ import MetricGauge from './MetricGauge'
 
 import { useRef } from 'preact/compat'
 import { alpha, useTheme } from '@mui/material/styles'
-import useCounterAnimation from '../hooks/useCounterAnimation'
+import useCounterAnimation from '@hooks/animations/useCounterAnimation'
 import useProject from '@hooks/useProject'
 import { useTranslation } from 'react-i18next'
 

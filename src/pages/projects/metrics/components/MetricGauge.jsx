@@ -6,7 +6,7 @@ import Tooltip from '@mui/material/Tooltip'
 import Typography from '@mui/material/Typography'
 import MetricPaper from './MetricPaper'
 
-import useCounterAnimation from '../hooks/useCounterAnimation'
+import useCounterAnimation from '@hooks/animations/useCounterAnimation'
 
 export default function MetricGauge({
   value,

@@ -8,7 +8,7 @@ import MetricPaper from './MetricPaper'
 import { alpha, useTheme } from '@mui/material/styles'
 import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
-import useCounterAnimation from '../hooks/useCounterAnimation'
+import useCounterAnimation from '@hooks/animations/useCounterAnimation'
 
 export default function StatCard({
   icon,

@@ -8,7 +8,7 @@ import { useTranslation } from 'react-i18next'
 import { useTheme } from '@mui/material/styles'
 import useApp from '@hooks/useApp'
 
-import useCounterAnimation from '../hooks/useCounterAnimation'
+import useCounterAnimation from '@hooks/animations/useCounterAnimation'
 
 const getDistributionData = (metrics, theme, t) => {
   const {
