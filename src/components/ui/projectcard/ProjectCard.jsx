@@ -49,11 +49,14 @@ export default function ProjectCard({ data, isRecent }) {
 
     gsap.to(cardRef.current, {
       backgroundImage: active ?
-        `linear-gradient(${theme.alpha(primaryColor, 0.25)}, 
+        `linear-gradient(${theme.alpha(primaryColor, 0.3)}, 
         ${theme.alpha(theme.palette.background.paper, 0.25)})`
-        : 'var(--Paper-overlay)',
+        : `linear-gradient(${theme.alpha(primaryColor, 0.05)}, 
+        ${theme.alpha(theme.palette.background.paper, 0.05)})`,
       duration: 0.5,
-      boxShadow: active ? '0 10px 20px rgba(0,0,0,0.1)' : '0 1px 3px rgba(0,0,0,0.05)',
+      boxShadow: active
+        ? '0 10px 20px rgba(0,0,0,0.1)'
+        : '0 1px 3px rgba(0,0,0,0.05)',
       borderColor: active ?
         primaryColor :
         // keep the border color if the card is recent
@@ -79,12 +82,14 @@ export default function ProjectCard({ data, isRecent }) {
       onMouseEnter={() => onHover(true)}
       onMouseLeave={() => onHover(false)}
       sx={theme => ({
+        backgroundColor: 'transparent',
         borderRadius: 2,
         border: isRecent ?
           `1px solid ${theme.palette.primary.main}` :
           '1px solid transparent',
         maxWidth: '35rem',
-        ...hidden
+        ...hidden,
+        transition: 'none'
       })}>
       <CardHeader
         disableTypography
