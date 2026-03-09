@@ -8,13 +8,13 @@ export default memo(function AnimatedTitle({
   id,
   loading,
   sx,
-  onRevert,
+  onComplete,
   ...otherProps
 }) {
 
   useTitleAnimation(id, {
     loading: typeof loading === 'boolean' ? loading : false,
-    onRevert
+    onComplete
   })
 
   if (loading) return null

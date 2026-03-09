@@ -5,7 +5,7 @@ import { SplitText } from 'gsap/SplitText'
 gsap.registerPlugin(SplitText)
 
 export default function useTitleAnimation(id, options) {
-  const { loading, onRevert } = options
+  const { loading, onComplete } = options
 
   useGSAP(() => {
     const element = document.getElementById(id)
@@ -25,8 +25,7 @@ export default function useTitleAnimation(id, options) {
       stagger: 0.03,
       onComplete: () => {
         split.revert()
-        console.log('title animation completed')
-        onRevert?.()
+        onComplete?.()
       },
     })
 

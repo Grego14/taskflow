@@ -25,7 +25,7 @@ const ProjectsSection = ({ title, children }) => (
   </Box>
 )
 
-export default function ProjectsCards({ data }) {
+export default function ProjectsCards({ data, animate, setAnimateButtons }) {
   const { t } = useTranslation('projects')
   const { isMobile } = useApp()
   const { metadata, userLoaded } = useUser()
@@ -39,13 +39,14 @@ export default function ProjectsCards({ data }) {
     return {
       other: data
         .filter(p => p.id !== lastId)
-        .sort((a, b) => (a.isArchived === b.isArchived ? 0 : a.isArchived ? 1 : -1)),
+        .sort((a, b) => (a.isArchived === b.isArchived ? 0
+          : a.isArchived ? 1 : -1)),
       last: data.find(p => p.id === lastId)
     }
   }, [data, lastId])
 
   useGSAP(() => {
-    if (!userLoaded || !data) return
+    if (!userLoaded || !data || !animate) return
 
     // wait until the last is ready
     if (lastId && !projects.last && data.length > 0) return
@@ -117,7 +118,12 @@ export default function ProjectsCards({ data }) {
           stagger: 0.01
         }, '<0.2')
     }
-  }, { dependencies: [userLoaded, lastId, projects.other.length], scope: containerRef })
+
+    setAnimateButtons(true)
+  }, {
+    dependencies: [userLoaded, lastId, projects.other.length, animate],
+    scope: containerRef
+  })
 
   return (
     <Box

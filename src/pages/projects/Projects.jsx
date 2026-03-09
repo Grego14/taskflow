@@ -41,6 +41,8 @@ export default function Projects() {
   const loadingResources = useLoadResources('projects')
 
   const projectsRef = useRef(null)
+  const [animateCards, setAnimateCards] = useState(false)
+  const [animateButtons, setAnimateButtons] = useState(false)
 
   // get the user projects and external projects he is working on
   useEffect(() => {
@@ -81,7 +83,7 @@ export default function Projects() {
   })
 
   useGSAP(() => {
-    if (loadingResources || loading) return
+    if (loadingResources || loading || !animateButtons) return
 
     gsap.set('#project-buttons', { y: 50 })
     gsap.to('#project-buttons', {
@@ -91,7 +93,7 @@ export default function Projects() {
       duration: 1,
       delay: 0.75
     })
-  }, [loadingResources, loading])
+  }, [loadingResources, loading, animateButtons])
 
   const hasProjects = projects.length > 0
   const btnStyles = { alignSelf: hasProjects ? 'start' : 'center' }
@@ -120,7 +122,10 @@ export default function Projects() {
         ) : (
           <Box>
             <Box className='flex' gap={1}>
-              <AnimatedTitle id='projects-title' textAlign='start'>
+              <AnimatedTitle
+                id='projects-title'
+                textAlign='start'
+                onComplete={() => setAnimateCards(true)}>
                 {t('text')}
               </AnimatedTitle>
               <Typography component='span' variant='h4' fontWeight={700}>
@@ -128,7 +133,12 @@ export default function Projects() {
               </Typography>
             </Box>
 
-            <ProjectsCards data={projects} />
+            <ProjectsCards
+              data={projects}
+              animate={animateCards}
+              setAnimateButtons={setAnimateButtons}
+            />
+
             <Box className='flex' sx={{
               '@media (max-width: 28rem)': {
                 flexDirection: 'column',
