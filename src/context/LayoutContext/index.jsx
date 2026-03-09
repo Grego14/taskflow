@@ -1,10 +1,13 @@
 import { useState, useEffect, useMemo } from 'react'
-import { getItem } from '@utils/storage'
 import useUser from '@hooks/useUser'
 import useDebounce from '@hooks/useDebounce'
+import useApp from '@hooks/useApp'
+
+import { getItem } from '@utils/storage'
 import LayoutContext from './context'
 
 export default function LayoutProvider({ children }) {
+  const { isMobile } = useApp()
   const { userLoaded, update, metadata } = useUser()
   const [drawerOpen, setDrawerOpen] = useState(getItem('drawerOpen'))
   const [filter, setFilter] = useState('default')
@@ -33,7 +36,7 @@ export default function LayoutProvider({ children }) {
     setFilter,
     updatePreviewer: previewer => debounceUpdater({ previewer, type: 'previewer' }),
     updateFilter: filter => debounceUpdater({ filter, type: 'filter' })
-  }), [drawerOpen, filter, debounceUpdater])
+  }), [drawerOpen, filter, debounceUpdater, isMobile])
 
   return (
     <LayoutContext.Provider value={value}>

@@ -1,11 +1,9 @@
-import { Suspense, lazy, memo, useRef, useCallback } from 'react'
+import { memo, useRef, useCallback } from 'react'
 
 import AppBar from '@components/ui/appbar/AppBar'
 import Box from '@mui/material/Box'
 import NavAction from '@components/reusable/NavAction'
-const ProfileButton = lazy(
-  () => import('@components/reusable/buttons/ProfileButton')
-)
+import ProfileButton from '@components/reusable/buttons/ProfileButton'
 
 import { useTranslation } from 'react-i18next'
 import useApp from '@hooks/useApp'
@@ -19,7 +17,7 @@ import gsap from 'gsap'
 
 const LayoutAppBar = memo(function LayoutAppBar() {
   const { t } = useTranslation('ui')
-  const { isMobile, drawerWidth } = useApp()
+  const { isMobile } = useApp()
   const noSpace = useMediaQuery('(max-width: 35rem)')
   const appBarRef = useRef(null)
   const loadingResources = useLoadResources('ui')
@@ -34,15 +32,6 @@ const LayoutAppBar = memo(function LayoutAppBar() {
     gsap.to('.appbar-link', { scale: 1, overwrite: true })
     gsap.to(e.currentTarget, { scale: 1.25, duration: 0.3, overwrite: true })
   }), [noSpace])
-
-  useGSAP(() => {
-    if (!isMobile || !appBarRef.current || loadingResources) return
-
-    gsap.set(appBarRef.current, { y: 100 })
-
-    // same as the drawer (no custom ease and duration)
-    gsap.to(appBarRef.current, { autoAlpha: 1, y: 0 })
-  }, [isMobile, loadingResources])
 
   if (!isMobile || loadingResources) return null
 
@@ -63,20 +52,22 @@ const LayoutAppBar = memo(function LayoutAppBar() {
 
   return (
     <AppBar
+      animate
+      noRotate={!noSpace}
       ref={appBarRef}
-      sx={{
+      sx={theme => ({
         justifyContent: noSpace ? 'space-around' : 'space-between',
-        px: 2,
-        width: `calc(100% - ${drawerWidth?.closed}px)`,
         ml: 'auto',
-        opacity: 0,
-        visibility: 'hidden',
-      }}>
+        backgroundColor: theme.palette.mode === 'dark'
+          ? 'rgba(0, 0, 0, 0.25)'
+          : 'rgba(255,255,255, 0.5)',
+        backgroundImage: theme.palette.background.appbar[isMobile ? 'bottom' : 'top'],
+        perspective: '1000px',
+        transformOrigin: '0 50% -50',
+      })}>
       {noSpace ? items : <Box className='flex' gap={1}>{items}</Box>}
 
-      <Suspense fallback={null}>
-        <ProfileButton open onlyIcon />
-      </Suspense>
+      <ProfileButton open onlyIcon sx={{ ml: 1.5 }} />
     </AppBar>
   )
 })

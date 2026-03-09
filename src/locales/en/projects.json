@@ -36,7 +36,6 @@
   "loadingProject": "Getting project data",
   "validating": "Validating access",
   "goToProject": "Go to project",
-  "title_quantity": "Projects ({{quantity}})",
   "template": "Template",
   "archived": "Archived",
   "created_date": "Created {{date}}",

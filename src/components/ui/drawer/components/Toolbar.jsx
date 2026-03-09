@@ -10,15 +10,21 @@ import MenuIcon from '@mui/icons-material/Menu'
 
 const ToolbarSelect = lazy(() => import('./ToolbarSelect'))
 
+import { APPBAR_HEIGHT } from '@/constants'
+
 export default function DrawerToolbar({ open, toggleDrawer }) {
+  const { isMobile } = useApp()
   const { t } = useTranslation('ui')
-  const { appBarHeight } = useApp()
 
   return (
     <Box mb={2}>
       <Box
         className='flex flex-center'
-        sx={{ minHeight: `calc(${(appBarHeight)} - 1px)`, px: 1 }}>
+        sx={{
+          minHeight:
+            `calc(${(APPBAR_HEIGHT[isMobile ? 'mobile' : 'other'])} - 1px)`,
+          px: 1
+        }}>
         <Suspense fallback={null}>
           <ToolbarSelect open={open} toggleDrawer={toggleDrawer} />
         </Suspense>
@@ -26,8 +32,7 @@ export default function DrawerToolbar({ open, toggleDrawer }) {
         <IconButton
           aria-label={t(`drawer.toolbar.${open ? 'collapse' : 'expand'}`)}
           onClick={toggleDrawer}
-          sx={{ ml: open ? 'auto' : 0 }}
-        >
+          sx={{ ml: open ? 'auto' : 0 }}>
           {open ? <ChevronLeftIcon fontSize='small' /> : <MenuIcon fontSize='small' />}
         </IconButton>
       </Box>

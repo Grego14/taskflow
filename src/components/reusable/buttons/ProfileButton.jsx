@@ -21,7 +21,6 @@ export default function ProfileButton({
   tooltipPosition = 'top',
   onlyIcon = false,
   sx,
-  onClick,
   className
 }) {
   const { t } = useTranslation('ui')

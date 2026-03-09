@@ -48,8 +48,6 @@ export default function ArchiveButton() {
     }
   }
 
-  if (count === 0) return
-
   const buttonProps = {
     onClick: handleArchive,
     sx: theme => ({
@@ -61,7 +59,11 @@ export default function ArchiveButton() {
       borderColor: isMobile ?
         theme.darken(theme.palette.warning.main, 0.25)
         : 'none',
-      p: 1
+      p: 1,
+      display:
+        // always render on laptop/desktop devices
+        !isMobile ? 'inline-flex' :
+          count ? 'inline-flex' : 'none'
     }),
     disabled: projectData?.isArchived,
     variant: isMobile ? 'outlined' : 'text'
@@ -95,23 +97,4 @@ export default function ArchiveButton() {
       {button}
     </Tooltip>
   ) : button
-
-  // return (
-  //   <Box sx={{ display: 'flex', alignItems: 'center', ml: 1 }}>
-  //     {button}
-  //
-  //     <Typography
-  //       variant='caption'
-  //       sx={{
-  //         display: { xs: 'none', md: 'block' },
-  //         ml: 0.5,
-  //         fontWeight: 'bold',
-  //         color: 'text.secondary',
-  //         textTransform: 'uppercase',
-  //         fontSize: '0.65rem'
-  //       }}>
-  //       {t('buttons.archive')}
-  //     </Typography>
-  //   </Box>
-  // )
 }

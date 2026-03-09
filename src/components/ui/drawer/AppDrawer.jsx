@@ -10,54 +10,47 @@ import Divider from '@mui/material/Divider'
 
 const ProjectNavFolder = lazy(() => import('./components/ProjectNavFolder'))
 
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { useTheme, alpha } from '@mui/material/styles'
 import { useGSAP } from '@gsap/react'
 import useApp from '@hooks/useApp'
-import useUser from '@hooks/useUser'
 import useLayout from '@hooks/useLayout'
 import useLoadResources from '@hooks/useLoadResources'
 
-import { setItem } from '@utils/storage.js'
+import { DRAWER_CONFIG, APPBAR_HEIGHT } from '@/constants'
+
+import { setItem, getItem } from '@utils/storage.js'
 import gsap from 'gsap'
 
-const drawerPaperStyles = (open, width, shadow) => ({
-  width: open ? width.open : width.closed,
-  transition: 'none',
-  ...(!open && { boxShadow: shadow }),
-  backgroundImage: 'none'
-})
-
 export default function AppDrawer() {
-  const { drawerWidth, appBarHeight, isMobile } = useApp()
-  const { preferences } = useUser()
+  const { isMobile } = useApp()
   const { projectId } = useParams()
-  const { drawerOpen, setDrawerOpen } = useLayout()
+  const { drawerOpen, setDrawerOpen, drawerGradient } = useLayout()
   const theme = useTheme()
-  const navigate = useNavigate()
   const drawerRef = useRef(null)
 
   const loadingResources = useLoadResources('ui')
 
-  const userTheme = preferences?.theme || 'dark'
-  const shadowColor = theme.palette.grey[userTheme === 'light' ? 300 : 800]
-  const shadow = `0 ${projectId && !isMobile ? appBarHeight : 0} 3px ${shadowColor}`
+  const isLight = theme.palette.mode === 'light'
+  const shadowColor = theme.palette.grey[isLight ? 300 : 800]
+  const isProjectAndDesktop = projectId && !isMobile
+  const shadow = `0 ${isProjectAndDesktop ? APPBAR_HEIGHT.other : 0} 3px ${shadowColor}`
 
   const { contextSafe } = useGSAP({ scope: drawerRef })
 
   const animateDrawer = contextSafe((isOpening) => {
     if (!drawerRef.current) return
 
-    const targetWidth = isOpening ? drawerWidth.open : drawerWidth.closed
-    const labels = ['.nav-action-text']
+    setItem('drawerOpen', isOpening)
+
+    const targetWidth = DRAWER_CONFIG[isOpening ? 'widthOpen' : 'widthClosed']
     const allIcons = gsap.utils.toArray('.drawer-action .MuiSvgIcon-root')
+    const labels = ['.nav-action-text']
 
     if (projectId) labels.push('.nav-folder-text')
     labels.push('.profile-btn-text')
 
-    // get the icons that aren't inside the Collapse container
-    const icons = allIcons.filter(icon => !icon.closest('.MuiCollapse-root'))
-    icons.push('.profile-btn-avatar')
+    allIcons.push('.profile-btn-avatar')
 
     const tl = gsap.timeline({
       defaults: {
@@ -68,59 +61,67 @@ export default function AppDrawer() {
     })
 
     if (!isMobile) {
-      tl.to(drawerRef.current, {
-        width: targetWidth,
-        duration: 0.4,
-        ease: 'power3.out'
-      }).addLabel('items')
+      tl.fromTo(drawerRef.current, { x: -targetWidth },
+        {
+          x: 0,
+          width: targetWidth,
+          duration: isOpening ? 0.25 : 0.15,
+          ease: 'power2.out',
+          overwrite: 'auto'
+        })
+        .addLabel('items')
     }
 
     if (isOpening) {
-      tl.fromTo(icons,
+      return tl.fromTo(allIcons,
         { opacity: 0, x: -8, scale: 0.8 },
         { opacity: 1, x: 0, scale: 1, stagger: 0.05 }, 'items')
         .fromTo(labels,
           { x: -15, opacity: 0 },
           { x: 0, opacity: 1, stagger: 0.075 }, 'items-=0.2')
-    } else {
-      tl.to(labels,
-        { opacity: 0, x: -15, duration: 0.15, stagger: 0.03 }, 'items-=0.4')
-        .to(icons, { x: 0, opacity: 1, scale: 1, duration: 0.3 }, 'items')
     }
+
+    tl.to(labels,
+      { opacity: 0, x: -15, duration: 0.15, stagger: 0.03 }, 'items-=0.4')
+      .to(allIcons, { x: 0, opacity: 1, scale: 1, duration: 0.3 }, 'items')
   })
 
   // trigger animation when dependencies change (for permanent drawer)
   useGSAP(() => {
     if (loadingResources || isMobile) return
 
-    animateDrawer(drawerOpen)
-  }, {
-    dependencies: [drawerOpen, loadingResources, projectId],
-    scope: drawerRef
-  })
+    animateDrawer(getItem('drawerOpen'))
+  }, { dependencies: [loadingResources, projectId], scope: drawerRef })
 
   const toggleDrawer = useCallback((state) => {
-    setDrawerOpen(prev => {
-      const newState = typeof state === 'boolean' ? state : !prev
-      setItem('drawerOpen', newState)
-      return newState
-    })
-  }, [])
+    const stateExists = typeof state === 'boolean'
+    const newValue = stateExists ? state : !drawerOpen
+
+    animateDrawer(newValue)
+    setDrawerOpen(newValue)
+  }, [drawerOpen])
 
   if (isMobile && !projectId || loadingResources) return
+
+  const drawerWidth = DRAWER_CONFIG[drawerOpen ? 'widthOpen' : 'widthClosed']
 
   return (
     <Drawer
       slotProps={{
         paper: {
           ref: drawerRef,
-          sx: {
+          sx: theme => ({
             display: 'flex',
             textWrap: 'nowrap',
-            width: drawerOpen ? drawerWidth.open : drawerWidth.closed,
-            '& .MuiDrawer-paper': drawerPaperStyles(drawerOpen, drawerWidth, shadow),
-            overflowX: 'hidden'
-          }
+            width: drawerWidth,
+            ...(!open && { boxShadow: shadow }),
+            backgroundImage: theme.palette.background.drawer,
+            overflowX: 'hidden',
+            transition: theme =>
+              theme.transitions.create('width',
+                { easing: theme.transitions.easing.easeInOut }
+              )
+          })
         },
         transition: {
           // this ensures animation runs when the temporary drawer mounts
@@ -129,8 +130,7 @@ export default function AppDrawer() {
       }}
       open={drawerOpen}
       onClose={() => toggleDrawer(false)}
-      variant={isMobile ? 'temporary' : 'permanent'}
-    >
+      variant={isMobile ? 'temporary' : 'permanent'}>
       <Toolbar open={drawerOpen} toggleDrawer={toggleDrawer} />
 
       <List
@@ -153,7 +153,6 @@ export default function AppDrawer() {
             open={drawerOpen}
             showTexts
             className='drawer-action'
-            onClick={() => navigate('/profile')}
             sx={{
               p: 1.5,
               mr: drawerOpen ? 0 : 'auto',

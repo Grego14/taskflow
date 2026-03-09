@@ -1,16 +1,17 @@
-import { Suspense, lazy, memo, useEffect } from 'react'
+import { Suspense, lazy, memo } from 'react'
 import { Outlet, useParams } from 'react-router-dom'
-
-import useApp from '@hooks/useApp'
-import useLoadResources from '@hooks/useLoadResources'
-
 import Box from '@mui/material/Box'
 
 const LayoutAppBar = lazy(() => import('./components/LayoutAppBar'))
 const AppDrawer = lazy(() => import('@components/ui/drawer/AppDrawer'))
 
+import useApp from '@hooks/useApp'
+import useLoadResources from '@hooks/useLoadResources'
+
+import { DRAWER_CONFIG, APPBAR_HEIGHT } from '@/constants'
+
 export default memo(function LayoutManager() {
-  const { isMobile, drawerWidth, appBarHeight } = useApp()
+  const { isMobile } = useApp()
   const { projectId } = useParams()
   const loadingResource = useLoadResources('ui')
 
@@ -27,9 +28,10 @@ export default memo(function LayoutManager() {
       <Box
         component='main'
         minHeight='100dvh'
-        marginLeft={`${!isMobile ? drawerWidth?.closed : 0}px`}
+        pl={`${!isMobile ? DRAWER_CONFIG.widthClosed : 0}px`}
+        sx={theme => ({ backgroundImage: theme.palette.background.app })}
         className='flex flex-column'
-        pb={isMobile ? appBarHeight : 0}>
+        pb={isMobile ? APPBAR_HEIGHT.mobile : 0}>
         <Suspense fallback={null}>
           <Outlet />
         </Suspense>

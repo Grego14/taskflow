@@ -1,6 +1,6 @@
-import { Suspense, lazy } from 'react'
+import { Suspense, lazy } from 'preact/compat'
 
-const ProjectItems = lazy(() => import('./ProjectItems'))
+import ProjectItems from './ProjectItems'
 const ToggleProjectDrawer = lazy(() => import('@components/ui/projects/ToggleProjectDrawer'))
 
 import AppBar from '@components/ui/appbar/AppBar'
@@ -10,7 +10,7 @@ import Typography from '@mui/material/Typography'
 import useApp from '@hooks/useApp'
 import useProject from '@hooks/useProject'
 import { useTranslation } from 'react-i18next'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 
 const PROJECT_ACTIONS = ['/settings', '/metrics']
 
@@ -18,7 +18,6 @@ export default function ProjectAppBar() {
   const { t } = useTranslation('ui')
   const { isOnlyMobile, isMobile } = useApp()
   const { data, id } = useProject()
-  const navigate = useNavigate()
 
   const location = useLocation()
   const projectRute = location.pathname?.split(id)?.[1]
@@ -26,16 +25,23 @@ export default function ProjectAppBar() {
   const isProjectSubRoute = PROJECT_ACTIONS.find(pAction => pAction === action)
 
   return (
-    <AppBar top>
+    <AppBar
+      animate
+      noRotate={!isMobile}
+      withDrawer={!isMobile}
+      top={!isMobile}
+      sx={theme => ({ backgroundImage: theme.palette.background.appbar.top })}>
       {isProjectSubRoute ? (
         <Box className='flex flex-grow' gap={1.5} px={2}>
-          <Suspense fallback={null}>
-            <ToggleProjectDrawer />
-          </Suspense>
+          {isMobile && (
+            <Suspense fallback={null}>
+              <ToggleProjectDrawer />
+            </Suspense>
+          )}
 
           <Box
             className={`${isMobile ? 'flex flex-column' : 'flex flex-center'}`}
-            gap={isMobile ? 0 : 2}>
+            gap={{ mobile: 0, tablet: 2 }}>
             <Typography
               variant='h1'
               sx={[theme => ({ ...theme.typography.h5, fontWeight: 600 })]}>
@@ -46,7 +52,7 @@ export default function ProjectAppBar() {
               sx={[
                 theme => ({
                   ...theme.typography.body2,
-                  ml: isMobile ? 0 : 'auto'
+                  ml: { mobile: 0, tablet: 'auto' }
                 })
               ]}
               color='textSecondary'>
@@ -54,11 +60,7 @@ export default function ProjectAppBar() {
             </Typography>
           </Box>
         </Box>
-      ) : (
-        <Suspense fallback={null}>
-          <ProjectItems />
-        </Suspense>
-      )}
+      ) : <ProjectItems />}
     </AppBar>
   )
 }

@@ -8,11 +8,6 @@ import AppRoutes from '@/AppRoutes.jsx'
 
 const Notification = lazy(() => import('@components/ui/notification/Notification'))
 
-const DRAWER_CONFIG = {
-  widthOpen: 260,
-  widthClosedDesktop: 64
-}
-
 export default function AppProvider({ children }) {
   const { mode } = useColorScheme()
 
@@ -38,17 +33,10 @@ export default function AppProvider({ children }) {
   }, [])
 
   const contextValue = useMemo(() => {
-    const appBarHeight = isMobile ? '3.8rem' : '3.4rem'
-
     return {
       notification,
       isMobile,
       isOnlyMobile,
-      appBarHeight,
-      drawerWidth: {
-        open: DRAWER_CONFIG.widthOpen,
-        closed: isMobile ? 0 : DRAWER_CONFIG.widthClosedDesktop
-      },
       isOffline,
       setIsOffline,
       appNotification

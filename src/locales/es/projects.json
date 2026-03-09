@@ -36,7 +36,6 @@
   "loadingProject": "Obteniendo datos del proyecto",
   "validating": "Validando acceso",
   "goToProject": "Ir al proyecto",
-  "title_quantity": "Proyectos ({{quantity}})",
   "template": "Plantilla",
   "archived": "Archivado",
   "created_date": "Creado {{date}}",

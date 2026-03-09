@@ -20,29 +20,30 @@ export default function ProjectItems() {
     <>
       <PreviewSwitcher />
       {!isMobile && <ArchiveButton />}
-      <AddButton />
       <FilterButton />
       <AddMembers />
+      <AddButton />
     </>
 
   return (
-    <>
+    <List
+      disablePadding
+      sx={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        gap: 1,
+        flexGrow: 1
+      }}>
       {!isMobile ? (
-        <List
-          disablePadding
-          sx={{ display: 'flex', justifyContent: 'space-between', gap: 2, flexGrow: 1 }}>
-          <ToggleProjectDrawer />
-
-          <Box className='flex flex-grow flex-center' justifyContent='end' gap={2}>
-            {defaultItems}
-          </Box>
-        </List>
+        <Box className='flex flex-grow flex-center' justifyContent='end' gap={2}>
+          {defaultItems}
+        </Box>
       ) : (
         <>
           <ToggleProjectDrawer />
           {defaultItems}
         </>
       )}
-    </>
+    </List>
   )
 }
