@@ -97,14 +97,12 @@ export default memo(function TasksContainer({
         tasks={overdueTasks}
         show={showOverdueTasks}
         title={t('overdueTasks_quantity', { quantity: overdueTasks?.length })}
-        tasksStyles={{ opacity: 0.5 }}
       />
 
       {toArchive.length > 0 && (
         <TasksWrapper
           tasks={toArchive}
           title={t('toArchiveTasks', { quantity: toArchive?.length })}
-          tasksStyles={{ opacity: 0.75 }}
           expand={false}
         />
       )}
