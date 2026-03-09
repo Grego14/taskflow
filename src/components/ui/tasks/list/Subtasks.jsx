@@ -15,7 +15,7 @@ import { priorityColors } from '@/constants'
 import useTaskDropTarget from './hooks/useTaskDropTarget'
 import useTaskDraggable from './hooks/useTaskDraggable'
 import useTasks from '@hooks/useTasks'
-import useTaskEntranceAnimation from '@hooks/useTaskEntranceAnimation'
+import useTaskEntranceAnimation from '@hooks/animations/useTaskEntranceAnimation'
 
 const subtaskStyles = (theme, priority) => {
   const priorityColor = priorityColors[priority][0]
@@ -73,11 +73,19 @@ const subtaskStyles = (theme, priority) => {
   }
 }
 
-const SubtaskItem = ({ data, list, onContextMenu, isParentOverdue }) => {
+const SubtaskItem = ({ data, list, onContextMenu }) => {
   const { isArchived } = useProject()
   const { actions } = useTasks()
 
-  const { status, id, ref, priority, subtask, isOverdue } = data
+  const {
+    status,
+    id,
+    ref,
+    priority,
+    subtask,
+    isOverdue,
+    isParentOverdue
+  } = data
 
   const { isDragging } = useTaskDraggable({
     data,
@@ -107,7 +115,7 @@ const SubtaskItem = ({ data, list, onContextMenu, isParentOverdue }) => {
         sx={[theme => ({
           ...subtaskStyles(theme, priority),
           opacity: isChecked ? 0.6 : 1,
-          ...((isDragging || isOverdue) && { opacity: 0.4 }),
+          ...((isDragging || isOverdue && !isParentOverdue) && { opacity: 0.4 }),
           cursor: 'grab'
         })]}>
         <Box className='flex flex-center' width='100%'>
@@ -128,7 +136,7 @@ const SubtaskItem = ({ data, list, onContextMenu, isParentOverdue }) => {
   )
 }
 
-export default memo(function Subtasks({ data, contextMenuHandler, isParentOverdue }) {
+export default memo(function Subtasks({ data, contextMenuHandler }) {
   const wrapperRef = useRef(null)
 
   if (!data?.length) return null
@@ -146,7 +154,6 @@ export default memo(function Subtasks({ data, contextMenuHandler, isParentOverdu
           key={subtask.id}
           data={subtask}
           onContextMenu={contextMenuHandler}
-          isParentOverdue={isParentOverdue}
           list={data}
         />
       ))}

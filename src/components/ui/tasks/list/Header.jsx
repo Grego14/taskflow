@@ -32,19 +32,32 @@ export default function Header({ data, insideTask = false, status }) {
   const locale = preferences?.locale
   const isDone = status === 'done'
   const isCancelled = status === 'cancelled'
-  const isSubtask = data?.isSubtask
-  const { id, subtask } = data
 
   if (!data) return null
+
+  const {
+    id,
+    subtasks,
+    subtask,
+    isSubtask,
+    assignedTo: members,
+    rawDate,
+    priority,
+    title,
+    dueDate,
+    isParentChecked
+  } = data
 
   const actionsData = {
     id: id,
     isSubtask,
     subtask: subtask,
-    members: data.assignedTo,
-    rawDate: data.rawDate,
-    priority: data.priority
+    members,
+    rawDate,
+    priority
   }
+
+  const isChecked = isDone || isCancelled
 
   return (
     <CardHeader
@@ -59,11 +72,11 @@ export default function Header({ data, insideTask = false, status }) {
       }}
       title={
         <UpdatableTaskTitle
-          title={data.title}
+          title={title}
           taskId={id}
-          isChecked={isDone || isCancelled}
+          isChecked={isChecked}
           isCancelled={isCancelled}
-          subtask={data.subtask}
+          subtask={subtask}
           show={showTitle}
           setShow={setShowTitle}
         />
@@ -71,19 +84,20 @@ export default function Header({ data, insideTask = false, status }) {
       action={
         !showTitle && (
           <>
-            {data.dueDate && <SmartDateLabel date={data.dueDate} />}
+            {(dueDate && !isChecked && !isParentChecked)
+              && <SmartDateLabel date={dueDate} />}
 
             <TaskMembers
-              assignedTo={data.assignedTo}
-              subtasks={data.subtasks}
+              assignedTo={members}
+              subtasks={subtasks}
               insideTask={insideTask}
             />
 
             {!isOnlyMobile && (
               <TaskCalendar
-                rawDate={data?.rawDate}
-                taskId={data.id}
-                parentId={data.subtask}
+                rawDate={rawDate}
+                taskId={id}
+                parentId={subtask}
                 insideTask={insideTask}
               />
             )}

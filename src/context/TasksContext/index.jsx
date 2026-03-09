@@ -42,7 +42,10 @@ export default memo(function TasksProvider({ children }) {
         ? task.subtasks.map(subtask => ({
           ...subtask,
           ref: createRef(),
-          isOverdue: taskIsOverdue(subtask)
+          isOverdue: taskIsOverdue(subtask),
+          isParentOverdue: taskIsOverdue(task),
+          isParentChecked: task.status === 'done'
+            || task.status === 'cancelled'
         }))
         : [],
       isOverdue: taskIsOverdue(task)

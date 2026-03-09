@@ -39,6 +39,7 @@ const taskStyles = (t, priority) => ({
   mx: 'auto',
   borderLeftWidth: 4,
   transitionProperty: 'opacity, background-color, border-color, box-shadow',
+  backgroundColor: t.alpha(t.palette.background.paper, 0.35),
   cursor: 'grab',
   // the user clicks the task link on a non-overdue subtask and sets the
   // focused dataset
@@ -144,7 +145,7 @@ export default memo(function ListTask({ data }) {
         sx={[theme => ({
           ...taskStyles(theme, priority),
           borderLeftColor: fg,
-          ...((isDragging || isOverdueLabelVisible) && { opacity: 0.5 }),
+          ...((isDragging || isOverdue) && { opacity: 0.75 }),
           ...(status === 'cancelled' && { opacity: 0.75 })
         })]}>
         <Box
@@ -173,11 +174,7 @@ export default memo(function ListTask({ data }) {
         </Box>
 
         {filteredSubtasks.length > 0 && (
-          <Subtasks
-            data={filteredSubtasks}
-            contextMenuHandler={handler}
-            isParentOverdue={isOverdue}
-          />
+          <Subtasks data={filteredSubtasks} contextMenuHandler={handler} />
         )}
       </Card>
 
