@@ -9,7 +9,7 @@ import Typography from '@mui/material/Typography'
 
 import useApp from '@hooks/useApp'
 import { forwardRef, memo, useRef, useState } from 'preact/compat'
-import useTaskEntranceAnimation from '@hooks/useTaskEntranceAnimation'
+import useTaskEntranceAnimation from '@hooks/animations/useTaskEntranceAnimation'
 
 const TasksWrapper = forwardRef(function TasksWrapper(props, ref) {
   const { isMobile } = useApp()
