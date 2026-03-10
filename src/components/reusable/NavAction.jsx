@@ -16,7 +16,8 @@ export default memo(function NavAction({
   isActive,
   className,
   showTooltip,
-  tooltipPlacement = 'top'
+  tooltipPlacement = 'top',
+  hideText
 }) {
   const { isMobile } = useApp()
   const { unreadCount } = useNotifications()
@@ -48,16 +49,29 @@ export default memo(function NavAction({
             color: isDark
               ? '#fff'
               : theme.darken(contrast, 0.1),
-            '& .nav-action-text': { fontWeight: 500 }
+            '& .nav-action-text': { fontWeight: 500 },
+            backgroundColor: theme.alpha(theme.palette.primary.main, 0.25)
           }),
-          textDecoration: 'none'
+          textDecoration: 'none',
+          ...(hideText && { justifyContent: 'center' })
         }
       }}>
       {iconElement}
       {showText && (
-        <Typography className='nav-action-text' variant='body2'>{translation}</Typography>
+        <Typography
+          className='nav-action-text'
+          variant='body2'
+          sx={{
+            ...(hideText && {
+              position: 'absolute',
+              opacity: 0,
+              visibility: 'hidden'
+            })
+          }}>
+          {translation}
+        </Typography>
       )}
-    </NavLink >
+    </NavLink>
   )
 
   if (isMobile && noSpace || showTooltip) {

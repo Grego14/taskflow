@@ -1,9 +1,8 @@
 import { useEffect, useState, useMemo } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { dbAdapter } from '@services/dbAdapter'
-import projectService from '@services/project'
 import useUser from '@hooks/useUser'
+import useLayout from '@hooks/useLayout'
 
 import FormControl from '@mui/material/FormControl'
 import InputLabel from '@mui/material/InputLabel'
@@ -12,6 +11,9 @@ import Select from '@mui/material/Select'
 import Button from '@mui/material/Button'
 import Typography from '@mui/material/Typography'
 import FolderOpen from '@mui/icons-material/FolderOpen'
+
+import { dbAdapter } from '@services/dbAdapter'
+import projectService from '@services/project'
 
 const selectStyles = theme => ({
   '& .MuiSelect-select': {
@@ -22,11 +24,12 @@ const selectStyles = theme => ({
   }
 })
 
-export default function ToolbarSelect({ open, toggleDrawer }) {
+export default function ToolbarSelect() {
   const { uid, metadata } = useUser()
   const { projectId } = useParams()
   const { t } = useTranslation(['ui', 'projects'])
   const navigate = useNavigate()
+  const { drawerOpen, toggleDrawer } = useLayout()
 
   const [projects, setProjects] = useState([])
   const [loading, setLoading] = useState(true)
@@ -83,19 +86,17 @@ export default function ToolbarSelect({ open, toggleDrawer }) {
     }
   }
 
-  if (!open || loading) return
+  if (!drawerOpen || loading) return
 
   const hasProjects = projects.length > 0
 
+  const toolbarKey = actualProject?.isLast ? 'lastProject' : 'actualProject'
   // to show when the user has recently edited a project or is in a project
-  const projectLabel = t(`drawer.toolbar.${actualProject?.isLast
-    ? 'lastProject'
-    : 'actualProject'}`,
-    { ns: 'ui' })
+  const projectLabel = t(`ui:drawer.toolbar.${toolbarKey}`)
 
   // to show when the user has no lastEditedProject and he isn't inside a
   // project
-  const defaultLabel = t('myProjects', { ns: 'projects' })
+  const defaultLabel = t('projects:myProjects')
   const label = actualProject ? projectLabel : defaultLabel
 
   const shouldShrink = !!actualProject?.id || isFocused
@@ -130,8 +131,7 @@ export default function ToolbarSelect({ open, toggleDrawer }) {
               color: 'action.active'
             }}
           />
-        }
-      >
+        }>
         {projects.map(p => (
           <MenuItem key={p.id} value={p.id}>
             {p.name}
@@ -141,7 +141,7 @@ export default function ToolbarSelect({ open, toggleDrawer }) {
     </FormControl>
   ) : (
     <Button onClick={() => { navigate('/projects/new'); toggleDrawer(false) }}>
-      {t('drawer.toolbar.newProject', { ns: 'ui' })}
+      {t('ui:drawer.toolbar.newProject')}
     </Button>
   )
 }

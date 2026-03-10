@@ -7,7 +7,7 @@ import useLayout from '@hooks/useLayout'
 
 export default function ToggleProjectDrawer() {
   const { t } = useTranslation(['projects', 'common'])
-  const { setDrawerOpen, drawerOpen } = useLayout()
+  const { toggleDrawer, drawerOpen } = useLayout()
 
   const sidebarName = t('sidebar', { ns: 'projects' })
   const label = t(drawerOpen ? 'close_x' : 'open_x', {
@@ -21,7 +21,7 @@ export default function ToggleProjectDrawer() {
         edge='start'
         color='inherit'
         aria-label={label}
-        onClick={() => setDrawerOpen(prev => !prev)}
+        onClick={() => toggleDrawer(!drawerOpen)}
         sx={{ ml: 0, alignSelf: 'center', display: { xs: 'flex', tablet: 'none' } }}>
         <GridViewIcon fontSize='medium' />
       </IconButton>

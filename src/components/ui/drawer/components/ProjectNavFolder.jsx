@@ -4,11 +4,11 @@ import ListItemButton from '@mui/material/ListItemButton'
 import ListItemIcon from '@mui/material/ListItemIcon'
 import ListItemText from '@mui/material/ListItemText'
 import Collapse from '@mui/material/Collapse'
-import ExpandLess from '@mui/icons-material/ExpandLess'
-import ExpandMore from '@mui/icons-material/ExpandMore'
 import AccountTreeIcon from '@mui/icons-material/AccountTree'
 import NavAction from '@components/reusable/NavAction'
 import Tooltip from '@mui/material/Tooltip'
+
+import ExpandIcon from '@mui/icons-material/ExpandLess'
 
 import { useState, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -19,7 +19,7 @@ import useLayout from '@hooks/useLayout'
 import { getProjectNavigation } from '@constants/navigation'
 import gsap from 'gsap'
 
-const TEXT_PROPS = {
+const LABEL_PROPS = {
   variant: 'caption',
   textTransform: 'uppercase',
   fontWeight: 700,
@@ -33,7 +33,7 @@ export default function ProjectCollapsibleSection() {
   const { t } = useTranslation('ui')
   const containerRef = useRef(null)
   const [open, setOpen] = useState(true)
-  const { drawerOpen, setDrawerOpen } = useLayout()
+  const { drawerOpen, toggleDrawer } = useLayout()
 
   useGSAP(() => {
     if (open && drawerOpen) {
@@ -47,11 +47,8 @@ export default function ProjectCollapsibleSection() {
   if (!projectId) return null
 
   const handleToggle = () => {
-    // open the drawer and show the items if the drawer was closed and the user
-    // clicked the button
     if (!drawerOpen) {
-      setDrawerOpen(true)
-      setOpen(true)
+      toggleDrawer(true)
       return
     }
 
@@ -80,7 +77,7 @@ export default function ProjectCollapsibleSection() {
           link={link}
           showText={drawerOpen}
           isActive={isActive}
-          onClick={() => setDrawerOpen(false)}
+          onClick={() => toggleDrawer(false)}
         />
       </Box>
     )
@@ -109,19 +106,36 @@ export default function ProjectCollapsibleSection() {
             <AccountTreeIcon fontSize='small' />
           </ListItemIcon>
 
-          {drawerOpen && (
-            <>
-              <ListItemText
-                className='nav-folder-text'
-                primary={t('projectActions.navFolder')}
-                slotProps={{ primary: TEXT_PROPS }}
-              />
-              {open
-                ? <ExpandLess fontSize='small' />
-                : <ExpandMore fontSize='small' />
-              }
-            </>
-          )}
+          <>
+            <ListItemText
+              primary={t('projectActions.navFolder')}
+              sx={{ flexGrow: drawerOpen ? 1 : 0 }}
+              slotProps={{
+                primary: {
+                  className: 'nav-folder-text',
+                  ...LABEL_PROPS,
+                  sx: {
+                    ...(!drawerOpen ? ({
+                      position: 'absolute',
+                      opacity: 0
+                    }) : {})
+                  },
+                  'aria-hidden': !drawerOpen
+                }
+              }}
+            />
+            <ExpandIcon
+              fontSize='small'
+              sx={{
+                transition: 'rotate 0.15s ease-in-out',
+                rotate: open ? '180deg' : 0,
+                ...(!drawerOpen ? ({
+                  position: 'absolute',
+                  opacity: 0
+                }) : {})
+              }}
+            />
+          </>
         </ListItemButton>
       </Tooltip>
 

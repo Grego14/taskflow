@@ -25,9 +25,8 @@ import gsap from 'gsap'
 export default function AppDrawer() {
   const { isMobile } = useApp()
   const { projectId } = useParams()
-  const { drawerOpen, setDrawerOpen, drawerGradient } = useLayout()
+  const { drawerRef, toggleDrawer, drawerOpen } = useLayout()
   const theme = useTheme()
-  const drawerRef = useRef(null)
 
   const loadingResources = useLoadResources('ui')
 
@@ -36,70 +35,13 @@ export default function AppDrawer() {
   const isProjectAndDesktop = projectId && !isMobile
   const shadow = `0 ${isProjectAndDesktop ? APPBAR_HEIGHT.other : 0} 3px ${shadowColor}`
 
-  const { contextSafe } = useGSAP({ scope: drawerRef })
-
-  const animateDrawer = contextSafe((isOpening) => {
-    if (!drawerRef.current) return
-
-    setItem('drawerOpen', isOpening)
-
-    const targetWidth = DRAWER_CONFIG[isOpening ? 'widthOpen' : 'widthClosed']
-    const allIcons = gsap.utils.toArray('.drawer-action .MuiSvgIcon-root')
-    const labels = ['.nav-action-text']
-
-    if (projectId) labels.push('.nav-folder-text')
-    labels.push('.profile-btn-text')
-
-    allIcons.push('.profile-btn-avatar')
-
-    const tl = gsap.timeline({
-      defaults: {
-        ease: 'expo.inOut',
-        duration: 0.5,
-        overwrite: 'auto'
-      }
-    })
-
-    if (!isMobile) {
-      tl.fromTo(drawerRef.current, { x: -targetWidth },
-        {
-          x: 0,
-          width: targetWidth,
-          duration: isOpening ? 0.25 : 0.15,
-          ease: 'power2.out',
-          overwrite: 'auto'
-        })
-        .addLabel('items')
-    }
-
-    if (isOpening) {
-      return tl.fromTo(allIcons,
-        { opacity: 0, x: -8, scale: 0.8 },
-        { opacity: 1, x: 0, scale: 1, stagger: 0.05 }, 'items')
-        .fromTo(labels,
-          { x: -15, opacity: 0 },
-          { x: 0, opacity: 1, stagger: 0.075 }, 'items-=0.2')
-    }
-
-    tl.to(labels,
-      { opacity: 0, x: -15, duration: 0.15, stagger: 0.03 }, 'items-=0.4')
-      .to(allIcons, { x: 0, opacity: 1, scale: 1, duration: 0.3 }, 'items')
-  })
-
-  // trigger animation when dependencies change (for permanent drawer)
+  // trigger animation when dependencies change (for permanent drawer, or
+  // initial animation)
   useGSAP(() => {
     if (loadingResources || isMobile) return
 
-    animateDrawer(getItem('drawerOpen'))
+    toggleDrawer(getItem('drawerOpen'))
   }, { dependencies: [loadingResources, projectId], scope: drawerRef })
-
-  const toggleDrawer = useCallback((state) => {
-    const stateExists = typeof state === 'boolean'
-    const newValue = stateExists ? state : !drawerOpen
-
-    animateDrawer(newValue)
-    setDrawerOpen(newValue)
-  }, [drawerOpen])
 
   if (isMobile && !projectId || loadingResources) return
 
@@ -110,34 +52,33 @@ export default function AppDrawer() {
       slotProps={{
         paper: {
           ref: drawerRef,
+          className: drawerOpen ? 'is-open' : 'is-closed',
           sx: theme => ({
             display: 'flex',
             textWrap: 'nowrap',
             width: drawerWidth,
-            ...(!open && { boxShadow: shadow }),
+            ...(!drawerOpen && { boxShadow: shadow }),
             backgroundImage: theme.palette.background.drawer,
             overflowX: 'hidden',
-            transition: theme =>
-              theme.transitions.create('width',
-                { easing: theme.transitions.easing.easeInOut }
-              )
+            transition: theme.transitions.create(['transform', 'width'],
+              { duration: '0.3s', easing: 'ease-in-out' })
           })
         },
         transition: {
           // this ensures animation runs when the temporary drawer mounts
-          onEnter: () => isMobile && animateDrawer(true)
+          onEnter: () => { console.log('enter drawer animation'), toggleDrawer(true) }
         }
       }}
       open={drawerOpen}
       onClose={() => toggleDrawer(false)}
       variant={isMobile ? 'temporary' : 'permanent'}>
-      <Toolbar open={drawerOpen} toggleDrawer={toggleDrawer} />
+      <Toolbar />
 
       <List
         className='flex flex-column'
         sx={{ gap: 1.25, height: '100%' }}
         disablePadding>
-        <DrawerActions open={drawerOpen} toggleDrawer={toggleDrawer} />
+        <DrawerActions />
 
         {projectId && (
           <>

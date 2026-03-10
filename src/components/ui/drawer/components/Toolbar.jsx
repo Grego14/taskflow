@@ -1,6 +1,7 @@
 import { Suspense, lazy } from 'react'
 import { useTranslation } from 'react-i18next'
 import useApp from '@hooks/useApp'
+import useLayout from '@hooks/useLayout'
 
 import Box from '@mui/material/Box'
 import Divider from '@mui/material/Divider'
@@ -12,9 +13,10 @@ const ToolbarSelect = lazy(() => import('./ToolbarSelect'))
 
 import { APPBAR_HEIGHT } from '@/constants'
 
-export default function DrawerToolbar({ open, toggleDrawer }) {
+export default function DrawerToolbar({ open }) {
   const { isMobile } = useApp()
   const { t } = useTranslation('ui')
+  const { toggleDrawer, drawerOpen } = useLayout()
 
   return (
     <Box mb={2}>
@@ -26,14 +28,15 @@ export default function DrawerToolbar({ open, toggleDrawer }) {
           px: 1
         }}>
         <Suspense fallback={null}>
-          <ToolbarSelect open={open} toggleDrawer={toggleDrawer} />
+          <ToolbarSelect />
         </Suspense>
 
         <IconButton
-          aria-label={t(`drawer.toolbar.${open ? 'collapse' : 'expand'}`)}
+          aria-label={t(`drawer.toolbar.${drawerOpen ? 'collapse' : 'expand'}`)}
           onClick={toggleDrawer}
-          sx={{ ml: open ? 'auto' : 0 }}>
-          {open ? <ChevronLeftIcon fontSize='small' /> : <MenuIcon fontSize='small' />}
+          sx={{ ml: drawerOpen ? 'auto' : 0 }}>
+          <ChevronLeftIcon fontSize='small' sx={{ display: drawerOpen ? 'inline-block' : 'none' }} />
+          <MenuIcon fontSize='small' sx={{ display: drawerOpen ? 'none' : 'inline-block' }} />
         </IconButton>
       </Box>
       <Divider sx={{ display: 'block' }} />
