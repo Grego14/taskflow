@@ -154,7 +154,7 @@ export default function AssignMembers({
           })
         }
       }}>
-      {(triggerExit) => renderMembersList({
+      {(_, triggerExit) => renderMembersList({
         projectMembers,
         taskMembers,
         triggerExit,
