@@ -43,7 +43,7 @@ export default function LandingAppBar() {
   })
 
   return (
-    <AppBar color='inherit' sx={appBarStyles}>
+    <AppBar color='inherit' sx={appBarStyles} animate noRotate>
       <Link
         href='/'
         className='flex flex-center nav-item'
