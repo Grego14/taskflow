@@ -52,7 +52,7 @@ const baseTheme = createTheme({
             // temporary)
             top: `linear-gradient(45deg,
             ${alpha(lightColors.secondary, 0.03)},
-            ${alpha(lightColors.primary, 0.45)})`
+            ${alpha(lightColors.primary, 0.225)})`
           }
         },
         error: { main: lightColors.error }
