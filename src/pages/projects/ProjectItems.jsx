@@ -1,3 +1,5 @@
+import { lazy, Suspense } from 'preact/compat'
+
 import Box from '@mui/material/Box'
 import AddButton from '@components/ui/buttons/AddButton'
 import AddMembers from '@components/ui/buttons/AddMembers'
@@ -5,7 +7,9 @@ import FilterButton from '@components/ui/buttons/FilterButton'
 import ArchiveButton from '@components/ui/buttons/ArchiveButton'
 import PreviewSwitcher from '@components/ui/previewswitcher/PreviewSwitcher'
 import List from '@mui/material/List'
-import ToggleProjectDrawer from '@components/ui/projects/ToggleProjectDrawer'
+
+const ToggleProjectDrawer = lazy(() =>
+  import('@components/ui/projects/ToggleProjectDrawer'))
 
 import useApp from '@hooks/useApp'
 import useProject from '@hooks/useProject'
@@ -40,7 +44,10 @@ export default function ProjectItems() {
         </Box>
       ) : (
         <>
-          <ToggleProjectDrawer />
+          <Suspense fallback={null}>
+            <ToggleProjectDrawer />
+          </Suspense>
+
           {defaultItems}
         </>
       )}
