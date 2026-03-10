@@ -22,7 +22,7 @@ export default function TaskPriority({ priority, updatePriority }) {
       label={t('changePriority')}
       text={getPriorityLabel(priority)}
       buttonStyles={(theme) => ({ ...getPriorityStyles(theme, { fg, bg }) })}>
-      {(triggerExit) =>
+      {(_, triggerExit) =>
         renderPriorityMenu(priority, (val) => {
           triggerExit()
           updatePriority(val)

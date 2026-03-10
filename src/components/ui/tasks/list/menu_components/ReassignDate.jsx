@@ -6,7 +6,9 @@ import DropdownMenu from '@components/reusable/DropdownMenu'
 import useLoadResources from '@hooks/useLoadResources'
 import useTaskDateUpdater from '@hooks/useTaskDateUpdater'
 import { useTranslation } from 'react-i18next'
-import getDateItems from '@utils/tasks/getDateItems'
+import { lazy, Suspense } from 'preact/compat'
+
+const DateItems = lazy(() => import('@components/reusable/tasks/DateItems'))
 
 export default function ReassignDate({ rawDate, id, subtask }) {
   const { t } = useTranslation(['tasks', 'dialogs'])
@@ -40,10 +42,16 @@ export default function ReassignDate({ rawDate, id, subtask }) {
           '& .MuiButton-startIcon': { order: 2, ml: 1, mr: 0 },
           ...theme.typography.body2
         })
-        ]}
-      >
-        {(triggerExit) => (
-          getDateItems(date, false, (val) => handleDateChange(val, triggerExit))
+        ]}>
+        {(open, triggerExit) => (
+          <Suspense>
+            {open && (
+              <DateItems
+                currentDate={date}
+                onItemClick={val => handleDateChange(val, triggerExit)}
+              />
+            )}
+          </Suspense>
         )}
       </DropdownMenu>
     </Box>

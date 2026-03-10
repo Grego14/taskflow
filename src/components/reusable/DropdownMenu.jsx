@@ -94,7 +94,9 @@ export default memo(function DropdownMenu(props) {
               ...otherSlots
             }}
             transitionDuration={0}>
-            {typeof children === 'function' ? children(triggerExit) : children}
+            {typeof children === 'function'
+              ? children(renderOpen, triggerExit)
+              : children}
           </Menu>
         )}
       </AnimatedMenu>

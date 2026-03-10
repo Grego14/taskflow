@@ -1,11 +1,14 @@
+import { lazy, Suspense } from 'preact/compat'
+
 import DropdownMenu from '@components/reusable/DropdownMenu'
 import CalendarIcon from '@mui/icons-material/CalendarMonth'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 
+const DateItems = lazy(() => import('@components/reusable/tasks/DateItems'))
+
 import { DATES } from '@/constants'
 import { useTranslation } from 'react-i18next'
-import getDateItems from '@utils/tasks/getDateItems'
 import upperCaseInitialLetter from '@utils/upperCaseInitialLetter'
 
 const getDate = date => (!DATES.includes(date) ? 'nodate' : date)
@@ -24,12 +27,16 @@ export default function TaskDate({ date, setDate }) {
         label={t('newtask.taskDateLabel')}
         tooltipPosition='top'
         icon={<CalendarIcon />}>
-        {(triggerExit) => (
-          getDateItems(
-            date,
-            true,
-            (val) => handleDateChange(val, triggerExit)
-          )
+        {(open, triggerExit) => (
+          <Suspense fallback={null}>
+            {open && (
+              <DateItems
+                currentDate={date}
+                isList
+                onItemClick={val => handleDateChange(val, triggerExit)}
+              />
+            )}
+          </Suspense>
         )}
       </DropdownMenu>
 

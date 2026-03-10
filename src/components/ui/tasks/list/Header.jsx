@@ -1,3 +1,4 @@
+import { useMemo, useState, Suspense, lazy } from 'preact/compat'
 
 import DropdownMenu from '@components/reusable/DropdownMenu'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
@@ -5,12 +6,12 @@ import Box from '@mui/material/Box'
 import CardHeader from '@mui/material/CardHeader'
 import Typography from '@mui/material/Typography'
 import UpdatableTaskTitle from './UpdatableTaskTitle'
-import TaskActions from './menu_components/TaskActions'
 import TaskMembers from './TaskMembers'
 import SmartDateLabel from './SmartDateLabel'
 import TaskCalendar from './TaskCalendar'
 
-import { useMemo, useState } from 'preact/compat'
+const TaskActions = lazy(() => import('./menu_components/TaskActions'))
+
 import useApp from '@hooks/useApp'
 import useProject from '@hooks/useProject'
 import useUser from '@hooks/useUser'
@@ -109,8 +110,12 @@ export default function Header({ data, insideTask = false, status }) {
               disabled={isArchived}
               onClick={() => setOpen(true)}
               label={state => getMenuLabel(state, 'taskActionsLabel', 'tasks')}>
-              {(triggerExit) => (
-                <TaskActions {...actionsData} menuHandler={triggerExit} />
+              {(menuOpen, triggerExit) => (
+                <Suspense fallback={null}>
+                  {menuOpen && (
+                    <TaskActions {...actionsData} menuHandler={triggerExit} />
+                  )}
+                </Suspense>
               )}
             </DropdownMenu>
           </>

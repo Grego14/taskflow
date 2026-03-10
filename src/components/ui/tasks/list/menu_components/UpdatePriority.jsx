@@ -29,8 +29,9 @@ export default function UpdatePriority({ priority, id, subtask }) {
       text={getPriorityLabel(priority)}
       buttonStyles={(theme) => getPriorityStyles(theme, { fg, bg, isArchived })}
       disabled={isArchived}>
-      {(triggerExit) =>
-        renderPriorityMenu(priority, (val) => handleUpdatePriority(val, triggerExit), t)
+      {(_, triggerExit) =>
+        renderPriorityMenu(priority,
+          (val) => handleUpdatePriority(val, triggerExit), t)
       }
     </DropdownMenu>
   )

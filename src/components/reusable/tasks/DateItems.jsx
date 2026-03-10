@@ -11,7 +11,11 @@ const getTranslatedText = (date) => {
   return upperCaseInitialLetter(t(`newtask.dates.${date}`))
 }
 
-export default function getDateItems(currentDate, isList = false, onItemClick) {
+export default function DateItems({
+  currentDate,
+  isList = false,
+  onItemClick
+}) {
   return DATES.map(date => {
     const text = getTranslatedText(date)
     const isSelected = date === currentDate

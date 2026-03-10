@@ -1,12 +1,13 @@
 import CalendarIcon from '@mui/icons-material/CalendarMonth'
 import DropdownMenu from '@components/reusable/DropdownMenu'
 
+import { Suspense, lazy } from 'preact/compat'
 import { useTranslation } from 'react-i18next'
 import useLoadResources from '@hooks/useLoadResources'
 import useProject from '@hooks/useProject'
 import useTaskDateUpdater from '@hooks/useTaskDateUpdater'
 
-import getDateItems from '@utils/tasks/getDateItems'
+const DateItems = lazy(() => import('@components/reusable/tasks/DateItems'))
 
 export default function TaskCalendar({ rawDate, taskId, parentId, insideTask }) {
   const { t } = useTranslation('tasks')
@@ -26,12 +27,16 @@ export default function TaskCalendar({ rawDate, taskId, parentId, insideTask }) 
       buttonStyles={{ p: 1 }}
       icon={<CalendarIcon fontSize={insideTask ? 'small' : 'medium'} />}
       disabled={isArchived}>
-      {(triggerExit) => (
-        getDateItems(
-          date,
-          true,
-          (val) => handleDateChange(val, triggerExit)
-        )
+      {(open, triggerExit) => (
+        <Suspense fallback={null}>
+          {open && (
+            <DateItems
+              currentDate={date}
+              isList
+              onItemClick={val => handleDateChange(val, triggerExit)}
+            />
+          )}
+        </Suspense>
       )}
     </DropdownMenu>
   )

@@ -47,7 +47,12 @@ const AssignedMember = ({ id, removeMember }) => {
 
   return (
     <Button
-      sx={{ perspective: '1000px', transformOrigin: '0 50% -50' }}
+      sx={{
+        perspective: '1000px',
+        transformOrigin: '0 50% -50',
+        gap: '.5rem',
+        pl: '.5rem'
+      }}
       ref={memberRef}
       key={`avatar-button__${id}`}
       variant='outlined'
@@ -66,11 +71,9 @@ const AssignedMember = ({ id, removeMember }) => {
           <RemoveIcon fontSize='small' color='action' />
         </Box>}
       onClick={() => handleDeletion(id)}
-      aria-label={t('buttons.removeMember_member', {
-        member: username,
-        ns: 'tasks'
-      })}
-      sx={{ gap: '.5rem', pl: '.5rem' }}>
+      aria-label={t('tasks:buttons.removeMember_member', {
+        member: username
+      })}>
       <Avatar
         alt={username}
         src={avatar}
