@@ -4,13 +4,13 @@ import Tooltip from '@mui/material/Tooltip'
 import Badge from '@mui/material/Badge'
 import Typography from '@mui/material/Typography'
 import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
 
 import useTasks from '@hooks/useTasks'
 import useProject from '@hooks/useProject'
 import { useTranslation } from 'react-i18next'
 import { useMemo } from 'react'
 import useApp from '@hooks/useApp'
-import { Button } from '@mui/material'
 
 export default function ArchiveButton() {
   const { t } = useTranslation('tasks')
