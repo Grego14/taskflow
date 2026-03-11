@@ -74,7 +74,8 @@ export default memo(function PreviewSwitcher() {
     <Box
       minWidth={isMobile ? '40px' : '12rem'}
       height='min-content'
-      mr={{ tablet: 'auto' }}>
+      mr={{ tablet: 'auto' }}
+      component='li'>
       <Suspense fallback={null}>
         {isMobile ? (
           <DropdownMenu

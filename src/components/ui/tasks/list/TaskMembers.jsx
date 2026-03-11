@@ -6,8 +6,10 @@ import PersonIcon from '@mui/icons-material/PersonOutline'
 
 import { useState, useMemo } from 'react'
 import useProject from '@hooks/useProject'
+import { useTranslation } from 'react-i18next'
 
 export default function TaskMembers({ assignedTo = [], subtasks = [], insideTask }) {
+  const { t } = useTranslation('tasks')
   const { projectMembers } = useProject()
 
   const taskMembers = useMemo(() => {
@@ -55,6 +57,7 @@ export default function TaskMembers({ assignedTo = [], subtasks = [], insideTask
         {taskMembers.length === 1 ? (
           <Avatar
             src={firstMember?.avatar}
+            alt={t('avatar_name', { name: firstMember?.username })}
             slotProps={{ img: { fetchPriority: 'high' } }}
             sx={{
               width: avatarSize,

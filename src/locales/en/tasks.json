@@ -66,11 +66,13 @@
     },
     "archive": "Archive completed",
     "archiveCount": "Archive {{count}} tasks",
-    "removeMember_member": "Remove member {{member}} from the task"
+    "removeMember_member": "Remove member {{member}} from the task",
+    "complete_newStatus": "Switch to $t(statuses.{{newStatus}})"
   },
   "notifications": {
     "taskDeleted": "Task successfully deleted",
     "tasksArchived": "Tasks archived successfully"
   },
-  "assignedMembers": "Assigned members"
+  "assignedMembers": "Assigned members",
+  "avatar_name": "{{name}}'s avatar"
 }

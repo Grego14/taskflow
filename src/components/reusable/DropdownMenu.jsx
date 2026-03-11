@@ -1,10 +1,10 @@
-import { memo, useState } from 'preact/compat'
-import Box from '@mui/material/Box'
+import { memo, useState, forwardRef } from 'preact/compat'
 import Button from '@mui/material/Button'
 import IconButton from '@mui/material/IconButton'
 import Menu from '@mui/material/Menu'
 import Tooltip from '@mui/material/Tooltip'
 import AnimatedMenu from '@components/reusable/animated/AnimatedMenu'
+import ButtonListItem from './buttons/ButtonListItem'
 
 export default memo(function DropdownMenu(props) {
   const {
@@ -20,6 +20,7 @@ export default memo(function DropdownMenu(props) {
     forceClose,
     disabled,
     disableTooltip,
+    asListItem = false,
     ...other
   } = props
 
@@ -38,36 +39,33 @@ export default memo(function DropdownMenu(props) {
   }
 
   const tooltipTitle = typeof label === 'function' ? label(isMenuOpen) : label
-  const { button: buttonProps, ...otherSlots } = other?.slotProps || {}
+  const { button: btnSlotProps, ...otherSlots } = other?.slotProps || {}
 
-  const button = !text ? (
-    <IconButton
-      sx={buttonStyles}
-      onClick={handleOnClick}
-      disabled={disabled}
-      {...buttonProps}>
-      {icon}
-    </IconButton>
-  ) : (
-    <Button
-      sx={buttonStyles}
-      onClick={handleOnClick}
-      startIcon={icon}
-      disabled={disabled}
-      {...buttonProps}>
-      {text}
-    </Button>
-  )
+  const buttonContent = !text ? icon : text
+  const buttonProps = {
+    sx: buttonStyles,
+    onClick: handleOnClick,
+    disabled,
+    startIcon: !text ? null : icon,
+    children: asListItem ? null : buttonContent,
+    ...btnSlotProps
+  }
+
+  const DropdownButton = !text ? IconButton : Button
 
   return (
-    <Box role='none'>
+    <>
       {!disableTooltip ? (
         <Tooltip title={tooltipTitle} placement={tooltipPosition}>
-          <Box component='span' sx={{ display: 'flex' }}>
-            {button}
-          </Box>
+          {asListItem
+            ? <ButtonListItem
+              component={DropdownButton}
+              btnProps={buttonProps}
+              children={buttonContent}
+            />
+            : <DropdownButton {...buttonProps} />}
         </Tooltip>
-      ) : button}
+      ) : <DropdownButton {...buttonProps} />}
 
       <AnimatedMenu open={isMenuOpen} onExitComplete={handleFinalClose}>
         {(renderOpen, setMenuRef, triggerExit) => (
@@ -100,6 +98,6 @@ export default memo(function DropdownMenu(props) {
           </Menu>
         )}
       </AnimatedMenu>
-    </Box>
+    </>
   )
 })

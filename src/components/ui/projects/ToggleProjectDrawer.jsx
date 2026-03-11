@@ -1,6 +1,7 @@
 import IconButton from '@mui/material/IconButton'
 import GridViewIcon from '@mui/icons-material/GridView'
 import Tooltip from '@mui/material/Tooltip'
+import ButtonListItem from '@components/reusable/buttons/ButtonListItem'
 
 import { useTranslation } from 'react-i18next'
 import useLayout from '@hooks/useLayout'
@@ -17,14 +18,18 @@ export default function ToggleProjectDrawer() {
 
   return (
     <Tooltip title={label}>
-      <IconButton
-        edge='start'
-        color='inherit'
-        aria-label={label}
-        onClick={() => toggleDrawer(!drawerOpen)}
-        sx={{ ml: 0, alignSelf: 'center', display: { xs: 'flex', tablet: 'none' } }}>
+      <ButtonListItem component={IconButton} btnProps={{
+        edge: 'start',
+        color: 'inherit',
+        onClick: toggleDrawer,
+        sx: {
+          ml: 0,
+          alignSelf: 'center',
+          display: { xs: 'flex', tablet: 'none' }
+        }
+      }}>
         <GridViewIcon fontSize='medium' />
-      </IconButton>
+      </ButtonListItem>
     </Tooltip>
   )
 }

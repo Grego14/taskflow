@@ -73,6 +73,7 @@ export default function UpdatableTaskTitle({
       fullWidth={show}
       inputRef={inputRef}
       value={taskTitle}
+      placeholder={taskTitle}
       disabled={isArchived}
       onClick={() => setShow(true)}
       onChange={e => setTaskTitle(e.target.value)}

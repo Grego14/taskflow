@@ -1,12 +1,12 @@
 import Box from '@mui/material/Box'
 import List from '@mui/material/List'
-import ListItemButton from '@mui/material/ListItemButton'
-import ListItemIcon from '@mui/material/ListItemIcon'
-import ListItemText from '@mui/material/ListItemText'
+import Button from '@mui/material/Button'
+import Typography from '@mui/material/Typography'
 import Collapse from '@mui/material/Collapse'
 import AccountTreeIcon from '@mui/icons-material/AccountTree'
 import NavAction from '@components/reusable/NavAction'
 import Tooltip from '@mui/material/Tooltip'
+import ButtonListItem from '@components/reusable/buttons/ButtonListItem'
 
 import ExpandIcon from '@mui/icons-material/ExpandLess'
 
@@ -90,53 +90,66 @@ export default function ProjectCollapsibleSection() {
       disablePadding
       sx={{ mt: 0.5 }}>
       <Tooltip title={t('projectActions.navFolder')} placement='right'>
-        <ListItemButton
-          onClick={handleToggle}
+        <ButtonListItem
+          component={Button}
           sx={{
-            px: 1.5,
-            py: 1,
-            justifyContent: drawerOpen ? 'initial' : 'center'
-          }}>
-          <ListItemIcon sx={{
-            minWidth: 0,
-            mr: drawerOpen ? 1.5 : '0',
+            display: 'flex',
             justifyContent: 'center',
-            color: 'text.secondary'
+            '.is-open &': {
+              justifyContent: 'initial'
+            }
+          }}
+          btnProps={{
+            onClick: handleToggle,
+            sx: {
+              width: '100%',
+              px: 1.5,
+              py: 1.5
+            }
           }}>
-            <AccountTreeIcon fontSize='small' />
-          </ListItemIcon>
-
-          <>
-            <ListItemText
-              primary={t('projectActions.navFolder')}
-              sx={{ flexGrow: drawerOpen ? 1 : 0 }}
-              slotProps={{
-                primary: {
-                  className: 'nav-folder-text',
-                  ...LABEL_PROPS,
-                  sx: {
-                    ...(!drawerOpen ? ({
-                      position: 'absolute',
-                      opacity: 0
-                    }) : {})
-                  },
-                  'aria-hidden': !drawerOpen
-                }
+          <Box
+            className='flex flex-center'
+            sx={{ mr: 0, '.is-open &': { mr: 'auto' } }}>
+            <AccountTreeIcon
+              fontSize='small'
+              sx={{
+                minWidth: 0,
+                mr: 0,
+                '.is-open &': { mr: 1.5 },
+                justifyContent: 'center',
+                color: 'text.secondary'
               }}
             />
+
+            <Typography
+              className='nav-folder-text'
+              {...LABEL_PROPS}
+              sx={{
+                '.is-closed &': {
+                  position: 'absolute',
+                  opacity: 0,
+                  visibility: 'hidden'
+                }
+              }}>
+              {t('projectActions.navFolder')}
+            </Typography>
+          </Box>
+
+          <>
             <ExpandIcon
               fontSize='small'
               sx={{
                 transition: 'rotate 0.15s ease-in-out',
                 rotate: open ? '180deg' : 0,
-                ...(!drawerOpen ? ({
+                '.is-closed &': {
                   position: 'absolute',
-                  opacity: 0
-                }) : {})
+                  opacity: 0,
+                  visibility: 'hidden'
+                }
               }}
             />
           </>
-        </ListItemButton>
+        </ButtonListItem>
       </Tooltip>
 
       <Collapse in={open && drawerOpen} timeout='auto' unmountOnExit>
