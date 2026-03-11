@@ -9,8 +9,9 @@ import UpdatableTaskTitle from './UpdatableTaskTitle'
 import TaskMembers from './TaskMembers'
 import SmartDateLabel from './SmartDateLabel'
 import TaskCalendar from './TaskCalendar'
+import TaskActionsSkeleton from '../buttons/TaskActionsSkeleton'
 
-const TaskActions = lazy(() => import('@components/ui/tasks/buttons/TaskActions'))
+const TaskActions = lazy(() => import('../buttons/TaskActions'))
 
 import useApp from '@hooks/useApp'
 import useProject from '@hooks/useProject'
@@ -112,7 +113,7 @@ export default function Header({ data, insideTask = false, status }) {
               onClick={() => setOpen(true)}
               label={state => getMenuLabel(state, 'taskActionsLabel', 'tasks')}>
               {(menuOpen, triggerExit) => (
-                <Suspense fallback={null}>
+                <Suspense fallback={<TaskActionsSkeleton />}>
                   {menuOpen && (
                     <TaskActions {...actionsData} menuHandler={triggerExit} />
                   )}

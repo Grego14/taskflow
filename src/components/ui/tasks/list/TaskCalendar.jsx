@@ -1,5 +1,6 @@
 import CalendarIcon from '@mui/icons-material/CalendarMonth'
 import DropdownMenu from '@components/reusable/DropdownMenu'
+import Skeleton from '@mui/material/Skeleton'
 
 import { Suspense, lazy } from 'preact/compat'
 import { useTranslation } from 'react-i18next'
@@ -28,7 +29,7 @@ export default function TaskCalendar({ rawDate, taskId, parentId, insideTask }) 
       icon={<CalendarIcon fontSize={insideTask ? 'small' : 'medium'} />}
       disabled={isArchived}>
       {(open, triggerExit) => (
-        <Suspense fallback={null}>
+        <Suspense fallback={<Skeleton width='8rem' height={0} />}>
           {open && (
             <DateItems
               currentDate={date}
