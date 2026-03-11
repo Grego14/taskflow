@@ -43,7 +43,9 @@ export default function useDrawerAnimation(drawerRef) {
           transition: `width ${widthDuration}s ease-in-out`,
           width: targetWidth,
           duration: widthDuration,
-          ease: 'power3.out'
+          ease: 'power3.out',
+          // avoid the scrollbar on the initial animation
+          onComplete() { gsap.set(drawerRef.current, { overflowX: 'hidden' }) }
         }, 'start')
     }
 

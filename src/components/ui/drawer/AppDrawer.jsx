@@ -58,7 +58,7 @@ export default function AppDrawer() {
             textWrap: 'nowrap',
             width: drawerWidth,
             backgroundImage: theme.palette.background.drawer,
-            overflowX: 'hidden',
+            overflow: 'hidden',
             transition: 'none',
             '&.is-closed': { boxShadow: shadow }
           })
