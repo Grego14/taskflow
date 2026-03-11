@@ -1,7 +1,12 @@
+import { Suspense, lazy } from 'preact/compat'
+
 import Button from '@mui/material/Button'
 import Typography from '@mui/material/Typography'
 import Section from './Section'
 import Box from '@mui/material/Box'
+
+const ScrollIndicator = lazy(() => import('./ScrollIndicator'))
+
 import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
 import { useTranslation } from 'react-i18next'
@@ -63,10 +68,25 @@ const btnStyles = (theme) => ({
     background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent)',
     transform: 'skewX(-20deg)'
   },
-  boxShadow: `0 3px 18px ${theme.palette.primary.main}80`
+  boxShadow: `0 3px 18px ${theme.palette.primary.main}80`,
+  mt: { xs: 4, tablet: 6, laptop: 8 }
 })
 
-export default function MainText({ setAnimationEnded, prefetchAuth }) {
+const secondaryBtnStyles = (theme) => ({
+  opacity: 0,
+  visibility: 'hidden',
+  ...theme.typography.h6,
+  py: 1.5,
+  px: 3,
+  borderWidth: '2px',
+  mt: 2
+})
+
+export default function MainText({
+  setAnimationEnded,
+  prefetchAuth,
+  animationEnded
+}) {
   const { t, i18n } = useTranslation('landing')
   const { preferences } = useUser()
   const lang = preferences?.lang
@@ -103,33 +123,33 @@ export default function MainText({ setAnimationEnded, prefetchAuth }) {
     })
 
     gsap.set(['#bigText', '#shortText'], { opacity: 1 })
-    gsap.set('#startBtn', { y: 40, scale: 0.9 })
+    gsap.set(['#startBtn', '#previewBtn'], { y: 40, scale: 0.9 })
 
     tl.from(bigSplit.words, {
       y: 50,
       autoAlpha: 0,
-      stagger: 0.6 / bigSplit.words.length,
+      stagger: 0.8 / bigSplit.words.length,
       ease: 'back.out(2.5)',
-      rotate: 45,
-      transformOrigin: '0 50% -50',
-      delay: 0.2
+      rotateZ: -45,
+      transformOrigin: '0 50% -50'
     })
       .from(shortSplit.chars, {
         opacity: 0,
         y: 15,
         rotateX: -80,
-        stagger: 0.85 / shortSplit.chars.length,
-        onComplete: setAnimationEnded
+        stagger: 0.85 / shortSplit.chars.length
       }, '-=0.4')
-      .to('#startBtn', {
+      .to(['#startBtn', '#previewBtn'], {
         autoAlpha: 1,
         y: 0,
-        scale: 1
+        scale: 1,
+        stagger: 0.3,
+        onComplete: setAnimationEnded
       }, '-=0.5')
   }, { dependencies: [resourceExists] })
 
   return (
-    <Section className='text-center' sx={{ px: 2 }} id='main-text'>
+    <Section className='text-center relative' sx={{ px: 2 }} id='main-text'>
       <Typography
         className='text-balance'
         id='bigText'
@@ -156,13 +176,27 @@ export default function MainText({ setAnimationEnded, prefetchAuth }) {
       </Box>
 
       <Button
-        sx={[theme => ({ ...btnStyles(theme), mt: { xs: 4, tablet: 6, laptop: 8 } })]}
+        sx={btnStyles}
         variant='contained'
         onMouseEnter={prefetchAuth}
         id='startBtn'
         onClick={() => navigate('signup')}>
         {t('startForFree')}
       </Button>
+
+      <Button
+        sx={secondaryBtnStyles}
+        variant='outlined'
+        id='previewBtn'
+        onClick={() => navigate('preview')}>
+        {t('livePreview')}
+      </Button>
+
+      {animationEnded && (
+        <Suspense fallback={null}>
+          <ScrollIndicator nextSectionId='cards' />
+        </Suspense>
+      )}
     </Section>
   )
 }

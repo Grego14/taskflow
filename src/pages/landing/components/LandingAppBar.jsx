@@ -43,7 +43,7 @@ export default function LandingAppBar() {
   })
 
   return (
-    <AppBar color='inherit' sx={appBarStyles} animate noRotate>
+    <AppBar color='inherit' sx={appBarStyles} animate noRotate top>
       <Link
         href='/'
         className='flex flex-center nav-item'
@@ -56,9 +56,7 @@ export default function LandingAppBar() {
           gap: 1
         })}>
         <Box sx={[theme => ({
-          color: theme.palette.common[theme.palette.mode === 'light'
-            ? 'white'
-            : 'black']
+          color: theme.palette.common[userTheme === 'light' ? 'white' : 'black']
         })]}>
           <img
             width='40'

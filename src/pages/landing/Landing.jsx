@@ -115,6 +115,7 @@ export default function Landing() {
         <MainText
           setAnimationEnded={handleMainAnim}
           prefetchAuth={handlePrefetch}
+          animationEnded={mainEnded}
         />
       </ScreenWrapper>
 
