@@ -17,7 +17,8 @@ export default memo(function NavAction({
   className,
   showTooltip,
   tooltipPlacement = 'top',
-  hideText
+  hideText,
+  showBg
 }) {
   const { isMobile } = useApp()
   const { unreadCount } = useNotifications()
@@ -50,7 +51,9 @@ export default memo(function NavAction({
               ? '#fff'
               : theme.darken(contrast, 0.1),
             '& .nav-action-text': { fontWeight: 500 },
-            backgroundColor: theme.alpha(theme.palette.primary.main, 0.25)
+            backgroundColor: showBg
+              ? theme.alpha(theme.palette.primary.main, 0.25)
+              : 'transparent'
           }),
           textDecoration: 'none',
           ...(hideText && { justifyContent: 'center' })

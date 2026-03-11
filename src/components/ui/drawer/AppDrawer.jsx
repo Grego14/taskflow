@@ -31,12 +31,11 @@ export default function AppDrawer() {
   const loadingResources = useLoadResources('ui')
 
   const isLight = theme.palette.mode === 'light'
-  const shadowColor = theme.palette.grey[isLight ? 300 : 800]
+  const shadowColor = theme.palette.grey[isLight ? 400 : 800]
   const isProjectAndDesktop = projectId && !isMobile
   const shadow = `0 ${isProjectAndDesktop ? APPBAR_HEIGHT.other : 0} 3px ${shadowColor}`
 
-  // trigger animation when dependencies change (for permanent drawer, or
-  // initial animation)
+  // trigger when dependencies change (for temporary drawer initial animation)
   useGSAP(() => {
     if (loadingResources || isMobile) return
 
@@ -52,21 +51,21 @@ export default function AppDrawer() {
       slotProps={{
         paper: {
           ref: drawerRef,
-          className: drawerOpen ? 'is-open' : 'is-closed',
+          className: `${drawerOpen ? 'is-open' : 'is-closed'}`,
           sx: theme => ({
+            willChange: 'width',
             display: 'flex',
             textWrap: 'nowrap',
             width: drawerWidth,
-            ...(!drawerOpen && { boxShadow: shadow }),
             backgroundImage: theme.palette.background.drawer,
             overflowX: 'hidden',
-            transition: theme.transitions.create(['transform', 'width'],
-              { duration: '0.3s', easing: 'ease-in-out' })
+            transition: 'none',
+            '&.is-closed': { boxShadow: shadow }
           })
         },
         transition: {
-          // this ensures animation runs when the temporary drawer mounts
-          onEnter: () => { console.log('enter drawer animation'), toggleDrawer(true) }
+          // this ensures animation runs when the permanent drawer mounts
+          onEnter: () => toggleDrawer(true)
         }
       }}
       open={drawerOpen}
@@ -82,24 +81,33 @@ export default function AppDrawer() {
 
         {projectId && (
           <>
-            <Divider sx={{ my: 1, opacity: 0.8, mx: 1 }} />
+            <Divider sx={{ my: 1, opacity: 0.8, mx: 1 }} role='none' />
             <Suspense fallback={null}>
               <ProjectNavFolder />
             </Suspense>
           </>
         )}
 
-        <Box className='flex flex-column' mt='auto' gap={1.5} minHeight='10rem'>
+        <Box
+          className='flex flex-column'
+          mt='auto'
+          gap={1.5}
+          minHeight='10rem'
+          component='li'>
           <ProfileButton
-            open={drawerOpen}
             showTexts
             className='drawer-action'
             sx={{
               p: 1.5,
-              mr: drawerOpen ? 0 : 'auto',
-              justifyContent: drawerOpen ? 'start' : 'center',
+              mr: 'auto',
+              justifyContent: 'center',
               maxWidth: '100%',
-              mt: 'auto'
+              mt: 'auto',
+
+              '.is-open &': {
+                justifyContent: 'start',
+                mr: 0
+              }
             }}
             tooltipPosition='right'
           />

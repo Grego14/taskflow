@@ -16,7 +16,6 @@ import useLoadResources from '@hooks/useLoadResources'
 import { useNavigate } from 'react-router-dom'
 
 export default function ProfileButton({
-  open,
   showTexts,
   tooltipPosition = 'top',
   onlyIcon = false,
@@ -85,9 +84,13 @@ export default function ProfileButton({
             sx={{
               alignItems: 'start',
               position: 'absolute',
-              left: { xs: '4.25rem', laptop: '3.5rem' }
-            }}
-            aria-hidden={!open}>
+              left: { xs: '4.25rem', laptop: '3.5rem' },
+              visibility: 'hidden',
+
+              '.is-open &': {
+                visibility: 'visible'
+              }
+            }}>
             <Typography
               sx={[theme => ({
                 ...theme.typography.subtitle2,

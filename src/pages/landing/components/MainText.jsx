@@ -68,8 +68,7 @@ const btnStyles = (theme) => ({
     background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent)',
     transform: 'skewX(-20deg)'
   },
-  boxShadow: `0 3px 18px ${theme.palette.primary.main}80`,
-  mt: { xs: 4, tablet: 6, laptop: 8 }
+  boxShadow: `0 3px 18px ${theme.palette.primary.main}80`
 })
 
 const secondaryBtnStyles = (theme) => ({
@@ -78,8 +77,7 @@ const secondaryBtnStyles = (theme) => ({
   ...theme.typography.h6,
   py: 1.5,
   px: 3,
-  borderWidth: '2px',
-  mt: 2
+  borderWidth: '2px'
 })
 
 export default function MainText({
@@ -175,22 +173,33 @@ export default function MainText({
         </span>
       </Box>
 
-      <Button
-        sx={btnStyles}
-        variant='contained'
-        onMouseEnter={prefetchAuth}
-        id='startBtn'
-        onClick={() => navigate('signup')}>
-        {t('startForFree')}
-      </Button>
+      <Box className='flex flex-center'
+        sx={{
+          mt: {
+            xs: 3,
+            tablet: 5,
+            laptop: 4
+          },
+          gap: 2,
+          flexDirection: { xs: 'column', laptop: 'row' }
+        }}>
+        <Button
+          sx={btnStyles}
+          variant='contained'
+          onMouseEnter={prefetchAuth}
+          id='startBtn'
+          onClick={() => navigate('signup')}>
+          {t('startForFree')}
+        </Button>
 
-      <Button
-        sx={secondaryBtnStyles}
-        variant='outlined'
-        id='previewBtn'
-        onClick={() => navigate('preview')}>
-        {t('livePreview')}
-      </Button>
+        <Button
+          sx={secondaryBtnStyles}
+          variant='outlined'
+          id='previewBtn'
+          onClick={() => navigate('preview')}>
+          {t('livePreview')}
+        </Button>
+      </Box>
 
       {animationEnded && (
         <Suspense fallback={null}>

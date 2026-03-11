@@ -34,9 +34,9 @@ export default function DrawerToolbar({ open }) {
         <IconButton
           aria-label={t(`drawer.toolbar.${drawerOpen ? 'collapse' : 'expand'}`)}
           onClick={toggleDrawer}
-          sx={{ ml: drawerOpen ? 'auto' : 0 }}>
-          <ChevronLeftIcon fontSize='small' sx={{ display: drawerOpen ? 'inline-block' : 'none' }} />
-          <MenuIcon fontSize='small' sx={{ display: drawerOpen ? 'none' : 'inline-block' }} />
+          sx={{ ml: 0, '.is-open &': { ml: 'auto' } }}>
+          <ChevronLeftIcon fontSize='small' sx={{ '.is-closed &': { display: 'none' } }} />
+          <MenuIcon fontSize='small' sx={{ '.is-open &': { display: 'none' } }} />
         </IconButton>
       </Box>
       <Divider sx={{ display: 'block' }} />
