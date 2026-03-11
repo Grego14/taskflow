@@ -1,7 +1,12 @@
-import AddMembersDialog from '@components/reusable/dialogs/addMembers/AddMembersDialog'
+import { lazy, Suspense } from 'preact/compat'
+
 import PersonAddIcon from '@mui/icons-material/PersonAdd'
 import IconButton from '@mui/material/IconButton'
 import Tooltip from '@mui/material/Tooltip'
+import ButtonListItem from '@components/reusable/buttons/ButtonListItem'
+
+const AddMembersDialog = lazy(() =>
+  import('@components/reusable/dialogs/addMembers/AddMembersDialog'))
 
 import useProject from '@hooks/useProject'
 import { useState } from 'react'
@@ -17,14 +22,19 @@ export default function AddMembers() {
   return (
     <>
       <Tooltip title={t('buttons.addMembers')}>
-        <span>
-          <IconButton onClick={() => setOpen(true)} disabled={data?.isArchived}>
-            <PersonAddIcon fontSize='medium' />
-          </IconButton>
-        </span>
+        <ButtonListItem
+          component={IconButton}
+          btnProps={{
+            onClick: () => setOpen(true),
+            disabled: data?.isArchived
+          }}>
+          <PersonAddIcon fontSize='medium' />
+        </ButtonListItem>
       </Tooltip>
 
-      {open && <AddMembersDialog open={open} setOpen={setOpen} />}
+      <Suspense fallback={null}>
+        {open && <AddMembersDialog open={open} setOpen={setOpen} />}
+      </Suspense>
     </>
   )
 }

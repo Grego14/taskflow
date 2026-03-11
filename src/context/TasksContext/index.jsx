@@ -6,6 +6,7 @@ import useTaskAnimations from './hooks/useTaskAnimations'
 import useTaskMutations from './hooks/useTaskMutations'
 import useTaskReorder from './hooks/useTaskReorder'
 import useTaskMetrics from './hooks/useTaskMetrics'
+import useUser from '@hooks/useUser'
 
 import taskService from '@services/task'
 import TasksContext from './context'
@@ -13,9 +14,11 @@ import playSound from '@services/audio'
 
 import getFirstPosition from '@utils/tasks/getFirstPosition'
 import taskIsOverdue from '@utils/tasks/taskIsOverdue'
+import resolveTaskStatusUpdate from '@utils/tasks/taskStatusResolver'
 
 export default memo(function TasksProvider({ children }) {
   const { id: projectId, data: projectData, hasAccess } = useProject()
+  const { uid } = useUser()
 
   const {
     tasks: projectTasks,
@@ -30,6 +33,7 @@ export default memo(function TasksProvider({ children }) {
   })
 
   const ownerId = projectData?.createdBy
+  const isArchived = projectData?.isArchived
 
   const tasksWithRefs = useMemo(() => {
     if (!Array.isArray(projectTasks)) return null
@@ -114,7 +118,58 @@ export default memo(function TasksProvider({ children }) {
       })
     },
 
-    handleReorder
+    handleReorder,
+
+    getTaskData: (target, isSubtask) => {
+      if (!tasksWithRefs) return null
+
+      if (!isSubtask) {
+        return tasksWithRefs.find(t => t.id === target) || null
+      }
+
+      for (const task of tasksWithRefs) {
+        if (Array.isArray(task.subtasks)) {
+          const subtask = task.subtasks.find(s => s.id === target)
+          if (subtask) return subtask
+        }
+      }
+
+      return null
+    },
+
+    updateStatus: async ({ id, subtask, nextStatus }) => {
+      if (isArchived) return
+
+      const currentTaskData = actions.getTaskData(id, !!subtask)
+      const statusFields = resolveTaskStatusUpdate(currentTaskData, nextStatus)
+
+      const finalData = {
+        ...statusFields,
+        completedBy: nextStatus === 'done' ? uid : null,
+        cancelledBy: nextStatus === 'cancelled' ? uid : null
+      }
+
+      await updateTaskMutation.mutate({
+        id,
+        subtask,
+        data: finalData
+      })
+
+      if (nextStatus === 'done') playSound('complete')
+    },
+
+    moveSubtasks: async ({ taskId, subtasks }) => {
+      const list = tasksWithRefs.filter(t => !taskIsOverdue(t))
+      const position = getFirstPosition(list)
+
+      await taskService.moveSubtasks({
+        user: ownerId,
+        project: projectId,
+        task: taskId,
+        subtasks,
+        position
+      })
+    }
   }), [
     deleteTaskMutation,
     updateTaskMutation,
@@ -138,22 +193,7 @@ export default memo(function TasksProvider({ children }) {
       const task = tasksWithRefs?.find(t => t.id === target)
       task?.ref?.current?.scrollIntoView({ behavior: 'smooth' })
     },
-    getTaskData: (target, isSubtask) => {
-      if (!tasksWithRefs) return null
-
-      if (!isSubtask) {
-        return tasksWithRefs.find(t => t.id === target) || null
-      }
-
-      for (const task of tasksWithRefs) {
-        if (Array.isArray(task.subtasks)) {
-          const subtask = task.subtasks.find(s => s.id === target)
-          if (subtask) return subtask
-        }
-      }
-
-      return null
-    }
+    getTaskData: actions.getTaskData
   }), [actions, error, isLoading, tasksWithRefs])
 
   return <TasksContext.Provider value={value}>{children}</TasksContext.Provider>

@@ -1,6 +1,5 @@
 import { Suspense, lazy } from 'react'
 
-import TaskActionsProvider from '@context/TaskActionsContext'
 import CircleLoader from '@components/reusable/loaders/CircleLoader'
 import Box from '@mui/material/Box'
 
@@ -26,12 +25,12 @@ export default function TasksPreviewer() {
     <Box className='flex flex-grow'>
       {loading && <CircleLoader text={t('loading')} height='auto' />}
 
-      <TaskActionsProvider>
-        <Suspense fallback={null}>
-          {!loading &&
-            (actualPreview === 'kanban' ? <KanbanPreview /> : <ListPreview />)}
-        </Suspense>
-      </TaskActionsProvider>
+      <Suspense fallback={null}>
+        {!loading &&
+          (actualPreview === 'kanban'
+            ? <KanbanPreview />
+            : <ListPreview />)}
+      </Suspense>
     </Box>
   )
 }

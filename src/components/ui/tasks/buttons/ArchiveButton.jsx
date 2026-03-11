@@ -5,6 +5,7 @@ import Badge from '@mui/material/Badge'
 import Typography from '@mui/material/Typography'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
+import ButtonListItem from '@components/reusable/buttons/ButtonListItem'
 
 import useTasks from '@hooks/useTasks'
 import useProject from '@hooks/useProject'
@@ -76,7 +77,8 @@ export default function ArchiveButton() {
       </Button>
     )
     : (
-      <IconButton {...buttonProps}>
+      // the icon button is used inside the appbar list
+      <ButtonListItem component={IconButton} btnProps={buttonProps}>
         <Badge
           badgeContent={count}
           color='error'
@@ -89,7 +91,7 @@ export default function ArchiveButton() {
           }}>
           <ArchiveIcon fontSize='medium' />
         </Badge>
-      </IconButton>
+      </ButtonListItem>
     )
 
   return !isMobile ? (

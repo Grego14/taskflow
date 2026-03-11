@@ -9,7 +9,7 @@ import Breadcrumbs from '@mui/material/Breadcrumbs'
 import Chip from '@mui/material/Chip'
 import Typography from '@mui/material/Typography'
 
-const ArchiveButton = lazy(() => import('@components/ui/buttons/ArchiveButton'))
+const ArchiveButton = lazy(() => import('@components/ui/tasks/buttons/ArchiveButton'))
 
 import useProject from '@hooks/useProject'
 import { useTranslation } from 'react-i18next'

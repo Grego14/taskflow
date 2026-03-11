@@ -1,4 +1,4 @@
-import { Suspense, lazy, memo, useEffect, useRef, useMemo } from 'react'
+import { Suspense, lazy, memo, useRef, useMemo } from 'react'
 
 import Box from '@mui/material/Box'
 import Card from '@mui/material/Card'
@@ -26,7 +26,7 @@ import sortTasks from '@utils/tasks/sortTasks'
 import taskIsPending from '@utils/tasks/taskIsPending'
 import gsap from 'gsap'
 
-const taskStyles = (t, priority) => ({
+const getTaskCardStyles = (t, priority, isDragging, isOverdue, status, fg) => ({
   borderRadius: '12px',
   border: '1px solid',
   borderColor: 'divider',
@@ -38,11 +38,11 @@ const taskStyles = (t, priority) => ({
   maxWidth: '30rem',
   mx: 'auto',
   borderLeftWidth: 4,
+  borderLeftColor: fg,
   transitionProperty: 'opacity, background-color, border-color, box-shadow',
   backgroundColor: t.alpha(t.palette.background.paper, 0.35),
   cursor: 'grab',
-  // the user clicks the task link on a non-overdue subtask and sets the
-  // focused dataset
+  opacity: (isDragging || isOverdue || status === 'cancelled') ? 0.75 : 1,
   '&[data-focused]': { boxShadow: `0 0 0 2px ${t.palette.primary.main}` }
 })
 
@@ -80,48 +80,40 @@ export default memo(function ListTask({ data }) {
   })
 
   const [contextMenu, handler] = useContextMenu(isArchived, tasks)
-  const [fg, bg] = priorityColors[priority]
+  const [fg] = priorityColors[priority]
 
   // memoize subtasks to avoid re-filtering on every render
   const filteredSubtasks = useMemo(() => {
     if (!subtasks?.length) return []
 
-    return sortTasks(subtasks.filter(s =>
-      isOverdue
-        ? taskIsOverdue(s)
-        : true))
+    return sortTasks(subtasks.filter(s => isOverdue
+      ? taskIsOverdue(s)
+      : true))
   }, [subtasks, isOverdue])
 
-  const taskDate = createdAt?.seconds
-    ? formatTimestamp(createdAt).raw
-    : new Date()
-  const diff = new Date() - taskDate
-  const isNewTask = diff < 10000
+  const isNewTask = useMemo(() => {
+    const taskDate = createdAt?.seconds
+      ? formatTimestamp(createdAt).raw
+      : new Date()
+    return (new Date() - taskDate) < 10000
+  }, [createdAt])
 
   // new task animation
   useGSAP(() => {
-    const element = ref || internalRef
     const cardContainer = element?.current?.parentElement
-
     if (!cardContainer || !isNewTask) return
 
-    gsap.fromTo(cardContainer, {
-      autoAlpha: 0,
-      y: -10,
-      x: -25,
-      ease: 'power2.out'
-    }, {
-      autoAlpha: 1,
-      y: 0,
-      x: 0
-    })
-  })
-
-  if (!data) return null
+    gsap.fromTo(cardContainer,
+      { autoAlpha: 0, y: -10, x: -25 },
+      { autoAlpha: 1, y: 0, x: 0, ease: 'power2.out' }
+    )
+  }, [isNewTask])
 
   const isOverdueLabelVisible = filter !== 'default' &&
     taskIsPending(status) &&
     taskIsOverdue(data)
+
+  if (!data) return null
 
   return (
     <Box
@@ -142,12 +134,14 @@ export default memo(function ListTask({ data }) {
         className='flex flex-column'
         ref={ref || internalRef}
         elevation={3}
-        sx={[theme => ({
-          ...taskStyles(theme, priority),
-          borderLeftColor: fg,
-          ...((isDragging || isOverdue) && { opacity: 0.75 }),
-          ...(status === 'cancelled' && { opacity: 0.75 })
-        })]}>
+        sx={t => getTaskCardStyles(
+          t,
+          priority,
+          isDragging,
+          isOverdue,
+          status,
+          fg)
+        }>
         <Box
           className='flex flex-column'
           onContextMenu={(e) => handler(e, id)}

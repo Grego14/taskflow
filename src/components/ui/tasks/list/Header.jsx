@@ -10,7 +10,7 @@ import TaskMembers from './TaskMembers'
 import SmartDateLabel from './SmartDateLabel'
 import TaskCalendar from './TaskCalendar'
 
-const TaskActions = lazy(() => import('./menu_components/TaskActions'))
+const TaskActions = lazy(() => import('@components/ui/tasks/buttons/TaskActions'))
 
 import useApp from '@hooks/useApp'
 import useProject from '@hooks/useProject'
@@ -50,9 +50,10 @@ export default function Header({ data, insideTask = false, status }) {
   } = data
 
   const actionsData = {
-    id: id,
+    id,
     isSubtask,
-    subtask: subtask,
+    subtask,
+    subtasks,
     members,
     rawDate,
     priority

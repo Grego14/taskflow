@@ -1,10 +1,10 @@
 import { lazy, Suspense } from 'preact/compat'
 
 import Box from '@mui/material/Box'
-import AddButton from '@components/ui/buttons/AddButton'
-import AddMembers from '@components/ui/buttons/AddMembers'
-import FilterButton from '@components/ui/buttons/FilterButton'
-import ArchiveButton from '@components/ui/buttons/ArchiveButton'
+import AddButton from '@components/ui/tasks/buttons/AddButton'
+import AddMembers from '@components/ui/tasks/buttons/AddMembers'
+import FilterButton from '@components/ui/tasks/buttons/FilterButton'
+import ArchiveButton from '@components/ui/tasks/buttons/ArchiveButton'
 import PreviewSwitcher from '@components/ui/previewswitcher/PreviewSwitcher'
 import List from '@mui/material/List'
 
@@ -32,25 +32,23 @@ export default function ProjectItems() {
   return (
     <List
       disablePadding
+      className='flex flex-center'
       sx={{
         display: 'flex',
         justifyContent: 'space-between',
         gap: 1,
         flexGrow: 1
       }}>
-      {!isMobile ? (
-        <Box className='flex flex-grow flex-center' justifyContent='end' gap={2}>
-          {defaultItems}
-        </Box>
-      ) : (
-        <>
-          <Suspense fallback={null}>
-            <ToggleProjectDrawer />
-          </Suspense>
+      {!isMobile ? defaultItems
+        : (
+          <>
+            <Suspense fallback={null}>
+              <ToggleProjectDrawer />
+            </Suspense>
 
-          {defaultItems}
-        </>
-      )}
+            {defaultItems}
+          </>
+        )}
     </List>
   )
 }

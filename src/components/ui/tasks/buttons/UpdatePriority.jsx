@@ -11,7 +11,7 @@ import {
   getPriorityLabel
 } from '@utils/tasks/priorityUI'
 
-export default function UpdatePriority({ priority, id, subtask }) {
+export default function UpdatePriority({ priority, id, subtask, showMenu }) {
   const { t } = useTranslation('tasks')
   const { isArchived } = useProject()
   const { actions } = useTasks()
@@ -19,6 +19,7 @@ export default function UpdatePriority({ priority, id, subtask }) {
 
   const handleUpdatePriority = async (priority, triggerExit) => {
     triggerExit()
+    showMenu(false)
     await actions.updateTask({ id, subtask, data: { priority } })
   }
 

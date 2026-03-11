@@ -30,7 +30,6 @@ import {
   getFriendlyAuthError,
   getFriendlyErrorFormatted
 } from '@utils/getFriendlyAuthError.js'
-import taskService from '@services/task'
 
 import { initialValue, tasksReducer } from './tasksReducer.js'
 
@@ -57,7 +56,8 @@ export default memo(function NewTaskDialog({
   taskId,
   subtask = false,
   onCreate,
-  isArchived
+  isArchived,
+  isPreview
 }) {
   // the isArchived state can't be changed so we dont pay attention to the
   // below hook calls
@@ -76,17 +76,13 @@ export default memo(function NewTaskDialog({
   const updateField = (field) => (payload) => dispatch({ type: field, payload })
 
   const handleAccept = useCallback(async () => {
-    if (
-      !id ||
-      !projectData?.createdBy ||
-      isOffline ||
-      !priorities.includes(task.priority)
-    ) return
-
     if (!TITLE_REGEX.test(task.title)) {
       setTitleError(t('dialogs:newtask.errors.title'))
       return
     }
+
+    const passNonPreviewValidations = id && projectData?.createdBy && !isOffline
+    if (!isPreview && (!passNonPreviewValidations)) return
 
     try {
       const taskDataFormatted = await formatTaskData(task, subtask, taskId)
@@ -108,15 +104,12 @@ export default memo(function NewTaskDialog({
     }
   }, [
     id,
-    projectData?.createdBy,
-    appNotification,
+    projectData,
     isOffline,
-    preferences.lang,
-    onCreate,
     subtask,
-    setOpen,
     task,
     taskId,
+    actions,
     t
   ])
 

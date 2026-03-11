@@ -13,12 +13,18 @@ export default function TaskActions({
   menuHandler,
   rawDate,
   priority,
+  subtasks
 }) {
   if (!id) return null
 
   return (
     <>
-      <UpdatePriority priority={priority} id={id} subtask={subtask} />
+      <UpdatePriority
+        priority={priority}
+        id={id}
+        subtask={subtask}
+        showMenu={menuHandler}
+      />
 
       {!isSubtask && <CreateSubtask id={id} showMenu={menuHandler} />}
 
@@ -27,7 +33,11 @@ export default function TaskActions({
       <ReassignDate id={id} subtask={subtask} rawDate={rawDate}
       />
 
-      <DeleteTask id={id} subtask={subtask} showMenu={menuHandler} />
+      <DeleteTask
+        id={id}
+        subtask={subtask}
+        subtasks={subtasks}
+        showMenu={menuHandler} />
     </>
   )
 }

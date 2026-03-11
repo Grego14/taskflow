@@ -65,6 +65,7 @@ export default function FilterButton() {
       icon={<FilterAltIcon fontSize='medium' />}
       label={state => getMenuLabel(state, 'buttons.filter', 'tasks')}
       tooltipPosition='bottom'
+      asListItem
       buttonStyles={{
         borderRadius: '50%',
         px: 1,

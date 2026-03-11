@@ -32,6 +32,7 @@ export default function useContextMenu(isArchived, tasks) {
             id: taskData.id,
             isSubtask: !!taskData.subtask,
             subtask: taskData.subtask,
+            subtasks: taskData.subtasks,
             members: taskData.assignedTo,
             rawDate: taskData.rawDate,
             priority: taskData.priority
