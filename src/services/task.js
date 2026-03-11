@@ -285,6 +285,42 @@ const taskService = {
       console.error('Task Service (reorder):', e.message)
       throw getFriendlyErrorFormatted('reorderTask', e.message).message
     }
+  },
+
+  moveSubtasks: async function ({ user, task, subtasks, project, position }) {
+    if (!user || !project) throw Error('moveSubtasks: Invalid user or project')
+
+    try {
+      const tasksCol = dbAdapter.getColRef('users', user, 'projects', project, 'tasks')
+      const batch = dbAdapter.createBatch()
+
+      for (const task of subtasks) {
+        const taskRef = dbAdapter.getDocRef(tasksCol)
+        const { id, subtask, isSubtask, status, ref, ...other } = task
+
+        const newData = {
+          ...other,
+          status: 'todo',
+          isSubtask: false,
+          subtask: null,
+          id: taskRef.id,
+          position
+        }
+
+        batch.set(taskRef, newData)
+
+        // delete the original subtask
+        batch.delete(dbAdapter.getDocRef(tasksCol, id))
+      }
+
+      // delete the parent task
+      batch.delete(dbAdapter.getDocRef(tasksCol, task))
+
+      await batch.commit()
+    } catch (e) {
+      console.error('Task Service (move subtasks):', e.message)
+      throw getFriendlyErrorFormatted('move subtasks', e.message).message
+    }
   }
 }
 
