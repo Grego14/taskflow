@@ -24,7 +24,7 @@
     }
   },
   "deleteTask": {
-    "title": "Esta tarea contiene subtareas sin completar, ¿desea eliminarlas o mantenerlas?",
+    "title": "Esta tarea contiene subtareas pendientes, ¿desea eliminarlas o mantenerlas?",
     "schedule": "Eliminar tarea y programar subtareas para hoy",
     "deleteAll": "Eliminar tarea y subtareas"
   },

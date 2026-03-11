@@ -24,7 +24,7 @@
     }
   },
   "deleteTask": {
-    "title": "This task contains uncompleted subtasks, do you want to delete them all or keep them?",
+    "title": "This task contains pending subtasks, do you want to delete them all or keep them?",
     "schedule": "Delete task and schedule subtasks to today",
     "deleteAll": "Delete task and subtasks"
   },
