@@ -22,7 +22,7 @@ export default function TaskDate({ date, setDate }) {
   }
 
   return (
-    <Box className='flex flex-center' gap={2} width='100%'>
+    <Box className='flex' gap={2} width='100%' alignItems='center'>
       <DropdownMenu
         label={t('newtask.taskDateLabel')}
         tooltipPosition='top'
