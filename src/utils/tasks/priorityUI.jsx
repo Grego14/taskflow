@@ -5,6 +5,8 @@ import PriorityHighIcon from '@mui/icons-material/PriorityHigh'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 
+import useApp from '@hooks/useApp'
+
 import { alpha, darken, lighten } from '@mui/material/styles'
 import upperCaseInitialLetter from '@utils/upperCaseInitialLetter'
 import { priorities, priorityColors } from '@/constants'
@@ -82,7 +84,10 @@ export const renderPriorityMenu = (selected, onSelect, t) => {
 
   return items
 }
+
 export const getPriorityLabel = (priority) => {
+  const { isOnlyMobile } = useApp()
+
   const t = i18n.getFixedT(i18n.language, 'tasks')
   const isEnglish = i18n.language === 'en'
   const isNone = priority === 'none'
@@ -97,7 +102,10 @@ export const getPriorityLabel = (priority) => {
   return (
     <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
       <PriorityHighIcon sx={{ fontSize: '1rem', mr: 1 }} />
-      <Typography variant='body2' sx={{ my: 0.5 }}>{label}</Typography>
+      <Typography variant='body2' sx={{ my: 0.5 }}>
+        { /* show the priority without the "priority" text if there's no much space */ }
+        {!isOnlyMobile ? label : upperCaseInitialLetter(priority)}
+      </Typography>
     </Box>
   )
 }
