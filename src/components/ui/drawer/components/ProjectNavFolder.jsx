@@ -37,9 +37,9 @@ export default function ProjectCollapsibleSection() {
 
   useGSAP(() => {
     if (open && drawerOpen) {
-      gsap.fromTo('.project-nav-item',
-        { opacity: 0, x: -10 },
-        { opacity: 1, x: 0, stagger: 0.1, ease: 'power2.out', duration: 0.4 }
+      gsap.fromTo('.nav-action',
+        { autoAlpha: 0, x: -10 },
+        { autoAlpha: 1, x: 0, stagger: 0.1, ease: 'power2.out', duration: 0.4 }
       )
     }
   }, { dependencies: [open, drawerOpen], scope: containerRef })
@@ -70,7 +70,6 @@ export default function ProjectCollapsibleSection() {
     navElements.push(
       <Box
         key={item.key}
-        className='project-nav-item'
         component='li'
         sx={{ listStyle: 'none' }}>
         <NavAction
