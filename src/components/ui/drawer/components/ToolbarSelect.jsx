@@ -11,6 +11,7 @@ import Select from '@mui/material/Select'
 import Button from '@mui/material/Button'
 import Typography from '@mui/material/Typography'
 import FolderOpen from '@mui/icons-material/FolderOpen'
+import Box from '@mui/material/Box'
 
 import { dbAdapter } from '@services/dbAdapter'
 import projectService from '@services/project'
@@ -29,11 +30,23 @@ export default function ToolbarSelect() {
   const { projectId } = useParams()
   const { t } = useTranslation(['ui', 'projects'])
   const navigate = useNavigate()
-  const { drawerOpen, toggleDrawer } = useLayout()
+  const {
+    drawerOpen,
+    toggleDrawer,
+    isPreview,
+    triggerUpsell,
+    setDrawerReady
+  } = useLayout()
 
   const [projects, setProjects] = useState([])
   const [loading, setLoading] = useState(true)
   const [isFocused, setIsFocused] = useState(false)
+
+  // trigger drawer animation on mount
+  useEffect(() => {
+    const timer = requestAnimationFrame(() => setDrawerReady(true))
+    return () => cancelAnimationFrame(timer)
+  }, [])
 
   // get the projects data for the drawer (projectId_drawer on the db)
   useEffect(() => {
@@ -86,11 +99,9 @@ export default function ToolbarSelect() {
     }
   }
 
-  if (!drawerOpen || loading) return
-
   const hasProjects = projects.length > 0
-
   const toolbarKey = actualProject?.isLast ? 'lastProject' : 'actualProject'
+
   // to show when the user has recently edited a project or is in a project
   const projectLabel = t(`ui:drawer.toolbar.${toolbarKey}`)
 
@@ -101,47 +112,65 @@ export default function ToolbarSelect() {
 
   const shouldShrink = !!actualProject?.id || isFocused
 
-  return (actualProject || hasProjects) ? (
-    <FormControl sx={{ minWidth: '10rem', '& .MuiInputBase-root': { mt: 2 } }}>
-      <InputLabel
-        id='select-project'
-        shrink={shouldShrink}
-        sx={{
-          transform: 'translate(38px, 8px) scale(1)',
-          '&.MuiInputLabel-shrink': {
-            transform: 'translate(0px, 4px) scale(0.75)'
-          }
+  const handleNewProject = () => {
+    if (!isPreview) {
+      navigate('/projects/new')
+      toggleDrawer(false)
+      return
+
+    }
+
+    triggerUpsell('new-project')
+  }
+
+  return (
+    <Box className='hide-element toolbar-select'>
+      {(actualProject || hasProjects) ? (
+        <FormControl sx={{
+          minWidth: '10rem',
+          '& .MuiInputBase-root': { mt: 2 }
         }}>
-        {label}
-      </InputLabel>
-      <Select
-        variant='standard'
-        labelId='select-project'
-        value={actualProject?.id || ''}
-        label={shouldShrink ? label : ''}
-        onChange={handleProjectChange}
-        sx={selectStyles}
-        onFocus={() => setIsFocused(true)}
-        onBlur={() => setIsFocused(false)}
-        startAdornment={
-          <FolderOpen
+          <InputLabel
+            id='select-project'
+            shrink={shouldShrink}
             sx={{
-              fontSize: '1rem',
-              mx: 0.75,
-              color: 'action.active'
-            }}
-          />
-        }>
-        {projects.map(p => (
-          <MenuItem key={p.id} value={p.id}>
-            {p.name}
-          </MenuItem>
-        ))}
-      </Select>
-    </FormControl>
-  ) : (
-    <Button onClick={() => { navigate('/projects/new'); toggleDrawer(false) }}>
-      {t('ui:drawer.toolbar.newProject')}
-    </Button>
+              transform: 'translate(38px, 8px) scale(1)',
+              '&.MuiInputLabel-shrink': {
+                transform: 'translate(0px, 4px) scale(0.75)'
+              }
+            }}>
+            {label}
+          </InputLabel>
+          <Select
+            variant='standard'
+            labelId='select-project'
+            value={actualProject?.id || ''}
+            label={shouldShrink ? label : ''}
+            onChange={handleProjectChange}
+            sx={selectStyles}
+            onFocus={() => setIsFocused(true)}
+            onBlur={() => setIsFocused(false)}
+            startAdornment={
+              <FolderOpen
+                sx={{
+                  fontSize: '1rem',
+                  mx: 0.75,
+                  color: 'action.active'
+                }}
+              />
+            }>
+            {projects.map(p => (
+              <MenuItem key={p.id} value={p.id}>
+                {p.name}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      ) : (
+        <Button onClick={handleNewProject}>
+          {t('ui:drawer.toolbar.newProject')}
+        </Button>
+      )}
+    </Box>
   )
 }

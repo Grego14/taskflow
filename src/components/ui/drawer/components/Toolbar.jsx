@@ -32,8 +32,9 @@ export default function DrawerToolbar({ open }) {
         </Suspense>
 
         <IconButton
+          className='toggle-drawer-btn'
           aria-label={t(`drawer.toolbar.${drawerOpen ? 'collapse' : 'expand'}`)}
-          onClick={toggleDrawer}
+          onClick={() => toggleDrawer(!drawerOpen, isMobile)}
           sx={{ ml: 0, '.is-open &': { ml: 'auto' } }}>
           <ChevronLeftIcon fontSize='small' sx={{ '.is-closed &': { display: 'none' } }} />
           <MenuIcon fontSize='small' sx={{ '.is-open &': { display: 'none' } }} />
