@@ -25,14 +25,12 @@ gsap.registerPlugin(SplitText)
 // used on the animations
 const hidden = { opacity: 0, visibility: 'hidden' }
 
-const alignment = { xs: 'center', tablet: 'start' }
-
 // used on the enter animation box and the container box
 const containerStyles = {
   display: 'flex',
   flexDirection: 'column',
   width: '100%',
-  alignItems: alignment,
+  alignItems: 'center',
   flexGrow: 1
 }
 
@@ -76,12 +74,11 @@ export default function NewProject() {
   return (
     <Box
       sx={containerStyles}
-      py={5}
       px={{ xs: 1.5, mobile: 4 }}
+      py={5}
       gap={5}
-      justifyContent={{ xs: 'center', laptop: 'start' }}
       ref={containerRef}>
-      <Box sx={containerStyles} gap={3} justifyContent='start'>
+      <Box sx={containerStyles} gap={3} justifyContent='center'>
         <AnimatedTitle
           id='new-project-title'
           onComplete={() => setAnimateForm(true)}>
@@ -98,9 +95,12 @@ export default function NewProject() {
             ...hidden,
             width: '100%',
             backgroundColor: 'transparent',
-            backgroundImage: `linear-gradient(135deg, 
-              ${t.alpha(t.palette.primary.main, 0.1)}, 
-              ${t.alpha(t.palette.secondary.main, 0.2)})`,
+            backgroundImage: `linear-gradient(180deg, 
+              ${t.alpha(t.palette.background.paper, 0.15)}, 
+              ${t.alpha(t.palette.primary.main, 0.075)})`,
+            '& .MuiInputBase-root .MuiInputBase-input::placeholder': {
+              opacity: 0.55
+            },
             perspective: '1000px',
             transformOrigin: '25% 100%',
             maxWidth: 'fit-content'
@@ -122,7 +122,7 @@ export default function NewProject() {
             />
           </Box>
 
-          <Box className='flex flex-column' gap='inherit'>
+          <Box className='flex flex-column flex-center' gap='inherit'>
             <MakeTemplate
               template={form.isTemplate}
               setTemplate={val => updateField('isTemplate', val)}
@@ -142,7 +142,7 @@ export default function NewProject() {
 
         <Box className='flex flex-column'
           flexDirection={{ xs: 'column', tablet: 'row' }}
-          justifyContent={{ xs: 'start', mobile: 'space-between', tablet: 'start' }}
+          justifyContent={{ mobile: 'space-between', tablet: 'center' }}
           alignItems='center'
           minWidth='100%'
           id='newProjectCreate'
