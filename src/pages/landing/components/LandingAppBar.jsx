@@ -22,7 +22,8 @@ const appBarStyles = {
   border: 'none',
   position: 'fixed',
   top: 0,
-  backgroundColor: 'transparent'
+  backgroundColor: 'transparent',
+  zIndex: 100
 }
 
 export default function LandingAppBar() {

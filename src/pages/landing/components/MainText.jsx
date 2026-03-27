@@ -14,6 +14,8 @@ import { useNavigate } from 'react-router-dom'
 import { SplitText } from 'gsap/SplitText'
 import useUser from '@hooks/useUser'
 
+import { APPBAR_HEIGHT } from '@/constants'
+
 const h1Styles = (theme) => ({
   ...theme.typography.h1,
   '&.MuiTypography-root': {
@@ -146,8 +148,15 @@ export default function MainText({
       }, '-=0.5')
   }, { dependencies: [resourceExists] })
 
+  const getPaddingTop = (ammount) => `calc(${APPBAR_HEIGHT.other} * ${ammount})`
+
   return (
-    <Section className='text-center relative' sx={{ px: 2 }} id='main-text'>
+    <Section className='text-center relative' sx={{
+      px: 2,
+      justifyContent: { xs: 'start', desktop: 'center' },
+      pt: { xs: getPaddingTop(1), mobile: getPaddingTop(2), desktop: 0 }
+    }}
+      id='main-text'>
       <Typography
         className='text-balance'
         id='bigText'
