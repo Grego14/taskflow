@@ -1,4 +1,3 @@
-// components
 import Avatar from '@mui/material/Avatar'
 import Badge from '@mui/material/Badge'
 import Box from '@mui/material/Box'
@@ -6,14 +5,12 @@ import Button from '@mui/material/Button'
 import Tooltip from '@mui/material/Tooltip'
 import Typography from '@mui/material/Typography'
 
-// hooks
 import useAuth from '@hooks/useAuth'
 import useUser from '@hooks/useUser'
-import useMediaQuery from '@mui/material/useMediaQuery'
-import { useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import useLoadResources from '@hooks/useLoadResources'
 import { useNavigate } from 'react-router-dom'
+import useLayout from '@hooks/useLayout'
 
 export default function ProfileButton({
   showTexts,
@@ -24,12 +21,11 @@ export default function ProfileButton({
 }) {
   const { t } = useTranslation('ui')
   const navigate = useNavigate()
+  const { isPreview, triggerUpsell } = useLayout()
 
   const { isOffline, currentUser } = useAuth()
   const { profile } = useUser()
   const avatar = profile?.avatar
-
-  const profileComponentPreLoaded = useRef(false)
 
   // we use this component on the Landing page so we need to get the ui
   // resources...
@@ -42,7 +38,6 @@ export default function ProfileButton({
   const preloadProfileComponent = async () => {
     try {
       await import('@pages/profile/Profile.jsx')
-      profileComponentPreLoaded.current = true
     } catch (err) {
       console.error('ProfileButton: error preloading the Profile component.')
     }
@@ -54,7 +49,9 @@ export default function ProfileButton({
       placement={tooltipPosition}>
       <Button
         disableRipple={onlyIcon}
-        onClick={() => navigate('/profile')}
+        onClick={() => isPreview
+          ? triggerUpsell('profile')
+          : navigate('/profile')}
         onMouseEnter={preloadProfileComponent}
         sx={{
           borderRadius: onlyIcon ? '50%' : 0,
@@ -64,7 +61,7 @@ export default function ProfileButton({
         aria-label={t('buttons.profileButtonLabel')}
         className={className}>
         <Badge
-          className='profile-btn-avatar'
+          className={`profile-btn-avatar ${showTexts ? 'hide-element' : ''}`}
           variant='dot'
           overlap='circular'
           anchorOrigin={{ vertical: 'bottom' }}
@@ -80,7 +77,7 @@ export default function ProfileButton({
 
         {showTexts && (
           <Box
-            className='profile-btn-text flex flex-column'
+            className='hide-element profile-btn-text flex flex-column'
             sx={{
               alignItems: 'start',
               position: 'absolute',
