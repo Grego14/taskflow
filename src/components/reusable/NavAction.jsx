@@ -5,6 +5,7 @@ import NavLink from '@components/reusable/NavLink'
 
 import useNotifications from '@hooks/useNotifications'
 import useApp from '@hooks/useApp'
+import useLayout from '@hooks/useLayout'
 
 import { memo } from 'react'
 
@@ -22,6 +23,7 @@ export default memo(function NavAction({
 }) {
   const { isMobile } = useApp()
   const { unreadCount } = useNotifications()
+  const { isPreview, triggerUpsell } = useLayout()
   const { icon: Icon, translation, to, isNotifications } = link
 
   const iconElement = (
@@ -30,11 +32,21 @@ export default memo(function NavAction({
     </Badge>
   )
 
+  const handleInteraction = (e) => {
+    if (isPreview) {
+      e.preventDefault()
+      triggerUpsell('drawer-action')
+      return
+    }
+
+    onClick?.(e)
+  }
+
   const content = (
     <NavLink
-      to={to}
-      onClick={onClick}
-      className={`flex ${className}`}
+      to={isPreview ? '#' : to}
+      onClick={handleInteraction}
+      className='flex flex-center nav-action'
       gap={showText ? 1.5 : 0}
       sx={theme => {
         const contrast = theme.palette.primary.contrast
@@ -59,10 +71,12 @@ export default memo(function NavAction({
           ...(hideText && { justifyContent: 'center' })
         }
       }}>
-      {iconElement}
+      <span className='nav-action__icon hide-element'>
+        {iconElement}
+      </span>
       {showText && (
         <Typography
-          className='nav-action-text'
+          className='nav-action__text hide-element'
           variant='body2'
           sx={{
             ...(hideText && {
@@ -78,7 +92,9 @@ export default memo(function NavAction({
   )
 
   if (isMobile && noSpace || showTooltip) {
-    return <Tooltip title={translation} placement={tooltipPlacement}>{content}</Tooltip>
+    return <Tooltip title={translation} placement={tooltipPlacement}>
+      {content}
+    </Tooltip>
   }
 
   return content
