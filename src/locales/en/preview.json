@@ -1,0 +1,34 @@
+{
+  "welcome": "Welcome to the TaskFlow demo",
+  "startAction": "Got it, let's start",
+  "points": {
+    "localStorageInfo": "All data is saved in your localStorage (only for this demo).",
+    "noSessionRequired": "No account or session required to explore.",
+    "limitedFeatures": "Some advanced features might be disabled in this version.",
+    "privateData": "Your data stays on your device and is never sent to our servers."
+  },
+  "upsell": {
+    "button_primary": "Sign up for free",
+    "button_secondary": "Maybe later",
+    "profile": {
+      "title": "Customize your profile",
+      "desc": "Create an account to upload a custom avatar, change your username, and sync your settings across all your devices."
+    },
+    "drawer": {
+      "title": "Unlock full navigation",
+      "desc": "The home, notifications, and search features are available for registered users. Join TaskFlow to organize your life effectively."
+    },
+    "project": {
+      "title": "Manage multiple projects",
+      "desc": "In this demo you can explore one project. Sign up to create unlimited projects, share them with teams, and use advanced filters."
+    },
+    "add-members": {
+      "title": "Work Together",
+      "desc": "Don't go it alone! Invite your friends or teammates and start collaborating in real-time. Create projects, assign tasks, and reach your goals together."
+    },
+    "archive": {
+      "title": "History & Metrics",
+      "desc": "Take your productivity to the next level. By archiving tasks in the full version, you'll get access to detailed metrics, progress reports, and an unlimited history of your achievements."
+    }
+  }
+}

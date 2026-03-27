@@ -4,7 +4,9 @@ import { Suspense, lazy } from 'react'
 import { Route, Routes, BrowserRouter as Router } from 'react-router-dom'
 
 import Landing from '@pages/landing/Landing'
+
 const AuthenticatedApp = lazy(() => import('./AuthenticatedApp'))
+const Preview = lazy(() => import('@pages/preview/Preview'))
 
 export default function AppRoutes() {
   const { notification } = useApp()
@@ -14,6 +16,14 @@ export default function AppRoutes() {
       <Suspense fallback={null}>
         <Routes>
           <Route path='/' element={<Landing />} />
+          <Route
+            path='/preview'
+            element={
+              <Suspense fallback={null}>
+                <Preview />
+              </Suspense>
+            }
+          />
 
           <Route path='/*' element={
             <Suspense fallback={null}>

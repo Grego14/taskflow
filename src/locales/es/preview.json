@@ -1,0 +1,34 @@
+{
+  "welcome": "Bienvenido a la demo de TaskFlow",
+  "startAction": "Entendido, empezar",
+  "points": {
+    "localStorageInfo": "Todos los datos se guardan en el localStorage (solo en esta demo).",
+    "noSessionRequired": "No se requiere cuenta ni iniciar sesión para explorar.",
+    "limitedFeatures": "Algunas funcionalidades avanzadas podrían no estar disponibles aquí.",
+    "privateData": "Tus datos permanecen en tu dispositivo y nunca se envían a nuestros servidores."
+  },
+  "upsell": {
+    "button_primary": "Regístrate gratis",
+    "button_secondary": "Tal vez más tarde",
+    "profile": {
+      "title": "Personaliza tu perfil",
+      "desc": "Crea una cuenta para subir un avatar personalizado, cambiar tu nombre de usuario y sincronizar tu configuración en todos tus dispositivos."
+    },
+    "drawer": {
+      "title": "Desbloquea la navegación completa",
+      "desc": "Las secciones de inicio, notificaciones y búsqueda están disponibles para usuarios registrados. Únete a TaskFlow para organizar tu vida de forma efectiva."
+    },
+    "project": {
+      "title": "Gestiona múltiples proyectos",
+      "desc": "En esta demo puedes explorar un proyecto. Regístrate para crear proyectos ilimitados, compartirlos con equipos y usar filtros avanzados."
+    },
+    "add-members": {
+      "title": "Trabaja en equipo",
+      "desc": "¡No lo hagas solo! Invita a tus amigos o compañeros y empiecen a colaborar en tiempo real. Crea proyectos, asigna tareas y alcancen sus metas juntos."
+    },
+    "archive": {
+      "title": "Historial y Métricas",
+      "desc": "Lleva tu productividad al siguiente nivel. Al archivar tareas en la versión completa, podrás acceder a métricas detalladas, reportes de progreso y un historial ilimitado de tus logros."
+    }
+  }
+}

@@ -1,23 +1,30 @@
-import { createRef, memo, useMemo } from 'react'
-import useProject from '@hooks/useProject'
+import { createRef, memo, useMemo, useRef } from 'preact/compat'
 
+import useProject from '@hooks/useProject'
 import useProjectTasks from './hooks/useProjectTasks'
 import useTaskAnimations from './hooks/useTaskAnimations'
 import useTaskMutations from './hooks/useTaskMutations'
-import useTaskReorder from './hooks/useTaskReorder'
-import useTaskMetrics from './hooks/useTaskMetrics'
 import useUser from '@hooks/useUser'
 
+import useTaskReorder from '@hooks/tasks/useTaskReorder'
+import useTaskMetrics from '@hooks/tasks/useTaskMetrics'
+
 import taskService from '@services/task'
-import TasksContext from './context'
 import playSound from '@services/audio'
 
 import getFirstPosition from '@utils/tasks/getFirstPosition'
 import taskIsOverdue from '@utils/tasks/taskIsOverdue'
 import resolveTaskStatusUpdate from '@utils/tasks/taskStatusResolver'
 
+import TasksBaseProvider from './TaskBaseProvider'
+
 export default memo(function TasksProvider({ children }) {
-  const { id: projectId, data: projectData, hasAccess } = useProject()
+  const {
+    id: projectId,
+    data: projectData,
+    hasAccess,
+    isArchived
+  } = useProject()
   const { uid } = useUser()
 
   const {
@@ -33,30 +40,18 @@ export default memo(function TasksProvider({ children }) {
   })
 
   const ownerId = projectData?.createdBy
-  const isArchived = projectData?.isArchived
+  const taskRefs = useRef({}) // { [taskId]: DOMElement }
 
-  const tasksWithRefs = useMemo(() => {
-    if (!Array.isArray(projectTasks)) return null
+  const scrollIntoTask = (taskId) => {
+    const element = taskRefs.current[taskId]
 
-    return projectTasks.map(task => ({
-      ...task,
-      ref: createRef(),
-      // map subtasks to add their own refs
-      subtasks: Array.isArray(task.subtasks)
-        ? task.subtasks.map(subtask => ({
-          ...subtask,
-          ref: createRef(),
-          isOverdue: taskIsOverdue(subtask),
-          isParentOverdue: taskIsOverdue(task),
-          isParentChecked: task.status === 'done'
-            || task.status === 'cancelled'
-        }))
-        : [],
-      isOverdue: taskIsOverdue(task)
-    }))
-  }, [projectTasks])
+    if (element) element.scrollIntoView({
+      behavior: 'smooth',
+      block: 'center'
+    })
+  }
 
-  const { animateOut } = useTaskAnimations(tasksWithRefs)
+  const { animateOut } = useTaskAnimations(projectTasks, taskRefs)
 
   const { deleteTaskMutation, updateTaskMutation } =
     useTaskMutations({
@@ -65,12 +60,12 @@ export default memo(function TasksProvider({ children }) {
     })
 
   const handleReorder = useTaskReorder({
-    tasks: tasksWithRefs,
+    tasks: projectTasks,
     updateTask: updateTaskMutation.mutate
   })
 
   // logic hook
-  useTaskMetrics(projectTasks)
+  useTaskMetrics()
 
   // --- Actions ---
 
@@ -80,8 +75,8 @@ export default memo(function TasksProvider({ children }) {
 
       // get the correct list to find the current top task/subtask
       const list = subtaskId
-        ? tasksWithRefs.find(t => t.id === subtaskId)?.subtasks
-        : tasksWithRefs.filter(t => !taskIsOverdue(t))
+        ? projectTasks.find(t => t.id === subtaskId)?.subtasks
+        : projectTasks.filter(t => !taskIsOverdue(t))
 
       const position = getFirstPosition(list)
 
@@ -120,28 +115,26 @@ export default memo(function TasksProvider({ children }) {
 
     handleReorder,
 
-    getTaskData: (target, isSubtask) => {
-      if (!tasksWithRefs) return null
-
-      if (!isSubtask) {
-        return tasksWithRefs.find(t => t.id === target) || null
-      }
-
-      for (const task of tasksWithRefs) {
-        if (Array.isArray(task.subtasks)) {
-          const subtask = task.subtasks.find(s => s.id === target)
-          if (subtask) return subtask
-        }
-      }
-
-      return null
-    },
-
     updateStatus: async ({ id, subtask, nextStatus }) => {
       if (isArchived) return
 
-      const currentTaskData = actions.getTaskData(id, !!subtask)
-      const statusFields = resolveTaskStatusUpdate(currentTaskData, nextStatus)
+      let taskData = projectTasks.find(task => task.id === id)
+
+      if (!taskData) {
+        // look up if the task is a subtask
+        for (const task of projectTasks) {
+          const subtask = task.subtasks?.find(subtask => subtask.id === id)
+
+          if (subtask) {
+            taskData = subtask
+            break
+          }
+        }
+      }
+
+      if (!taskData) return
+
+      const statusFields = resolveTaskStatusUpdate(taskData, nextStatus)
 
       const finalData = {
         ...statusFields,
@@ -159,7 +152,7 @@ export default memo(function TasksProvider({ children }) {
     },
 
     moveSubtasks: async ({ taskId, subtasks }) => {
-      const list = tasksWithRefs.filter(t => !taskIsOverdue(t))
+      const list = projectTasks.filter(t => !taskIsOverdue(t))
       const position = getFirstPosition(list)
 
       await taskService.moveSubtasks({
@@ -176,25 +169,17 @@ export default memo(function TasksProvider({ children }) {
     animateOut,
     ownerId,
     projectId,
-    handleReorder
+    handleReorder,
+    projectTasks
   ])
 
-  const value = useMemo(() => ({
-    tasks: tasksWithRefs,
-    actions,
-    error,
-    loading: isLoading,
-    scrollIntoTask: (e) => {
-      const target = e.target.dataset?.parenttask
-        || e.target?.closest('[data-parenttask]')?.dataset?.parenttask
-
-      if (!target) return
-
-      const task = tasksWithRefs?.find(t => t.id === target)
-      task?.ref?.current?.scrollIntoView({ behavior: 'smooth' })
-    },
-    getTaskData: actions.getTaskData
-  }), [actions, error, isLoading, tasksWithRefs])
-
-  return <TasksContext.Provider value={value}>{children}</TasksContext.Provider>
+  return (
+    <TasksBaseProvider
+      tasks={projectTasks}
+      actions={actions}
+      loading={isLoading}
+      error={error}>
+      {children}
+    </TasksBaseProvider>
+  )
 })

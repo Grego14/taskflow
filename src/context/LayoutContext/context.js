@@ -6,7 +6,9 @@ const LayoutContext = createContext({
   filter: 'default',
   setFilter: (filter) => { },
   updatePreviewer: (previewer) => { },
-  updateFilter: (filter) => { }
+  updateFilter: (filter) => { },
+  isPreview: false,
+  triggerUpsell: (reason) => { }
 })
 
 export default LayoutContext
