@@ -11,7 +11,6 @@ import UserContext from './context.js'
 export default function UserProvider({ children }) {
   const { i18n } = useTranslation('ui')
   const { currentUser, isOffline } = useAuth()
-  const userId = currentUser?.uid
   const { mode, systemMode, setMode } = useColorScheme()
   const userTheme = mode === 'system' ? systemMode : mode
 
@@ -36,6 +35,8 @@ export default function UserProvider({ children }) {
       email: currentUser?.email || ''
     }
   })
+
+  const userId = currentUser?.uid || user?.uid
 
   const [updatePlaceholder, setUpdatePlaceholder] = useState(null)
 
