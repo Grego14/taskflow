@@ -292,11 +292,12 @@ const taskService = {
 
     try {
       const tasksCol = dbAdapter.getColRef('users', user, 'projects', project, 'tasks')
+      const timestamp = dbAdapter.getServerTimestamp()
       const batch = dbAdapter.createBatch()
 
       for (const task of subtasks) {
         const taskRef = dbAdapter.getDocRef(tasksCol)
-        const { id, subtask, isSubtask, status, ref, ...other } = task
+        const { id, subtask, isSubtask, status, ref, createdAt, ...other } = task
 
         const newData = {
           ...other,
@@ -304,7 +305,9 @@ const taskService = {
           isSubtask: false,
           subtask: null,
           id: taskRef.id,
-          position
+          position,
+          createdAt: timestamp,
+          updatedAt: timestamp
         }
 
         batch.set(taskRef, newData)
