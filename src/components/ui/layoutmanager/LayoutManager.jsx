@@ -7,22 +7,26 @@ const AppDrawer = lazy(() => import('@components/ui/drawer/AppDrawer'))
 
 import useApp from '@hooks/useApp'
 import useLoadResources from '@hooks/useLoadResources'
+import useLayout from '@hooks/useLayout'
 
 import { DRAWER_CONFIG, APPBAR_HEIGHT } from '@/constants'
 
-export default memo(function LayoutManager() {
+export default memo(function LayoutManager({ children }) {
   const { isMobile } = useApp()
   const { projectId } = useParams()
   const loadingResource = useLoadResources('ui')
+  const { isPreview } = useLayout()
+
+  const showDrawer = !isMobile || (isMobile && (!!projectId || isPreview))
 
   return (
     <Box>
       <Suspense fallback={null}>
-        {!projectId && <LayoutAppBar />}
+        {(!projectId && !isPreview) && <LayoutAppBar />}
       </Suspense>
 
       <Suspense fallback={null}>
-        {(!isMobile || (isMobile && projectId)) && <AppDrawer />}
+        {showDrawer && <AppDrawer />}
       </Suspense>
 
       <Box
@@ -33,7 +37,7 @@ export default memo(function LayoutManager() {
         className='flex flex-column'
         pb={isMobile ? APPBAR_HEIGHT.mobile : 0}>
         <Suspense fallback={null}>
-          <Outlet />
+          {!isPreview ? <Outlet /> : children}
         </Suspense>
       </Box>
     </Box>
