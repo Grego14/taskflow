@@ -7,7 +7,6 @@ export default function useProjectTasks({ user, project, hasAccess }) {
   const [tasks, setTasks] = useState(null)
   const [error, setError] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
-  const [deletedTaskData, setDeletedTaskData] = useState(null)
 
   useEffect(() => {
     if (!hasAccess || isOffline || !user || !project) return
@@ -20,18 +19,11 @@ export default function useProjectTasks({ user, project, hasAccess }) {
         setTasks(data || [])
         setIsLoading(false)
       },
-      onChange: (type, changes) => {
-        for (const change of changes) {
-          // if a task is removed, we store it to allow "Undo"
-          if (change.type === 'removed') {
-            setDeletedTaskData(change.doc.data())
-          }
-        }
-      }
+      onChange: (type, changes) => { }
     })
 
     return () => unsubscribe?.()
   }, [user, project, hasAccess, isOffline])
 
-  return { error, isLoading, tasks, deletedTaskData, setDeletedTaskData }
+  return { error, isLoading, tasks }
 }
