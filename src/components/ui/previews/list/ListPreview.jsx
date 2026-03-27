@@ -9,10 +9,9 @@ const ProjectPercentage = lazy(() => import('@components/ui/tasks/ProjectPercent
 
 import useAuth from '@hooks/useAuth'
 import useTasks from '@hooks/useTasks'
-import useUser from '@hooks/useUser'
 import { useTranslation } from 'react-i18next'
-import useTaskProcessing from './useTaskProcessing'
 import useLayout from '@hooks/useLayout'
+import useTaskEngine from '@hooks/tasks/useTaskEngine'
 
 const SecondaryCenteredH6 = ({ text }) => (
   <Typography
@@ -27,15 +26,18 @@ const SecondaryCenteredH6 = ({ text }) => (
 export default memo(function ListPreview() {
   const { isOffline } = useAuth()
   const { t } = useTranslation('tasks')
-  const { uid } = useUser()
   const { filter } = useLayout()
   const { tasks, error } = useTasks()
 
-  const { tasksForContainer, overdueTasks, filteredTasks, othersToArchive } =
-    useTaskProcessing(tasks, filter, uid)
+  const {
+    tasksForContainer,
+    overdueTasks,
+    filteredTasks,
+    othersToArchive
+  } = useTaskEngine(tasks)
 
   const hasContent = tasksForContainer?.length > 0 || overdueTasks?.length > 0
-  const isFilterEmpty = filter !== 'default' && filteredTasks.length < 1
+  const isFilterEmpty = filter !== 'default' && filteredTasks?.length < 1
   const showTasks = (hasContent && !isFilterEmpty) ||
     filter === 'default' && tasksForContainer?.length < 1
 
@@ -54,7 +56,7 @@ export default memo(function ListPreview() {
       minHeight='100%'
       alignItems={!hasContent ? 'center' : 'auto'}
       py={2}>
-      {showTasks && (
+      {!errorMessage && (
         <TasksContainer
           tasks={tasksForContainer}
           overdueTasks={overdueTasks}
