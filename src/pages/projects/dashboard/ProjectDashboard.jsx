@@ -1,4 +1,4 @@
-import { lazy, Suspense } from 'preact/compat'
+import { lazy, Suspense, useEffect } from 'preact/compat'
 
 import Link from '@components/reusable/Link'
 import CircleLoader from '@components/reusable/loaders/CircleLoader'
@@ -16,9 +16,19 @@ import { useTranslation } from 'react-i18next'
 import useLoadResources from '@hooks/useLoadResources'
 import useApp from '@hooks/useApp'
 
+import gsap from 'gsap'
+import ScrollTrigger from 'gsap/ScrollTrigger'
+
+gsap.registerPlugin(ScrollTrigger)
+
 const ProjectHeader = ({ projectName, isArchived }) => {
   const { isMobile } = useApp()
   const { t } = useTranslation('projects')
+
+  // avoid refreshing everytime the items or subtasks changes
+  useEffect(() => {
+    ScrollTrigger.refresh()
+  }, [])
 
   return (
     <Box
