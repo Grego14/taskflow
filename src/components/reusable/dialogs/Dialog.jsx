@@ -1,4 +1,3 @@
-// components
 import CloseIcon from '@mui/icons-material/Close'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
@@ -11,7 +10,6 @@ import IconButton from '@mui/material/IconButton'
 import Skeleton from '@mui/material/Skeleton'
 import Typography from '@mui/material/Typography'
 
-// hooks
 import useApp from '@hooks/useApp'
 import useLoadResources from '@hooks/useLoadResources.js'
 import { useTheme } from '@mui/material/styles'
@@ -40,7 +38,8 @@ export default function Dialog({
   acceptBtn,
   disableButtons = false,
   disablePortal = false,
-  transitionComponent
+  transitionComponent,
+  hideHeader = false
 }) {
   const { t } = useTranslation(['common', 'dialogs'])
   const { isMobile } = useApp()
@@ -66,46 +65,48 @@ export default function Dialog({
           }
         }
       }}>
-      <DialogTitle>
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center'
-          }}>
-          {titleLoaded || !loadingResources ? (
-            <Typography variant='h5' color={color}>
-              {t(title, { ns: 'dialogs' })}
+      {!hideHeader && (
+        <DialogTitle>
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center'
+            }}>
+            {titleLoaded || !loadingResources ? (
+              <Typography variant='h5' color={color}>
+                {t(title, { ns: 'dialogs' })}
+              </Typography>
+            ) : (
+              <Skeleton
+                variant='text'
+                animation='wave'
+                width='75%'
+                sx={{ fontSize: theme.typography.h6 }}
+              />
+            )}
+
+            {children && (
+              <IconButton
+                edge='end'
+                color='inherit'
+                onClick={onClose}
+                aria-label={t('close_x', {
+                  ns: 'common',
+                  x: t('dialog', { ns: 'dialogs' })
+                })}>
+                <CloseIcon />
+              </IconButton>
+            )}
+          </Box>
+
+          {subTitle && (
+            <Typography color='error' marginTop={2}>
+              {t(subTitle, { ns: 'dialogs' })}
             </Typography>
-          ) : (
-            <Skeleton
-              variant='text'
-              animation='wave'
-              width='75%'
-              sx={{ fontSize: theme.typography.h6 }}
-            />
           )}
-
-          {children && (
-            <IconButton
-              edge='end'
-              color='inherit'
-              onClick={onClose}
-              aria-label={t('close_x', {
-                ns: 'common',
-                x: t('dialog', { ns: 'dialogs' })
-              })}>
-              <CloseIcon />
-            </IconButton>
-          )}
-        </Box>
-
-        {subTitle && (
-          <Typography color='error' marginTop={2}>
-            {t(subTitle, { ns: 'dialogs' })}
-          </Typography>
-        )}
-      </DialogTitle>
+        </DialogTitle>
+      )}
 
       {/* allow us to create just a "close or accept" dialog */}
       {children && (
