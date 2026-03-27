@@ -32,16 +32,14 @@ export default function AppProvider({ children }) {
     })
   }, [])
 
-  const contextValue = useMemo(() => {
-    return {
-      notification,
-      isMobile,
-      isOnlyMobile,
-      isOffline,
-      setIsOffline,
-      appNotification
-    }
-  }, [notification, isMobile, isOnlyMobile, isOffline, appNotification])
+  const contextValue = useMemo(() => ({
+    notification,
+    isMobile,
+    isOnlyMobile,
+    isOffline,
+    setIsOffline,
+    appNotification
+  }), [notification, isMobile, isOnlyMobile, isOffline, appNotification])
 
   if (!mode) return null
 
