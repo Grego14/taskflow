@@ -29,9 +29,9 @@ const getFilterLabel = (label, t) => {
 
 export default function FilterButton() {
   const { metadata } = useUser()
-  const { setFilter, updateFilter } = useLayout()
+  const { setFilter, updateFilter, filter } = useLayout()
   const { t } = useTranslation('tasks')
-  const [selected, setSelected] = useState(metadata?.lastUsedFilter)
+  const [selected, setSelected] = useState(filter)
 
   useEffect(() => {
     if (
@@ -43,13 +43,13 @@ export default function FilterButton() {
   }, [metadata])
 
   const changeSelectedOption = useCallback(
-    e => {
-      const value = e.currentTarget.id.replace('filter-option__', '')
-
-      if (!FILTERS.find(f => f === value)) return
+    (value, triggerExit) => {
+      triggerExit()
 
       setSelected(value)
       setFilter(value)
+
+      // update the db (if the user is logged)
       updateFilter(value)
     },
     [updateFilter, setFilter]
@@ -70,19 +70,23 @@ export default function FilterButton() {
         borderRadius: '50%',
         px: 1,
         flexGrow: 0
-      }}>
-      <Typography variant='body2' color='textSecondary' sx={{ px: 2, py: 1 }}>
-        {t('buttons.filterHelpText')}
-      </Typography>
-      {filterOptions.map(filter => (
-        <MenuAction
-          key={filter.label}
-          text={filter.label}
-          selected={filter.value === selected}
-          id={`filter-option__${filter.value}`}
-          handler={changeSelectedOption}
-        />
-      ))}
+      }}
+      slotProps={{ button: { className: 'hide-element' } }}>
+      {(_, triggerExit) => (
+        <>
+          <Typography variant='body2' color='textSecondary' sx={{ px: 2, py: 1 }}>
+            {t('buttons.filterHelpText')}
+          </Typography>
+          {filterOptions.map(filter => (
+            <MenuAction
+              key={filter.label}
+              text={filter.label}
+              selected={filter.value === selected}
+              handler={() => changeSelectedOption(filter.value, triggerExit)}
+            />
+          ))}
+        </>
+      )}
     </DropdownMenu>
   )
 }
