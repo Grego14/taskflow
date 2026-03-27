@@ -25,6 +25,7 @@ const AppBar = forwardRef((props, ref) => {
     shadow,
     animate,
     noRotate,
+    animateY = false,
     ...other
   } = props
 
@@ -32,7 +33,12 @@ const AppBar = forwardRef((props, ref) => {
   const appBarRef = useRef(null)
   const height = APPBAR_HEIGHT[isMobile ? 'mobile' : 'other']
 
-  useAppBarAnimation(ref || appBarRef, { enabled: animate, noRotate, top })
+  useAppBarAnimation(ref || appBarRef, {
+    enabled: animate,
+    noRotate,
+    top,
+    animateY
+  })
 
   return (
     <MUIAppBar
@@ -51,7 +57,8 @@ const AppBar = forwardRef((props, ref) => {
         alignItems: 'center',
         flexDirection: 'row',
         ...(isMobile && appBarMobileStyles),
-        ...(typeof sx === 'function' ? sx(theme) : sx)
+        ...(typeof sx === 'function' ? sx(theme) : sx),
+        ...(animateY && { translate: `0px ${top ? '-' : ''}${height}` })
       })}>
       {children}
     </MUIAppBar>
