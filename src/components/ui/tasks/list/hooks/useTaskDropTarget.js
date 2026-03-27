@@ -1,25 +1,31 @@
 import { useEffect, useState } from 'preact/hooks'
+
+import getNeighbors from '@utils/tasks/getNeighbors'
+import getTaskRef from '@utils/tasks/getTaskRef'
+import useTasks from '@hooks/useTasks'
+
 import { dropTargetForElements } from '@atlaskit/pragmatic-drag-and-drop/element/adapter'
 import {
   attachClosestEdge,
   extractClosestEdge
 } from '@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge'
-import getNeighbors from '@utils/tasks/getNeighbors'
 
 export default function useTaskDropTarget({ data, list, type, onDrop }) {
   const [closestEdge, setClosestEdge] = useState(null)
   const [sourceData, setSourceData] = useState(null)
+  const { taskRefs } = useTasks()
+  const { id, position } = data
 
-  const { prevTask, nextTask } = getNeighbors(list, data?.id)
+  const { prevTask, nextTask } = getNeighbors(list, id)
 
   useEffect(() => {
-    const el = data?.ref?.current
+    const el = getTaskRef(taskRefs, id)
     if (!el) return
 
     return dropTargetForElements({
       element: el,
       getData: ({ input, element }) => {
-        const baseData = { id: data.id, position: data.position, type }
+        const baseData = { id, position, type }
         return attachClosestEdge(baseData, {
           input,
           element,
@@ -39,7 +45,7 @@ export default function useTaskDropTarget({ data, list, type, onDrop }) {
         const edge = extractClosestEdge(self.data)
         setClosestEdge(null)
         setSourceData(null)
-        if (source.data.id !== data.id && source.data.type === type) {
+        if (source.data.id !== id && source.data.type === type) {
           onDrop?.(source.data, data, edge)
         }
       }
@@ -48,7 +54,7 @@ export default function useTaskDropTarget({ data, list, type, onDrop }) {
 
   // only show indicator if types match and it's not the same position and task
   const isNotSelfAndSameMatch = sourceData?.type === type &&
-    sourceData?.id !== data.id
+    sourceData?.id !== id
 
   const isTopVisible = closestEdge === 'top' &&
     isNotSelfAndSameMatch &&
