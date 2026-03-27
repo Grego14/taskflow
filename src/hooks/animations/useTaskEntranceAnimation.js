@@ -1,65 +1,76 @@
-import { useState } from 'preact/hooks'
+import { useEffect, useState, useRef } from 'preact/hooks'
 import { useGSAP } from '@gsap/react'
-import gsap from 'gsap'
-import ScrollTrigger from 'gsap/ScrollTrigger'
+import useLayout from '../useLayout'
+import useTasks from '../useTasks'
 
-gsap.registerPlugin(ScrollTrigger)
+import gsap from 'gsap'
+import getTaskRef from '@utils/tasks/getTaskRef'
 
 export default function useTaskEntranceAnimation(
   wrapperRef,
   items = [],
-  subtasks
+  { subtasks = false, addDelay = false }
 ) {
-  const [initialPlay, setInitialPlay] = useState(false)
+  const { taskRefs } = useTasks()
+  const { filter } = useLayout()
+
+  const filterAnimated = useRef(null)
 
   useGSAP(() => {
-    if (items.length === 0 || !wrapperRef.current || initialPlay) return
+    if (!items?.length ||
+      !wrapperRef.current ||
+      filterAnimated.current === filter) return
 
-    const targets = []
-    for (const item of items) {
-      if (item?.ref?.current) {
-        // get the parent container of the MUI Card
-        targets.push(item.ref.current.parentElement)
-      }
-    }
+    const getCard = ({ id }) => getTaskRef(taskRefs, id)?.parentElement
+    const targets = items.map(getCard).filter(Boolean)
 
     if (targets.length === 0) return
 
-    ScrollTrigger.refresh()
+    filterAnimated.current = filter
 
-    const tl = gsap.timeline({
-      scrollTrigger: {
-        start: 'top+=35% bottom',
-        trigger: wrapperRef.current,
-        once: true
-      },
-      defaults: {
-        stagger: 0.15,
-        onComplete: () => setInitialPlay(true)
-      }
-    })
+    const rafId = requestAnimationFrame(() => {
+      const tl = gsap.timeline({
+        // add the scrollTrigger only if we aren't animating a new task
+        ...(targets.length > 1 && {
+          scrollTrigger: {
+            trigger: wrapperRef.current,
+            start: 'top+=35% bottom',
+            once: true
+          }
+        }),
+        defaults: { stagger: 0.15 }
+      })
 
-    const icons = gsap.utils.toArray('.MuiCardHeader-action', wrapperRef.current)
+      // only animate the icons of the current targets
+      const icons = targets
+        .map(t => t.querySelector('.MuiCardHeader-action'))
+        .filter(Boolean)
 
-    tl.fromTo(targets, {
-      autoAlpha: 0,
-      y: -10,
-      x: -25,
-      ease: 'back.out(2)'
-    }, {
-      autoAlpha: 1,
-      y: 0,
-      x: 0,
-      delay: subtasks ? 0.5 : 0
-    })
-      .fromTo(icons, {
+      const startDelay = addDelay || subtasks ? 0.3 : 0
+
+      tl.fromTo(targets, {
         autoAlpha: 0,
-        x: 15,
-        ease: 'expo.out'
+        y: -10,
+        x: -25,
+        force3D: true
       }, {
         autoAlpha: 1,
-        x: 0
-      }, '<')
+        y: 0,
+        x: 0,
+        delay: startDelay,
+        ease: 'power2.out',
+        overwrite: 'auto'
+      })
+        .fromTo(icons, {
+          autoAlpha: 0,
+          x: 15,
+          ease: 'expo.out'
+        }, {
+          autoAlpha: 1,
+          x: 0
+        }, '-=0.2')
+    })
 
-  }, { scope: wrapperRef, dependencies: [items.length, subtasks, initialPlay] })
+    return () => cancelAnimationFrame(rafId)
+  }, { scope: wrapperRef, dependencies: [items?.length, filter, subtasks] })
 }
