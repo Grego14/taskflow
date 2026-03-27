@@ -1,5 +1,5 @@
 import Menu from '@mui/material/Menu'
-import TaskActions from './menu_components/TaskActions'
+import TaskActions from '@components/ui/tasks/buttons/TaskActions'
 import AnimatedMenu from '@components/reusable/animated/AnimatedMenu'
 
 export default function TaskContextMenu({ data, open, setOpen }) {
