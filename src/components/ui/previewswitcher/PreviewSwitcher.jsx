@@ -1,4 +1,4 @@
-import { Suspense, lazy, memo, useMemo } from 'react'
+import { Suspense, lazy, memo, useMemo, useEffect } from 'preact/compat'
 
 import useApp from '@hooks/useApp'
 import useUser from '@hooks/useUser'
@@ -6,13 +6,12 @@ import useUser from '@hooks/useUser'
 import Box from '@mui/material/Box'
 import ViewKanbanIcon from '@mui/icons-material/ViewKanban'
 import ViewListIcon from '@mui/icons-material/ViewList'
+import Tab from '@mui/material/Tab'
+import Tabs from '@mui/material/Tabs'
+import VisibilityIcon from '@mui/icons-material/Visibility'
+import DropdownMenu from '@components/reusable/DropdownMenu'
+import Skeleton from '@mui/material/Skeleton'
 
-// there is a different layout for mobile and desktop so we lazy 
-// load all these components
-const VisibilityIcon = lazy(() => import('@mui/icons-material/Visibility'))
-const Tab = lazy(() => import('@mui/material/Tab'))
-const Tabs = lazy(() => import('@mui/material/Tabs'))
-const DropdownMenu = lazy(() => import('@components/reusable/DropdownMenu'))
 const MenuAction = lazy(() => import('@components/reusable/MenuAction'))
 
 import { useTheme } from '@mui/material/styles'
@@ -43,6 +42,15 @@ const OPTIONS = [
     disabled: true
   }
 ]
+
+const PreviewSwitcherMenuSkeleton = () => {
+  return (
+    <Box className='flex flex-column'>
+      <Skeleton height={40} width={110} variant='rounded' />
+      <Skeleton height={40} width={110} variant='rounded' />
+    </Box>
+  )
+}
 
 export default memo(function PreviewSwitcher() {
   const { t } = useTranslation('tasks')
@@ -76,48 +84,48 @@ export default memo(function PreviewSwitcher() {
       height='min-content'
       mr={{ tablet: 'auto' }}
       component='li'>
-      <Suspense fallback={null}>
-        {isMobile ? (
-          <DropdownMenu
-            icon={<VisibilityIcon fontSize='medium' />}
-            label={state => getMenuLabel(state, 'buttons.previewLabel', 'ui')}
-            tooltipPosition='top'>
-            <Suspense fallback={null}>
-              {OPTIONS.map(opt => (
-                <MenuAction
-                  key={opt.id}
-                  handler={() => updatePreviewer(opt.id)}
-                  text={t(opt.keyTitle)}
-                  icon={<opt.icon />}
-                  styles={[previewStyles, getMenuActionStyles(normalColor, selectedColor)]}
-                  selected={preview === opt.id}
-                  disabled={opt.disabled}
-                />
-              ))}
-            </Suspense>
-          </DropdownMenu>
-        ) : (
-          <Tabs
-            value={preview}
-            onChange={(_, preview) => updatePreviewer(preview)}
-            aria-label={t('previewSwitcher')}
-            indicatorColor={'primary'}
-            centered
-            sx={{ minHeight: 0 }}>
+      {isMobile ? (
+        <DropdownMenu
+          icon={<VisibilityIcon fontSize='medium' />}
+          label={state => getMenuLabel(state, 'buttons.previewLabel', 'ui')}
+          tooltipPosition='top'
+          slotProps={{ button: { className: 'hide-element' } }}>
+          <Suspense fallback={<PreviewSwitcherMenuSkeleton />}>
             {OPTIONS.map(opt => (
-              <Tab
+              <MenuAction
                 key={opt.id}
-                label={t(opt.keyTitle)}
-                value={opt.id}
+                handler={() => updatePreviewer(opt.id)}
+                text={t(opt.keyTitle)}
                 icon={<opt.icon />}
-                iconPosition='start'
-                sx={previewStyles}
+                styles={[previewStyles, getMenuActionStyles(normalColor, selectedColor)]}
+                selected={preview === opt.id}
                 disabled={opt.disabled}
               />
             ))}
-          </Tabs>
-        )}
-      </Suspense>
-    </ Box>
+          </Suspense>
+        </DropdownMenu>
+      ) : (
+        <Tabs
+          value={preview}
+          onChange={(_, preview) => updatePreviewer(preview)}
+          aria-label={t('previewSwitcher')}
+          indicatorColor='primary'
+          centered
+          sx={{ minHeight: 0 }}>
+          {OPTIONS.map(opt => (
+            <Tab
+              className='hide-element'
+              key={opt.id}
+              label={t(opt.keyTitle)}
+              value={opt.id}
+              icon={<opt.icon />}
+              iconPosition='start'
+              sx={previewStyles}
+              disabled={opt.disabled}
+            />
+          ))}
+        </Tabs>
+      )}
+    </Box>
   )
 })
