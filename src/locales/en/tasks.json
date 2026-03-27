@@ -70,7 +70,6 @@
     "complete_newStatus": "Switch to $t(statuses.{{newStatus}})"
   },
   "notifications": {
-    "taskDeleted": "Task successfully deleted",
     "tasksArchived": "Tasks archived successfully"
   },
   "assignedMembers": "Assigned members",

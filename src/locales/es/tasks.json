@@ -76,7 +76,6 @@
     "complete_newStatus": "Cambiar a $t(statuses.{{newStatus}})"
   },
   "notifications": {
-    "taskDeleted": "Tarea eliminada exitosamente",
     "tasksArchived": "Tareas archivadas correctamente"
   },
   "assignedMembers": "Miembros asignados",
