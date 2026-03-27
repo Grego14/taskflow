@@ -40,7 +40,7 @@ export default memo(function TasksContainer({
     default: 'todayTasks'
   }
 
-  const titleKey = !hasTodayTasks
+  const titleKey = !hasTodayTasks && isDefaultFilter
     ? 'todayTasks'
     : (titleKeys[filter] || 'filterTasks_filter')
 
@@ -73,7 +73,7 @@ export default memo(function TasksContainer({
       mt: showOverdueTasks ? 8 : 'auto',
       mb: showOverdueTasks ? 6 : 'auto'
     } : null,
-    children: !hasTodayTasks && (
+    children: (!hasTodayTasks && isDefaultFilter) && (
       <Suspense fallback={null}>
         <NoTodayTasks />
       </Suspense>
@@ -89,15 +89,21 @@ export default memo(function TasksContainer({
           && source.data?.isOverdue}
         onMove={handleMoveTask}
         render={({ dragState, ref }) => (
-          <TasksWrapper {...todayWrapperProps} dragState={dragState} ref={ref} />
+          <TasksWrapper
+            {...todayWrapperProps}
+            dragState={dragState}
+            ref={ref}
+          />
         )}
       />
 
-      <TasksWrapper
-        tasks={overdueTasks}
-        show={showOverdueTasks}
-        title={t('overdueTasks_quantity', { quantity: overdueTasks?.length })}
-      />
+      {showOverdueTasks && overdueTasks.length > 0 && (
+        <TasksWrapper
+          tasks={overdueTasks}
+          title={t('overdueTasks_quantity', { quantity: overdueTasks?.length })}
+          type='overdue'
+        />
+      )}
 
       {toArchive.length > 0 && (
         <TasksWrapper

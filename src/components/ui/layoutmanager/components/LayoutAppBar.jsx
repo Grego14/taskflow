@@ -44,7 +44,6 @@ const LayoutAppBar = memo(function LayoutAppBar() {
         showText={!noSpace}
         link={{ ...link, translation: t(link.translation) }}
         onClick={handleLinkClick}
-        className='appbar-link'
         isActive={pathname === link.to}
       />
     )
@@ -63,7 +62,7 @@ const LayoutAppBar = memo(function LayoutAppBar() {
           : 'rgba(255,255,255, 0.5)',
         backgroundImage: theme.palette.background.appbar[isMobile ? 'bottom' : 'top'],
         perspective: '1000px',
-        transformOrigin: '0 50% -50',
+        transformOrigin: '0 50% -50'
       })}>
       {noSpace ? items : <Box className='flex' gap={1}>{items}</Box>}
 

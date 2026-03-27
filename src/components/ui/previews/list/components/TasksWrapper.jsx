@@ -8,6 +8,7 @@ import Divider from '@mui/material/Divider'
 import Typography from '@mui/material/Typography'
 
 import useApp from '@hooks/useApp'
+import useTasks from '@hooks/useTasks'
 import { forwardRef, memo, useRef, useState } from 'preact/compat'
 import useTaskEntranceAnimation from '@hooks/animations/useTaskEntranceAnimation'
 
@@ -23,9 +24,11 @@ const TasksWrapper = forwardRef(function TasksWrapper(props, ref) {
     dragState,
     children = null,
     show = true,
-    expand = true
+    expand = true,
+    type = null
   } = props
 
+  const { taskRefs } = useTasks()
   const wrapperRef = useRef(null)
 
   const isOver = dragState === 'is-over'
@@ -33,7 +36,7 @@ const TasksWrapper = forwardRef(function TasksWrapper(props, ref) {
 
   const [expanded, setExpanded] = useState(expand)
 
-  useTaskEntranceAnimation(wrapperRef, tasks)
+  useTaskEntranceAnimation(wrapperRef, tasks, { addDelay: type === 'overdue' })
 
   return (
     <Box
@@ -91,8 +94,15 @@ const TasksWrapper = forwardRef(function TasksWrapper(props, ref) {
           <Box className='flex flex-column' ref={wrapperRef}>
             {show &&
               tasks?.map(task => (
-                <ListTask key={task.id} data={task} subtask={task.subtask} />
-              ))}
+                <ListTask
+                  key={task.id}
+                  data={task}
+                  ref={(el) => {
+                    if (el) taskRefs.current[task.id] = el
+                    else taskRefs.current[task.id] = null
+                  }}
+                />)
+              )}
             {children}
           </Box>
           {(divider && hasTasks) && (

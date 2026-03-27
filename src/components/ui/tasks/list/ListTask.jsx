@@ -1,4 +1,4 @@
-import { Suspense, lazy, memo, useRef, useMemo } from 'react'
+import { Suspense, lazy, memo, useRef, useMemo, forwardRef } from 'preact/compat'
 
 import Box from '@mui/material/Box'
 import Card from '@mui/material/Card'
@@ -8,25 +8,28 @@ import DropIndicator from './DropIndicator'
 import Subtasks from './Subtasks'
 
 const TaskContextMenu = lazy(() => import('./TaskContextMenu'))
-const OverdueContent = lazy(() => import('./OverdueContent'))
+const Content = lazy(() => import('./Content'))
 
 import useProject from '@hooks/useProject'
 import useTasks from '@hooks/useTasks'
 import useLayout from '@hooks/useLayout'
-import { useGSAP } from '@gsap/react'
 
 import useContextMenu from './hooks/useContextMenu'
 import useTaskDropTarget from './hooks/useTaskDropTarget'
 import useTaskDraggable from './hooks/useTaskDraggable'
+import useNewTaskAnimation from '@hooks/animations/useNewTaskAnimation'
 
 import taskIsOverdue from '@utils/tasks/taskIsOverdue'
-import formatTimestamp from '@utils/formatTimestamp'
 import { priorityColors } from '@/constants'
 import sortTasks from '@utils/tasks/sortTasks'
-import taskIsPending from '@utils/tasks/taskIsPending'
-import gsap from 'gsap'
 
-const getTaskCardStyles = (t, priority, isDragging, isOverdue, status, fg) => ({
+const getCardOpacity = (isDragging, isOverdue, status, isDefaultFilter) =>
+  // show the items with opacity only if the filter is the default
+  (isDragging || isOverdue || status === 'cancelled') && isDefaultFilter
+    ? 0.75
+    : 1
+
+const getTaskCardStyles = (t, priority, isDragging, isOverdue, status, fg, filter) => ({
   borderRadius: '12px',
   border: '1px solid',
   borderColor: 'divider',
@@ -42,11 +45,12 @@ const getTaskCardStyles = (t, priority, isDragging, isOverdue, status, fg) => ({
   transitionProperty: 'opacity, background-color, border-color, box-shadow',
   backgroundColor: t.alpha(t.palette.background.paper, 0.35),
   cursor: 'grab',
-  opacity: (isDragging || isOverdue || status === 'cancelled') ? 0.75 : 1,
-  '&[data-focused]': { boxShadow: `0 0 0 2px ${t.palette.primary.main}` }
+  opacity: getCardOpacity(isDragging, isOverdue, status, filter === 'default'),
+  '&[data-focused]': { boxShadow: `0 0 0 2px ${fg}` },
+  willChange: 'transform, opacity'
 })
 
-export default memo(function ListTask({ data }) {
+const ListTask = forwardRef(({ data }, ref) => {
   const { isArchived } = useProject()
   const { tasks, actions } = useTasks()
   const { filter } = useLayout()
@@ -57,24 +61,24 @@ export default memo(function ListTask({ data }) {
     status,
     subtasks,
     createdAt,
-    ref,
-    id
+    id,
+    isNew,
+    isParentChecked,
+    isParentOverdue
   } = data
 
-  const internalRef = useRef(null)
-  const element = ref || internalRef
-
   const { isDragging } = useTaskDraggable({
-    data: { ...data, ref: element },
+    data: { ...data, ref },
     isArchived,
     type: 'task',
     extraData: { isOverdue }
   })
 
   const { isTopVisible, isBottomVisible } = useTaskDropTarget({
-    data: { ...data, ref: element },
+    data: { ...data, ref },
     list: tasks,
     type: 'task',
+    filter,
     onDrop: (source, target, edge) =>
       actions.handleReorder(source, target.id, edge)
   })
@@ -91,27 +95,7 @@ export default memo(function ListTask({ data }) {
       : true))
   }, [subtasks, isOverdue])
 
-  const isNewTask = useMemo(() => {
-    const taskDate = createdAt?.seconds
-      ? formatTimestamp(createdAt).raw
-      : new Date()
-    return (new Date() - taskDate) < 10000
-  }, [createdAt])
-
-  // new task animation
-  useGSAP(() => {
-    const cardContainer = element?.current?.parentElement
-    if (!cardContainer || !isNewTask) return
-
-    gsap.fromTo(cardContainer,
-      { autoAlpha: 0, y: -10, x: -25 },
-      { autoAlpha: 1, y: 0, x: 0, ease: 'power2.out' }
-    )
-  }, [isNewTask])
-
-  const isOverdueLabelVisible = filter !== 'default' &&
-    taskIsPending(status) &&
-    taskIsOverdue(data)
+  useNewTaskAnimation(id, isNew)
 
   if (!data) return null
 
@@ -123,8 +107,6 @@ export default memo(function ListTask({ data }) {
         // the dropIndicators
         opacity: 0,
         visibility: 'hidden',
-
-        transition: 'margin-bottom 0.3s ease-in 0.3s',
         marginBottom: 3.5,
         '&:last-child, &.removing': { marginBottom: 0 },
       }}>
@@ -132,7 +114,7 @@ export default memo(function ListTask({ data }) {
 
       <Card
         className='flex flex-column'
-        ref={ref || internalRef}
+        ref={ref}
         elevation={3}
         sx={t => getTaskCardStyles(
           t,
@@ -140,8 +122,9 @@ export default memo(function ListTask({ data }) {
           isDragging,
           isOverdue,
           status,
-          fg)
-        }>
+          fg,
+          filter
+        )}>
         <Box
           className='flex flex-column'
           onContextMenu={(e) => handler(e, id)}
@@ -157,12 +140,8 @@ export default memo(function ListTask({ data }) {
           </Box>
 
           <Suspense fallback={null}>
-            {isOverdue &&
-              <OverdueContent
-                data={data}
-                status={status}
-                isOverdueLabelVisible={isOverdueLabelVisible}
-              />
+            {(isParentOverdue || isParentChecked) &&
+              <Content data={data} status={status} />
             }
           </Suspense>
         </Box>
@@ -186,3 +165,5 @@ export default memo(function ListTask({ data }) {
     </Box>
   )
 })
+
+export default memo(ListTask)
