@@ -1,6 +1,8 @@
-import { Suspense, lazy } from 'preact/compat'
+import { Suspense, lazy, useState } from 'preact/compat'
 
-import ProjectItems from './ProjectItems'
+import ProjectItemsSkeleton from './ProjectItemsSkeleton'
+
+const ProjectItems = lazy(() => import('./ProjectItems'))
 const ToggleProjectDrawer = lazy(() => import('@components/ui/projects/ToggleProjectDrawer'))
 
 import AppBar from '@components/ui/appbar/AppBar'
@@ -19,6 +21,8 @@ export default function ProjectAppBar() {
   const { isOnlyMobile, isMobile } = useApp()
   const { data, id } = useProject()
 
+  const [isReady, setIsReady] = useState(false)
+
   const location = useLocation()
   const projectRute = location.pathname?.split(id)?.[1]
   const action = projectRute === 'dashboard' ? '' : projectRute
@@ -26,11 +30,21 @@ export default function ProjectAppBar() {
 
   return (
     <AppBar
-      animate
+      animate={isReady}
+      animateY
       noRotate={!isMobile}
       withDrawer={!isMobile}
       top={!isMobile}
-      sx={theme => ({ backgroundImage: theme.palette.background.appbar.top })}>
+      sx={theme => ({
+        backgroundImage: theme.palette.background.appbar.top,
+        boxShadow: theme.palette.shadows.appbar,
+        px: {
+          xs: 2,
+          mobile: 4,
+          // reset the padding when the appbar is on top
+          tablet: 2
+        }
+      })}>
       {isProjectSubRoute ? (
         <Box className='flex flex-grow' gap={1.5} px={2}>
           {isMobile && (
@@ -60,7 +74,11 @@ export default function ProjectAppBar() {
             </Typography>
           </Box>
         </Box>
-      ) : <ProjectItems />}
+      ) : (
+        <Suspense fallback={<ProjectItemsSkeleton />}>
+          <ProjectItems onMount={() => setIsReady(true)} />
+        </Suspense>
+      )}
     </AppBar>
   )
 }

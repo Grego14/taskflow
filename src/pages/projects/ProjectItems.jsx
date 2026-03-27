@@ -1,4 +1,4 @@
-import { lazy, Suspense } from 'preact/compat'
+import { lazy, Suspense, useEffect } from 'preact/compat'
 
 import Box from '@mui/material/Box'
 import AddButton from '@components/ui/tasks/buttons/AddButton'
@@ -15,7 +15,7 @@ import useApp from '@hooks/useApp'
 import useProject from '@hooks/useProject'
 import { useNavigate } from 'react-router-dom'
 
-export default function ProjectItems() {
+export default function ProjectItems({ onMount }) {
   const { isMobile } = useApp()
   const { id } = useProject()
   const navigate = useNavigate()
@@ -28,6 +28,14 @@ export default function ProjectItems() {
       <AddMembers />
       <AddButton />
     </>
+
+  useEffect(() => {
+    // let the ToggleProjectDrawer trigger the animation
+    if (isMobile) return
+
+    const timer = requestAnimationFrame(() => onMount?.())
+    return () => cancelAnimationFrame(timer)
+  }, [])
 
   return (
     <List
@@ -43,7 +51,7 @@ export default function ProjectItems() {
         : (
           <>
             <Suspense fallback={null}>
-              <ToggleProjectDrawer />
+              <ToggleProjectDrawer onMount={onMount} />
             </Suspense>
 
             {defaultItems}

@@ -12,12 +12,14 @@ import useProject from '@hooks/useProject'
 import { useTranslation } from 'react-i18next'
 import { useMemo } from 'react'
 import useApp from '@hooks/useApp'
+import useLayout from '@hooks/useLayout'
 
 export default function ArchiveButton() {
   const { t } = useTranslation('tasks')
   const { tasks, actions } = useTasks()
   const { appNotification, isMobile } = useApp()
   const { id: projectId, data: projectData } = useProject()
+  const { triggerUpsell, isPreview } = useLayout()
 
   const tasksToArchive = useMemo(() => {
     const toArchive = []
@@ -37,6 +39,11 @@ export default function ArchiveButton() {
 
   const handleArchive = async () => {
     if (count === 0) return
+
+    if (isPreview) {
+      triggerUpsell('archive')
+      return
+    }
 
     try {
       await actions.archiveTasks(tasksToArchive)
@@ -78,7 +85,11 @@ export default function ArchiveButton() {
     )
     : (
       // the icon button is used inside the appbar list
-      <ButtonListItem component={IconButton} btnProps={buttonProps}>
+      <ButtonListItem component={IconButton}
+        btnProps={{
+          ...buttonProps,
+          className: 'hide-element'
+        }}>
         <Badge
           badgeContent={count}
           color='error'

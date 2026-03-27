@@ -3,10 +3,11 @@ import GridViewIcon from '@mui/icons-material/GridView'
 import Tooltip from '@mui/material/Tooltip'
 import ButtonListItem from '@components/reusable/buttons/ButtonListItem'
 
+import { useEffect } from 'preact/hooks'
 import { useTranslation } from 'react-i18next'
 import useLayout from '@hooks/useLayout'
 
-export default function ToggleProjectDrawer() {
+export default function ToggleProjectDrawer({ onMount }) {
   const { t } = useTranslation(['projects', 'common'])
   const { toggleDrawer, drawerOpen } = useLayout()
 
@@ -15,6 +16,11 @@ export default function ToggleProjectDrawer() {
     x: sidebarName,
     ns: 'common'
   })
+
+  useEffect(() => {
+    const timer = requestAnimationFrame(() => onMount())
+    return () => cancelAnimationFrame(timer)
+  }, [])
 
   return (
     <Tooltip title={label}>

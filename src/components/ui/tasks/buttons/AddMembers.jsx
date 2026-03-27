@@ -12,12 +12,23 @@ import useProject from '@hooks/useProject'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router-dom'
+import useLayout from '@hooks/useLayout'
 
 export default function AddMembers() {
   const { t } = useTranslation('ui')
   const [open, setOpen] = useState(false)
   const { projectId } = useParams()
   const { data } = useProject()
+  const { isPreview, triggerUpsell } = useLayout()
+
+  const handleClick = () => {
+    if (isPreview) {
+      triggerUpsell('add-members')
+      return
+    }
+
+    setOpen(true)
+  }
 
   return (
     <>
@@ -25,8 +36,9 @@ export default function AddMembers() {
         <ButtonListItem
           component={IconButton}
           btnProps={{
-            onClick: () => setOpen(true),
-            disabled: data?.isArchived
+            onClick: handleClick,
+            disabled: data?.isArchived,
+            className: 'hide-element'
           }}>
           <PersonAddIcon fontSize='medium' />
         </ButtonListItem>

@@ -5,7 +5,9 @@ import {
   lighten,
   alpha
 } from '@mui/material/styles'
+import { grey } from '@mui/material/colors'
 import Zoom from '@mui/material/Zoom'
+import { APPBAR_HEIGHT } from './constants'
 
 const lightColors = {
   primary: '#7C5DFA',
@@ -17,6 +19,11 @@ const darkColors = {
   primary: '#A592E8',
   secondary: '#D29AEE',
   error: '#FFA3A3'
+}
+
+const uiShadow = {
+  light: grey[400],
+  dark: grey[800]
 }
 
 const baseTheme = createTheme({
@@ -55,7 +62,14 @@ const baseTheme = createTheme({
             ${alpha(lightColors.primary, 0.225)})`
           }
         },
-        error: { main: lightColors.error }
+        error: { main: lightColors.error },
+        shadows: {
+          drawer: {
+            solo: `0 0 3px ${uiShadow.light}`,
+            withAppbar: `0 ${APPBAR_HEIGHT.other} 3px ${uiShadow.light}`
+          },
+          appbar: `0 0 3px ${uiShadow.light}`
+        }
       }
     },
     dark: {
@@ -91,7 +105,14 @@ const baseTheme = createTheme({
         action: {
           selected: 'rgba(255, 255, 255, 0.65)'
         },
-        error: { main: darkColors.error }
+        error: { main: darkColors.error },
+        shadows: {
+          drawer: {
+            solo: `0 0 3px ${uiShadow.dark}`,
+            withAppbar: `0 ${APPBAR_HEIGHT.other} 3px ${uiShadow.darh}`
+          },
+          appbar: `0 0 3px ${uiShadow.dark}`
+        }
       }
     }
   },
@@ -179,6 +200,12 @@ const baseTheme = createTheme({
           clip: 'rect(0, 0, 0, 0)',
           whiteSpace: 'nowrap',
           borderWidth: 0
+        },
+        // used on animated elements (improves animations on lazy-loaded
+        // components)
+        '.hide-element': {
+          opacity: 0,
+          visibility: 'hidden'
         }
       }
     },

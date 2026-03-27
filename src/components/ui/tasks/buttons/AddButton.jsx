@@ -31,7 +31,8 @@ export default function AddButton({ isPreview }) {
             sx: {
               minWidth: 'auto',
               borderRadius: '50%'
-            }
+            },
+            className: 'hide-element'
           }}>
           <AddIcon fontSize='medium' />
         </ButtonListItem>
