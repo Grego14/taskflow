@@ -1,10 +1,12 @@
 import { useEffect } from 'preact/hooks'
 import useProject from '@hooks/useProject'
+import useTasks from '../useTasks'
 
 const isNotCancelled = status => status !== 'cancelled'
 
-export default function useProjectMetrics(tasks) {
-  const { updateMetrics } = useProject()
+export default function useProjectMetrics() {
+  const { updateMetrics, metrics } = useProject()
+  const { tasks } = useTasks()
 
   useEffect(() => {
     if (!tasks) return

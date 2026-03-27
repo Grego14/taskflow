@@ -1,45 +1,52 @@
 import Box from '@mui/material/Box'
 import CardContent from '@mui/material/CardContent'
 import Chip from '@mui/material/Chip'
-
 import ParentTaskLink from './ParentTaskLink'
 
 import useProject from '@hooks/useProject'
-import useUser from '@hooks/useUser'
 import { useTranslation } from 'react-i18next'
+import useLayout from '@hooks/useLayout'
 
-import taskIsOverdue from '@utils/tasks/taskIsOverdue'
 import taskIsPending from '@utils/tasks/taskIsPending'
 
 export default function OverdueContent({
   data,
   insideTask = false,
-  status,
-  isOverdueLabelVisible
+  status
 }) {
   const { t } = useTranslation('ui')
-  const { metadata } = useUser()
-  const filter = metadata?.lastUsedFilter
+  const { filter } = useLayout()
+  const { isParentChecked, isParentOverdue } = data
 
-  if (!isOverdueLabelVisible) return
+  const isOverdueLabelVisible =
+    filter === 'default'
+    && isParentOverdue
+    && taskIsPending(status)
+
+  const showParentLink = isParentChecked && filter !== 'default'
+    || isOverdueLabelVisible
 
   return (
     <CardContent
       className='flex flex-column'
       sx={{
         pt: 0,
-        mt: 2,
         ml: 1.25,
         px: 0,
-        '&:last-child': { pb: data.subtasks ? 1 : 1.5 }
+        '&:last-child': { pb: 0 }
       }}>
       <Box className='flex' gap={2}>
         {isOverdueLabelVisible && (
-          <Chip label={t('dates.overdue')} size='small' color='warning' />
+          <Chip
+            sx={{ fontSize: '0.675rem' }}
+            label={t('dates.overdue')}
+            size='small'
+            color='warning'
+          />
         )}
 
-        {!insideTask && data.isSubtask && (
-          <ParentTaskLink parentTask={data.subtask} />
+        {showParentLink && (
+          <ParentTaskLink parentTask={data.subtask} isOverdue={isOverdueLabelVisible} />
         )}
       </Box>
     </CardContent>
