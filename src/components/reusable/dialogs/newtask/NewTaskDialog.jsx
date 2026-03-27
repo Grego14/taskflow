@@ -66,7 +66,7 @@ export default memo(function NewTaskDialog({
   const { t } = useTranslation(['dialogs', 'tasks'])
   const { isOffline } = useAuth()
   const { preferences } = useUser()
-  const { appNotification } = useApp()
+  const { appNotification, isOnlyMobile } = useApp()
   const { id, data: projectData, projectMembers } = useProject()
   const { actions } = useTasks()
 
@@ -124,7 +124,7 @@ export default memo(function NewTaskDialog({
       onClose={() => setOpen(false)}
       onAccept={handleAccept}
       disableAcceptBtn={!task.title}
-      maxWidth='tablet'
+      maxWidth={isOnlyMobile ? 'mobile' : 'tablet'}
       title={t('dialogs:newtask.title')}
       transitionComponent={Grow}
       sx={{

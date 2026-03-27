@@ -7,14 +7,17 @@ import Typography from '@mui/material/Typography'
 
 const DateItems = lazy(() => import('@components/reusable/tasks/DateItems'))
 
-import { DATES } from '@/constants'
 import { useTranslation } from 'react-i18next'
+import useApp from '@hooks/useApp'
+
+import { DATES } from '@/constants'
 import upperCaseInitialLetter from '@utils/upperCaseInitialLetter'
 
 const getDate = date => (!DATES.includes(date) ? 'nodate' : date)
 
 export default function TaskDate({ date, setDate }) {
   const { t } = useTranslation('dialogs')
+  const { isOnlyMobile } = useApp()
 
   const handleDateChange = async (newDate, triggerExit) => {
     triggerExit()
@@ -22,7 +25,15 @@ export default function TaskDate({ date, setDate }) {
   }
 
   return (
-    <Box className='flex' gap={2} width='100%' alignItems='center'>
+    <Box
+      className='flex'
+      gap={2}
+      width='100%'
+      alignItems='center'
+      justifyContent={{
+        xs: 'center',
+        mobile: 'initial'
+      }}>
       <DropdownMenu
         label={t('newtask.taskDateLabel')}
         tooltipPosition='top'
@@ -40,9 +51,11 @@ export default function TaskDate({ date, setDate }) {
         )}
       </DropdownMenu>
 
-      <Typography variant='body2' color='primary.main'>
-        {upperCaseInitialLetter(t(`newtask.dates.${date}`))}
-      </Typography>
+      {!isOnlyMobile && (
+        <Typography variant='body2' color='primary.main'>
+          {upperCaseInitialLetter(t(`newtask.dates.${date}`))}
+        </Typography>
+      )}
     </Box>
   )
 }
