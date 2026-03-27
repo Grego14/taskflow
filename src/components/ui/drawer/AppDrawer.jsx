@@ -25,24 +25,22 @@ import gsap from 'gsap'
 export default function AppDrawer() {
   const { isMobile } = useApp()
   const { projectId } = useParams()
-  const { drawerRef, toggleDrawer, drawerOpen } = useLayout()
+  const { drawerRef, toggleDrawer, drawerOpen, isPreview } = useLayout()
   const theme = useTheme()
 
   const loadingResources = useLoadResources('ui')
-
-  const isLight = theme.palette.mode === 'light'
-  const shadowColor = theme.palette.grey[isLight ? 400 : 800]
-  const isProjectAndDesktop = projectId && !isMobile
-  const shadow = `0 ${isProjectAndDesktop ? APPBAR_HEIGHT.other : 0} 3px ${shadowColor}`
+  const shadowWithAppbar = (projectId && !isMobile) || isPreview
 
   // trigger when dependencies change (for temporary drawer initial animation)
   useGSAP(() => {
-    if (loadingResources || isMobile) return
+    if (loadingResources) return
 
-    toggleDrawer(getItem('drawerOpen'))
-  }, { dependencies: [loadingResources, projectId], scope: drawerRef })
+    const timer = requestAnimationFrame(() => toggleDrawer(
+      getItem('drawerOpen')
+    ))
 
-  if (isMobile && !projectId || loadingResources) return
+    return () => cancelAnimationFrame(timer)
+  }, { dependencies: [loadingResources, projectId, isMobile], scope: drawerRef })
 
   const drawerWidth = DRAWER_CONFIG[drawerOpen ? 'widthOpen' : 'widthClosed']
 
@@ -51,7 +49,8 @@ export default function AppDrawer() {
       slotProps={{
         paper: {
           ref: drawerRef,
-          className: `${drawerOpen ? 'is-open' : 'is-closed'}`,
+          className: `${drawerOpen ? 'is-open' : 'is-closed'} 
+          ${isMobile ? 'is-temporary' : ''}`,
           sx: theme => ({
             willChange: 'width',
             display: 'flex',
@@ -60,16 +59,18 @@ export default function AppDrawer() {
             backgroundImage: theme.palette.background.drawer,
             overflow: 'hidden',
             transition: 'none',
-            '&.is-closed': { boxShadow: shadow }
+            translate: `-${drawerWidth}px`,
+            '&.is-closed': {
+              boxShadow:
+                theme.palette.shadows.drawer[shadowWithAppbar
+                  ? 'withAppbar' : 'solo']
+            }
           })
         },
-        transition: {
-          // this ensures animation runs when the permanent drawer mounts
-          onEnter: () => toggleDrawer(true)
-        }
+        root: { keepMounted: true }
       }}
       open={drawerOpen}
-      onClose={() => toggleDrawer(false)}
+      onClose={() => toggleDrawer(false, isMobile)}
       variant={isMobile ? 'temporary' : 'permanent'}>
       <Toolbar />
 
