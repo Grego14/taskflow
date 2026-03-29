@@ -14,15 +14,16 @@ import CompleteButton from './CompleteButton'
 import Header from './Header'
 import DropIndicator from './DropIndicator'
 
-import useProject from '@hooks/useProject'
 import taskIsOverdue from '@utils/tasks/taskIsOverdue'
 import { priorityColors } from '@/constants'
 
+import useProject from '@hooks/useProject'
 import useTaskDropTarget from './hooks/useTaskDropTarget'
 import useTaskDraggable from './hooks/useTaskDraggable'
 import useTasks from '@hooks/useTasks'
-import useTaskEntranceAnimation from '@hooks/animations/useTaskEntranceAnimation'
-import useNewTaskAnimation from '@hooks/animations/useNewTaskAnimation'
+import useLayout from '@hooks/useLayout'
+
+import useTaskAnimations from '@hooks/tasks/useTaskAnimations'
 
 const subtaskStyles = (theme, priority) => {
   const priorityColor = priorityColors[priority][0]
@@ -113,7 +114,11 @@ const SubtaskItem = forwardRef(function SubtaskItem({
 
   const isChecked = status === 'done' || status === 'cancelled'
 
-  useNewTaskAnimation(id, isNew)
+  const { animateItemEntrance } = useTaskAnimations()
+
+  useEffect(() => {
+    if (isNew) animateItemEntrance(id)
+  }, [id, isNew])
 
   return (
     <Box className='relative'>
@@ -142,10 +147,15 @@ const SubtaskItem = forwardRef(function SubtaskItem({
 export default memo(function Subtasks({ data, contextMenuHandler }) {
   const wrapperRef = useRef(null)
   const { taskRefs } = useTasks()
+  const { filter } = useLayout()
+
+  const { animateEntrance } = useTaskAnimations()
+
+  useEffect(() => {
+    animateEntrance(wrapperRef, data, { subtasks: true })
+  }, [filter])
 
   if (!data?.length) return null
-
-  useTaskEntranceAnimation(wrapperRef, data, { subtasks: true })
 
   return (
     <Box

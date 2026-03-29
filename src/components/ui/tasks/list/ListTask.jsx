@@ -1,4 +1,12 @@
-import { Suspense, lazy, memo, useRef, useMemo, forwardRef } from 'preact/compat'
+import {
+  Suspense,
+  lazy,
+  memo,
+  useRef,
+  useMemo,
+  forwardRef,
+  useEffect
+} from 'preact/compat'
 
 import Box from '@mui/material/Box'
 import Card from '@mui/material/Card'
@@ -17,7 +25,7 @@ import useLayout from '@hooks/useLayout'
 import useContextMenu from './hooks/useContextMenu'
 import useTaskDropTarget from './hooks/useTaskDropTarget'
 import useTaskDraggable from './hooks/useTaskDraggable'
-import useNewTaskAnimation from '@hooks/animations/useNewTaskAnimation'
+import useTaskAnimations from '@hooks/tasks/useTaskAnimations'
 
 import taskIsOverdue from '@utils/tasks/taskIsOverdue'
 import { priorityColors } from '@/constants'
@@ -95,7 +103,11 @@ const ListTask = forwardRef(({ data }, ref) => {
       : true))
   }, [subtasks, isOverdue])
 
-  useNewTaskAnimation(id, isNew)
+  const { animateItemEntrance } = useTaskAnimations()
+
+  useEffect(() => {
+    if (isNew) animateItemEntrance(id)
+  }, [id, isNew])
 
   if (!data) return null
 

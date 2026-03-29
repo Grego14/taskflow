@@ -9,8 +9,10 @@ import Typography from '@mui/material/Typography'
 
 import useApp from '@hooks/useApp'
 import useTasks from '@hooks/useTasks'
-import { forwardRef, memo, useRef, useState } from 'preact/compat'
-import useTaskEntranceAnimation from '@hooks/animations/useTaskEntranceAnimation'
+import { forwardRef, memo, useRef, useState, useEffect } from 'preact/compat'
+import useLayout from '@hooks/useLayout'
+
+import useTaskAnimations from '@hooks/tasks/useTaskAnimations'
 
 const TasksWrapper = forwardRef(function TasksWrapper(props, ref) {
   const { isMobile } = useApp()
@@ -29,6 +31,7 @@ const TasksWrapper = forwardRef(function TasksWrapper(props, ref) {
   } = props
 
   const { taskRefs } = useTasks()
+  const { filter } = useLayout()
   const wrapperRef = useRef(null)
 
   const isOver = dragState === 'is-over'
@@ -36,7 +39,11 @@ const TasksWrapper = forwardRef(function TasksWrapper(props, ref) {
 
   const [expanded, setExpanded] = useState(expand)
 
-  useTaskEntranceAnimation(wrapperRef, tasks, { addDelay: type === 'overdue' })
+  const { animateEntrance } = useTaskAnimations()
+
+  useEffect(() => {
+    animateEntrance(wrapperRef, tasks, { addDelay: type === 'overdue' })
+  }, [filter])
 
   return (
     <Box
@@ -87,7 +94,8 @@ const TasksWrapper = forwardRef(function TasksWrapper(props, ref) {
               border: '2px dashed',
               borderColor: isOver ? 'primary.main' : 'transparent',
               backgroundColor: isOver ? theme.alpha('#fff', 0.075) : 'transparent',
-              transition: 'border-color 0.3 ease, background-color 0.3 ease'
+              transition: 'border-color 0.3 ease, background-color 0.3 ease',
+              overflow: 'hidden'
             }),
             tasksStyles
           ]}>

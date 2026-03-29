@@ -9,10 +9,10 @@ export default function TasksBaseProvider({
   tasks,
   actions,
   loading,
-  error
+  error,
+  taskRefs // [taskId]: DOMElement
 }) {
   const { isPreview } = useLayout()
-  const taskRefs = useRef({}) // [taskId]: DOMElement
   const timeout = useRef(null)
 
   const scrollIntoTask = useCallback((taskId) => {

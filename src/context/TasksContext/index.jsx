@@ -2,12 +2,12 @@ import { createRef, memo, useMemo, useRef } from 'preact/compat'
 
 import useProject from '@hooks/useProject'
 import useProjectTasks from './hooks/useProjectTasks'
-import useTaskAnimations from './hooks/useTaskAnimations'
 import useTaskMutations from './hooks/useTaskMutations'
 import useUser from '@hooks/useUser'
 
 import useTaskReorder from '@hooks/tasks/useTaskReorder'
 import useTaskMetrics from '@hooks/tasks/useTaskMetrics'
+import useTaskAnimations from '@hooks/tasks/useTaskAnimations'
 
 import taskService from '@services/task'
 import playSound from '@services/audio'
@@ -15,6 +15,7 @@ import playSound from '@services/audio'
 import getFirstPosition from '@utils/tasks/getFirstPosition'
 import taskIsOverdue from '@utils/tasks/taskIsOverdue'
 import resolveTaskStatusUpdate from '@utils/tasks/taskStatusResolver'
+import getContainers from '@utils/tasks/getContainers'
 
 import TasksBaseProvider from './TaskBaseProvider'
 
@@ -51,7 +52,7 @@ export default memo(function TasksProvider({ children }) {
     })
   }
 
-  const { animateOut } = useTaskAnimations(projectTasks, taskRefs)
+  const { animateOut } = useTaskAnimations()
 
   const { deleteTaskMutation, updateTaskMutation } =
     useTaskMutations({
@@ -95,17 +96,20 @@ export default memo(function TasksProvider({ children }) {
 
     deleteTask: async (props) => {
       const { id } = props
+      const elements = getContainers(taskRefs, id)
 
-      // animate only if the task isn't a subtask
-      await animateOut([id], 'delete')
+      await animateOut(elements, 'delete')
 
       deleteTaskMutation.mutate(props)
       playSound('delete')
     },
 
     archiveTasks: async (taskIds) => {
+      const elements = getContainers(taskRefs, taskIds)
       playSound('archive')
-      await animateOut(taskIds, 'archive')
+
+      await animateOut(elements, 'archive')
+
       await taskService.archiveTasks({
         ownerId,
         projectId,
@@ -166,7 +170,6 @@ export default memo(function TasksProvider({ children }) {
   }), [
     deleteTaskMutation,
     updateTaskMutation,
-    animateOut,
     ownerId,
     projectId,
     handleReorder,
@@ -178,6 +181,7 @@ export default memo(function TasksProvider({ children }) {
       tasks={projectTasks}
       actions={actions}
       loading={isLoading}
+      taskRefs={taskRefs}
       error={error}>
       {children}
     </TasksBaseProvider>

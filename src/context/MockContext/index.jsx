@@ -1,7 +1,10 @@
-import { useState, useEffect, useCallback, useMemo } from 'preact/compat'
+import {
+  useState, useEffect, useCallback, useMemo, useRef
+} from 'preact/compat'
 import useUser from '@hooks/useUser'
 
 import useTaskReorder from '@hooks/tasks/useTaskReorder'
+import useTaskAnimations from '@hooks/tasks/useTaskAnimations'
 
 import TasksBaseProvider from '@context/TasksContext/TaskBaseProvider'
 import ProjectContext from '@pages/projects/context'
@@ -11,11 +14,15 @@ import resolveTaskStatusUpdate from '@utils/tasks/taskStatusResolver'
 import playSound from '@services/audio'
 import getFirstPosition from '@utils/tasks/getFirstPosition'
 import taskIsOverdue from '@utils/tasks/taskIsOverdue'
+import getContainers from '@utils/tasks/getContainers'
 
 export default function MockProvider({ children }) {
   const { uid } = useUser()
   const [data, setData] = useState(() => getItem('preview'))
   const project = data.projects[0]
+
+  const taskRefs = useRef({})
+  const { animateOut } = useTaskAnimations()
 
   const [metrics, setMetrics] = useState({
     totalTasks: 0,
@@ -101,7 +108,10 @@ export default function MockProvider({ children }) {
       if (nextStatus === 'done') playSound('complete')
     },
 
-    deleteTask: ({ id, subtask, deleteSubtasks }) => {
+    deleteTask: async ({ id, subtask, deleteSubtasks }) => {
+      const elements = getContainers(taskRefs, id)
+      await animateOut(elements, 'delete')
+
       setData(prev => {
         if (subtask)
           return { ...prev, tasks: prev.tasks.filter(task => task.id !== id) }
@@ -113,6 +123,8 @@ export default function MockProvider({ children }) {
 
         return { ...prev, tasks: newTasks }
       })
+
+      playSound('delete')
     },
 
     handleReorder,
@@ -170,7 +182,10 @@ export default function MockProvider({ children }) {
 
   return (
     <ProjectContext.Provider value={projectValue}>
-      <TasksBaseProvider tasks={tasks} actions={actions}>
+      <TasksBaseProvider
+        tasks={tasks}
+        actions={actions}
+        taskRefs={taskRefs}>
         {children}
       </TasksBaseProvider>
     </ProjectContext.Provider>
