@@ -78,8 +78,6 @@ export default function UpsellDialog({ open, setOpen, upsellKey }) {
         <Box className='flex flex-column' gap={2}>
           <Button
             variant='contained'
-            size='large'
-            fullWidth
             onClick={() => navigate('/signup')}
             sx={{ py: 1.5, fontWeight: 700, borderRadius: 2 }}>
             {t('preview:upsell.button_primary')}
@@ -87,9 +85,8 @@ export default function UpsellDialog({ open, setOpen, upsellKey }) {
 
           <Button
             variant='text'
-            fullWidth
             onClick={() => setOpen(false)}
-            sx={{ textTransform: 'none' }}>
+            sx={{ textTransform: 'none', mx: 'auto' }}>
             {t('preview:upsell.button_secondary')}
           </Button>
         </Box>
