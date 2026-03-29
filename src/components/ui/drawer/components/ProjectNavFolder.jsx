@@ -33,14 +33,34 @@ export default function ProjectCollapsibleSection() {
   const { t } = useTranslation('ui')
   const containerRef = useRef(null)
   const [open, setOpen] = useState(true)
-  const { drawerOpen, toggleDrawer } = useLayout()
+  const { drawerOpen, toggleDrawer, isPreview } = useLayout()
 
   useGSAP(() => {
-    if (open && drawerOpen) {
-      gsap.fromTo('.nav-action',
-        { autoAlpha: 0, x: -10 },
-        { autoAlpha: 1, x: 0, stagger: 0.1, ease: 'power2.out', duration: 0.4 }
-      )
+    const labels = '.nav-action__text'
+    const icons = '.nav-action__icon'
+
+    const tl = gsap.timeline({
+      defaults: {
+        ease: 'power2.out',
+        overwrite: 'auto',
+        stagger: 0.2
+      }
+    })
+
+    if (drawerOpen) {
+      if (open) {
+        tl.to('.nav-action', { autoAlpha: 1, y: 0, x: 0 }, 'openStart')
+
+        tl.fromTo(icons,
+          { autoAlpha: 0, x: -10, rotateZ: -90 },
+          { autoAlpha: 1, x: 0, rotateZ: 0, duration: 0.35 }, 'openStart+=0.25')
+          .fromTo(labels,
+            { autoAlpha: 0, x: -20, y: -25 },
+            { autoAlpha: 1, x: 0, y: 0 },
+            '<0.15')
+      } else {
+        tl.to('.nav-action', { x: -10, y: -25, autoAlpha: 0, stagger: 0.15 })
+      }
     }
   }, { dependencies: [open, drawerOpen], scope: containerRef })
 
@@ -71,7 +91,12 @@ export default function ProjectCollapsibleSection() {
       <Box
         key={item.key}
         component='li'
-        sx={{ listStyle: 'none' }}>
+        sx={{
+          listStyle: 'none',
+          overflow: 'hidden',
+          perspective: '1000px',
+          perspectiveOrigin: '0 50%'
+        }}>
         <NavAction
           link={link}
           showText={drawerOpen}
@@ -151,7 +176,7 @@ export default function ProjectCollapsibleSection() {
         </ButtonListItem>
       </Tooltip>
 
-      <Collapse in={open && drawerOpen} timeout='auto' unmountOnExit>
+      <Collapse in={open && drawerOpen} timeout='auto'>
         <List sx={{ pl: 1.25 }} disablePadding>
           {navElements}
         </List>
