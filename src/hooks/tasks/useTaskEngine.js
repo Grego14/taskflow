@@ -37,18 +37,20 @@ export default function useTaskEngine(rawTasks) {
       return task.status === filter
     }
 
-    const processTask = (task, parent = null) => {
+    const processTask = (task) => {
       const isOverdue = taskIsOverdue(task)
+      const isCancelled = task.status === 'cancelled'
 
       return {
         ...task,
         isOverdue,
         isNew: getIsNew(task.createdAt || now),
-        ...(parent && {
-          isParentOverdue: parent.isOverdue,
-          isParentChecked:
-            parent.status === 'done' || parent.status === 'cancelled'
-        })
+        subtasks: task?.subtasks?.map(subtask => ({
+          ...subtask,
+          isParentChecked: task.status === 'done' || isCancelled,
+          isParentOverdue: isOverdue,
+          isParentCancelled: isCancelled
+        }))
       }
     }
 
@@ -78,7 +80,8 @@ export default function useTaskEngine(rawTasks) {
           }
         }
       }
-      else if (taskPasses) {
+
+      if (!isDefaultFilter && taskPasses) {
         // non-default filters
         acc.mainFiltered.push(task)
       }
@@ -88,14 +91,18 @@ export default function useTaskEngine(rawTasks) {
       // doesn't (or if we are in default mode and parent is overdue)
       if (rawTask.subtasks?.length) {
         for (const rawSub of rawTask.subtasks) {
-          const subtask = processTask(rawSub, task)
-          const subPasses = passesFilter(subtask)
+          const subPasses = passesFilter(rawSub)
 
           const shouldPromote = !isDefaultFilter
             ? (subPasses && !taskPasses)
-            : (task.isOverdue && !subtask.isOverdue && subPasses)
+            : (task.isOverdue && !rawSub.isOverdue && subPasses)
 
-          if (shouldPromote) acc.promotedSubtasks.push(subtask)
+          if (shouldPromote) acc.promotedSubtasks.push({
+            ...rawSub,
+            isParentChecked: task.status === 'done' || task.status === 'cancelled',
+            isParentOverdue: task.isOverdue,
+            isParentCancelled: task.status === 'cancelled'
+          })
         }
       }
 
