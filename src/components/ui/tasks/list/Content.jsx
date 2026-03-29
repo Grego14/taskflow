@@ -16,15 +16,15 @@ export default function OverdueContent({
 }) {
   const { t } = useTranslation('ui')
   const { filter } = useLayout()
-  const { isParentChecked, isParentOverdue } = data
+  const { isParentChecked, isParentOverdue, isParentCancelled } = data
 
   const isOverdueLabelVisible =
     filter === 'default'
-    && isParentOverdue
+    && !isParentOverdue
     && taskIsPending(status)
 
-  const showParentLink = isParentChecked && filter !== 'default'
-    || isOverdueLabelVisible
+  const showParentLink = (isParentOverdue && filter !== 'default'
+    || taskIsPending(status) && filter === 'default') && !isParentCancelled
 
   return (
     <CardContent
