@@ -12,7 +12,7 @@ import useProject from '@hooks/useProject'
 
 const getColor = (theme) => ({
   color: theme.palette.error.light,
-  ...theme.applyStyles('dark', { color: theme.palette.error.dark })
+  ...theme.applyStyles('dark', { color: theme.palette.error.main })
 })
 
 export default function DeleteTask({
