@@ -11,8 +11,8 @@
   },
   "profileUpdated": "Perfil actualizado con éxito",
   "loading": "Cargando perfil",
-  "accountCreated_date": "Fecha de creación: {{date}}",
-  "lastLogin_date": "Último inicio de sesión: {{date}}",
+  "accountCreated": "Fecha de creación:",
+  "lastLogin": "Último inicio de sesión:",
   "deleteUser": {
     "passwordLabel": "Introduce tu contraseña",
     "errors": {
@@ -20,5 +20,6 @@
       "authenticating": "No se pudo autenticar. Intente nuevamente",
       "password": "Contraseña invalida"
     }
-  }
+  },
+  "goHome": "Ir al inicio"
 }

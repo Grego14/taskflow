@@ -60,7 +60,13 @@ const baseTheme = createTheme({
             top: `linear-gradient(45deg,
             ${alpha(lightColors.secondary, 0.03)},
             ${alpha(lightColors.primary, 0.225)})`
-          }
+          },
+          profile: `
+            radial-gradient(at 0% 0%, ${alpha(lightColors.secondary, 0.25)} 0px, 
+            transparent 60%),
+            radial-gradient(at 100% 100%, ${alpha(lightColors.primary, 0.15)} 0px,
+            transparent 60%),
+            #ffffff`
         },
         error: { main: lightColors.error },
         shadows: {
@@ -100,7 +106,13 @@ const baseTheme = createTheme({
             top: `linear-gradient(45deg,
             ${alpha(darkColors.secondary, 0.1)},
             ${alpha(darkColors.primary, 0.18)})`
-          }
+          },
+          profile: `
+            radial-gradient(at 0% 0%, ${alpha(darkColors.secondary, 0.3)} 0px, 
+            transparent 50%),
+            radial-gradient(at 100% 0%, ${alpha(darkColors.primary, 0.2)} 0px, 
+            transparent 50%),
+            #121212`
         },
         action: {
           selected: 'rgba(255, 255, 255, 0.65)'
@@ -206,6 +218,11 @@ const baseTheme = createTheme({
         '.hide-element': {
           opacity: 0,
           visibility: 'hidden'
+        },
+        '@keyframes profileGradient': {
+          '0%': { backgroundPosition: '0% 0%, 100% 100%' },
+          '50%': { backgroundPosition: '25% 20%, 75% 80%' },
+          '100%': { backgroundPosition: '0% 0%, 100% 100%' }
         }
       }
     },

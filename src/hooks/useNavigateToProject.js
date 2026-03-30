@@ -1,13 +1,13 @@
 import { useCallback } from 'react'
-import { useNavigate } from 'react-router-dom'
+import useRoute from './useRoute'
 
 export default function useNavigateToProject() {
-  const navigate = useNavigate()
+  const { navigateTo } = useRoute()
 
   const navigateFunc = useCallback(
     (id, owner) =>
-      navigate(`/projects/${owner}/${id}`),
-    [navigate]
+      navigateTo(`/projects/${owner}/${id}`),
+    [navigateTo]
   )
 
   return navigateFunc

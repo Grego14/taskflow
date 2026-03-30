@@ -11,8 +11,8 @@
   },
   "profileUpdated": "Profile updated successfully",
   "loading": "Loading profile",
-  "accountCreated_date": "Account creation date: {{date}}",
-  "lastLogin_date": "Last login: {{date}}",
+  "accountCreated": "Account creation date:",
+  "lastLogin": "Last login:",
   "deleteUser": {
     "passwordLabel": "Enter your password",
     "errors": {
@@ -20,5 +20,6 @@
       "authenticating": "Couldn't authenticate. Try again",
       "password": "Invalid password"
     }
-  }
+  },
+  "goHome": "Go home"
 }

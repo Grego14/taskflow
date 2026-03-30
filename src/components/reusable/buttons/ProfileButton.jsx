@@ -9,8 +9,8 @@ import useAuth from '@hooks/useAuth'
 import useUser from '@hooks/useUser'
 import { useTranslation } from 'react-i18next'
 import useLoadResources from '@hooks/useLoadResources'
-import { useNavigate } from 'react-router-dom'
 import useLayout from '@hooks/useLayout'
+import useRoute from '@hooks/useRoute'
 
 export default function ProfileButton({
   showTexts,
@@ -20,7 +20,7 @@ export default function ProfileButton({
   className
 }) {
   const { t } = useTranslation('ui')
-  const navigate = useNavigate()
+  const { navigateTo } = useRoute()
   const { isPreview, triggerUpsell } = useLayout()
 
   const { isOffline, currentUser } = useAuth()
@@ -51,7 +51,7 @@ export default function ProfileButton({
         disableRipple={onlyIcon}
         onClick={() => isPreview
           ? triggerUpsell('profile')
-          : navigate('/profile')}
+          : navigateTo('/profile')}
         onMouseEnter={preloadProfileComponent}
         sx={{
           borderRadius: onlyIcon ? '50%' : 0,
