@@ -6,7 +6,7 @@ import useApp from '@hooks/useApp'
 import useDrawerAnimation from '@hooks/animations/useDrawerAnimation'
 
 import LayoutContext from './context'
-import { getItem } from '@utils/storage'
+import { getItem, setItem } from '@utils/storage'
 
 export default function LayoutProvider({ children, isPreview, triggerUpsell }) {
   const { isMobile } = useApp()
@@ -54,6 +54,7 @@ export default function LayoutProvider({ children, isPreview, triggerUpsell }) {
     if (typeof opening === 'boolean') return
 
     setDrawerOpen(newVal)
+    setItem('drawerOpen', newVal)
 
     // do not animate the exit if the drawer is temporary
     if (isTemporary && newVal === false) return
