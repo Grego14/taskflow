@@ -11,23 +11,33 @@ export default function useProjectMetrics() {
   useEffect(() => {
     if (!tasks) return
 
-    const pendingSubtasks = tasks.flatMap(t => t.subtasks || [])
-      .filter(s => isNotCancelled(s.status))
-    const pendingTasks = tasks.filter(t => isNotCancelled(t.status))
+    let totalTasks = 0
+    let totalCompletedTasks = 0
 
-    const totalTasks = pendingSubtasks.length + pendingTasks.length
-    const totalCompletedTasks =
-      pendingTasks.filter(t => t.status === 'done').length +
-      pendingSubtasks.filter(s => s.status === 'done').length
+    for (const task of tasks) {
+      const parentActive = isNotCancelled(task.status)
+
+      if (parentActive) {
+        totalTasks++
+        if (task.status === 'done') totalCompletedTasks++
+
+        if (task.subtasks?.length <= 0) continue
+
+        for (const sub of task.subtasks) {
+          // only count subtasks with pending/non-cancelled parents
+          if (isNotCancelled(sub.status)) {
+            totalTasks++
+            if (sub.status === 'done') totalCompletedTasks++
+          }
+        }
+      }
+    }
 
     updateMetrics(prev => {
-      if (
-        prev?.totalTasks !== totalTasks ||
+      const hasChanged = prev?.totalTasks !== totalTasks ||
         prev?.totalCompletedTasks !== totalCompletedTasks
-      ) {
-        return { ...prev, totalTasks, totalCompletedTasks }
-      }
-      return prev
+
+      return hasChanged ? { ...prev, totalTasks, totalCompletedTasks } : prev
     })
   }, [tasks, updateMetrics])
 }
