@@ -6,7 +6,6 @@ import useTaskMutations from './hooks/useTaskMutations'
 import useUser from '@hooks/useUser'
 
 import useTaskReorder from '@hooks/tasks/useTaskReorder'
-import useTaskMetrics from '@hooks/tasks/useTaskMetrics'
 import useTaskAnimations from '@hooks/tasks/useTaskAnimations'
 
 import taskService from '@services/task'
@@ -64,9 +63,6 @@ export default memo(function TasksProvider({ children }) {
     tasks: projectTasks,
     updateTask: updateTaskMutation.mutate
   })
-
-  // logic hook
-  useTaskMetrics()
 
   // --- Actions ---
 

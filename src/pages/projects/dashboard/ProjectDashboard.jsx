@@ -16,6 +16,7 @@ import { useTranslation } from 'react-i18next'
 import useLoadResources from '@hooks/useLoadResources'
 import useApp from '@hooks/useApp'
 import useLayout from '@hooks/useLayout'
+import useTaskMetrics from '@hooks/tasks/useTaskMetrics'
 
 import gsap from 'gsap'
 import ScrollTrigger from 'gsap/ScrollTrigger'
@@ -31,6 +32,9 @@ const ProjectHeader = ({ projectName, isArchived }) => {
   useEffect(() => {
     ScrollTrigger.refresh()
   }, [])
+
+  // logic hook
+  useTaskMetrics()
 
   return (
     <Box

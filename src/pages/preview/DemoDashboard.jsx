@@ -23,8 +23,6 @@ import useProject from '@hooks/useProject'
 import useTasks from '@hooks/useTasks'
 import useUser from '@hooks/useUser'
 
-import useTaskMetrics from '@hooks/tasks/useTaskMetrics'
-
 import getLocale from '@utils/getLocale'
 import { username, userId, UPPSELL_KEYS } from '@context/MockContext/utils'
 
@@ -80,8 +78,6 @@ export default function DemoWrapper() {
       uid: userId
     })
   }, [userTheme])
-
-  useTaskMetrics()
 
   const triggerUpsell = (reason) => {
     setUpsellContext(reason)
