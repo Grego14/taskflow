@@ -30,10 +30,10 @@ export default function MetricGauge({
           value={displayValue}
           innerRadius='80%'
           outerRadius='100%'
-          text={size > 100 ? `${displayValue}%` : ''}
+          text={size >= 100 ? `${displayValue}%` : ''}
           sx={theme => ({
             [`& .${gaugeClasses.valueText}`]: {
-              fontSize: 32,
+              fontSize: { xs: 25, tablet: 32 },
               fontWeight: 700
             },
             [`& .${gaugeClasses.valueArc}`]: {

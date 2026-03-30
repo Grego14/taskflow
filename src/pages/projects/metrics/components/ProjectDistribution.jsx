@@ -101,7 +101,7 @@ export default function ProjectDistribution() {
         }}
         sx={{
           '& .MuiChartsLegend-root': {
-            display: isOnlyMobile ? 'none' : 'block'
+            display: { xs: 'none', tablet: 'block' }
           }
         }}
       />

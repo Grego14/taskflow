@@ -22,7 +22,12 @@ export default function ProjectMember({
   return (
     <Paper
       className='flex'
-      sx={{ my: 2, p: 2, justifyContent: 'space-between' }}>
+      sx={{
+        my: 2,
+        p: 2,
+        justifyContent: 'space-between',
+        backgroundColor: 'transparent'
+      }}>
       <Box className='flex flex-center' gap={2}>
         <Avatar src={data?.avatar} />
         <Box className='flex flex-column' gap={1}>

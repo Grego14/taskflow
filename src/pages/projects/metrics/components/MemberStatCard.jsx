@@ -53,11 +53,21 @@ export default function MemberStatCard({ member, metrics }) {
         display: 'flex',
         flexWrap: 'wrap',
         alignItems: 'center',
-        gap: { xs: 2, mobile: 4 },
-        transition: 'transform 0.2s',
-        '&:hover': { bgcolor: alpha(theme.palette.action.hover, 0.04) }
+        gap: { xs: 1, mobile: 2 },
+        transition: 'translate 0.2s ease-in-out, background-color 0.2s ease-in-out',
+        '&:hover': {
+          bgcolor: alpha(theme.palette.action.hover, 0.04),
+          translate: '0 -5px'
+        },
+        bgcolor: 'transparent',
       }}>
-      <Box className='flex flex-center' gap={2} sx={{ minWidth: 200, flex: 1 }}>
+      <Box className='flex flex-center'
+        sx={{
+          gap: 2,
+          minWidth: { xs: 200, mobile: '100%' },
+          flex: { tablet: 1 },
+          justifyContent: 'start'
+        }}>
         <Avatar
           src={member?.avatar}
           sx={{
@@ -92,11 +102,15 @@ export default function MemberStatCard({ member, metrics }) {
           color='error' />
       </Box>
 
-      <Box sx={{ width: 100, display: 'flex', justifyContent: 'flex-end' }}>
+      <Box sx={{
+        minWidth: 100,
+        display: 'flex',
+        justifyContent: 'flex-end',
+        mx: 'auto'
+      }}>
         <MetricGauge
           value={efficiency}
-          size={80}
-          hideTitle
+          size={100}
           title={t('completedOnTimeTasks')}
         />
       </Box>

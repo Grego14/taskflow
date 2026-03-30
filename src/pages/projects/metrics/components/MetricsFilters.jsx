@@ -48,7 +48,7 @@ const MetricsFilters = memo(({ preview }) => {
   }
 
   return (
-    <Box className='flex items-center' flexWrap='wrap' mb={2} gap={2}>
+    <Box className='flex flex-center' flexWrap='wrap' mb={2} gap={2}>
       <FormControl size='small' sx={{ minWidth: 160 }}>
         <InputLabel id='date-range-label'>{t('dateRange')}</InputLabel>
         <Select
