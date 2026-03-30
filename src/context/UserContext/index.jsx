@@ -51,17 +51,11 @@ export default function UserProvider({ children }) {
   // fields are different from the local ones (the user changes the theme/lang
   // when he was on the Landing Page, but he has other theme on the db)
   useEffect(() => {
-    if (!userId || !userLoaded) return
-
     const { theme, lang } = user.preferences
 
-    if (theme && theme !== userTheme) {
-      setMode(theme)
-    }
+    if (theme && theme !== userTheme) setMode(theme)
 
-    if (lang && lang !== i18n.language) {
-      i18n.changeLanguage(lang)
-    }
+    if (lang && lang !== i18n.language) i18n.changeLanguage(lang)
   }, [user?.preferences, setMode, i18n, userId, userTheme, userLoaded])
 
   const value = useMemo(
