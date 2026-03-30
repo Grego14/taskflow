@@ -48,6 +48,8 @@ const taskService = {
     let initialSubtasksLoaded = false
 
     const handleUpdate = () => {
+      if (!initialTasksLoaded || !initialSubtasksLoaded) return
+
       const finalData = orderSubtasks(tasksMap, subtasksMap)
       onUpdate(finalData)
     }
