@@ -142,6 +142,8 @@ export default function MockProvider({ children }) {
           // if is the parent task, ignore
           if (currentTask.id === taskId) return acc
 
+          const date = Date.now()
+
           // if is a moving subtask
           if (subtaskIds.includes(currentTask.id)) {
             const { status, subtask, ...other } = currentTask
@@ -151,7 +153,8 @@ export default function MockProvider({ children }) {
               status: 'todo',
               subtask: null,
               position,
-              updatedAt: Date.now()
+              updatedAt: date,
+              createdAt: date
             })
             return acc
           }

@@ -22,11 +22,12 @@ export default function useTaskEngine(rawTasks) {
     const isDefaultFilter = filter === 'default'
 
     const getIsNew = (date) => {
-      const time = date?.seconds
+      const currentTime = Date.now()
+      const taskTime = date?.seconds
         ? date.seconds * 1000
         : new Date(date).getTime()
 
-      return (now - time) < 10000
+      return Math.abs(currentTime - taskTime) < 10000
     }
 
     const passesFilter = (task) => {
