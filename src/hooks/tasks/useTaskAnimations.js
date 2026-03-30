@@ -18,11 +18,8 @@ export default function useTaskAnimations() {
     items,
     { addDelay = false, subtasks = false }
   ) => {
-    if (
-      !items?.length ||
-      !wrapperRef.current ||
-      animatedFilter.current === filter
-    ) return
+    if (!items?.length || !wrapperRef.current) return
+    if (animatedFilter.current === filter) return
 
     const targets = items
       .map(item => getTaskRef(taskRefs, item.id)?.parentElement)
@@ -32,47 +29,43 @@ export default function useTaskAnimations() {
 
     animatedFilter.current = filter
 
-    const rafId = requestAnimationFrame(() => {
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: wrapperRef.current,
-          start: 'top+=35% bottom',
-          once: true
-        },
-        defaults: { stagger: 0.15 }
-      })
-
-      const startDelay = addDelay || subtasks ? 0.3 : 0
-
-      // only animate the icons of the current targets
-      const icons = targets
-        .map(t => t.querySelector('.MuiCardHeader-action'))
-        .filter(Boolean)
-
-      tl.fromTo(targets, {
-        autoAlpha: 0,
-        y: -10,
-        x: -25,
-        force3D: true
-      }, {
-        autoAlpha: 1,
-        y: 0,
-        x: 0,
-        delay: startDelay,
-        ease: 'power2.out',
-        overwrite: 'auto'
-      })
-        .fromTo(icons, {
-          autoAlpha: 0,
-          x: 15,
-          ease: 'expo.out'
-        }, {
-          autoAlpha: 1,
-          x: 0
-        }, '-=0.2')
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: wrapperRef.current,
+        start: 'top+=35% bottom',
+        once: true
+      },
+      defaults: { stagger: 0.15 }
     })
 
-    return () => cancelAnimationFrame(rafId)
+    const startDelay = addDelay || subtasks ? 0.3 : 0
+
+    // only animate the icons of the current targets
+    const icons = targets
+      .map(t => t.querySelector('.MuiCardHeader-action'))
+      .filter(Boolean)
+
+    tl.fromTo(targets, {
+      autoAlpha: 0,
+      y: -10,
+      x: -25,
+      force3D: true
+    }, {
+      autoAlpha: 1,
+      y: 0,
+      x: 0,
+      delay: startDelay,
+      ease: 'power2.out',
+      overwrite: 'auto'
+    })
+      .fromTo(icons, {
+        autoAlpha: 0,
+        x: 15,
+        ease: 'expo.out'
+      }, {
+        autoAlpha: 1,
+        x: 0
+      }, '-=0.2')
   })
 
   // --- individual entrance (new task/task promotion) ---
