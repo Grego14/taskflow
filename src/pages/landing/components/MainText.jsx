@@ -1,4 +1,4 @@
-import { Suspense, lazy } from 'preact/compat'
+import { Suspense, lazy, useEffect, useState } from 'preact/compat'
 
 import Button from '@mui/material/Button'
 import Typography from '@mui/material/Typography'
@@ -11,9 +11,9 @@ import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
-import { SplitText } from 'gsap/SplitText'
 import useUser from '@hooks/useUser'
 
+import { SplitText } from 'gsap/SplitText'
 import { APPBAR_HEIGHT } from '@/constants'
 
 const h1Styles = (theme) => ({
@@ -25,7 +25,7 @@ const h1Styles = (theme) => ({
   mb: 2,
   fontWeight: 800,
   opacity: 0,
-  maxWidth: '15ch',
+  maxWidth: { xs: '10ch', tablet: '15ch' },
   lineHeight: 1.2,
   background: `linear-gradient(
     90deg, 
@@ -46,7 +46,7 @@ const h1Styles = (theme) => ({
 const h2Styles = (theme) => ({
   ...theme.typography.h5,
   opacity: 0,
-  maxWidth: { xs: '40ch', laptop: '50ch' },
+  maxWidth: { xs: '32ch', laptop: '45ch' },
   perspective: '1000px',
   lineHeight: 1.45
 })
@@ -92,9 +92,9 @@ export default function MainText({
   const lang = preferences?.lang
   const navigate = useNavigate()
 
-  const resourceExists = i18n.hasResourceBundle(lang, 'landing')
+  const resourceExists = i18n.getResourceBundle(lang, 'landing')
 
-  useGSAP((context) => {
+  useGSAP(() => {
     if (!resourceExists) return
 
     const bigSplit = new SplitText('#bigText', { type: 'words' })
@@ -131,7 +131,7 @@ export default function MainText({
       stagger: 0.8 / bigSplit.words.length,
       ease: 'back.out(2.5)',
       rotateZ: -45,
-      transformOrigin: '0 50% -50'
+      transformOrigin: '0 50% -50',
     })
       .from(shortSplit.chars, {
         opacity: 0,
@@ -146,27 +146,46 @@ export default function MainText({
         stagger: 0.3,
         onComplete: setAnimationEnded
       }, '-=0.5')
-  }, { dependencies: [resourceExists] })
+
+    return () => {
+      bigSplit.revert()
+      shortSplit.revert()
+    }
+  }, { dependencies: [lang, resourceExists], revertOnUpdate: true })
 
   const getPaddingTop = (ammount) => `calc(${APPBAR_HEIGHT.other} * ${ammount})`
 
   return (
     <Section className='text-center relative' sx={{
       px: 2,
-      justifyContent: { xs: 'start', desktop: 'center' },
-      pt: { xs: getPaddingTop(1), mobile: getPaddingTop(2), desktop: 0 }
+      justifyContent: { xs: 'start', laptop: 'center' },
+      pt: {
+        xs: getPaddingTop(1.35),
+        mobile: getPaddingTop(2),
+        tablet: getPaddingTop(2.75),
+        laptop: 0,
+      }
     }}
       id='main-text'>
-      <Typography
-        className='text-balance'
-        id='bigText'
-        variant='h1'
-        sx={h1Styles}>
-        {t('title0')}
-      </Typography>
+      <Box className='relative'>
+        <Typography
+          key={`big-${lang}`}
+          className='text-balance'
+          id='bigText'
+          variant='h1'
+          sx={h1Styles}
+          aria-hidden='true'>
+          {t('title0')}
+        </Typography>
+
+        <span className='sr-only'>
+          {t('title0')}
+        </span>
+      </Box>
 
       <Box className='relative'>
         <Typography
+          key={`short-${lang}`}
           color='textSecondary'
           variant='body1'
           className='text-balance'
@@ -176,7 +195,6 @@ export default function MainText({
           {t('title1')}
         </Typography>
 
-        {/* Only visible to screen readers */}
         <span className='sr-only'>
           {t('title1')}
         </span>
