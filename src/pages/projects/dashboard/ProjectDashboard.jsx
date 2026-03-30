@@ -15,6 +15,7 @@ import useProject from '@hooks/useProject'
 import { useTranslation } from 'react-i18next'
 import useLoadResources from '@hooks/useLoadResources'
 import useApp from '@hooks/useApp'
+import useLayout from '@hooks/useLayout'
 
 import gsap from 'gsap'
 import ScrollTrigger from 'gsap/ScrollTrigger'
@@ -24,6 +25,7 @@ gsap.registerPlugin(ScrollTrigger)
 const ProjectHeader = ({ projectName, isArchived }) => {
   const { isMobile } = useApp()
   const { t } = useTranslation('projects')
+  const { isPreview } = useLayout()
 
   // avoid refreshing everytime the items or subtasks changes
   useEffect(() => {
@@ -42,7 +44,10 @@ const ProjectHeader = ({ projectName, isArchived }) => {
       <Breadcrumbs
         separator={<BreadcrumbIcon fontSize='small' />}
         sx={{ width: 'fit-content' }}>
-        <Link underline='hover' color='inherit' to='/projects'>
+        <Link
+          underline='hover'
+          color='inherit'
+          to={isPreview ? '' : '/projects'}>
           {t('text')}
         </Link>
 
