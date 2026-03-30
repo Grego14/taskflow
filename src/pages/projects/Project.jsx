@@ -5,7 +5,7 @@ import Box from '@mui/material/Box'
 import ProjectAppBar from './ProjectAppBar'
 import TasksProvider from '@context/TasksContext'
 
-import { useEffect, useMemo, useState, Suspense } from 'react'
+import { useEffect, useMemo, useState, Suspense, memo } from 'preact/compat'
 import { useTranslation } from 'react-i18next'
 import useProjectAccess from '@context/ProjectsContext/useProjectAccess'
 import useProjectMembers from '@context/ProjectsContext/useProjectMembers'
@@ -17,7 +17,7 @@ import { Outlet, useNavigate, useParams } from 'react-router-dom'
 import ProjectContext from './context'
 import setPageTitle from '@utils/setPageTitle'
 
-export default function Project() {
+export default memo(function Project() {
   const { isOffline } = useAuth()
   const { uid, update: updateUser } = useUser()
   const { t } = useTranslation(['common', 'projects'])
@@ -70,10 +70,19 @@ export default function Project() {
       const { default: service } = await import('@services/project')
       return await service.updateProject(projectOwner, projectId, data)
     }
-  }), [projectId, projectOwner, projectData, hasAccess, validating, projectMembers, uid, metrics])
+  }), [
+    projectId,
+    projectOwner,
+    projectData,
+    hasAccess,
+    validating,
+    projectMembers,
+    uid,
+    metrics
+  ])
 
-  if (loadingResources) return <CircleLoader text={t('loading', { ns: 'common' })} />
-  if (validating) return <CircleLoader text={t('validating', { ns: 'projects' })} />
+  if (loadingResources) return <CircleLoader text={t('common:loading')} />
+  if (validating) return <CircleLoader text={t('projects:validating')} />
 
   if (!hasAccess)
     return (
@@ -83,18 +92,18 @@ export default function Project() {
         width='100%'>
         <ErrorText className='text-center text-balance'>
           {isOffline
-            ? t('errors.noConnection', { ns: 'projects' })
-            : t('errors.noAccess', { ns: 'projects' })}
+            ? t('projects:errors.noConnection')
+            : t('projects:errors.noAccess')}
         </ErrorText>
         <GoBackButton
           handler={() => navigate('/projects')}
-          text={t('goToProjects', { ns: 'projects' })}
+          text={t('projects:goToProjects')}
         />
       </Box>
     )
 
   if (projectMembersError)
-    return <ErrorText>{t('errors.members', { ns: 'projects' })}</ErrorText>
+    return <ErrorText>{t('projects:errors.members')}</ErrorText>
 
   return (
     <ProjectContext.Provider value={contextValue}>
@@ -107,4 +116,4 @@ export default function Project() {
       </TasksProvider>
     </ProjectContext.Provider>
   )
-}
+})

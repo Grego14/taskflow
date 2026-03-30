@@ -1,4 +1,4 @@
-import { Suspense, lazy, useState } from 'preact/compat'
+import { Suspense, lazy, useState, useMemo, useEffect } from 'preact/compat'
 
 import ProjectItemsSkeleton from './ProjectItemsSkeleton'
 
@@ -18,15 +18,28 @@ const PROJECT_ACTIONS = ['/settings', '/metrics']
 
 export default function ProjectAppBar() {
   const { t } = useTranslation('ui')
+  const { pathname } = useLocation()
+
   const { isOnlyMobile, isMobile } = useApp()
   const { data, id } = useProject()
 
   const [isReady, setIsReady] = useState(false)
 
-  const location = useLocation()
-  const projectRute = location.pathname?.split(id)?.[1]
-  const action = projectRute === 'dashboard' ? '' : projectRute
-  const isProjectSubRoute = PROJECT_ACTIONS.find(pAction => pAction === action)
+  const { action, isProjectSubRoute } = useMemo(() => {
+    const projectRute = pathname?.split(id)?.[1]
+    const action = projectRute === 'dashboard' ? '' : projectRute
+
+    return {
+      action,
+      isProjectSubRoute: PROJECT_ACTIONS.find(pAction => pAction === action)
+    }
+  }, [pathname, id])
+
+  // trigger the app bar animation again if the user moves from one
+  // projectSubRoute to the dashboard so the other bar actions are animated
+  useEffect(() => {
+    if (action === '/') setIsReady(false)
+  }, [pathname])
 
   return (
     <AppBar
@@ -46,10 +59,13 @@ export default function ProjectAppBar() {
         }
       })}>
       {isProjectSubRoute ? (
-        <Box className='flex flex-grow' gap={1.5} px={2}>
+        <Box className='flex flex-grow' gap={2}>
           {isMobile && (
             <Suspense fallback={null}>
-              <ToggleProjectDrawer />
+              <ToggleProjectDrawer
+                onMount={() => setIsReady(true)}
+                onList={false}
+              />
             </Suspense>
           )}
 

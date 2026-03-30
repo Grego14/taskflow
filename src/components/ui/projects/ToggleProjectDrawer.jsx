@@ -7,7 +7,7 @@ import { useEffect } from 'preact/hooks'
 import { useTranslation } from 'react-i18next'
 import useLayout from '@hooks/useLayout'
 
-export default function ToggleProjectDrawer({ onMount }) {
+export default function ToggleProjectDrawer({ onMount, onList = true }) {
   const { t } = useTranslation(['projects', 'common'])
   const { toggleDrawer, drawerOpen } = useLayout()
 
@@ -18,22 +18,30 @@ export default function ToggleProjectDrawer({ onMount }) {
   })
 
   useEffect(() => {
-    const timer = requestAnimationFrame(() => onMount())
+    const timer = requestAnimationFrame(() => onMount?.())
     return () => cancelAnimationFrame(timer)
-  }, [])
+  }, [onMount])
+
+  const btnProps = {
+    edge: 'start',
+    color: 'inherit',
+    onClick: toggleDrawer,
+    sx: {
+      ml: 0,
+      alignSelf: 'center',
+      display: { xs: 'flex', tablet: 'none' }
+    }
+  }
+
+  if (!onList) return (
+    <IconButton {...btnProps}>
+      <GridViewIcon fontSize='medium' />
+    </IconButton>
+  )
 
   return (
     <Tooltip title={label}>
-      <ButtonListItem component={IconButton} btnProps={{
-        edge: 'start',
-        color: 'inherit',
-        onClick: toggleDrawer,
-        sx: {
-          ml: 0,
-          alignSelf: 'center',
-          display: { xs: 'flex', tablet: 'none' }
-        }
-      }}>
+      <ButtonListItem component={IconButton} btnProps={btnProps}>
         <GridViewIcon fontSize='medium' />
       </ButtonListItem>
     </Tooltip>
