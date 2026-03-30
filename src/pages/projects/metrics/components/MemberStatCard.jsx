@@ -46,7 +46,7 @@ export default function MemberStatCard({ member, metrics }) {
       ref={cardRef}
       elevation={0}
       sx={{
-        p: 2,
+        p: 3,
         mb: 2,
         borderRadius: 4,
         border: `1px solid ${theme.palette.divider}`,
@@ -60,6 +60,9 @@ export default function MemberStatCard({ member, metrics }) {
           translate: '0 -5px'
         },
         bgcolor: 'transparent',
+        maxWidth: '30rem',
+        mx: 'auto',
+        px: 4
       }}>
       <Box className='flex flex-center'
         sx={{

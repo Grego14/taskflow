@@ -42,6 +42,7 @@ export default function StatCard({
       ref={cardRef}
       elevation={0}>
       <Box
+        className='flex'
         sx={theme => ({
           color: theme.palette[color]?.main,
           bgcolor: alpha(theme.palette[color]?.main ||
