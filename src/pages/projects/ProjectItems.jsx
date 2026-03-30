@@ -35,7 +35,7 @@ export default function ProjectItems({ onMount }) {
 
     const timer = requestAnimationFrame(() => onMount?.())
     return () => cancelAnimationFrame(timer)
-  }, [])
+  }, [onMount])
 
   return (
     <List
