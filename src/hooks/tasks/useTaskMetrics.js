@@ -4,7 +4,7 @@ import useTasks from '../useTasks'
 
 const isNotCancelled = status => status !== 'cancelled'
 
-export default function useProjectMetrics() {
+export default function useTaskMetrics() {
   const { updateMetrics, metrics } = useProject()
   const { tasks } = useTasks()
 
