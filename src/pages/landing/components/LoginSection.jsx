@@ -25,11 +25,10 @@ const loginBtnStyles = (t) => ({
 })
 
 const signUpBtnStyles = (t) => ({
-  borderRadius: '12px',
+  borderRadius: 3.5,
   px: 4,
   py: 1.5,
   textTransform: 'none',
-  fontWeight: 700,
   boxShadow: `0 6px 16px ${t.alpha(t.palette.primary.main, 0.3)}`,
   background:
     `linear-gradient(45deg, ${t.palette.primary.main}, ${t.palette.primary.dark})`,
@@ -150,6 +149,36 @@ export default function LoginSection({ prefetchAuth }) {
         </Box>
       </div>
 
+      <Box
+        className='flex'
+        gap={1}
+        mt={6}
+        sx={t => ({
+          '& .githubLink': {
+            color: t.darken(t.palette.primary.main, 0.1),
+            textShadow: `0 1px 2px ${t.palette.secondary.main}`,
+            ...(t.applyStyles('dark', {
+              color: t.lighten(t.palette.primary.main, 0.25),
+            })),
+            transition: 'opacity 0.2s ease-out',
+            textDecoration: 'none',
+            ...t.typography.h6,
+            '&:hover': {
+              opacity: 0.8
+            }
+          }
+        })}>
+        <Typography variant='h6'>
+          {t('buildBy')}
+        </Typography>
+        <a
+          className='githubLink'
+          target='_blank'
+          href='https://github.com/Grego14'>
+          Gregorio Piñero
+        </a>
+      </Box>
+
       <BlurredCircle
         className='blur-circle'
         positions={{ bottom: '10%', left: '-5%' }}
@@ -160,7 +189,7 @@ export default function LoginSection({ prefetchAuth }) {
         positions={{ top: '10%', right: '-5%' }}
         color='secondary'
       />
-    </Section>
+    </Section >
   )
 }
 

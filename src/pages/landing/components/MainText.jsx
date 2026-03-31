@@ -46,9 +46,13 @@ const h1Styles = (theme) => ({
 const h2Styles = (theme) => ({
   ...theme.typography.h5,
   opacity: 0,
-  maxWidth: { xs: '32ch', laptop: '45ch' },
+  maxWidth: { xs: '30ch', mobile: '40ch', laptop: '45ch' },
   perspective: '1000px',
-  lineHeight: 1.45
+  lineHeight: 1.45,
+
+  // same as the textSecondary but darker/lighter
+  color: theme.alpha('#000', 0.7),
+  ...(theme.applyStyles('dark', { color: theme.alpha('#fff', 0.8) }))
 })
 
 const btnStyles = (theme) => ({
@@ -156,17 +160,28 @@ export default function MainText({
   const getPaddingTop = (ammount) => `calc(${APPBAR_HEIGHT.other} * ${ammount})`
 
   return (
-    <Section className='text-center relative' sx={{
-      px: 2,
-      justifyContent: { xs: 'start', laptop: 'center' },
-      pt: {
-        xs: getPaddingTop(1.35),
-        mobile: getPaddingTop(2),
-        tablet: getPaddingTop(2.75),
-        laptop: 0,
-      }
-    }}
+    <Section className='text-center relative'
+      sx={{
+        px: 2,
+        justifyContent: { xs: 'start', laptop: 'center' },
+        pt: {
+          xs: getPaddingTop(1.35),
+          mobile: getPaddingTop(2),
+          tablet: getPaddingTop(2.75),
+          laptop: 0,
+        }
+      }}
       id='main-text'>
+      <Box
+        sx={{
+          position: 'absolute',
+          zIndex: -1,
+          inset: 0,
+          backgroundImage: theme => theme.palette.background.landingMainText,
+          top: -250
+        }}
+      />
+
       <Box className='relative'>
         <Typography
           key={`big-${lang}`}
@@ -186,9 +201,7 @@ export default function MainText({
       <Box className='relative'>
         <Typography
           key={`short-${lang}`}
-          color='textSecondary'
           variant='body1'
-          className='text-balance'
           sx={h2Styles}
           id='shortText'
           aria-hidden='true'>

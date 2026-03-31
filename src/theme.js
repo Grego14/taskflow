@@ -66,7 +66,12 @@ const baseTheme = createTheme({
             transparent 60%),
             radial-gradient(at 100% 100%, ${alpha(lightColors.primary, 0.15)} 0px,
             transparent 60%),
-            #ffffff`
+            #ffffff`,
+          landingMainText: 
+            `radial-gradient(at 0% 0%, ${alpha(lightColors.primary, 0.35)} 0px, 
+            transparent 50%),
+            radial-gradient(at 100% 0%, ${alpha(lightColors.secondary, 0.4)} 0px, 
+            transparent 50%)`
         },
         error: { main: lightColors.error },
         shadows: {
@@ -112,7 +117,12 @@ const baseTheme = createTheme({
             transparent 50%),
             radial-gradient(at 100% 0%, ${alpha(darkColors.primary, 0.2)} 0px, 
             transparent 50%),
-            #121212`
+            #121212`,
+          landingMainText: 
+            `radial-gradient(at 0% 0%, ${alpha(darkColors.primary, 0.35)} 0px, 
+            transparent 50%),
+            radial-gradient(at 100% 0%, ${alpha(darkColors.secondary, 0.3)} 0px, 
+            transparent 50%)`
         },
         action: {
           selected: 'rgba(255, 255, 255, 0.65)'

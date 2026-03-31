@@ -56,9 +56,7 @@ export default function LandingAppBar() {
           alignItems: 'center',
           gap: 1
         })}>
-        <Box sx={[theme => ({
-          color: theme.palette.common[userTheme === 'light' ? 'white' : 'black']
-        })]}>
+        <Box>
           <img
             width='40'
             height='40'
@@ -67,7 +65,11 @@ export default function LandingAppBar() {
             fetchPriority='high'
           />
         </Box>
-        <Typography variant='h6' sx={{ fontWeight: 700 }}>TaskFlow</Typography>
+        <Typography
+          component='span'
+          sx={[t => ({ ...t.typography.h6, ml: -1.25, fontWeight: 400 })]}>
+          TaskFlow
+        </Typography>
       </Link>
 
       <Box className='flex flex-center nav-item' sx={{ display: 'flex', gap: 2 }}>
