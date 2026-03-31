@@ -25,7 +25,7 @@ export default function ProfileButton({
 
   const { isOffline, currentUser } = useAuth()
   const { profile } = useUser()
-  const avatar = profile?.avatar
+  const avatar = profile?.avatar || currentUser?.avatar
 
   // we use this component on the Landing page so we need to get the ui
   // resources...
