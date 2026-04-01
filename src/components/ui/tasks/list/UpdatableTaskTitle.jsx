@@ -85,7 +85,7 @@ export default function UpdatableTaskTitle({
       slotProps={{
         htmlInput: {
           sx: theme => ({
-            py: !subtask ? 1 : 0.5,
+            py: 0.5,
             pl: 1,
             fontSize: !subtask ? theme.typography.h6.fontSize : '.9rem',
             textOverflow: 'ellipsis',

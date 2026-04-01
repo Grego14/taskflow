@@ -69,7 +69,7 @@ export default function Header({ data, insideTask = false, status }) {
       disableTypography
       slotProps={{
         action: {
-          sx: { my: 'auto', display: 'flex', gap: 1 },
+          sx: { my: 'auto', display: 'flex', gap: 1, mr: 0 },
           className: !insideTask ? 'task' : 'subtask'
         }
       }}

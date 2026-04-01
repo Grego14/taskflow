@@ -142,7 +142,7 @@ const ListTask = forwardRef(({ data }, ref) => {
         <Box
           className='flex flex-column'
           onContextMenu={(e) => handler(e, id)}
-          sx={{ p: 2, py: 1.5 }}>
+          p={1.15}>
           <Box className='flex'
             sx={{
               width: '100%',

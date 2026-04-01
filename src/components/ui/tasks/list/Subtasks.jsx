@@ -161,8 +161,7 @@ export default memo(function Subtasks({ data, contextMenuHandler }) {
     <Box
       ref={wrapperRef}
       className='flex flex-column relative'
-      pb={1}
-      sx={{ ml: 4, mb: 1 }}>
+      sx={{ ml: 4, pb: 1 }}>
       {data.map(subtask => (
         <SubtaskItem
           key={subtask.id}
