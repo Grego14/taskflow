@@ -1,4 +1,4 @@
-import { Suspense, lazy, memo } from 'react'
+import { Suspense, lazy, memo, useCallback, useMemo } from 'preact/compat'
 import TasksWrapper from '@components/ui/previews/list/components/TasksWrapper'
 import DropTarget from './DropTarget'
 
@@ -7,6 +7,7 @@ const NoTodayTasks = lazy(() => import('./NoTodayTasks'))
 import useProject from '@hooks/useProject'
 import useTasks from '@hooks/useTasks'
 import { useTranslation } from 'react-i18next'
+import useLayout from '@hooks/useLayout'
 
 import getFirstPosition from '@utils/tasks/getFirstPosition'
 import taskIsOverdue from '@utils/tasks/taskIsOverdue'
@@ -24,25 +25,30 @@ const getTodayMidnight = () => {
 export default memo(function TasksContainer({
   tasks = [],
   overdueTasks = [],
-  toArchive = [],
-  filter
+  toArchive = []
 }) {
   const { t } = useTranslation('tasks')
   const { id: projectId, data } = useProject()
   const { actions, tasks: projectTasks } = useTasks()
+  const { filter } = useLayout()
 
   const isDefaultFilter = filter === 'default'
   const hasTodayTasks = tasks?.length > 0
   const showOverdueTasks = overdueTasks?.length > 0 && isDefaultFilter
 
-  const titleKeys = {
-    assignedToMe: 'filterTasks_assignedToMe',
-    default: 'todayTasks'
-  }
+  const titleKey = useMemo(() => {
+    const titleKeys = {
+      assignedToMe: 'filterTasks_assignedToMe',
+      default: 'todayTasks'
+    }
 
-  const titleKey = !hasTodayTasks && isDefaultFilter
-    ? 'todayTasks'
-    : (titleKeys[filter] || 'filterTasks_filter')
+    const filterIsEmpty = !isDefaultFilter && tasks?.length < 1
+
+    if (filterIsEmpty) return 'noTasksWithFilter_filter'
+    if (!hasTodayTasks && isDefaultFilter) return 'todayTasks'
+
+    return titleKeys[filter] || 'filterTasks_filter'
+  }, [filter])
 
   const handleMoveTask = async ({ source }) => {
     const { id, isOverdue } = source?.data || {}
@@ -64,7 +70,7 @@ export default memo(function TasksContainer({
     })
   }
 
-  const todayWrapperProps = {
+  const todayWrapperProps = useMemo(() => ({
     tasks,
     variant: 'h5',
     title: t(titleKey, { count: tasks.length, filter }),
@@ -78,7 +84,22 @@ export default memo(function TasksContainer({
         <NoTodayTasks />
       </Suspense>
     )
-  }
+  }), [
+    tasks,
+    titleKey,
+    showOverdueTasks,
+    hasTodayTasks,
+    isDefaultFilter,
+    t
+  ])
+
+  const renderTodayTasks = useCallback(({ dragState, ref }) => (
+    <TasksWrapper
+      {...todayWrapperProps}
+      dragState={dragState}
+      ref={ref}
+    />
+  ), [todayWrapperProps])
 
   return (
     <>
@@ -88,13 +109,7 @@ export default memo(function TasksContainer({
         canMove={(dropId, source) => dropId === TASKS_DROP_ID
           && source.data?.isOverdue}
         onMove={handleMoveTask}
-        render={({ dragState, ref }) => (
-          <TasksWrapper
-            {...todayWrapperProps}
-            dragState={dragState}
-            ref={ref}
-          />
-        )}
+        render={renderTodayTasks}
       />
 
       {showOverdueTasks && overdueTasks.length > 0 && (

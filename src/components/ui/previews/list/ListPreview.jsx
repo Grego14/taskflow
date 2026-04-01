@@ -10,7 +10,6 @@ const ProjectPercentage = lazy(() => import('@components/ui/tasks/ProjectPercent
 import useAuth from '@hooks/useAuth'
 import useTasks from '@hooks/useTasks'
 import { useTranslation } from 'react-i18next'
-import useLayout from '@hooks/useLayout'
 import useTaskEngine from '@hooks/tasks/useTaskEngine'
 
 const SecondaryCenteredH6 = ({ text }) => (
@@ -26,28 +25,17 @@ const SecondaryCenteredH6 = ({ text }) => (
 export default memo(function ListPreview() {
   const { isOffline } = useAuth()
   const { t } = useTranslation('tasks')
-  const { filter } = useLayout()
   const { tasks, error } = useTasks()
 
   const {
     tasksForContainer,
     overdueTasks,
-    filteredTasks,
-    othersToArchive
+    othersToArchive,
+    isDefaultFilter
   } = useTaskEngine(tasks)
 
   const hasContent = tasksForContainer?.length > 0 || overdueTasks?.length > 0
-  const isFilterEmpty = filter !== 'default' && filteredTasks?.length < 1
-  const showTasks = (hasContent && !isFilterEmpty) ||
-    filter === 'default' && tasksForContainer?.length < 1
-
-  const getErrorMessage = () => {
-    if (error) return t(`errors.${error}`)
-    if (isFilterEmpty) return t('noTasksWithFilter_filter', { filter, count: 0 })
-    return null
-  }
-
-  const errorMessage = getErrorMessage()
+  const errorMessage = error ? t(`errors.${error}`) : null
 
   return (
     <Box
@@ -56,14 +44,11 @@ export default memo(function ListPreview() {
       minHeight='100%'
       alignItems={!hasContent ? 'center' : 'auto'}
       py={2}>
-      {!errorMessage && (
-        <TasksContainer
-          tasks={tasksForContainer}
-          overdueTasks={overdueTasks}
-          toArchive={othersToArchive}
-          filter={filter}
-        />
-      )}
+      <TasksContainer
+        tasks={tasksForContainer}
+        overdueTasks={overdueTasks}
+        toArchive={othersToArchive}
+      />
 
       {errorMessage && (
         <Box textAlign='center'>
@@ -81,7 +66,7 @@ export default memo(function ListPreview() {
         {!isOffline && error === 'empty' && <CreateTask />}
 
         {/* non empty project so we show percentage to complete */}
-        {hasContent && <ProjectPercentage />}
+        {isDefaultFilter && <ProjectPercentage />}
       </Suspense>
     </Box>
   )

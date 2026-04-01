@@ -9,7 +9,7 @@ import Typography from '@mui/material/Typography'
 
 import useApp from '@hooks/useApp'
 import useTasks from '@hooks/useTasks'
-import { forwardRef, memo, useRef, useState, useEffect } from 'preact/compat'
+import { forwardRef, memo, useRef, useState, useLayoutEffect } from 'preact/compat'
 import useLayout from '@hooks/useLayout'
 
 import useTaskAnimations from '@hooks/tasks/useTaskAnimations'
@@ -41,7 +41,7 @@ const TasksWrapper = forwardRef(function TasksWrapper(props, ref) {
 
   const { animateEntrance } = useTaskAnimations()
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     animateEntrance(wrapperRef, tasks, { addDelay: type === 'overdue' })
   }, [filter])
 
@@ -81,7 +81,13 @@ const TasksWrapper = forwardRef(function TasksWrapper(props, ref) {
               <ChevronLeftIcon fontSize='small' sx={{ rotate: '-90deg' }} />
               : null
           }>
-          <Typography variant={variant} fontWeight={500} color='textSecondary'>{title}</Typography>
+          <Typography
+            className='text-center text-balance'
+            variant={variant}
+            fontWeight={500}
+            color='textSecondary'>
+            {title}
+          </Typography>
         </AccordionSummary>
         <AccordionDetails
           className='flex flex-column'

@@ -5,7 +5,7 @@ import {
   useRef,
   useMemo,
   forwardRef,
-  useEffect
+  useLayoutEffect
 } from 'preact/compat'
 
 import Box from '@mui/material/Box'
@@ -37,26 +37,29 @@ const getCardOpacity = (isDragging, isOverdue, status, isDefaultFilter) =>
     ? 0.75
     : 1
 
-const getTaskCardStyles = (t, priority, isDragging, isOverdue, status, fg, filter) => ({
-  borderRadius: '12px',
-  border: '1px solid',
-  borderColor: 'divider',
-  '&:hover': {
-    borderColor: 'primary.main',
-    boxShadow: '0 4px 20px rgba(0,0,0,0.12)'
-  },
-  width: '100%',
-  maxWidth: '30rem',
-  mx: 'auto',
-  borderLeftWidth: 4,
-  borderLeftColor: fg,
-  transitionProperty: 'opacity, background-color, border-color, box-shadow',
-  backgroundColor: t.alpha(t.palette.background.paper, 0.35),
-  cursor: 'grab',
-  opacity: getCardOpacity(isDragging, isOverdue, status, filter === 'default'),
-  '&[data-focused]': { boxShadow: `0 0 0 2px ${fg}` },
-  willChange: 'transform, opacity'
-})
+const getTaskCardStyles = (t, priority) => {
+  const [fg] = priorityColors[priority]
+
+  return {
+    borderRadius: '12px',
+    border: '1px solid',
+    borderColor: 'divider',
+    '&:hover': {
+      borderColor: 'primary.main',
+      boxShadow: '0 4px 20px rgba(0,0,0,0.12)'
+    },
+    width: '100%',
+    maxWidth: '30rem',
+    mx: 'auto',
+    borderLeftWidth: 4,
+    borderLeftColor: fg,
+    transitionProperty: 'opacity, background-color, border-color, box-shadow',
+    backgroundColor: t.alpha(t.palette.background.paper, 0.35),
+    cursor: 'grab',
+    '&[data-focused]': { boxShadow: `0 0 0 2px ${fg}` },
+    willChange: 'transform, opacity'
+  }
+}
 
 const ListTask = forwardRef(({ data }, ref) => {
   const { isArchived } = useProject()
@@ -92,7 +95,6 @@ const ListTask = forwardRef(({ data }, ref) => {
   })
 
   const [contextMenu, handler] = useContextMenu(isArchived, tasks)
-  const [fg] = priorityColors[priority]
 
   // memoize subtasks to avoid re-filtering on every render
   const filteredSubtasks = useMemo(() => {
@@ -105,9 +107,9 @@ const ListTask = forwardRef(({ data }, ref) => {
 
   const { animateItemEntrance } = useTaskAnimations()
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (isNew) animateItemEntrance(id)
-  }, [id, isNew])
+  }, [])
 
   if (!data) return null
 
@@ -128,15 +130,15 @@ const ListTask = forwardRef(({ data }, ref) => {
         className='flex flex-column'
         ref={ref}
         elevation={3}
-        sx={t => getTaskCardStyles(
-          t,
-          priority,
-          isDragging,
-          isOverdue,
-          status,
-          fg,
-          filter
-        )}>
+        sx={t => ({
+          ...getTaskCardStyles(t, priority),
+          opacity: getCardOpacity(
+            isDragging,
+            isOverdue,
+            status,
+            filter === 'default'
+          ),
+        })}>
         <Box
           className='flex flex-column'
           onContextMenu={(e) => handler(e, id)}

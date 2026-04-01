@@ -1,11 +1,11 @@
 import {
   useState,
-  useEffect,
   lazy,
   Suspense,
   memo,
   useRef,
-  forwardRef
+  forwardRef,
+  useLayoutEffect
 } from 'preact/compat'
 
 import Box from '@mui/material/Box'
@@ -116,9 +116,9 @@ const SubtaskItem = forwardRef(function SubtaskItem({
 
   const { animateItemEntrance } = useTaskAnimations()
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (isNew) animateItemEntrance(id)
-  }, [id, isNew])
+  }, [])
 
   return (
     <Box className='relative'>
@@ -151,7 +151,7 @@ export default memo(function Subtasks({ data, contextMenuHandler }) {
 
   const { animateEntrance } = useTaskAnimations()
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     animateEntrance(wrapperRef, data, { subtasks: true })
   }, [filter])
 

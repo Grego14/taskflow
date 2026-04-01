@@ -45,27 +45,31 @@ export default function useTaskAnimations() {
       .map(t => t.querySelector('.MuiCardHeader-action'))
       .filter(Boolean)
 
-    tl.fromTo(targets, {
-      autoAlpha: 0,
-      y: -10,
-      x: -25,
-      force3D: true
-    }, {
-      autoAlpha: 1,
-      y: 0,
-      x: 0,
-      delay: startDelay,
-      ease: 'power2.out',
-      overwrite: 'auto'
-    })
-      .fromTo(icons, {
+    gsap.killTweensOf(targets)
+
+    requestAnimationFrame(() => {
+      tl.fromTo(targets, {
         autoAlpha: 0,
-        x: 15,
-        ease: 'expo.out'
+        y: -10,
+        x: -25,
+        force3D: true
       }, {
         autoAlpha: 1,
-        x: 0
-      }, '-=0.2')
+        y: 0,
+        x: 0,
+        delay: startDelay,
+        ease: 'power2.out',
+        overwrite: 'auto'
+      })
+        .fromTo(icons, {
+          autoAlpha: 0,
+          x: 15,
+          ease: 'expo.out'
+        }, {
+          autoAlpha: 1,
+          x: 0
+        }, '-=0.3')
+    })
   })
 
   // --- individual entrance (new task/task promotion) ---
@@ -74,20 +78,20 @@ export default function useTaskAnimations() {
 
     if (!el) return
 
-    // if is already visible the wrapper animated it
-    if (gsap.getProperty(el, 'opacity') > 0) return
-
-    gsap.fromTo(el,
-      { autoAlpha: 0, y: -25, scale: 0.95, x: -50 },
-      {
-        autoAlpha: 1,
-        y: 0,
-        scale: 1,
-        x: 0,
-        ease: 'back.out(1.7)',
-        force3D: true
-      }
-    )
+    requestAnimationFrame(() => {
+      gsap.fromTo(el,
+        { autoAlpha: 0, y: -25, scale: 0.95, x: -50 },
+        {
+          autoAlpha: 1,
+          y: 0,
+          scale: 1,
+          x: 0,
+          ease: 'back.out(1.7)',
+          force3D: true,
+          clearProps: 'transform'
+        }
+      )
+    })
   })
 
   // --- exit (archive/delete) ---
@@ -107,16 +111,18 @@ export default function useTaskAnimations() {
 
       validTargets.forEach(t => t.classList.add('removing'))
 
-      gsap.to(targets, {
-        ...settings,
-        autoAlpha: 0,
-        height: 0,
-        marginBottom: 0,
-        stagger: 0.1,
-        duration: 0.4,
-        ease: 'power2.inOut',
-        onComplete: resolve,
-        clearProps: 'transform'
+      requestAnimationFrame(() => {
+        gsap.to(targets, {
+          ...settings,
+          autoAlpha: 0,
+          height: 0,
+          marginBottom: 0,
+          stagger: 0.1,
+          duration: 0.4,
+          ease: 'power2.inOut',
+          onComplete: resolve,
+          clearProps: 'transform'
+        })
       })
     })
   })

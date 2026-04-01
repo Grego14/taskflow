@@ -29,7 +29,7 @@ const getFilterLabel = (label, t) => {
 
 export default function FilterButton() {
   const { metadata } = useUser()
-  const { setFilter, updateFilter, filter } = useLayout()
+  const { setFilter, updateFilter, filter, isPreview } = useLayout()
   const { t } = useTranslation('tasks')
   const [selected, setSelected] = useState(filter)
 
@@ -48,6 +48,9 @@ export default function FilterButton() {
 
       setSelected(value)
       setFilter(value)
+
+      // do not fire the other function on the Demo
+      if(isPreview) return
 
       // update the db (if the user is logged)
       updateFilter(value)
