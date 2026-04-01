@@ -50,7 +50,8 @@ export default function useTaskEngine(rawTasks) {
           ...subtask,
           isParentChecked: task.status === 'done' || isCancelled,
           isParentOverdue: isOverdue,
-          isParentCancelled: isCancelled
+          isParentCancelled: isCancelled,
+          isNew: getIsNew(subtask.createdAt || now)
         }))
       }
     }
