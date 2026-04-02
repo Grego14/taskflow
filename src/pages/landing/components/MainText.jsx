@@ -74,7 +74,8 @@ const btnStyles = (theme) => ({
     background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent)',
     transform: 'skewX(-20deg)'
   },
-  boxShadow: `0 3px 18px ${theme.palette.primary.main}80`
+  boxShadow: `0 3px 18px ${theme.palette.primary.main}80`,
+  fontWeight: 400
 })
 
 const secondaryBtnStyles = (theme) => ({
@@ -83,7 +84,8 @@ const secondaryBtnStyles = (theme) => ({
   ...theme.typography.h6,
   py: 1.5,
   px: 3,
-  borderWidth: '2px'
+  borderWidth: '2px',
+  fontWeight: 400
 })
 
 export default function MainText({
@@ -221,7 +223,7 @@ export default function MainText({
             laptop: 4
           },
           gap: 2,
-          flexDirection: { xs: 'column', laptop: 'row' }
+          flexDirection: { xs: 'column', tablet: 'row' }
         }}>
         <Button
           sx={btnStyles}

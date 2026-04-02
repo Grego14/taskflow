@@ -206,7 +206,7 @@ const baseTheme = createTheme({
           fontFamily: 'Rubik',
           src: 'url(/fonts/Rubik-VariableFont_wght.woff2) format("woff2")',
           fontStyle: 'normal',
-          fontWeight: '400 700',
+          fontWeight: '400 900',
           fontDisplay: 'swap'
         },
         body: {
