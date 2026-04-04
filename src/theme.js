@@ -9,6 +9,14 @@ import { grey } from '@mui/material/colors'
 import Zoom from '@mui/material/Zoom'
 import { APPBAR_HEIGHT } from './constants'
 
+export const BREAKPOINTS = {
+  xs: 0,
+  mobile: 420,
+  tablet: 640,
+  laptop: 1024,
+  desktop: 1360
+}
+
 const lightColors = {
   primary: '#7C5DFA',
   secondary: '#A592E8',
@@ -67,7 +75,7 @@ const baseTheme = createTheme({
             radial-gradient(at 100% 100%, ${alpha(lightColors.primary, 0.15)} 0px,
             transparent 60%),
             #ffffff`,
-          landingMainText: 
+          landingMainText:
             `radial-gradient(at 0% 0%, ${alpha(lightColors.primary, 0.35)} 0px, 
             transparent 50%),
             radial-gradient(at 100% 0%, ${alpha(lightColors.secondary, 0.4)} 0px, 
@@ -118,7 +126,7 @@ const baseTheme = createTheme({
             radial-gradient(at 100% 0%, ${alpha(darkColors.primary, 0.2)} 0px, 
             transparent 50%),
             #121212`,
-          landingMainText: 
+          landingMainText:
             `radial-gradient(at 0% 0%, ${alpha(darkColors.primary, 0.35)} 0px, 
             transparent 50%),
             radial-gradient(at 100% 0%, ${alpha(darkColors.secondary, 0.3)} 0px, 
@@ -254,17 +262,9 @@ const baseTheme = createTheme({
       }
     }
   },
-  breakpoints: {
-    values: {
-      xs: 0,
-      mobile: 420,
-      tablet: 640,
-      laptop: 1024,
-      desktop: 1360
-    }
-  }
+  breakpoints: { values: BREAKPOINTS }
 })
 
 export const theme = responsiveFontSizes(baseTheme, {
-  breakpoints: ['mobile', 'tablet', 'laptop', 'desktop']
+  breakpoints: Object.keys(BREAKPOINTS)
 })
