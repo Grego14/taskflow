@@ -36,6 +36,8 @@ export default function ProfileButton({
   const email = profile?.email || currentUser?.email
 
   const preloadProfileComponent = async () => {
+    if (isPreview) return
+
     try {
       await import('@pages/profile/Profile.jsx')
     } catch (err) {
