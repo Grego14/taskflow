@@ -58,7 +58,7 @@ const h2Styles = (theme) => ({
 const btnStyles = (theme) => ({
   opacity: 0,
   visibility: 'hidden',
-  ...theme.typography.h6,
+  ...theme.typography.body1,
   py: 1.5,
   px: 3,
   position: 'relative',
@@ -81,7 +81,7 @@ const btnStyles = (theme) => ({
 const secondaryBtnStyles = (theme) => ({
   opacity: 0,
   visibility: 'hidden',
-  ...theme.typography.h6,
+  ...theme.typography.body1,
   py: 1.5,
   px: 3,
   borderWidth: '2px',
