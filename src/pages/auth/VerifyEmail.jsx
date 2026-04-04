@@ -10,7 +10,6 @@ import useAuth from '@hooks/useAuth'
 import useApp from '@hooks/useApp'
 
 import * as authService from '@services/auth'
-import playSound from '@services/audio'
 import { auth } from '@/firebase/firebase-config'
 import useUser from '@hooks/useUser'
 
@@ -35,10 +34,8 @@ export default function VerifyEmail() {
 
   // if the user is already verified, send him home
   useEffect(() => {
-    if (currentUser?.emailVerified) {
-      playSound('complete')
+    if (currentUser?.emailVerified)
       navigate('/home', { replace: true })
-    }
   }, [currentUser, navigate])
 
   const startCountdown = () => {
