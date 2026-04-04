@@ -9,7 +9,7 @@ import useTaskReorder from '@hooks/tasks/useTaskReorder'
 import useTaskAnimations from '@hooks/tasks/useTaskAnimations'
 
 import taskService from '@services/task'
-import playSound from '@services/audio'
+import { playSound } from '@services/audio'
 
 import getFirstPosition from '@utils/tasks/getFirstPosition'
 import taskIsOverdue from '@utils/tasks/taskIsOverdue'
@@ -161,6 +161,22 @@ export default memo(function TasksProvider({ children }) {
         task: taskId,
         subtasks,
         position
+      })
+    },
+
+    saveWorkingTime: async ({ id, parent, startTime, initialSeconds }) => {
+      // get the worked time of the current task/subtask
+      const task = projectTasks.find(t => t.id === (parent || id))
+      const currentTask = !parent ? task : task.subtasks.find(sTask => sTask.id === id)
+      const previousTime = currentTask?.timeWorked || 0
+
+      const secondsElapsed = Math.floor((Date.now() - startTime) / 1000)
+      const totalTime = initialSeconds + secondsElapsed
+
+      await updateTaskMutation.mutate({
+        id,
+        subtask: parent,
+        data: { timeWorked: previousTime + totalTime }
       })
     }
   }), [

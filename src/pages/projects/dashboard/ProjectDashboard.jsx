@@ -8,6 +8,7 @@ import Box from '@mui/material/Box'
 import Breadcrumbs from '@mui/material/Breadcrumbs'
 import Chip from '@mui/material/Chip'
 import Typography from '@mui/material/Typography'
+import FocusManager from './FocusManager'
 
 const ArchiveButton = lazy(() => import('@components/ui/tasks/buttons/ArchiveButton'))
 
@@ -17,6 +18,8 @@ import useLoadResources from '@hooks/useLoadResources'
 import useApp from '@hooks/useApp'
 import useLayout from '@hooks/useLayout'
 import useTaskMetrics from '@hooks/tasks/useTaskMetrics'
+import useTasks from '@hooks/useTasks'
+import { useGSAP } from '@gsap/react'
 
 import gsap from 'gsap'
 import ScrollTrigger from 'gsap/ScrollTrigger'
@@ -27,14 +30,6 @@ const ProjectHeader = ({ projectName, isArchived }) => {
   const { isMobile } = useApp()
   const { t } = useTranslation('projects')
   const { isPreview } = useLayout()
-
-  // avoid refreshing everytime the items or subtasks changes
-  useEffect(() => {
-    ScrollTrigger.refresh()
-  }, [])
-
-  // logic hook
-  useTaskMetrics()
 
   return (
     <Box
@@ -68,6 +63,8 @@ const ProjectHeader = ({ projectName, isArchived }) => {
         </Suspense>
       )}
 
+      <Box id='zen-portal-root' ml='auto' />
+
       {isArchived && (
         <Chip
           variant='outlined'
@@ -84,9 +81,17 @@ const ProjectHeader = ({ projectName, isArchived }) => {
 export default function ProjectDashBoard() {
   const { t } = useTranslation('projects')
   const { data, isArchived } = useProject()
+  const { tasks } = useTasks()
+  const { isMobile } = useApp()
 
   const projectName = data?.name
   const loadingResources = useLoadResources('tasks')
+
+  useGSAP(() => {
+    ScrollTrigger.refresh()
+  }, { dependencies: [tasks?.length] })
+
+  useTaskMetrics()
 
   if (!data || loadingResources) {
     return (
@@ -113,6 +118,8 @@ export default function ProjectDashBoard() {
       )}
 
       <TasksPreviewer />
+
+      <FocusManager />
     </Box>
   )
 }

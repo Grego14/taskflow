@@ -79,5 +79,18 @@
     "tasksArchived": "Tareas archivadas correctamente"
   },
   "assignedMembers": "Miembros asignados",
-  "avatar_name": "Avatar de {{name}}"
+  "avatar_name": "Avatar de {{name}}",
+  "workOnTask": "Trabajar en esta tarea",
+  "pauseTask": "Pausar tarea",
+  "minimizeSession": "Minimizar sesión",
+  "finishSession": "Terminar sesión",
+  "totalAccumulatedTime": "Tiempo total (incluye subtareas)",
+  "zenMode": "Modo Zen",
+  "openTimerMenu": "Abrir menú de objetivo",
+  "closeTimerMenu": "Cerrar menú",
+  "sessionGoal": "Objetivo de Sesión",
+  "presets": "Predefinidos",
+  "customTime": "Tiempo Personalizado",
+  "customTimePlaceholder": "Minutos...",
+  "positiveMinutes": "Ingresa un valor mayor a 0"
 }
