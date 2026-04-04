@@ -73,5 +73,18 @@
     "tasksArchived": "Tasks archived successfully"
   },
   "assignedMembers": "Assigned members",
-  "avatar_name": "{{name}}'s avatar"
+  "avatar_name": "{{name}}'s avatar",
+  "workOnTask": "Work on this task",
+  "pauseTask": "Pause task",
+  "minimizeSession": "Minimize session",
+  "finishSession": "Finish session",
+  "totalAccumulatedTime": "Total time (includes subtasks)",
+  "zenMode": "Zen Mode",
+  "openTimerMenu": "Open session goal menu",
+  "closeTimerMenu": "Close menu",
+  "sessionGoal": "Session Goal",
+  "presets": "Presets",
+  "customTime": "Custom Time",
+  "customTimePlaceholder": "Minutes...",
+  "positiveMinutes": "Please enter a value greater than 0"
 }

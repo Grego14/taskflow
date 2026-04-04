@@ -2,6 +2,7 @@ import Checkbox from '@mui/material/Checkbox'
 import CloseIcon from '@mui/icons-material/Close'
 import DoneIcon from '@mui/icons-material/Done'
 import Box from '@mui/material/Box'
+import TaskTooltip from '@components/reusable/tasks/Tooltip'
 
 import { useRef } from 'preact/hooks'
 import useProject from '@hooks/useProject'
@@ -43,6 +44,11 @@ export default function CompleteButton({ id, subtask, status }) {
   }, [status])
 
   const handleStatusChange = e => {
+    const isKeyEvent = e.type === 'keydown'
+    const isEnterKey = e.key === 'Enter'
+
+    if (isKeyEvent && !isEnterKey) return
+
     e.stopPropagation()
 
     const nextStatus = STATUS_CYCLE[status] || 'todo'
@@ -53,40 +59,39 @@ export default function CompleteButton({ id, subtask, status }) {
   const isDark = preferences.theme === 'dark'
 
   return (
-    <Checkbox
-      onClick={handleStatusChange}
-      size={subtask ? 'small' : 'medium'}
-      disableRipple
-      slotProps={{
-        input: {
-          title: t('buttons.complete_newStatus', {
-            newStatus: STATUS_CYCLE[status]
-          })
-        }
-      }}
-      checked={isChecked}
-      disabled={isArchived}
-      sx={{
-        color: 'text.secondary',
-        '&.Mui-checked .MuiSvgIcon-root': {
-          border: theme => `2px solid ${isDark
-            ? theme.palette.grey[400]
-            : theme.palette.grey[800]}`,
-          borderRadius: 1,
-          p: '1px'
-        },
-        '&:hover': {
-          backgroundColor: 'action.hover'
-        }
-      }}
-      checkedIcon={
-        <Box ref={iconRef} display='flex'>
-          {status === 'done'
-            ? <DoneIcon fontSize='medium' color='success' />
-            : <CloseIcon fontSize='medium' color='error' />
+    <TaskTooltip
+      title={t('buttons.complete_newStatus', {
+        newStatus: STATUS_CYCLE[status]
+      })}>
+      <Checkbox
+        onClick={handleStatusChange}
+        onKeyDown={handleStatusChange}
+        size={subtask ? 'small' : 'medium'}
+        disableRipple
+        checked={isChecked}
+        disabled={isArchived}
+        sx={{
+          color: 'text.secondary',
+          '&.Mui-checked .MuiSvgIcon-root': {
+            border: theme => `2px solid ${isDark
+              ? theme.palette.grey[400]
+              : theme.palette.grey[800]}`,
+            borderRadius: 1,
+            p: '1px'
+          },
+          '&:hover': {
+            backgroundColor: 'action.hover'
           }
-        </Box>
-      }
-    />
+        }}
+        checkedIcon={
+          <Box ref={iconRef} display='flex'>
+            {status === 'done'
+              ? <DoneIcon fontSize='medium' color='success' />
+              : <CloseIcon fontSize='medium' color='error' />
+            }
+          </Box>
+        }
+      />
+    </TaskTooltip>
   )
 }

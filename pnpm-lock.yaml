@@ -32,6 +32,9 @@ importers:
       '@mui/x-charts':
         specifier: ^8.16.0
         version: 8.16.0(@emotion/react@11.14.0(@types/react@19.1.8)(react@19.2.3))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.1.8)(react@19.2.3))(@types/react@19.1.8)(react@19.2.3))(@mui/material@7.3.2(@emotion/react@11.14.0(@types/react@19.1.8)(react@19.2.3))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.1.8)(react@19.2.3))(@types/react@19.1.8)(react@19.2.3))(@types/react@19.1.8)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@mui/system@7.3.2(@emotion/react@11.14.0(@types/react@19.1.8)(react@19.2.3))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.1.8)(react@19.2.3))(@types/react@19.1.8)(react@19.2.3))(@types/react@19.1.8)(react@19.2.3))(@types/react@19.1.8)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+      '@preact/signals':
+        specifier: ^2.9.0
+        version: 2.9.0(preact@10.28.3)
       '@tanstack/query-async-storage-persister':
         specifier: ^5.89.0
         version: 5.89.0
@@ -891,6 +894,14 @@ packages:
     peerDependencies:
       '@babel/core': 7.x
       vite: 2.x || 3.x || 4.x || 5.x || 6.x || 7.x
+
+  '@preact/signals-core@1.14.1':
+    resolution: {integrity: sha512-vxPpfXqrwUe9lpjqfYNjAF/0RF/eFGeLgdJzdmIIZjpOnTmGmAB4BjWone562mJGMRP4frU6iZ6ei3PDsu52Ng==}
+
+  '@preact/signals@2.9.0':
+    resolution: {integrity: sha512-hYrY0KyUqkDgOl1qba/JGn6y81pXnurn21PMaxfcMwdncdZ3M/oVdmpTvEnsGjh48dIwDVc7bjWHqIsngSjYug==}
+    peerDependencies:
+      preact: '>= 10.25.0 || >=11.0.0-0'
 
   '@prefresh/babel-plugin@0.5.2':
     resolution: {integrity: sha512-AOl4HG6dAxWkJ5ndPHBgBa49oo/9bOiJuRDKHLSTyH+Fd9x00shTXpdiTj1W41l6oQIwUOAgJeHMn4QwIDpHkA==}
@@ -2776,6 +2787,13 @@ snapshots:
       - preact
       - rollup
       - supports-color
+
+  '@preact/signals-core@1.14.1': {}
+
+  '@preact/signals@2.9.0(preact@10.28.3)':
+    dependencies:
+      '@preact/signals-core': 1.14.1
+      preact: 10.28.3
 
   '@prefresh/babel-plugin@0.5.2': {}
 

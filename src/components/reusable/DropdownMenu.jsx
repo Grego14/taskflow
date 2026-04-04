@@ -21,6 +21,7 @@ export default memo(function DropdownMenu(props) {
     disabled,
     disableTooltip,
     asListItem = false,
+    tooltipComponent,
     ...other
   } = props
 
@@ -52,11 +53,12 @@ export default memo(function DropdownMenu(props) {
   }
 
   const DropdownButton = !text ? IconButton : Button
+  const TooltipComponent = tooltipComponent || Tooltip
 
   return (
     <>
       {!disableTooltip ? (
-        <Tooltip title={tooltipTitle} placement={tooltipPosition}>
+        <TooltipComponent title={tooltipTitle} placement={tooltipPosition}>
           {asListItem
             ? <ButtonListItem
               component={DropdownButton}
@@ -64,7 +66,7 @@ export default memo(function DropdownMenu(props) {
               children={buttonContent}
             />
             : <DropdownButton {...buttonProps} />}
-        </Tooltip>
+        </TooltipComponent>
       ) : <DropdownButton {...buttonProps} />}
 
       <AnimatedMenu open={isMenuOpen} onExitComplete={handleFinalClose}>

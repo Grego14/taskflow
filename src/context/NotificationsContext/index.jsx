@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next'
 import notificationService from '@services/notification'
 import { dbAdapter } from '@services/dbAdapter'
 
-import playSound from '@services/audio'
+import { playSound } from '@services/audio'
 import flashTitle from '@utils/notifications/titleNotification'
 
 export default function NotificationsProvider({ children }) {

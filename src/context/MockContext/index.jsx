@@ -11,7 +11,7 @@ import ProjectContext from '@pages/projects/context'
 
 import { getItem, setItem } from '@utils/storage'
 import resolveTaskStatusUpdate from '@utils/tasks/taskStatusResolver'
-import playSound from '@services/audio'
+import { playSound } from '@services/audio'
 import getFirstPosition from '@utils/tasks/getFirstPosition'
 import taskIsOverdue from '@utils/tasks/taskIsOverdue'
 import getContainers from '@utils/tasks/getContainers'
@@ -166,6 +166,17 @@ export default function MockProvider({ children }) {
 
         return { ...prev, tasks: updatedTasks }
       })
+    },
+
+    saveWorkingTime: ({ id, parent, startTime, initialSeconds }) => {
+      // get the worked time of the current task
+      const currentTask = data.tasks.find(t => t.id === id)
+      const previousTime = currentTask?.timeWorked || 0
+
+      const secondsElapsed = Math.floor((Date.now() - startTime) / 1000)
+      const totalTime = initialSeconds + secondsElapsed
+
+      updateTaskAction({ id, data: { timeWorked: previousTime + totalTime } })
     }
   }), [uid, project, updateTaskAction, handleReorder])
 

@@ -49,7 +49,7 @@ const getTaskCardStyles = (t, priority) => {
       boxShadow: '0 4px 20px rgba(0,0,0,0.12)'
     },
     width: '100%',
-    maxWidth: '30rem',
+    maxWidth: '27.5rem',
     mx: 'auto',
     borderLeftWidth: 4,
     borderLeftColor: fg,
@@ -124,7 +124,7 @@ const ListTask = forwardRef(({ data }, ref) => {
         marginBottom: 3.5,
         '&:last-child, &.removing': { marginBottom: 0 },
       }}>
-      <DropIndicator visible={isTopVisible} maxWidth='25rem' isTop />
+      <DropIndicator visible={isTopVisible} maxWidth='22.5rem' isTop />
 
       <Card
         className='flex flex-column'
@@ -147,7 +147,7 @@ const ListTask = forwardRef(({ data }, ref) => {
             sx={{
               width: '100%',
               alignItems: 'center',
-              gap: 1
+              gap: 0.5
             }}>
             <CompleteButton id={id} status={status} />
             <Header data={data} status={status} />
@@ -165,7 +165,7 @@ const ListTask = forwardRef(({ data }, ref) => {
         )}
       </Card>
 
-      <DropIndicator visible={isBottomVisible} maxWidth='25rem' />
+      <DropIndicator visible={isBottomVisible} maxWidth='22.5rem' />
 
       {!!contextMenu && (
         <Suspense fallback={null}>

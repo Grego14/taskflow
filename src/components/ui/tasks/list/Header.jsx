@@ -7,9 +7,11 @@ import CardHeader from '@mui/material/CardHeader'
 import Typography from '@mui/material/Typography'
 import UpdatableTaskTitle from './UpdatableTaskTitle'
 import TaskMembers from './TaskMembers'
-import SmartDateLabel from './SmartDateLabel'
+import SmartActionLabel from './SmartActionLabel'
 import TaskCalendar from './TaskCalendar'
 import TaskActionsSkeleton from '../buttons/TaskActionsSkeleton'
+import TaskTotalTime from './TaskTotalTime'
+import TaskTooltip from '@components/reusable/tasks/Tooltip'
 
 const TaskActions = lazy(() => import('../buttons/TaskActions'))
 
@@ -41,7 +43,6 @@ export default function Header({ data, insideTask = false, status }) {
     id,
     subtasks,
     subtask,
-    isSubtask,
     assignedTo: members,
     rawDate,
     priority,
@@ -52,7 +53,6 @@ export default function Header({ data, insideTask = false, status }) {
 
   const actionsData = {
     id,
-    isSubtask,
     subtask,
     subtasks,
     members,
@@ -87,8 +87,15 @@ export default function Header({ data, insideTask = false, status }) {
       action={
         !showTitle && (
           <>
-            {(dueDate && !isChecked && !isParentChecked)
-              && <SmartDateLabel date={dueDate} />}
+            {/* Show the total time on the parent task */}
+            {!subtask && <TaskTotalTime data={data} />}
+
+            {(!isChecked && !isParentChecked) && (
+              <SmartActionLabel
+                data={data}
+                insideTask={insideTask}
+              />
+            )}
 
             <TaskMembers
               assignedTo={members}
@@ -109,6 +116,7 @@ export default function Header({ data, insideTask = false, status }) {
               icon={<MoreVertIcon fontSize={insideTask ? 'small' : 'medium'} />}
               forceClose={!open}
               tooltipPosition='top'
+              tooltipComponent={TaskTooltip}
               disabled={isArchived}
               onClick={() => setOpen(true)}
               label={state => getMenuLabel(state, 'taskActionsLabel', 'tasks')}>
