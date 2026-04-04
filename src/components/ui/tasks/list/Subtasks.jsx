@@ -38,7 +38,6 @@ const subtaskStyles = (theme, priority) => {
     position: 'relative',
     transition: 'opacity 0.3s ease-out',
     '&:hover': {
-      backgroundColor: 'action.hover',
       '&::after': {
         opacity: 1,
         transform: 'translateY(-50%) scale(1)' // bullet pop effect

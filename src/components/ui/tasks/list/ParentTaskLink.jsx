@@ -22,7 +22,7 @@ export default function ParentTaskLink({ parentTask, isOverdue }) {
     <Box
       className='flex'
       alignItems='center'
-      sx={{ cursor: 'pointer' }}
+      sx={{ cursor: 'pointer', py: 0.5 }}
       onClick={e => scrollIntoTask(parentTask)}>
       <Box className='flex flex-center' gap={0.5}>
         <LinkIcon fontSize='small' />

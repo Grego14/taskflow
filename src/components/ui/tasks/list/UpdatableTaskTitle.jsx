@@ -87,6 +87,7 @@ export default function UpdatableTaskTitle({
           sx: theme => ({
             py: 0.5,
             pl: 1,
+            pr: show ? 1.75 : 0,
             fontSize: !subtask ? theme.typography.h6.fontSize : '.9rem',
             textOverflow: 'ellipsis',
             transition: 'color 0.3s ease',
