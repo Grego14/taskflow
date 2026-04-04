@@ -1,6 +1,7 @@
 import CalendarIcon from '@mui/icons-material/CalendarMonth'
 import DropdownMenu from '@components/reusable/DropdownMenu'
 import Skeleton from '@mui/material/Skeleton'
+import TaskTooltip from '@components/reusable/tasks/Tooltip'
 
 import { Suspense, lazy } from 'preact/compat'
 import { useTranslation } from 'react-i18next'
@@ -25,6 +26,7 @@ export default function TaskCalendar({ rawDate, taskId, parentId, insideTask }) 
     <DropdownMenu
       label={t('changeDate')}
       tooltipPosition='top'
+      tooltipComponent={TaskTooltip}
       buttonStyles={{ p: 1 }}
       icon={<CalendarIcon fontSize={insideTask ? 'small' : 'medium'} />}
       disabled={isArchived}>

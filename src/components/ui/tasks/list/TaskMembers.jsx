@@ -1,8 +1,8 @@
 import Avatar from '@mui/material/Avatar'
 import AvatarGroup from '@mui/material/AvatarGroup'
-import Tooltip from '@mui/material/Tooltip'
 import Box from '@mui/material/Box'
 import PersonIcon from '@mui/icons-material/PersonOutline'
+import TaskTooltip from '@components/reusable/tasks/Tooltip'
 
 import { useState, useMemo } from 'react'
 import useProject from '@hooks/useProject'
@@ -37,10 +37,7 @@ export default function TaskMembers({ assignedTo = [], subtasks = [], insideTask
   const firstMember = projectMembers?.find(m => m.id === taskMembers[0])
 
   return (
-    <Tooltip
-      title={membersPreview}
-      arrow
-      placement='top'>
+    <TaskTooltip title={membersPreview}>
       <Box
         className='flex-center'
         sx={theme => ({
@@ -88,6 +85,6 @@ export default function TaskMembers({ assignedTo = [], subtasks = [], insideTask
           </Box>
         )}
       </Box>
-    </Tooltip>
+    </TaskTooltip>
   )
 }
