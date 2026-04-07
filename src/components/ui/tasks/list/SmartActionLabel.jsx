@@ -9,16 +9,21 @@ import { useTheme } from '@mui/material/styles'
 
 import formatTimestamp from '@utils/formatTimestamp'
 import formatTimer from '@utils/formatTimer'
-import { playSound } from '@services/audio'
+import { playSound, stopSound } from '@services/audio'
 import getDueDateLabel from '@utils/tasks/getDueDateLabel'
 
-import { globalClock, activeTaskData } from '@stores/task'
+import { 
+  activeTaskData, 
+  isAlarmRinging, 
+  currentSessionSeconds
+} from '@stores/task'
 
 const LiveTimer = () => {
-  if (!activeTaskData.value) return null
+  const task = activeTaskData.value
 
-  const elapsed = Math.floor((globalClock.value - activeTaskData.value.startTime) / 1000)
-  return <span>{formatTimer(activeTaskData.value.initialSeconds + elapsed)}</span>
+  if (!task) return null
+
+  return <span>{formatTimer(currentSessionSeconds.value)}</span>
 }
 
 export default function SmartActionLabel({ data, insideTask }) {
@@ -30,9 +35,15 @@ export default function SmartActionLabel({ data, insideTask }) {
   const { label, isOverdue, isToday } = getDueDateLabel(data?.dueDate)
 
   const handleToggle = (e) => {
-    playSound(!activeTaskData.value ? 'startSession' : 'endSession')
-    e.stopPropagation()
-    toggleWorkingTask(data)
+    if(isAlarmRinging.value) {
+      isAlarmRinging.value = false
+      stopSound('endSessionGoal')
+    }
+
+    const endingSession = activeTaskData.value
+
+    playSound(!endingSession ? 'startSession' : 'endSession')
+    toggleWorkingTask(!endingSession ? data : null)
   }
 
   const canPlayDirectly = isToday || isThisTaskWorking
@@ -66,7 +77,7 @@ export default function SmartActionLabel({ data, insideTask }) {
           minHeight: btnSize
         })}>
         {isThisTaskWorking ? (
-          <PauseIcon sx={{ fontSize: 12, minWidth: '44px' }} />
+          <PauseIcon sx={{ fontSize: 12 }} />
         ) : (
           <PlayIcon
             className='play-icon'

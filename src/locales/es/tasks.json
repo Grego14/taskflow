@@ -92,5 +92,8 @@
   "presets": "Predefinidos",
   "customTime": "Tiempo Personalizado",
   "customTimePlaceholder": "Minutos...",
-  "positiveMinutes": "Ingresa un valor mayor a 0"
+  "positiveMinutes": "Ingresa un valor mayor a 0",
+  "resetSession": "Reiniciar sesión",
+  "keepSession": "Mantener actual",
+  "resetPrompt": "Llevas {{minutes}} min trabajando. ¿Quieres reiniciar el cronómetro o mantener el progreso actual?"
 }

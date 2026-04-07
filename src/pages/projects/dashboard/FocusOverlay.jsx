@@ -16,6 +16,7 @@ import { useGSAP } from '@gsap/react'
 
 import { priorityColors } from '@/constants'
 import { playSound, stopSound } from '@services/audio'
+import gsap from 'gsap'
 
 import {
   activeTaskData,
@@ -24,16 +25,17 @@ import {
   targetTime,
   pomoStart,
   isAlarmRinging,
-  clearFocusGoals
+  clearFocusGoals,
+  showResetPrompt,
+  currentMinutes
 } from '@stores/task'
-
-import gsap from 'gsap'
+import { globalAlert, setGlobalAlert, closeGlobalAlert } from '@stores/ui'
 
 const circleSize = `clamp(245px, 200px + 12.5vw, 400px)`
 
 export default function FocusOverlay() {
   const { t } = useTranslation('tasks')
-  const { toggleWorkingTask } = useTasks()
+  const { toggleWorkingTask, actions } = useTasks()
   const container = useRef()
 
   const { title, priority, parentTitle } = activeTaskData?.value || {}
@@ -79,17 +81,57 @@ export default function FocusOverlay() {
   // calculate the exact moment to trigger the alarm
   const handleSetTarget = (minutes) => {
     const now = Date.now()
-    pomoStart.value = now
+    const task = activeTaskData.value
 
-    targetTime.value = now + (minutes * 60 * 1000)
+    // save the pomodoro time
+    currentMinutes.value = minutes
+    const elapsed = Math.floor((now - task.startTime) / 1000)
+
+    // reset the startTime if the user clicks one of the pomodoro options
+    // inside the drawer before reaching 2 minutes working
+    if (elapsed < 120) {
+      task.startTime = now 
+      pomoStart.value = now
+      targetTime.value = now + (minutes * 60 * 1000)
+    } else {
+      showResetPrompt.value = true
+
+      setGlobalAlert({
+        message: t('resetPrompt', { minutes: Math.floor(elapsed / 60) }),
+        autoHideDuration: 10000,
+        action: (
+          <Box>
+            <Button 
+              color='primary' 
+              size='small' 
+              onClick={() => {
+                actions.resetSession()
+                closeGlobalAlert()
+              }}>
+              {t('resetSession')}
+            </Button>
+            <Button 
+              color='inherit' 
+              size='small' 
+              onClick={() => {
+                pomoStart.value = task.startTime 
+                targetTime.value = task.startTime + (minutes * 60 * 1000)
+              
+                showResetPrompt.value = false
+                closeGlobalAlert()
+              }}>
+              {t('keepSession')}
+            </Button>
+          </Box>
+        )
+      })
+    }
   }
 
   const handleFinish = () => {
     if (isAlarmRinging.value) {
-      stopSound('endSessionGoal')
-
-      clearFocusGoals()
       isAlarmRinging.value = false
+      stopSound('endSessionGoal')
     }
 
     playSound('endSession')
@@ -103,7 +145,7 @@ export default function FocusOverlay() {
       sx={theme => ({
         position: 'fixed',
         inset: 0,
-        zIndex: 10000,
+        zIndex: t => t.zIndex.zenOverlay,
         backgroundColor: theme.alpha(theme.palette.background.default, 0.95),
         justifyContent: 'space-between',
         overflow: 'hidden'
@@ -112,7 +154,7 @@ export default function FocusOverlay() {
       <Tooltip
         title={t('minimizeSession')}
         placement='left'
-        slotProps={{ popper: { sx: { zIndex: 10000 } } }}>
+        slotProps={{ popper: { sx: { zIndex: t => t.zIndex.zenPriority } } }}>
         <IconButton
           sx={theme => ({
             position: 'absolute',

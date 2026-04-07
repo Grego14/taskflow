@@ -35,6 +35,13 @@ const uiShadow = {
 }
 
 const baseTheme = createTheme({
+  zIndex: {
+    zenOverlay: 12000,
+    // used on floating elements inside the zenOverlay (minimize btn tooltip,
+    // drawer)
+    zenPriority: 13000,
+    globalAlert: 14000 
+  },
   colorSchemes: {
     light: {
       palette: {

@@ -1,22 +1,31 @@
 import { useEffect, useRef } from 'preact/hooks'
 import formatTimer from '@utils/formatTimer'
-import { globalClock, activeTaskData, isWorking } from '@stores/task'
+import { 
+  globalClock, 
+  activeTaskData, 
+  isWorking, 
+  targetTime,
+  pomoStart,
+  isAlarmRinging,
+  currentSessionSeconds
+} from '@stores/task'
 
 export default function useDocumentTitleTimer() {
   const originalTitle = useRef(document.title)
+  const task = activeTaskData.value
+  const pomo = pomoStart.value
 
   useEffect(() => {
     // reset the title when the user stops working
-    if (!isWorking.value || !activeTaskData.value) {
+    if (!isWorking.value || !task) {
       document.title = originalTitle.current
       return
     }
 
-    const elapsed = Math.floor((globalClock.value - activeTaskData.value.startTime) / 1000)
-    const time = formatTimer(activeTaskData.value.initialSeconds + elapsed)
-    const taskTitle = activeTaskData.value.title
+    let time = formatTimer(currentSessionSeconds)
+    const taskTitle = task.title
 
-    document.title = `${time} - ${taskTitle}`
+    document.title = `• ${time} - ${taskTitle}`
 
     return () => {
       document.title = originalTitle.current

@@ -58,7 +58,7 @@ export default function FocusDrawer({ onSetTarget }) {
       {!open && (
         <Tooltip
           title={t('openTimerMenu')}
-          slotProps={{ popper: { sx: { zIndex: 13000 } } }}
+          slotProps={{ popper: { sx: { zIndex: t => t.zIndex.zenPriority } } }}
           placement='left'>
           <IconButton
             onClick={() => setOpen(true)}
@@ -80,7 +80,7 @@ export default function FocusDrawer({ onSetTarget }) {
         anchor='right'
         open={open}
         onClose={() => setOpen(false)}
-        sx={{ zIndex: 12000 }}
+        sx={{ zIndex: t => t.zIndex.zenPriority }}
         slotProps={{
           paper: {
             sx: {

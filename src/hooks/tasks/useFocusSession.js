@@ -1,6 +1,6 @@
 import { useEffect } from 'preact/hooks'
 import useTasks from '@hooks/useTasks'
-import { isWorking, activeTaskData } from '@stores/task'
+import { isWorking, activeTaskData, isAlarmRinging } from '@stores/task'
 
 export default function useFocusSession() {
   const { actions } = useTasks()
@@ -17,7 +17,7 @@ export default function useFocusSession() {
     return () => window.removeEventListener('beforeunload', handleBeforeUnload)
   }, [isWorking.value])
 
-  // automatically save the working time every 15 seconds
+  // automatically save the working time every 30 seconds
   useEffect(() => {
     const task = activeTaskData.value
 
@@ -26,13 +26,18 @@ export default function useFocusSession() {
     const interval = setInterval(() => {
       const { startTime, initialSeconds, id, subtask } = task || {}
 
+      // do not update the time if the goal was achieved (the user could spend
+      // some time stopping the alarm)
+      if(isAlarmRinging.value) return
+
       actions.saveWorkingTime({
         id,
         parent: subtask,
         startTime,
-        initialSeconds
+        initialSeconds,
+        isFocusGuard: true
       })
-    }, 15000)
+    }, 30000)
 
     return () => clearInterval(interval)
   }, [isWorking.value, activeTaskData.value])

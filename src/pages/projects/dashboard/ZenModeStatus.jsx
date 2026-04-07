@@ -6,7 +6,11 @@ import { useTranslation } from 'react-i18next'
 import formatTimer from '@utils/formatTimer'
 import { priorityColors } from '@/constants'
 
-import { globalClock, activeTaskData, showOverlay } from '@stores/task'
+import { 
+  currentSessionSeconds, 
+  activeTaskData, 
+  showOverlay
+} from '@stores/task'
 
 const ZenTimer = () => {
   const { t } = useTranslation('tasks')
@@ -14,11 +18,9 @@ const ZenTimer = () => {
 
   if (!task) return null
 
-  const elapsed = Math.floor((globalClock.value - task.startTime) / 1000)
-
   return (
     <span>
-      {t('zenMode')} • {formatTimer(task.initialSeconds + elapsed)}
+      {t('zenMode')} • {formatTimer(currentSessionSeconds)}
     </span>
   )
 }
