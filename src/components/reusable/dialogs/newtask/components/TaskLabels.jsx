@@ -1,4 +1,3 @@
-// components
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Chip from '@mui/material/Chip'
@@ -8,15 +7,12 @@ import Typography from '@mui/material/Typography'
 import LabelsPreview from './LabelsPreview'
 import MatchingLabels from './MatchingLabels'
 
-// hooks
 import useProject from '@hooks/useProject'
 import { useCallback, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router-dom'
 
 import getInteraction from '@utils/getInteraction'
-// utils
-import getProjectData from '@utils/getProjectData'
 
 const labelRegex = /^[a-zA-Z0-9_()#%!@\.\-\,\?\*\/\\$+¿]+$/
 
