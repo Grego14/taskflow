@@ -15,9 +15,12 @@ import Tooltip from '@components/reusable/tasks/Tooltip'
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft'
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight'
 import TimerIcon from '@mui/icons-material/Timer'
-import PlayArrowIcon from '@mui/icons-material/PlayArrow'
 
-const PRESETS = [15, 25, 30, 45, 50]
+import CustomTimerSelector from './CustomTimerSelector'
+
+const PRESETS = [15, 25, 30, 45, 50, 90]
+
+import { currentMinutes } from '@stores/task'
 
 export default function FocusDrawer({ onSetTarget }) {
   const { t } = useTranslation('tasks')
@@ -132,41 +135,11 @@ export default function FocusDrawer({ onSetTarget }) {
           </Box>
         </Stack>
 
-        <Stack spacing={1.5}>
-          <Typography variant='caption' color={subtitleColor}>
-            {t('customTime')}
-          </Typography>
-          <TextField
-            fullWidth
-            size='small'
-            placeholder={t('customTimePlaceholder')}
-            type='number'
-            value={customMinutes}
-            onInput={handleCustomMinutes}
-            onKeyDown={e => e.key === 'Enter' && handleApply(customMinutes)}
-            helperText={error}
-            error={!!error}
-            slotProps={{
-              input: {
-                endAdornment: (
-                  <InputAdornment position='end'>
-                    <IconButton
-                      size='small'
-                      onClick={() => handleApply(customMinutes)}
-                      disabled={customMinutes <= 0}
-                      sx={{ color: 'primary.light' }}>
-                      <PlayArrowIcon fontSize='small' />
-                    </IconButton>
-                  </InputAdornment>
-                ),
-                sx: {
-                  bgcolor: theme.alpha(color, 0.05),
-                  '& fieldset': { borderColor: theme.alpha(color, 0.2) }
-                }
-              }
-            }}
-          />
-        </Stack>
+        <CustomTimerSelector 
+          value={currentMinutes.value} 
+          onChange={(val) => { currentMinutes.value = val }} 
+          handleApply={handleApply}
+        />
 
         <Button
           variant='text'
