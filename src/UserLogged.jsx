@@ -12,6 +12,8 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import useLoadResources from './hooks/useLoadResources'
 
+import { setGlobalAlert } from '@stores/ui'
+
 const CloudOff = lazy(() => import('@mui/icons-material/CloudOff'))
 const CloudSync = lazy(() => import('@mui/icons-material/CloudSync'))
 
@@ -41,7 +43,7 @@ const QueryProvider = ({ children }) => {
 const Services = () => {
   const { uid, setUpdatePlaceholder } = useUser()
   const { currentUser, refreshUser, initAuth } = useAuth()
-  const { appNotification, setIsOffline, isOffline } = useApp()
+  const { setIsOffline, isOffline } = useApp()
   const navigate = useNavigate()
   const { pathname } = useLocation()
 
@@ -119,7 +121,7 @@ const Services = () => {
     const Icon = isOffline ? CloudOff : CloudSync
     const { default: internetNotification } = await import('@utils/notifications/internetAlert')
 
-    internetNotification(isOffline, props => appNotification({
+    internetNotification(isOffline, props => setGlobalAlert({
       ...props,
       icon: <Suspense fallback={null}>
         <Icon fontSize='smal' />
