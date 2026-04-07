@@ -1,10 +1,10 @@
+const usernameInvalidCharsRegex =
+  /[<>\*\(\)\[\]\{\};:,\?_\+\\=¿¡!@#$%&\|~`"^]/g
+
 // returns a key from the translation object
+// empty and short/long validations are made using react-hook-form
 export default function validateUsername(username) {
   const usernameRegex = /^[\p{L}\s\.'0-9-]+$/iu
-  const usernameInvalidCharsRegex =
-    /[<>\*\(\)\[\]\{\};:,\?_\+\\=¿¡!@#$%&\|~`"^]/g
-
-  // empty and short/long validations are made using react-hook-form
 
   if (usernameInvalidCharsRegex.test(username)) {
     const chars = username.match(usernameInvalidCharsRegex)
