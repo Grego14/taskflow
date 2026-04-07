@@ -61,9 +61,6 @@
     "sunday": "Sun"
   },
   "selectors": {
-    "members": {
-      "text": "Members"
-    },
     "themes": {
       "dark": "dark",
       "light": "light"

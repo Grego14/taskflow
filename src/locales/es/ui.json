@@ -61,9 +61,6 @@
     "sunday": "Dom"
   },
   "selectors": {
-    "members": {
-      "text": "Miembros"
-    },
     "themes": {
       "dark": "oscuro",
       "light": "claro"
