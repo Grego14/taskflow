@@ -1,10 +1,11 @@
 import TextField from '@mui/material/TextField'
-import useApp from '@hooks/useApp'
 import useAuth from '@hooks/useAuth'
 import useProject from '@hooks/useProject'
 import useTasks from '@hooks/useTasks'
 import { useRef, useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
+
+import { setGlobalAlert } from '@stores/ui'
 
 export default function UpdatableTaskTitle({
   title,
@@ -17,7 +18,6 @@ export default function UpdatableTaskTitle({
 }) {
   const { t } = useTranslation('tasks')
   const { isOffline } = useAuth()
-  const { appNotification } = useApp()
   const { isArchived } = useProject()
   const { actions } = useTasks()
 
@@ -41,7 +41,7 @@ export default function UpdatableTaskTitle({
     }
 
     if (isOffline) {
-      appNotification({ message: t('noUpdate'), status: 'error' })
+      setGlobalAlert({ message: t('noUpdate'), status: 'error' })
       setTaskTitle(lastUpdatedTitle.current)
       inputRef.current?.blur()
       return

@@ -6,6 +6,8 @@ import { useTranslation } from 'react-i18next'
 import { getFriendlyAuthError } from '@utils/getFriendlyAuthError'
 import useUser from '@hooks/useUser'
 
+import { setGlobalAlert } from '@stores/ui'
+
 export default function SaveProject({
   name,
   description,
@@ -18,7 +20,7 @@ export default function SaveProject({
   const { preferences } = useUser()
   const { t } = useTranslation('projects')
   const { data, update } = useProject()
-  const { appBarHeight, appNotification } = useApp()
+  const { appBarHeight } = useApp()
 
   const hasChanges = name !== data?.name || description !== data?.description
   const hasErrors = errors?.name || errors?.description
@@ -36,13 +38,13 @@ export default function SaveProject({
 
       setDisableBtn(true)
 
-      appNotification({
+      setGlobalAlert({
         message: t('notifications.savedProject'),
         status: 'success'
       })
     } catch (err) {
       console.error('SaveProject Error:', err.message)
-      appNotification({
+      setGlobalAlert({
         message: getFriendlyAuthError(err.message, preferences?.lang),
         status: 'error'
       })

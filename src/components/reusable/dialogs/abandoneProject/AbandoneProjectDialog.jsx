@@ -1,11 +1,10 @@
 import Dialog from '@components/reusable/dialogs/Dialog'
 
-import useApp from '@hooks/useApp'
 import useLoadResources from '@hooks/useLoadResources'
 import useUser from '@hooks/useUser'
 import { useTranslation } from 'react-i18next'
 
-import lazyImport from '@utils/lazyImport'
+import { setGlobalAlert } from '@stores/ui'
 
 export default function AbandoneProjectDialog({
   open,
@@ -15,14 +14,13 @@ export default function AbandoneProjectDialog({
 }) {
   const { t } = useTranslation('ui')
   const { uid } = useUser()
-  const { appNotification } = useApp()
   const loadingResources = useLoadResources('dialogs')
 
   async function handleProjectQuit() {
-    const abandoneProject = await lazyImport('/src/services/abandoneProject')
+    const { default: abandoneProject } =  await import('@services/abandoneProject')
     await abandoneProject(uid, projectId, projectOwner)
 
-    appNotification({ message: t('notifications.projectAbandoned') })
+    setGlobalAlert({ message: t('notifications.projectAbandoned') })
     onClose()
   }
 

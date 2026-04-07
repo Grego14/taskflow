@@ -4,7 +4,6 @@ import Typography from '@mui/material/Typography'
 import ProjectMember from './ProjectMember'
 import ProjectMemberSkeleton from './ProjectMemberSkeleton'
 
-import useApp from '@hooks/useApp'
 import useProject from '@hooks/useProject'
 import useUser from '@hooks/useUser'
 import { useTranslation } from 'react-i18next'
@@ -14,11 +13,12 @@ import taskService from '@services/task'
 import { dbAdapter } from '@services/dbAdapter'
 import notificationService from '@services/notification'
 
+import { setGlobalAlert } from '@stores/ui'
+
 const KickMemberDialog = lazy(() => import('@components/reusable/dialogs/kickMember/KickMemberDialog'))
 
 export default function ProjectMembers() {
   const { uid, profile } = useUser()
-  const { appNotification } = useApp()
   const { t } = useTranslation('projects')
   const { projectMembers, data, update } = useProject()
 
@@ -44,11 +44,11 @@ export default function ProjectMembers() {
 
       await notificationService.sendKicked(memberId, profile.username, data.name)
 
-      appNotification({ message: t('notifications.memberKicked') })
+      setGlobalAlert({ message: t('notifications.memberKicked') })
       setOpen(false)
     } catch (err) {
       console.error('removeMember', err.message)
-      appNotification({ message: t('errors.kickFailed'), status: 'error' })
+      setGlobalAlert({ message: t('errors.kickFailed'), status: 'error' })
     }
   }
 

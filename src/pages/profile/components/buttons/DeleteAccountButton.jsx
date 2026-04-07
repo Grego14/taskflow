@@ -3,10 +3,11 @@ import Button from '@mui/material/Button'
 import { Suspense, lazy, useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import useApp from '@hooks/useApp'
 import useAuth from '@hooks/useAuth'
 import useUser from '@hooks/useUser'
 import useReauthenticate from '@hooks/useReauthenticate'
+
+import { setGlobalAlert } from '@stores/ui'
 
 const DeleteUserDialog = lazy(
   () => import('@components/reusable/dialogs/deleteuser/DeleteUserDialog')
@@ -20,7 +21,6 @@ const getIconColor = (theme) => ({
 export default function DeleteAccountButton() {
   const { t } = useTranslation('profile')
   const { preferences, uid } = useUser()
-  const { appNotification } = useApp()
   const { reauthenticate, popup } = useReauthenticate()
 
   const [deleting, setDeleting] = useState(false)
@@ -36,7 +36,7 @@ export default function DeleteAccountButton() {
         if (authError) {
           const msg = t(`deleteUser.errors.${authError}`)
           setError(msg)
-          appNotification({ message: msg, status: 'error' })
+          setGlobalAlert({ message: msg, status: 'error' })
         }
         return
       }
@@ -57,13 +57,13 @@ export default function DeleteAccountButton() {
       location.assign('/')
     } catch (err) {
       console.error('Error deleting account:', err)
-      appNotification({
+      setGlobalAlert({
         message: t('deleteUser.errors.deletingUser'),
         status: 'error'
       })
       setDeleting(false)
     }
-  }, [appNotification, password, reauthenticate, t, uid])
+  }, [password, reauthenticate, t, uid])
 
   const manageDialogClose = () => {
     setOpen(false)

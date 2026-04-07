@@ -7,17 +7,17 @@ import { useState, useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate, useLocation } from 'react-router-dom'
 import useAuth from '@hooks/useAuth'
-import useApp from '@hooks/useApp'
 
 import * as authService from '@services/auth'
 import { auth } from '@/firebase/firebase-config'
 import useUser from '@hooks/useUser'
 
+import { setGlobalAlert } from '@stores/ui'
+
 export default function VerifyEmail() {
   const { t } = useTranslation(['auth', 'common'])
   const { currentUser, refreshUser } = useAuth()
   const { profile } = useUser()
-  const { appNotification } = useApp()
   const navigate = useNavigate()
 
   const [loading, setLoading] = useState(false)
@@ -63,7 +63,7 @@ export default function VerifyEmail() {
     try {
       startCountdown()
       await authService.resendVerification()
-      appNotification({ message: t('verify.emailSend', { ns: 'auth' }) })
+      setGlobalAlert({ message: t('verify.emailSend', { ns: 'auth' }) })
     } catch (err) {
       if (err.message === 'NO_USER') navigate('/login')
 

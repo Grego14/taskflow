@@ -1,5 +1,4 @@
 import {
-  useCallback,
   useMemo,
   useState,
   lazy,
@@ -12,14 +11,13 @@ import UserProvider from '@context/UserContext'
 import AppContext from './context'
 import AppRoutes from '@/AppRoutes.jsx'
 
-const Notification = lazy(() => import('@components/ui/notification/Notification'))
+const GlobalAlert = lazy(() => import('@components/ui/alert/GlobalAlert'))
 
 import { BREAKPOINTS } from '@/theme'
+import { globalAlert, setGlobalAlert } from '@stores/ui'
 
 export default function AppProvider({ children }) {
   const { mode } = useColorScheme()
-
-  const [notification, setNotification] = useState(null)
   const [isOffline, setIsOffline] = useState(false)
 
   const [layout, setLayout] = useState({
@@ -52,28 +50,11 @@ export default function AppProvider({ children }) {
     }
   }, [])
 
-  const appNotification = useCallback(payload => {
-    if (!payload) {
-      setNotification(null)
-      return
-    }
-
-    const { message, status = 'success', open, ...rest } = payload
-    setNotification({
-      ...rest,
-      message,
-      status,
-      open: open ?? !!message
-    })
-  }, [])
-
   const contextValue = useMemo(() => ({
-    notification,
     ...layout,
     isOffline,
-    setIsOffline,
-    appNotification
-  }), [notification, isOffline, appNotification, layout])
+    setIsOffline
+  }), [isOffline, layout])
 
   if (!mode) return null
 
@@ -88,9 +69,9 @@ export default function AppProvider({ children }) {
         </div>
       </UserProvider>
 
-      {notification?.open && (
+      {globalAlert.value?.open && (
         <Suspense fallback={null}>
-          <Notification />
+          <GlobalAlert />
         </Suspense>
       )}
     </AppContext.Provider>

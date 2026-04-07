@@ -1,23 +1,21 @@
 import Dialog from '@components/reusable/dialogs/Dialog'
 
-import useApp from '@hooks/useApp'
 import useAuth from '@hooks/useAuth'
 import useLoadResources from '@hooks/useLoadResources'
 import { useTranslation } from 'react-i18next'
 
-import lazyImport from '@utils/lazyImport'
+import { setGlobalAlert } from '@stores/ui'
 
 export default function ArchiveProjectDialog({ open, onClose, projectId }) {
   const { t } = useTranslation('ui')
   const { currentUser } = useAuth()
-  const { appNotification } = useApp()
   const loadingResources = useLoadResources('dialogs')
 
   async function handleProjectRemoval() {
-    const archiveProject = await lazyImport('/src/services/archiveProject')
+    const { default: archiveProject } = await import('@services/archiveProject')
     await archiveProject({ user: currentUser?.uid, project: projectId })
 
-    appNotification({ message: t('notifications.projectArchived') })
+    setGlobalAlert({ message: t('notifications.projectArchived') })
     onClose()
   }
 

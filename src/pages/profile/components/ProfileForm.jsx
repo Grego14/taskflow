@@ -1,6 +1,5 @@
 import ProfileFields from './ProfileFields'
 
-import useApp from '@hooks/useApp'
 import useAuth from '@hooks/useAuth'
 import useUser from '@hooks/useUser'
 import { useColorScheme } from '@mui/material/styles'
@@ -8,8 +7,8 @@ import { useCallback, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 
-import lazyImport from '@utils/lazyImport'
 import { auth } from '@/firebase/firebase-config'
+import { setGlobalAlert } from '@stores/ui'
 
 const defaultValues = values => ({
   defaultValues: {
@@ -23,7 +22,6 @@ const defaultValues = values => ({
 export default function ProfileForm({ setSaveBtnDisabled, fields }) {
   const { preferences, profile, setUser, update, uid } = useUser()
   const { currentUser } = useAuth()
-  const { appNotification } = useApp()
   const { t, i18n } = useTranslation('ui')
   const { setMode } = useColorScheme()
 
@@ -68,9 +66,8 @@ export default function ProfileForm({ setSaveBtnDisabled, fields }) {
       const { theme, lang, username, avatar } = data
 
       // load the function only when is going to be used
-      const validateProfileFields = await lazyImport(
-        '/src/pages/profile/validateProfileFields'
-      )
+      const {default: validateProfileFields} = 
+        await import('@pages/profile/validateProfileFields')
 
       const status = await validateProfileFields({
         initial: initialValues,
@@ -116,15 +113,14 @@ export default function ProfileForm({ setSaveBtnDisabled, fields }) {
           // updates the initialValue of the avatar and AvatarUploader component value
           updateAvatar(avatar)
 
-          appNotification({ message: t('profileUpdated', { ns: 'profile' }) })
+          setGlobalAlert({ message: t('profileUpdated', { ns: 'profile' }) })
           setSaveBtnDisabled(true)
         }
       } catch (err) {
-        appNotification({ message: err.message, status: 'error' })
+        setGlobalAlert({ message: err.message, status: 'error' })
       }
     },
     [
-      appNotification,
       currentUser,
       errors?.avatar,
       i18n.changeLanguage,

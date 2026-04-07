@@ -8,17 +8,17 @@ import Button from '@mui/material/Button'
 import { useState, useRef } from 'preact/compat'
 import { useTranslation } from 'react-i18next'
 import { useGSAP } from '@gsap/react'
-import useApp from '@hooks/useApp'
 import useUser from '@hooks/useUser'
 import useLoadResources from '@hooks/useLoadResources'
 
 import projectService from '@services/project'
 import gsap from 'gsap'
 
+import { setGlobalAlert } from '@stores/ui'
+
 export default function DeleteProject({ id, owner, asButton, disabled, onDelete }) {
   const { uid, update, metadata } = useUser()
   const { t } = useTranslation(['dialogs', 'ui', 'projects'])
-  const { appNotification } = useApp()
 
   const [open, setOpen] = useState(false)
   const [status, setStatus] = useState({
@@ -48,7 +48,7 @@ export default function DeleteProject({ id, owner, asButton, disabled, onDelete 
     try {
       const results = await projectService.removeProject(uid, id, animateStatusChange)
 
-      appNotification({
+      setGlobalAlert({
         message: t('alerts.projects.projectDeleted', {
           tasks: results.totalTasks,
           subtasks: results.totalSubtasks,
@@ -64,7 +64,7 @@ export default function DeleteProject({ id, owner, asButton, disabled, onDelete 
 
       onDelete?.()
     } catch (err) {
-      appNotification({
+      setGlobalAlert({
         message: t('alerts.projects.errorDeleting', { ns: 'ui' }),
         status: 'error'
       })

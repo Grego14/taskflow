@@ -1,6 +1,5 @@
 import useUser from '@hooks/useUser'
 import Button from '@mui/material/Button'
-import lazyImport from '@utils/lazyImport'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import projectService from '@services/project'

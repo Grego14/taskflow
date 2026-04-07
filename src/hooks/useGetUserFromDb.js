@@ -1,14 +1,14 @@
-import useApp from '@hooks/useApp'
 import useAuth from '@hooks/useAuth'
 import { dbAdapter } from '@services/dbAdapter'
 import useUser from '@hooks/useUser'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import { setGlobalAlert } from '@stores/ui'
+
 export default function useGetUserFromDb() {
   const { t } = useTranslation('ui')
   const { isOffline } = useAuth()
-  const { appNotification } = useApp()
   const { uid, setUser, setUserLoaded, userLoaded } = useUser()
 
   useEffect(() => {
@@ -28,7 +28,7 @@ export default function useGetUserFromDb() {
       (err) => {
         console.error('useGetUserFromDb:', err)
         if (isOffline) {
-          appNotification({
+          setGlobalAlert({
             message: t('notifications.cannotGetUserNoInternet'),
             status: 'error'
           })
@@ -38,5 +38,5 @@ export default function useGetUserFromDb() {
     )
 
     return () => unsubscribe()
-  }, [uid, setUser, setUserLoaded, appNotification, isOffline, t, userLoaded])
+  }, [uid, setUser, setUserLoaded, isOffline, t, userLoaded])
 }
