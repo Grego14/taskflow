@@ -103,7 +103,12 @@ export default function useTaskEngine(rawTasks) {
             ...rawSub,
             isParentChecked: task.status === 'done' || task.status === 'cancelled',
             isParentOverdue: task.isOverdue,
-            isParentCancelled: task.status === 'cancelled'
+            isParentCancelled: task.status === 'cancelled',
+
+            // as the TaskWrappers doesn't animate when the items size change, we
+            // add this flag so the promoted subtask is animated by the new
+            // animation function
+            isNew: true
           })
         }
       }
