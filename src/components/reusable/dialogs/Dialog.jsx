@@ -54,14 +54,14 @@ export default function Dialog({
       onClose={onClose}
       disableRestoreFocus
       disablePortal={disablePortal}
-      maxWidth={maxWidth}
       slots={{ transition: transitionComponent || DialogTransition }}
       slotProps={{
         transition: { in: open },
         // avoid horizontal scroll on 320px screens
         paper: {
           sx: {
-            minWidth: maxWidth === 'mobile' ? '17.5rem' : '25rem'
+            minWidth: { xs: '17.5rem', mobile: '25rem' },
+            maxWidth
           }
         }
       }}>

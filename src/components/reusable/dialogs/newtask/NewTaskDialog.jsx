@@ -10,7 +10,6 @@ import TaskTitle from './components/TaskTitle'
 import AssignMembers from '@components/reusable/tasks/AssignMembers'
 import AssignedMembers from './components/AssignedMembers'
 
-import useApp from '@hooks/useApp'
 import useAuth from '@hooks/useAuth'
 import useProject from '@hooks/useProject'
 import useUser from '@hooks/useUser'
@@ -32,6 +31,7 @@ import {
 } from '@utils/getFriendlyAuthError.js'
 
 import { initialValue, tasksReducer } from './tasksReducer.js'
+import { setGlobalAlert } from '@stores/ui'
 
 const TITLE_REGEX = /^[\p{L}\d_()\s!@#%^&*+|\]\[;,.<>:?¿-]{3,}/u
 
@@ -66,7 +66,6 @@ export default memo(function NewTaskDialog({
   const { t } = useTranslation(['dialogs', 'tasks'])
   const { isOffline } = useAuth()
   const { preferences } = useUser()
-  const { appNotification, isOnlyMobile } = useApp()
   const { id, data: projectData, projectMembers } = useProject()
   const { actions } = useTasks()
 
@@ -97,7 +96,7 @@ export default memo(function NewTaskDialog({
       onCreate?.()
     } catch (e) {
       const lang = preferences.lang || 'en'
-      appNotification({
+      setGlobalAlert({
         message: getFriendlyAuthError(e.message, lang).message,
         status: 'error'
       })
@@ -124,7 +123,7 @@ export default memo(function NewTaskDialog({
       onClose={() => setOpen(false)}
       onAccept={handleAccept}
       disableAcceptBtn={!task.title}
-      maxWidth={isOnlyMobile ? 'mobile' : 'tablet'}
+      maxWidth={{ xs: 'mobile', mobile: 'tablet' }}
       title={t('dialogs:newtask.title')}
       transitionComponent={Grow}
       sx={{
