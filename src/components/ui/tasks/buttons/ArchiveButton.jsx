@@ -14,10 +14,12 @@ import { useMemo } from 'react'
 import useApp from '@hooks/useApp'
 import useLayout from '@hooks/useLayout'
 
+import { setGlobalAlert } from '@stores/ui'
+
 export default function ArchiveButton() {
   const { t } = useTranslation('tasks')
   const { tasks, actions } = useTasks()
-  const { appNotification, isMobile } = useApp()
+  const { isMobile } = useApp()
   const { id: projectId, data: projectData } = useProject()
   const { triggerUpsell, isPreview } = useLayout()
 
@@ -38,16 +40,16 @@ export default function ArchiveButton() {
   const count = tasksToArchive.length
 
   const handleArchive = async () => {
-    if (count === 0) return
-
     if (isPreview) {
       triggerUpsell('archive')
       return
     }
 
+    if (count === 0) return
+
     try {
       await actions.archiveTasks(tasksToArchive)
-      appNotification({
+      setGlobalAlert({
         message: t('notifications.tasksArchived'),
         severity: 'success'
       })
