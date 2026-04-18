@@ -12,28 +12,6 @@ import upperCaseInitialLetter from '@utils/upperCaseInitialLetter'
 import { priorities, priorityColors } from '@/constants'
 import i18n from '@/i18n'
 
-export const getPriorityStyles = (theme, { fg, bg, isArchived }) => ({
-  alignItems: 'center',
-  justifyContent: 'start',
-  backgroundColor: isArchived ? 'transparent' : alpha(bg, 0.15),
-  border: `1px solid ${alpha(fg, 0.3)}`,
-  color: isArchived ? 'text.secondary' : darken(fg, 0.4),
-  ...(theme.applyStyles('dark', {
-    backgroundColor: alpha(bg, 0.1),
-    color: lighten(fg, 0.3),
-    borderColor: alpha(fg, 0.4)
-  })),
-  '&:hover': {
-    backgroundColor: alpha(bg, 0.4),
-    ...(theme.applyStyles('dark', { backgroundColor: alpha(bg, 0.2) }))
-  },
-  fontWeight: 500,
-  py: 0.94,
-  px: 2,
-  borderRadius: '4px',
-  width: '100%'
-})
-
 export const getMenuItemStyles = (isSelected, color) => [
   {
     color: 'inherit',

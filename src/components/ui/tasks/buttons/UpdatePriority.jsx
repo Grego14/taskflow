@@ -1,17 +1,14 @@
 import DropdownMenu from '@components/reusable/DropdownMenu'
+import PriorityButton from '@components/reusable/tasks/PriorityButton'
 
 import useProject from '@hooks/useProject'
 import { useTranslation } from 'react-i18next'
 import useTasks from '@hooks/useTasks'
 
 import { priorityColors } from '@/constants'
-import {
-  getPriorityStyles,
-  renderPriorityMenu,
-  getPriorityLabel
-} from '@utils/tasks/priorityUI'
+import { renderPriorityMenu, getPriorityLabel } from '@utils/tasks/priorityUI'
 
-export default function UpdatePriority({ priority, id, subtask, showMenu }) {
+export default function UpdatePriority({ priority, id, parentId, showMenu }) {
   const { t } = useTranslation('tasks')
   const { isArchived } = useProject()
   const { actions } = useTasks()
@@ -20,20 +17,24 @@ export default function UpdatePriority({ priority, id, subtask, showMenu }) {
   const handleUpdatePriority = async (priority, triggerExit) => {
     triggerExit()
     showMenu(false)
-    await actions.updateTask({ id, subtask, data: { priority } })
+    await actions.updateTask({ id, parentId, data: { priority } })
   }
 
   return (
     <DropdownMenu
       disableTooltip
       label={t('changePriority')}
-      text={getPriorityLabel(priority)}
-      buttonStyles={(theme) => getPriorityStyles(theme, { fg, bg, isArchived })}
-      disabled={isArchived}>
-      {(_, triggerExit) =>
-        renderPriorityMenu(priority,
-          (val) => handleUpdatePriority(val, triggerExit), t)
-      }
+      disabled={isArchived}
+      slots={{ root: PriorityButton }}
+      slotProps={{
+        root: {
+          priority,
+          isArchived,
+          children: getPriorityLabel(priority)
+        },
+      }}>
+      {(_, triggerExit) => renderPriorityMenu(priority, 
+          (val) => handleUpdate(val, triggerExit), t)}
     </DropdownMenu>
   )
 }

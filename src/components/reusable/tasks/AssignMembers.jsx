@@ -83,7 +83,7 @@ export default function AssignMembers({
   members: taskMembers = [],
   setMembers,
   id: taskId,
-  subtask,
+  parentId,
   sx,
   creatingTask = false
 }) {
@@ -103,7 +103,7 @@ export default function AssignMembers({
     if (!creatingTask) {
       await actions.updateTask({
         id: taskId,
-        subtask,
+        parentId,
         data: { assignedTo: newMembers }
       })
       return
@@ -134,23 +134,19 @@ export default function AssignMembers({
       icon={creatingTask && icon}
       label={creatingTask && label}
       tooltipPosition='top'
-      buttonStyles={theme => ({ ...getButtonStyles(theme), ...sx })}
-      sx={{ backgroundColor: 'rgba(0,0,0,0.35)' }}
       slotProps={{
+        root: {
+          sx: theme => ({ ...getButtonStyles(theme), ...sx }),
+          ...(creatingTask && { 'aria-label': label, sx: { p: 1.5 } })
+        },
         paper: {
-          sx: (theme) => ({
+          sx: theme => ({
             backgroundColor: theme.palette.mode === 'dark'
               ? theme.lighten(theme.palette.background.paper, 0.05)
               : theme.palette.background.paper,
             border: `1px solid ${theme.alpha(theme.palette.info.main, 0.5)}`,
             boxShadow: theme.shadows[8],
             backgroundImage: 'none'
-          })
-        },
-        button: {
-          ...(creatingTask && {
-            'aria-label': label,
-            sx: { p: 1.5 }
           })
         }
       }}>

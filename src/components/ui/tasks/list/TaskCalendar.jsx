@@ -7,36 +7,36 @@ import { Suspense, lazy } from 'preact/compat'
 import { useTranslation } from 'react-i18next'
 import useLoadResources from '@hooks/useLoadResources'
 import useProject from '@hooks/useProject'
-import useTaskDateUpdater from '@hooks/useTaskDateUpdater'
 
 const DateItems = lazy(() => import('@components/reusable/tasks/DateItems'))
 
-export default function TaskCalendar({ rawDate, taskId, parentId, insideTask }) {
+export default function TaskCalendar({ 
+  rawDate, 
+  taskId, 
+  parentId, 
+  insideTask,
+  onDateChange
+}) {
   const { t } = useTranslation('tasks')
-  const { date, updateDateHandler } = useTaskDateUpdater(rawDate)
   const { isArchived } = useProject()
-  const loadingResources = useLoadResources('dialogs')
 
-  const handleDateChange = async (newDate, triggerExit) => {
-    triggerExit()
-    await updateDateHandler(newDate, taskId, parentId)
-  }
+  useLoadResources('dialogs')
 
   return (
     <DropdownMenu
       label={t('changeDate')}
       tooltipPosition='top'
-      tooltipComponent={TaskTooltip}
-      buttonStyles={{ p: 1 }}
+      slots={{ tooltip: TaskTooltip }}
+      slotProps={{ root: { sx: { p: 1 } } }}
       icon={<CalendarIcon fontSize={insideTask ? 'small' : 'medium'} />}
       disabled={isArchived}>
       {(open, triggerExit) => (
         <Suspense fallback={<Skeleton width='8rem' height={0} />}>
           {open && (
             <DateItems
-              currentDate={date}
+              currentDate={rawDate}
               isList
-              onItemClick={val => handleDateChange(val, triggerExit)}
+              onItemClick={val => onDateChange(val, triggerExit)}
             />
           )}
         </Suspense>

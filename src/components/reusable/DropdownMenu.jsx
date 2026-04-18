@@ -1,4 +1,4 @@
-import { memo, useState, forwardRef } from 'preact/compat'
+import { memo, useState } from 'preact/compat'
 import Button from '@mui/material/Button'
 import IconButton from '@mui/material/IconButton'
 import Menu from '@mui/material/Menu'
@@ -13,15 +13,14 @@ export default memo(function DropdownMenu(props) {
     onClose,
     icon,
     label,
-    buttonStyles,
-    menuClass,
     tooltipPosition = 'left',
     text,
     forceClose,
     disabled,
     disableTooltip,
     asListItem = false,
-    tooltipComponent,
+    slots = {},
+    slotProps = {},
     ...other
   } = props
 
@@ -39,61 +38,73 @@ export default memo(function DropdownMenu(props) {
     onClick?.(e)
   }
 
+  const RootButton = slots.root || (!text ? IconButton : Button)
+  const TooltipComponent = slots.tooltip || Tooltip
+  
   const tooltipTitle = typeof label === 'function' ? label(isMenuOpen) : label
-  const { button: btnSlotProps, ...otherSlots } = other?.slotProps || {}
+  const buttonContent = text || icon
 
-  const buttonContent = !text ? icon : text
-  const buttonProps = {
-    sx: buttonStyles,
-    onClick: handleOnClick,
+  const rootProps = {
     disabled,
-    startIcon: !text ? null : icon,
+    onClick: handleOnClick,
+    startIcon: text ? icon : null,
     children: asListItem ? null : buttonContent,
-    ...btnSlotProps
+    ...slotProps.root
   }
 
-  const DropdownButton = !text ? IconButton : Button
-  const TooltipComponent = tooltipComponent || Tooltip
+  const menuProps = {
+    ...other,
+    anchorEl,
+    open: isMenuOpen,
+    autoFocusItem: true,
+    transitionDuration: 0,
+    ...slotProps.menu,
+    slotProps: {
+      backdrop: {
+        sx: { bgcolor: 'rgba(0,0,0,0.3)' },
+        ...slotProps.menu?.slotProps?.backdrop
+      },
+      list: {
+        sx: { overflow: 'hidden' },
+        ...slotProps.menu?.slotProps?.list
+      }
+    }
+  }
+
+  const renderButton = () => {
+    const trigger = asListItem ? (
+      <ButtonListItem 
+        component={RootButton} 
+        btnProps={rootProps} 
+        children={buttonContent} 
+      />
+    ) : (
+        <RootButton {...rootProps} />
+      )
+
+    if (disableTooltip) return trigger
+
+    return (
+      <TooltipComponent 
+        title={tooltipTitle} 
+        placement={tooltipPosition} 
+        {...slotProps.tooltip}>
+        {trigger}
+      </TooltipComponent>
+    )
+  }
 
   return (
     <>
-      {!disableTooltip ? (
-        <TooltipComponent title={tooltipTitle} placement={tooltipPosition}>
-          {asListItem
-            ? <ButtonListItem
-              component={DropdownButton}
-              btnProps={buttonProps}
-              children={buttonContent}
-            />
-            : <DropdownButton {...buttonProps} />}
-        </TooltipComponent>
-      ) : <DropdownButton {...buttonProps} />}
+      {renderButton()}
 
       <AnimatedMenu open={isMenuOpen} onExitComplete={handleFinalClose}>
         {(renderOpen, setMenuRef, triggerExit) => (
           <Menu
-            {...other}
-            anchorEl={anchorEl}
+            {...menuProps}
             open={renderOpen}
             onClose={triggerExit}
-            className={menuClass}
-            autoFocusItem
-            ref={setMenuRef}
-            slotProps={{
-              transition: null,
-              list: {
-                sx: {
-                  overflow: 'hidden',
-                  ...otherSlots?.list?.sx
-                }
-              },
-              backdrop: {
-                sx: { bgcolor: 'rgba(0,0,0,0.3)' },
-                onClick: triggerExit
-              },
-              ...otherSlots
-            }}
-            transitionDuration={0}>
+            ref={setMenuRef}>
             {typeof children === 'function'
               ? children(renderOpen, triggerExit)
               : children}

@@ -89,7 +89,7 @@ export default memo(function PreviewSwitcher() {
           icon={<VisibilityIcon fontSize='medium' />}
           label={state => getMenuLabel(state, 'buttons.previewLabel', 'ui')}
           tooltipPosition='top'
-          slotProps={{ button: { className: 'hide-element' } }}>
+          slotProps={{ root: { className: 'hide-element' } }}>
           <Suspense fallback={<PreviewSwitcherMenuSkeleton />}>
             {OPTIONS.map(opt => (
               <MenuAction
