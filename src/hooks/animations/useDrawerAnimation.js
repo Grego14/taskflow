@@ -1,4 +1,3 @@
-import useProject from '@hooks/useProject'
 import useApp from '@hooks/useApp'
 import { useParams } from 'react-router-dom'
 import { useGSAP } from '@gsap/react'
@@ -10,17 +9,13 @@ import gsap from 'gsap'
 const icons = ['.nav-action__icon', '.profile-btn-avatar']
 const toolbarSelect = '.toolbar-select'
 
-export default function useDrawerAnimation(drawerRef, {
-  onStart,
-  onComplete,
-  animate
-}) {
-  const { contextSafe } = useGSAP({ scope: drawerRef, dependencies: [animate] })
+export default function useDrawerAnimation(drawerRef, { onStart, onComplete }) {
+  const { contextSafe } = useGSAP({ scope: drawerRef })
   const { projectId } = useParams()
   const { isMobile } = useApp()
 
   const animateDrawer = contextSafe((isOpening) => {
-    if (!drawerRef.current || !animate) return
+    if (!drawerRef.current) return
 
     const width = DRAWER_CONFIG[isOpening ? 'widthOpen' : 'widthClosed']
     const currentWidth = drawerRef.current.offsetWidth
