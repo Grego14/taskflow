@@ -9,7 +9,7 @@ import IconButton from '@mui/material/IconButton'
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
 import MenuIcon from '@mui/icons-material/Menu'
 
-const ToolbarSelect = lazy(() => import('./ToolbarSelect'))
+import ToolbarSelect from './ToolbarSelect'
 
 import { APPBAR_HEIGHT } from '@/constants'
 
@@ -27,9 +27,7 @@ export default function DrawerToolbar({ open }) {
             `calc(${(APPBAR_HEIGHT[isMobile ? 'mobile' : 'other'])} - 1px)`,
           px: 1
         }}>
-        <Suspense fallback={null}>
-          <ToolbarSelect />
-        </Suspense>
+        <ToolbarSelect />
 
         <IconButton
           className='toggle-drawer-btn'
