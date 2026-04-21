@@ -3,17 +3,24 @@ import Typography from '@mui/material/Typography'
 
 import CircleLoader from '@components/reusable/loaders/CircleLoader'
 import CreateFromTemplate from '@components/reusable/projects/CreateFromTemplate'
+import AnimatedTitle from '@components/reusable/texts/AnimatedTitle'
+import CreateProject from '@components/ui/buttons/CreateProject'
 
-import { useEffect, useState, useMemo, Suspense, lazy, useRef } from 'preact/compat'
+import { 
+  useEffect, 
+  useState, 
+  useMemo, 
+  Suspense, 
+  lazy, 
+  useRef 
+} from 'preact/compat'
+
 import { useTranslation } from 'react-i18next'
 import useUser from '@hooks/useUser'
 import useLoadResources from '@hooks/useLoadResources'
 import { useGSAP } from '@gsap/react'
-import AnimatedTitle from '@components/reusable/texts/AnimatedTitle'
-
 import useCounterAnimation from '@hooks/animations/useCounterAnimation'
 
-const CreateProject = lazy(() => import('@components/ui/buttons/CreateProject'))
 const ProjectsCards = lazy(() => import('@components/ui/projectcard/ProjectsCards'))
 
 import { dbAdapter } from '@services/dbAdapter'
@@ -21,17 +28,29 @@ import projectService from '@services/project'
 
 import gsap from 'gsap'
 
-const containerStyles = (hasProjects) => ({
+const containerStyles = {
   display: 'flex',
   flexDirection: 'column',
   gap: 2,
   width: '100%',
+  flexGrow: 1,
   py: 2,
   px: { xs: 2, mobile: 3, tablet: 4 },
-  ...(hasProjects ? {} : { height: '100%', justifyContent: 'center', my: 'auto' })
-})
+}
 
-const hidden = { opacity: 0, visibility: 'hidden' }
+const noProjectsStyles = { my: 'auto' }
+
+const btnsContainerStyles = {
+  '@media (max-width: 28rem)': {
+    flexDirection: 'column',
+    alignItems: 'start'
+  }
+}
+
+const btnStyles = { 
+  hasProjects: { alignSelf: 'start'}, 
+  noProjects: { alignSelf: 'center'} 
+}
 
 export default function Projects() {
   const { uid } = useUser()
@@ -49,7 +68,7 @@ export default function Projects() {
     if (!uid) return
 
     const { userProjects, externalProjects } =
-      projectService.getProjectsQueries(uid)
+    projectService.getProjectsQueries(uid)
     const projectMap = new Map()
 
     const handleSnapshot = (snap) => {
@@ -96,65 +115,65 @@ export default function Projects() {
   }, [loadingResources, loading, animateButtons])
 
   const hasProjects = projects.length > 0
-  const btnStyles = { alignSelf: hasProjects ? 'start' : 'center' }
 
   if (loadingResources) return <CircleLoader text={t('common:loading')} />
   if (loading) return <CircleLoader text={t('projects:loading')} />
 
   return (
-    <Box sx={containerStyles(hasProjects)} ref={projectsRef}>
-      <Suspense fallback={null}>
-        {!hasProjects ? (
-          <Box>
-            <Typography variant='h5' textAlign='center'>
-              {t('errors.empty')}
+    <Box sx={containerStyles} ref={projectsRef}>
+      {hasProjects ? (
+        <Box>
+          <Box className='flex' gap={1}>
+            <AnimatedTitle
+              id='projects-title'
+              textAlign='start'
+              onComplete={() => setAnimateCards(true)}>
+              {t('text')}
+            </AnimatedTitle>
+            <Typography component='span' variant='h4' fontWeight={700}>
+              {`(${animatedCount})`}
             </Typography>
-            <Box
-              className='flex flex-center flex-column'
-              gap={2}
-              mt={4}
-              {...hidden}
-              id='project-buttons'>
-              <CreateProject sx={btnStyles} />
-              <CreateFromTemplate />
-            </Box>
           </Box>
-        ) : (
-          <Box>
-            <Box className='flex' gap={1}>
-              <AnimatedTitle
-                id='projects-title'
-                textAlign='start'
-                onComplete={() => setAnimateCards(true)}>
-                {t('text')}
-              </AnimatedTitle>
-              <Typography component='span' variant='h4' fontWeight={700}>
-                {`(${animatedCount})`}
-              </Typography>
-            </Box>
 
+          <Suspense fallback={null}>
             <ProjectsCards
               data={projects}
               animate={animateCards}
               setAnimateButtons={setAnimateButtons}
             />
+          </Suspense>
 
-            <Box className='flex' sx={{
-              '@media (max-width: 28rem)': {
-                flexDirection: 'column',
-                alignItems: 'start'
-              }
-            }}
-              gap={2}
-              {...hidden}
-              mt={4}
-              id='project-buttons'>
-              <CreateProject sx={btnStyles} />
-              <CreateFromTemplate sx={{ flexDirection: 'row' }} />
+          <Box className='flex hide-element' sx={btnsContainerStyles}
+            gap={2}
+            mt={4}
+            id='project-buttons'>
+            <CreateProject sx={hasProjects 
+              ? btnStyles.hasProjects 
+              : btnStyles.noProjects} 
+            />
+            <CreateFromTemplate sx={{ flexDirection: 'row' }} />
+          </Box>
+        </Box>
+      ): (
+          <Box sx={noProjectsStyles}>
+            <Box>
+              <Typography variant='h5' textAlign='center'>
+                {t('errors.empty')}
+              </Typography>
+              <Box
+                className='flex flex-center flex-column hide-element'
+                gap={2}
+                mt={4}
+                id='project-buttons'>
+                <CreateProject sx={hasProjects 
+                  ? btnStyles.hasProjects 
+                  : btnStyles.noProjects} 
+                />
+                <CreateFromTemplate />
+              </Box>
             </Box>
           </Box>
         )}
-      </Suspense>
     </Box>
   )
 }
