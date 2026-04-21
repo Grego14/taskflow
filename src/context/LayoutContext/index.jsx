@@ -7,6 +7,7 @@ import useDrawerAnimation from '@hooks/animations/useDrawerAnimation'
 
 import LayoutContext from './context'
 import { getItem, setItem } from '@utils/storage'
+import { FILTERS } from '@/constants'
 
 export default function LayoutProvider({ children, isPreview, triggerUpsell }) {
   const { isMobile } = useApp()
@@ -15,22 +16,22 @@ export default function LayoutProvider({ children, isPreview, triggerUpsell }) {
   const [filter, setFilter] = useState('default')
 
   const [opening, setOpening] = useState(null)
-  const [drawerReady, setDrawerReady] = useState(false)
-
   const drawerRef = useRef(null)
 
+  const debounceDelay = isPreview ? 0 : 1500
   const [debounceUpdater] = useDebounce(async data => {
-    const { previewer, filter, type } = data
-    if (type === 'filter') setFilter(filter)
+    const { previewer, filter } = data
 
-    await update(
-      previewer
-        ? { previewer }
-        : filter
-          ? { lastUsedFilter: filter }
-          : null
-    )
-  }, 1500)
+    const fieldsToUpdate = {}
+    
+    if(filter && !FILTERS.includes(filter)) return
+    if(previewer && (previewer !== 'list' && previewer !== 'kanban')) return
+
+    if (previewer) fieldsToUpdate.previewer = previewer
+    if (filter) fieldsToUpdate.lastUsedFilter = filter
+
+    if (Object.keys(fieldsToUpdate).length > 0) await update(fieldsToUpdate)
+  }, debounceDelay)
 
   useEffect(() => {
     if (userLoaded) setFilter(metadata?.lastUsedFilter || 'default')
@@ -38,13 +39,8 @@ export default function LayoutProvider({ children, isPreview, triggerUpsell }) {
 
   const drawerAnim = useDrawerAnimation(drawerRef, {
     onStart: () => setOpening(true),
-    onComplete: () => setOpening(null),
-    animate: drawerReady
+    onComplete: () => setOpening(null)
   })
-
-  useEffect(() => {
-    if (drawerReady) drawerAnim(drawerOpen)
-  }, [drawerReady])
 
   const animateDrawer = useCallback((open, isTemporary) => {
     const newVal = typeof open === 'boolean' ? open : !drawerOpen
@@ -73,8 +69,14 @@ export default function LayoutProvider({ children, isPreview, triggerUpsell }) {
     drawerRef,
     isPreview,
     triggerUpsell,
-    setDrawerReady
-  }), [drawerOpen, filter, debounceUpdater, isMobile, animateDrawer])
+  }), [
+      drawerOpen, 
+      filter, 
+      debounceUpdater, 
+      isMobile, 
+      animateDrawer, 
+      isPreview
+    ])
 
   return (
     <LayoutContext.Provider value={value}>
