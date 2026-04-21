@@ -36,10 +36,8 @@ export default memo(function Project() {
     owner: projectOwner
   })
 
-  const { projectMembers, projectMembersError } = useProjectMembers({
-    members: projectData?.members || [],
-    enabled: !!projectData && hasAccess
-  })
+  const { projectMembers, projectMembersError } = 
+    useProjectMembers(projectData?.members, !!projectData && hasAccess)
 
   // update last edited project on user metadata
   useEffect(() => {
