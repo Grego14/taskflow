@@ -19,7 +19,7 @@ import useNavigateToProject from '@hooks/useNavigateToProject'
 import useUser from '@hooks/useUser'
 import { useTheme } from '@mui/material/styles'
 import { useTranslation } from 'react-i18next'
-import { useRef } from 'preact/hooks'
+import { useRef, useMemo } from 'preact/hooks'
 import { useGSAP } from '@gsap/react'
 
 import formatTimeAgo from '@utils/formatTimeAgo.js'
@@ -86,21 +86,22 @@ export default function ProjectCard({ data, isRecent }) {
   const noDescription = !data?.description
   const goToProject = t('goToProject')
 
+  const cardStyles = useMemo(() => ({
+    backgroundColor: 'transparent',
+    borderRadius: 2,
+    border: isRecent ?
+      `1px solid ${theme.palette.primary.main}` : '1px solid transparent',
+    maxWidth: '35rem',
+    transition: 'none'
+  }), [theme.palette.mode, isRecent])
+
   return (
     <Card
-      className='flex flex-column card'
+      className='flex flex-column card hide-element'
       ref={cardRef}
       onMouseEnter={() => onHover(true)}
       onMouseLeave={() => onHover(false)}
-      sx={theme => ({
-        backgroundColor: 'transparent',
-        borderRadius: 2,
-        border: isRecent ?
-          `1px solid ${theme.palette.primary.main}` :
-          '1px solid transparent',
-        maxWidth: '35rem',
-        transition: 'none'
-      })}>
+      sx={cardStyles}>
       <CardHeader
         disableTypography
         action={

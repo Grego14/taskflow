@@ -60,7 +60,6 @@ export default function ProjectsCards({ data, animate, setAnimateButtons }) {
     if (lastId && !projects.last && data.length > 0) return
 
     const cards = gsap.utils.toArray('.card', containerRef.current)
-    gsap.set('.project-title, .project-description', { autoAlpha: 1 })
 
     if (projects.other.length) {
       gsap.to('#divider', {
@@ -73,7 +72,7 @@ export default function ProjectsCards({ data, animate, setAnimateButtons }) {
     }
 
     const CARD_STYLES = { x: -50, autoAlpha: 0 }
-    const CARD_ANIM_SET = { autoAlpha: 0, x: -50, ease: 'power3.out' }
+    const CARD_ANIM_SET = { autoAlpha: 1, x: 0, ease: 'power3.out' }
     const TITLE_ANIM_SET = { 
       x: -15, 
       rotateZ: 45, 
@@ -104,6 +103,8 @@ export default function ProjectsCards({ data, animate, setAnimateButtons }) {
       const title = SplitText.create(titleEl, { smartWrap: true, type: 'chars' })
       const description = SplitText.create(descEl, { smartWrap: true, type: 'chars' })
 
+      gsap.set('.project-title, .project-description', { autoAlpha: 1 })
+
       splits.push(title, description)
 
       const cardTl = gsap.timeline({
@@ -120,7 +121,7 @@ export default function ProjectsCards({ data, animate, setAnimateButtons }) {
       // make the non initial cards appear
       const position = 0.1 * cards.indexOf(card)
 
-      cardTl.from(card, CARD_ANIM_SET, position)
+      cardTl.to(card, CARD_ANIM_SET, position)
         .from(title.chars, TITLE_ANIM_SET, '<0.2')
         .to(idEl, { autoAlpha: 1, scrambleText: ID_SCRAMBLE_CONFIG }, '<0.3')
         .from(description.chars, DESC_ANIM_SET, '<0.2')
