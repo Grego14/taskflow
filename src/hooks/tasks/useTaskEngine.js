@@ -1,128 +1,93 @@
 import { useMemo } from 'preact/hooks'
 import useUser from '@hooks/useUser'
 import useLayout from '@hooks/useLayout'
-
-import sortTasks from '@utils/tasks/sortTasks'
 import taskIsOverdue from '@utils/tasks/taskIsOverdue'
 import taskIsPending from '@utils/tasks/taskIsPending'
-import { ONE_DAY_MS } from '@/constants'
 
-export default function useTaskEngine(rawTasks) {
+import { taskRegistry } from '@stores/task'
+
+const checkPassesFilter = (task, filter, uid) => {
+  if (filter === 'assignedToMe') return task.assignedTo?.includes(uid)
+  if (filter === 'overdue') return taskIsOverdue(task)
+  return task.status === filter
+}
+
+export default function useTaskEngine() {
   const { uid } = useUser()
   const { filter } = useLayout()
 
+  const registryValues = [...taskRegistry.value.values()]
+
   return useMemo(() => {
-    if (!rawTasks?.length) return {
+    if (!registryValues.length) return {
       tasksForContainer: [],
       overdueTasks: [],
       othersToArchive: []
     }
 
-    const now = Date.now()
     const isDefaultFilter = filter === 'default'
 
-    const getIsNew = (date) => {
-      const currentTime = Date.now()
-      const taskTime = date?.seconds
-        ? date.seconds * 1000
-        : new Date(date).getTime()
+    // sort the tasks before the reduce so the IDs are inserted in the correct
+    // order
+    const sortedTasks = registryValues.toSorted((a, b) => {
+      const posA = a.position ?? 0
+      const posB = b.position ?? 0
+      return posA - posB
+    })
 
-      return Math.abs(currentTime - taskTime) < 10000
-    }
-
-    const passesFilter = (task) => {
-      if (filter === 'assignedToMe') return task.assignedTo?.includes(uid)
-      if (filter === 'overdue') return taskIsOverdue(task)
-      if (filter === 'default') return !taskIsOverdue(task)
-
-      return task.status === filter
-    }
-
-    const processTask = (task) => {
+    const result = sortedTasks.reduce((acc, task) => {
       const isOverdue = taskIsOverdue(task)
-      const isCancelled = task.status === 'cancelled'
-
-      return {
-        ...task,
-        isOverdue,
-        isNew: getIsNew(task.createdAt || now),
-        subtasks: task?.subtasks?.map(subtask => ({
-          ...subtask,
-          isParentChecked: task.status === 'done' || isCancelled,
-          isParentOverdue: isOverdue,
-          isParentCancelled: isCancelled,
-          isNew: getIsNew(subtask.createdAt || now)
-        }))
-      }
-    }
-
-    const result = rawTasks.reduce((acc, rawTask) => {
-      const task = processTask(rawTask)
       const isPending = taskIsPending(task.status)
-      const taskPasses = passesFilter(task)
+      const isSubtask = !!task.parentId
 
-      // "default view"
+      const passes = !isDefaultFilter && checkPassesFilter(task, filter, uid)
+
       if (isDefaultFilter) {
-        if (task.isOverdue && isPending) {
-          acc.overdueTasks.push(task)
-        } else if (!task.isOverdue) {
-          acc.mainFiltered.push(task)
+        if (!isSubtask && isOverdue && isPending) {
+          // "overdue tasks wrapper"
+          acc.overdueIds.push(task.id)
+        } else if (!isSubtask && !isOverdue) {
+          // "today tasks wrapper"
+          acc.mainIds.push(task.id)
         }
 
-        // add the others tasks to archive only if they were completed/cancelled
-        // and not archived after 1 day (will be on the mainFiltered if they were
-        // completed/cancelled earlier)
-        if (!isPending && task.dueDate) {
-          const dueTime = task.dueDate.seconds
-            ? task.dueDate.seconds * 1000
-            : new Date(task.dueDate).getTime()
+        // subtask promotion
+        if (isSubtask && !isOverdue && isPending) {
+          const parent = taskRegistry.value.get(task.parentId)
 
-          if ((now - dueTime) > ONE_DAY_MS) {
-            acc.othersToArchive.push(task)
-          }
+          if (parent && taskIsOverdue(parent)) acc.promotedIds.push(task.id)
         }
-      }
 
-      if (!isDefaultFilter && taskPasses) {
-        // non-default filters
-        acc.mainFiltered.push(task)
-      }
+        // "tasks to archive wrapper"
+        if (!isPending && task.dueDate && isOverdue) {
+          acc.archiveIds.push(task.id)
+        }
 
-      // subtask promotion logic
-      // it "promotes" to main container if it passes filter but its parent 
-      // doesn't (or if we are in default mode and parent is overdue)
-      if (rawTask.subtasks?.length) {
-        for (const rawSub of rawTask.subtasks) {
-          const subPasses = passesFilter(rawSub)
+      } else if (passes) {
+        // non-default filters: include all matching tasks
+        // for subtasks, only promote them if the parent doesn't match the filter
+        // or passes it but is overdue
+        // to avoid duplication, as they would already be rendered within their parent
+        if (isSubtask) {
+          const parent = taskRegistry.value.get(task.parentId)
+          const parentPassesFilter = parent && 
+            checkPassesFilter(parent, filter, uid)
 
-          const shouldPromote = !isDefaultFilter
-            ? (subPasses && !taskPasses)
-            : (task.isOverdue && !rawSub.isOverdue && subPasses)
-
-          if (shouldPromote) acc.promotedSubtasks.push({
-            ...rawSub,
-            isParentChecked: task.status === 'done' || task.status === 'cancelled',
-            isParentOverdue: task.isOverdue,
-            isParentCancelled: task.status === 'cancelled',
-
-            // as the TaskWrappers doesn't animate when the items size change, we
-            // add this flag so the promoted subtask is animated by the new
-            // animation function
-            isNew: true
-          })
+          if (!parentPassesFilter) 
+            acc.promotedIds.push(task.id)
+        } else {
+          acc.mainIds.push(task.id)
         }
       }
 
       return acc
-    }, { overdueTasks: [], mainFiltered: [], promotedSubtasks: [], othersToArchive: [] })
+    }, { overdueIds: [], mainIds: [], promotedIds: [], archiveIds: [] })
 
     return {
-      tasksForContainer: sortTasks([
-        ...result.mainFiltered,
-        ...result.promotedSubtasks]),
-      overdueTasks: sortTasks(result.overdueTasks),
-      othersToArchive: result.othersToArchive,
+      tasksForContainer: [...result.mainIds, ...result.promotedIds],
+      overdueTasks: result.overdueIds,
+      othersToArchive: result.archiveIds,
       isDefaultFilter
     }
-  }, [rawTasks, filter, uid])
+  }, [registryValues, filter, uid])
 }

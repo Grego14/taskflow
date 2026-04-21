@@ -90,7 +90,7 @@ export default memo(function NewTaskDialog({
 
       await actions.createTask({
         data: taskDataFormatted,
-        subtaskId: subtask ? taskId : null
+        parentId: subtask ? taskId : null
       })
 
       onCreate?.()

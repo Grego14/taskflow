@@ -25,16 +25,16 @@ const SecondaryCenteredH6 = ({ text }) => (
 export default memo(function ListPreview() {
   const { isOffline } = useAuth()
   const { t } = useTranslation('tasks')
-  const { tasks, error } = useTasks()
+  const { error } = useTasks()
 
   const {
     tasksForContainer,
     overdueTasks,
     othersToArchive,
     isDefaultFilter
-  } = useTaskEngine(tasks)
+  } = useTaskEngine()
 
-  const hasContent = tasksForContainer?.length > 0 || overdueTasks?.length > 0
+  const hasContent = tasksForContainer.length > 0 || overdueTasks.length > 0
   const errorMessage = error ? t(`errors.${error}`) : null
 
   return (
@@ -45,13 +45,14 @@ export default memo(function ListPreview() {
       alignItems={!hasContent ? 'center' : 'auto'}
       py={2}>
       <TasksContainer
-        tasks={tasksForContainer}
-        overdueTasks={overdueTasks}
-        toArchive={othersToArchive}
+        taskIds={tasksForContainer}
+        overdueIds={overdueTasks}
+        toArchiveIds={othersToArchive}
+        error={error}
       />
 
       {errorMessage && (
-        <Box textAlign='center'>
+        <Box textAlign='center' my='auto'>
           <SecondaryCenteredH6 text={errorMessage} />
           {(error || error === 'query') && (
             <Suspense fallback={null}>
@@ -66,7 +67,7 @@ export default memo(function ListPreview() {
         {!isOffline && error === 'empty' && <CreateTask />}
 
         {/* non empty project so we show percentage to complete */}
-        {isDefaultFilter && <ProjectPercentage />}
+        {isDefaultFilter && hasContent && <ProjectPercentage />}
       </Suspense>
     </Box>
   )

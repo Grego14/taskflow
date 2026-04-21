@@ -7,7 +7,6 @@ import { useTranslation } from 'react-i18next'
 import useTasks from '@hooks/useTasks'
 import { useTheme } from '@mui/material/styles'
 
-import formatTimestamp from '@utils/formatTimestamp'
 import formatTimer from '@utils/formatTimer'
 import { playSound, stopSound } from '@services/audio'
 import getDueDateLabel from '@utils/tasks/getDueDateLabel'
@@ -15,39 +14,47 @@ import getDueDateLabel from '@utils/tasks/getDueDateLabel'
 import { 
   activeTaskData, 
   isAlarmRinging, 
-  currentSessionSeconds
+  currentSessionSeconds,
+  taskRegistry
 } from '@stores/task'
 
 const LiveTimer = () => {
-  const task = activeTaskData.value
-
-  if (!task) return null
+  if (!activeTaskData.value) return null
 
   return <span>{formatTimer(currentSessionSeconds.value)}</span>
 }
 
-export default function SmartActionLabel({ data, insideTask }) {
+export default function SmartActionLabel({ id, insideTask }) {
   const { t } = useTranslation(['ui', 'tasks'])
   const { toggleWorkingTask } = useTasks()
   const theme = useTheme()
 
-  const isThisTaskWorking = activeTaskData.value?.id === data.id
-  const { label, isOverdue, isToday } = getDueDateLabel(data?.dueDate)
+  const taskData = taskRegistry.value.get(id)
+
+  if (!taskData) return null
+
+  const isThisTaskWorking = activeTaskData.value?.id === id
+  const { label, isOverdue, isToday } = getDueDateLabel(taskData.dueDate)
 
   const handleToggle = (e) => {
-    if(isAlarmRinging.value) {
+    e.stopPropagation()
+
+    if (isAlarmRinging.value) {
       isAlarmRinging.value = false
       stopSound('endSessionGoal')
     }
 
-    const endingSession = activeTaskData.value
+    const currentActive = activeTaskData.value
+    const willStart = !currentActive || currentActive.id !== id
 
-    playSound(!endingSession ? 'startSession' : 'endSession')
-    toggleWorkingTask(!endingSession ? data : null)
+    playSound(willStart ? 'startSession' : 'endSession')
+    
+    // if working on this task pass nul to stop it, otherwise send the data
+    toggleWorkingTask(willStart ? taskData : null)
   }
 
+  const hasDate = !!taskData.dueDate
   const canPlayDirectly = isToday || isThisTaskWorking
-  const hasDate = !!data?.dueDate
 
   const btnColor = (isOverdue || isToday) && hasDate
     ? theme.palette[isOverdue ? 'error' : 'primary'].main

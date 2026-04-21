@@ -7,10 +7,13 @@ import { useMemo } from 'preact/hooks'
 import { useTranslation } from 'react-i18next'
 
 import formatTimer from '@utils/formatTimer'
+import { taskRegistry } from '@stores/task'
 
-export default function TaskTotalTime({ data }) {
+export default function TaskTotalTime({ id }) {
   const { t } = useTranslation('tasks')
-  const { timeWorked = 0, subtasks = [] } = data
+
+  const taskData = taskRegistry.value.get(id) || {}
+  const { timeWorked = 0, subtasks = [] } = taskData
 
   const totalSeconds = useMemo(() => {
     const parentTime = timeWorked
@@ -20,7 +23,7 @@ export default function TaskTotalTime({ data }) {
     return parentTime + subtasksTime
   }, [timeWorked, subtasks])
 
-  if (totalSeconds === 0) return null
+  if(!taskData || totalSeconds === 0) return null
 
   return (
     <TaskTooltip title={t('totalAccumulatedTime')}>

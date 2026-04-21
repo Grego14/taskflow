@@ -7,14 +7,16 @@ import Box from '@mui/material/Box'
 
 export default function TaskActions({
   id,
-  isSubtask = false,
-  subtask, // this is the parent id if it's a subtask
+  parentId,
   members,
   menuHandler,
   rawDate,
   priority,
-  subtasks
+  subtaskIds,
+  onDateChange
 }) {
+  const isSubtask = !!parentId
+
   if (!id) return null
 
   return (
@@ -22,22 +24,27 @@ export default function TaskActions({
       <UpdatePriority
         priority={priority}
         id={id}
-        subtask={subtask}
+        parentId={parentId}
         showMenu={menuHandler}
       />
 
       {!isSubtask && <CreateSubtask id={id} showMenu={menuHandler} />}
 
-      <AssignMembers id={id} members={members} subtask={subtask} />
+      <AssignMembers id={id} members={members} parentId={parentId} />
 
-      <ReassignDate id={id} subtask={subtask} rawDate={rawDate}
+      <ReassignDate 
+        id={id} 
+        parentId={parentId} 
+        rawDate={rawDate}
+        onDateChange={onDateChange}
       />
 
       <DeleteTask
         id={id}
-        subtask={subtask}
-        subtasks={subtasks}
-        showMenu={menuHandler} />
+        parentId={parentId}
+        subtaskIds={subtaskIds}
+        showMenu={menuHandler} 
+      />
     </>
   )
 }

@@ -3,27 +3,23 @@ import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 
 import useTasks from '@hooks/useTasks'
-import { useRef } from 'react'
+import { useTranslation } from 'react-i18next'
+import { taskRegistry } from '@stores/task'
 
-const textSizes = {
-  normal: { xs: '25ch', mobile: '35ch', tablet: '50ch' },
-  overdue: { xs: '18ch', mobile: '28ch', tablet: '42ch' }
-}
+export default function ParentTaskLink({ parentTask }) {
+  const { t } = useTranslation('tasks')
+  const { scrollIntoTask } = useTasks()
 
-export default function ParentTaskLink({ parentTask, isOverdue }) {
-  const { scrollIntoTask, taskRefs, tasks } = useTasks()
-
-  const { title } = tasks?.find(task => task.id === parentTask) || {}
-  const parentRef = taskRefs.current?.[parentTask]
-  const timeout = useRef(null)
-  const text = `Parent task: ${title}`
+  const parentData = taskRegistry.value.get(parentTask)
+  const title = parentData?.title || t('unknownTask')
+  const text = t('parentTask', { title })
 
   return (
     <Box
       className='flex'
       alignItems='center'
       sx={{ cursor: 'pointer', py: 0.5 }}
-      onClick={e => scrollIntoTask(parentTask)}>
+      onClick={() => scrollIntoTask(parentTask)}>
       <Box className='flex flex-center' gap={0.5}>
         <LinkIcon fontSize='small' />
         <Typography
@@ -34,7 +30,7 @@ export default function ParentTaskLink({ parentTask, isOverdue }) {
             overflowX: 'hidden',
             textOverflow: 'ellipsis',
             textWrap: 'nowrap',
-            maxWidth: textSizes[isOverdue ? 'overdue' : 'normal']
+            maxWidth: { xs: '25ch', mobile: '35ch', tablet: '50ch' }
           }}>
           {text}
         </Typography>

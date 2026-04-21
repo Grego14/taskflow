@@ -2,8 +2,6 @@ import ArchiveIcon from '@mui/icons-material/Inventory2Outlined'
 import IconButton from '@mui/material/IconButton'
 import Tooltip from '@mui/material/Tooltip'
 import Badge from '@mui/material/Badge'
-import Typography from '@mui/material/Typography'
-import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import ButtonListItem from '@components/reusable/buttons/ButtonListItem'
 
@@ -12,39 +10,33 @@ import useProject from '@hooks/useProject'
 import { useTranslation } from 'react-i18next'
 import { useMemo } from 'react'
 import useApp from '@hooks/useApp'
-import useLayout from '@hooks/useLayout'
 
 import { setGlobalAlert } from '@stores/ui'
+import { taskRegistry } from '@stores/task'
 
 export default function ArchiveButton() {
   const { t } = useTranslation('tasks')
-  const { tasks, actions } = useTasks()
+  const { actions } = useTasks()
   const { isMobile } = useApp()
   const { id: projectId, data: projectData } = useProject()
-  const { triggerUpsell, isPreview } = useLayout()
 
   const tasksToArchive = useMemo(() => {
     const toArchive = []
-    if (!tasks) return toArchive
+    const registry = taskRegistry.value
 
-    for (const task of tasks) {
-      const isProcessable = task.status === 'done' || task.status === 'cancelled'
+    for (const task of registry.values()) {
+      const isProcessable = task.status === 'done' 
+        || task.status === 'cancelled'
 
-      if (task.isArchived || !isProcessable) continue
-
-      toArchive.push(task.id)
+      if (isProcessable && !task.isArchived) toArchive.push(task.id)
     }
+
     return toArchive
-  }, [tasks])
+  }, [taskRegistry.value])
 
   const count = tasksToArchive.length
 
   const handleArchive = async () => {
-    if (isPreview) {
-      triggerUpsell('archive')
-      return
-    }
-
     if (count === 0) return
 
     try {

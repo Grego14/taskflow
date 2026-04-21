@@ -88,5 +88,7 @@
   "positiveMinutes": "Please enter a value greater than 0",
   "resetSession": "Reset session",
   "keepSession": "Keep current",
-  "resetPrompt": "You've been working for {{minutes}} min. Do you want to reset the timer or keep your current progress?"
+  "resetPrompt": "You've been working for {{minutes}} min. Do you want to reset the timer or keep your current progress?",
+  "parentTask": "Parent task: {{title}}",
+  "unknownTask": "Unknown task"
 }

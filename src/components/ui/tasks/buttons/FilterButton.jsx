@@ -27,32 +27,29 @@ const getFilterLabel = (label, t) => {
   )
 }
 
+const buttonSlotProps = { root: { sx: { px: 1 }, className: 'hide-element' } }
+const textStyles = { px: 2, py: 1 }
+
 export default function FilterButton() {
   const { metadata } = useUser()
   const { setFilter, updateFilter, filter, isPreview } = useLayout()
   const { t } = useTranslation('tasks')
   const [selected, setSelected] = useState(filter)
+  const lastUsed = metadata?.lastUsedFilter
 
   useEffect(() => {
-    if (
-      FILTERS.find(f => f === metadata?.lastUsedFilter) &&
-      metadata?.lastUsedFilter !== selected
-    ) {
-      setSelected(metadata.lastUsedFilter)
-    }
-  }, [metadata])
+    if (lastUsed && lastUsed !== selected && FILTERS.includes(lastUsed))
+      setSelected(lastUsed)
+  }, [lastUsed])
 
   const changeSelectedOption = useCallback(
     (value, triggerExit) => {
-      triggerExit()
+      triggerExit?.()
 
       setSelected(value)
       setFilter(value)
 
-      // do not fire the other function on the Demo
-      if(isPreview) return
-
-      // update the db (if the user is logged)
+      // update the LocalStorage/firestore
       updateFilter(value)
     },
     [updateFilter, setFilter]
@@ -69,15 +66,10 @@ export default function FilterButton() {
       label={state => getMenuLabel(state, 'buttons.filter', 'tasks')}
       tooltipPosition='bottom'
       asListItem
-      buttonStyles={{
-        borderRadius: '50%',
-        px: 1,
-        flexGrow: 0
-      }}
-      slotProps={{ button: { className: 'hide-element' } }}>
+      slotProps={buttonSlotProps}>
       {(_, triggerExit) => (
         <>
-          <Typography variant='body2' color='textSecondary' sx={{ px: 2, py: 1 }}>
+          <Typography variant='body2' color='textSecondary' sx={textStyles}>
             {t('buttons.filterHelpText')}
           </Typography>
           {filterOptions.map(filter => (

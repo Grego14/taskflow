@@ -17,6 +17,8 @@ export const BREAKPOINTS = {
   desktop: 1360
 }
 
+const TASK_MENU_WIDTH = '12rem'
+
 const lightColors = {
   primary: '#7C5DFA',
   secondary: '#A592E8',
@@ -35,6 +37,9 @@ const uiShadow = {
 }
 
 const baseTheme = createTheme({
+  ui: {
+    taskCardMaxWidth: '27.5rem'
+  },
   zIndex: {
     zenOverlay: 12000,
     // used on floating elements inside the zenOverlay (minimize btn tooltip,
@@ -248,6 +253,10 @@ const baseTheme = createTheme({
           '0%': { backgroundPosition: '0% 0%, 100% 100%' },
           '50%': { backgroundPosition: '25% 20%, 75% 80%' },
           '100%': { backgroundPosition: '0% 0%, 100% 100%' }
+        },
+        '.task-menu-paper': {
+          maxWidth: `${TASK_MENU_WIDTH} !important`,
+          width: '100%'
         }
       }
     },

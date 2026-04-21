@@ -10,6 +10,8 @@ import useTasks from '@hooks/useTasks'
 import { useTranslation } from 'react-i18next'
 import useProject from '@hooks/useProject'
 
+import { taskRegistry } from '@stores/task'
+
 const getColor = (theme) => ({
   color: theme.palette.error.light,
   ...theme.applyStyles('dark', { color: theme.palette.error.main })
@@ -17,10 +19,9 @@ const getColor = (theme) => ({
 
 export default function DeleteTask({
   id,
-  subtask,
-  subtasks,
-  showMenu,
-  isPreview
+  parentId,
+  subtaskIds,
+  showMenu
 }) {
   const { actions } = useTasks()
   const { t } = useTranslation('common')
@@ -35,20 +36,22 @@ export default function DeleteTask({
     setOpenConfirm(false)
 
     if (deleteAll) {
-      await actions.deleteTask({ id, subtask, deleteSubtasks: true })
-    } else {
-      if (isPreview) {
-        await actions.deleteTask({ id, subtask, deleteSubtasks: false })
-        return
-      }
-
-      await actions.moveSubtasks({ taskId: id, subtasks })
+      await actions.deleteTask({ id, parentId, deleteSubtasks: true })
+      return
     }
+
+    await actions.moveSubtasks({ taskId: id, subtaskIds })
   }
 
   const handleDelete = async () => {
-    const hasPendingSubtasks = !subtask && subtasks?.some(
-      s => s.status !== 'done' && s.status !== 'cancelled')
+    const registry = taskRegistry.value
+
+    const hasPendingSubtasks = !parentId && subtaskIds?.some(sId => {
+      const subtask = registry.get(sId)
+      if (!subtask) return false
+
+      return subtask.status !== 'done' && subtask.status !== 'cancelled'
+    })
 
     if (hasPendingSubtasks) {
       setOpenConfirm(true)
@@ -56,7 +59,7 @@ export default function DeleteTask({
     }
 
     showMenu(false)
-    await actions.deleteTask({ id, subtask })
+    await actions.deleteTask({ id, parentId })
   }
 
   return (
@@ -74,8 +77,8 @@ export default function DeleteTask({
             open={openConfirm}
             close={() => setOpenConfirm(false)}
             taskId={id}
-            isSubtask={!!subtask}
-            parentId={subtask}
+            isSubtask={!!parentId}
+            parentId={parentId}
             onConfirm={handleConfirmDelete}
           />
         </Suspense>

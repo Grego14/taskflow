@@ -6,7 +6,6 @@ import Button from '@mui/material/Button'
 import CircleLoader from '@components/reusable/loaders/CircleLoader'
 import AnimatedTitle from '@components/reusable/texts/AnimatedTitle'
 
-const MockProvider = lazy(() => import('@context/MockContext'))
 const DemoWrapper = lazy(() => import('./DemoDashboard'))
 
 import { useTranslation } from 'react-i18next'
@@ -18,6 +17,7 @@ import gsap from 'gsap'
 import { username, userId } from '@context/MockContext/utils'
 import useAuth from '@hooks/useAuth'
 import { useNavigate } from 'react-router-dom'
+import useUser from '@hooks/useUser'
 
 const bulletPoints = [
   'localStorageInfo',
@@ -25,10 +25,12 @@ const bulletPoints = [
   'limitedFeatures',
   'privateData'
 ]
+const usedResources = [ 'preview', 'tasks', 'projects', 'ui' ]
 
 export default function Preview() {
   const { t } = useTranslation(['common', 'preview'])
   const { currentUser } = useAuth()
+  const { setUser, profile, preferences, metadata } = useUser()
   const navigate = useNavigate()
 
   const previewData = getItem('preview', { playInitialAnim: true })
@@ -37,12 +39,7 @@ export default function Preview() {
     previewData.playInitialAnim === true)
   const [titleDone, setTitleDone] = useState(!showIntro)
 
-  const loadingResources = useLoadResources([
-    'preview',
-    'tasks',
-    'projects',
-    'ui'
-  ])
+  const loadingResources = useLoadResources(usedResources)
 
   // do not allow users with account enter this page
   useEffect(() => {
@@ -77,30 +74,38 @@ export default function Preview() {
 
   if (!showIntro) return (
     <Suspense fallback={null}>
-      <MockProvider>
-        <DemoWrapper />
-      </MockProvider>
+      <DemoWrapper />
     </Suspense>
   )
 
   const handleStart = () => {
+    const projectId = 'demo-project-id'
+
+    const fullUserDemo = {
+      uid: userId,
+      preferences,
+      profile: { ...profile, username },
+      metadata: { 
+        ...metadata, 
+        lastEditedProject: projectId,
+        lastEditedProjectOwner: username 
+      }
+    }
+
     setItem('preview', {
       playInitialAnim: false,
       tasks: [],
       projects: [{
-        id: 'demo-project-id',
+        id: projectId,
         name: 'My Project (Demo)',
-        members: [{
-          id: userId,
-          username: username,
-          avatar: '',
-          email: null
-        }],
+        members: [{ id: userId, username, avatar: '', email: null }],
         isArchived: false,
         createdBy: userId
-      }]
+      }],
+      user: fullUserDemo
     })
 
+    setUser(fullUserDemo)
     setShowIntro(false)
   }
 

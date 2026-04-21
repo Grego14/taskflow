@@ -13,50 +13,74 @@ import { useTranslation } from 'react-i18next'
 import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
 
+import { taskRegistry } from '@stores/task'
+
 const STATUS_CYCLE = {
   todo: 'done',
   done: 'cancelled',
   cancelled: 'todo'
 }
 
-export default function CompleteButton({ id, subtask, status }) {
+export default function CompleteButton({ id }) {
   const { t } = useTranslation('tasks')
   const { actions } = useTasks()
   const { preferences } = useUser()
-  const { data } = useProject()
-  const iconRef = useRef(null)
+  const { data: projectData } = useProject()
 
-  const isArchived = data?.isArchived
+  const btnRef = useRef(null)
+  const actualAnim = useRef(null)
 
-  useGSAP(() => {
-    if (!status || status === 'todo' || !iconRef.current) return
+  const taskData = taskRegistry.value.get(id)
+  const status = taskData?.status || 'todo'
+  const parentId = taskData?.parentId || taskData?.subtask
 
-    gsap.fromTo(iconRef.current,
-      { scale: 0.4, opacity: 0 },
+  const isArchived = projectData?.isArchived
+  const isDark = preferences.theme === 'dark'
+  const isChecked = status === 'done' || status === 'cancelled'
+
+  const { contextSafe } = useGSAP({ scope: btnRef })
+
+  const animateIn = contextSafe(() => {
+    actualAnim.current = gsap.fromTo(btnRef.current,
+      { scale: 0.7, opacity: 0, rotate: -15 },
       {
         scale: 1,
         opacity: 1,
+        rotate: 0,
         duration: 0.3,
-        ease: 'back.out(1.7)',
-        overwrite: 'all'
+        ease: 'back.out(2)',
+        clearProps: 'all'
       }
     )
-  }, [status])
+  })
 
-  const handleStatusChange = e => {
+  // enter animation of the btn when the status change
+  useGSAP(() => animateIn(), [status])
+
+  const handleStatusChange = contextSafe(e => {
     const isKeyEvent = e.type === 'keydown'
     const isEnterKey = e.key === 'Enter'
 
-    if (isKeyEvent && !isEnterKey) return
+    if (isKeyEvent && !isEnterKey || isArchived) return
 
     e.stopPropagation()
 
     const nextStatus = STATUS_CYCLE[status] || 'todo'
-    actions.updateStatus({ id, subtask, nextStatus })
-  }
 
-  const isChecked = status === 'done' || status === 'cancelled'
-  const isDark = preferences.theme === 'dark'
+    if(actualAnim.current?.isActive?.()) return
+
+    actualAnim.current = gsap.to(btnRef.current, {
+      scale: 0.5,
+      autoAlpha: 0,
+      duration: 0.2,
+      ease: 'power2.in',
+      onComplete: () => {
+        actions.updateStatus({ id, parentId, nextStatus })
+      }
+    })
+  })
+
+  if (!taskData) return null
 
   return (
     <TaskTooltip
@@ -64,9 +88,10 @@ export default function CompleteButton({ id, subtask, status }) {
         newStatus: STATUS_CYCLE[status]
       })}>
       <Checkbox
+        ref={btnRef}
         onClick={handleStatusChange}
         onKeyDown={handleStatusChange}
-        size={subtask ? 'small' : 'medium'}
+        size={parentId ? 'small' : 'medium'}
         disableRipple
         checked={isChecked}
         disabled={isArchived}
@@ -84,7 +109,7 @@ export default function CompleteButton({ id, subtask, status }) {
           }
         }}
         checkedIcon={
-          <Box ref={iconRef} display='flex'>
+          <Box display='flex'>
             {status === 'done'
               ? <DoneIcon fontSize='medium' color='success' />
               : <CloseIcon fontSize='medium' color='error' />

@@ -1,5 +1,4 @@
 import {
-  useState,
   lazy,
   Suspense,
   memo,
@@ -17,13 +16,11 @@ import DropIndicator from './DropIndicator'
 import taskIsOverdue from '@utils/tasks/taskIsOverdue'
 import { priorityColors } from '@/constants'
 
-import useProject from '@hooks/useProject'
-import useTaskDropTarget from './hooks/useTaskDropTarget'
-import useTaskDraggable from './hooks/useTaskDraggable'
 import useTasks from '@hooks/useTasks'
 import useLayout from '@hooks/useLayout'
-
 import useTaskAnimations from '@hooks/tasks/useTaskAnimations'
+
+import { taskRegistry, activeDropIndicator } from '@stores/task'
 
 const subtaskStyles = (theme, priority) => {
   const priorityColor = priorityColors[priority][0]
@@ -80,97 +77,109 @@ const subtaskStyles = (theme, priority) => {
   }
 }
 
-const SubtaskItem = forwardRef(function SubtaskItem({
-  data, list, onContextMenu
-}, ref) {
-  const { isArchived } = useProject()
-  const { actions } = useTasks()
-
-  const {
-    status,
-    id,
-    priority,
-    subtask,
-    isOverdue,
-    isParentOverdue,
-    isNew
-  } = data
-
-  const { isDragging } = useTaskDraggable({
-    data,
-    isArchived,
-    type: 'subtask',
-    extraData: { parentId: subtask }
-  })
-
-  const { isTopVisible, isBottomVisible } = useTaskDropTarget({
-    data,
-    list,
-    type: 'subtask',
-    onDrop: (source, target, edge) =>
-      actions.handleReorder(source, target.id, edge)
-  })
-
-  const isChecked = status === 'done' || status === 'cancelled'
+const SubtaskItem = forwardRef(function SubtaskItem(props, ref) {
+  const { 
+    id, 
+    isParentChecked, 
+    isParentOverdue, 
+    listIds
+  } = props
 
   const { animateItemEntrance } = useTaskAnimations()
 
+  const data = taskRegistry.value.get(id) || {}
+  const hasData = !!data?.id
+
+  const status = data?.status
+  const priority = data?.priority || 'none'
+  const parentId = data?.parentId
+  const isOverdue = hasData ? taskIsOverdue(data) : false
+  const isChecked = status === 'done' || status === 'cancelled'
+
+  const { sourceId, targetId, edge } = activeDropIndicator.value || {}
+  const showIndicator = targetId === id && sourceId !== id
+  const indicatorEdge = showIndicator ? edge : null
+
   useLayoutEffect(() => {
+    if (!hasData || !data.createdAt) return
+
+    const createdTime = typeof data.createdAt === 'number' 
+      ? data.createdAt 
+      : data.createdAt.seconds * 1000
+
+    const isNew = Math.abs(Date.now() - createdTime) < 5000
+
     if (isNew) animateItemEntrance(id)
-  }, [])
+  }, [hasData])
+
+  if (!hasData) return null
 
   return (
-    <Box className='relative'>
-      <DropIndicator visible={isTopVisible} maxWidth='100%' isTop />
+    <Box className='relative'
+      data-task-id={id}
+      data-type='subtask'
+      data-parent-id={parentId}
+      data-is-overdue={isOverdue}>
+      <Suspense fallback={null}>
+        {showIndicator && (
+          <DropIndicator 
+            maxWidth='100%' 
+            isTop={indicatorEdge === 'top'} 
+            isSubtask
+          />
+        )}
+      </Suspense>
 
       <Card
         ref={ref}
         elevation={0}
-        onContextMenu={(e) => onContextMenu(e, id)}
         sx={[theme => ({
           ...subtaskStyles(theme, priority),
           opacity: isChecked ? 0.6 : 1,
-          ...((isDragging || isOverdue && !isParentOverdue) && { opacity: 0.4 }),
+          ...(showIndicator || (isOverdue && !isParentOverdue) && { opacity: 0.4 }),
           cursor: 'grab'
         })]}>
         <Box className='flex flex-center' width='100%'>
-          <CompleteButton id={id} subtask={subtask} status={status} />
-          <Header data={data} status={status} insideTask />
+          <CompleteButton id={id}  />
+          <Header id={id} insideTask />
         </Box>
       </Card>
-      <DropIndicator visible={isBottomVisible} maxWidth='100%' />
     </Box>
   )
 })
 
-export default memo(function Subtasks({ data, contextMenuHandler }) {
-  const wrapperRef = useRef(null)
-  const { taskRefs } = useTasks()
-  const { filter } = useLayout()
+export default memo(function Subtasks(props) {
+  const {
+    subtaskIds = [], 
+    isParentOverdue, 
+    isParentChecked 
+  } = props
 
+  const wrapperRef = useRef(null)
+  const { setTaskRef } = useTasks()
+  const { filter } = useLayout()
   const { animateEntrance } = useTaskAnimations()
 
   useLayoutEffect(() => {
-    animateEntrance(wrapperRef, data, { subtasks: true })
-  }, [filter])
+    if (subtaskIds.length > 0) 
+      animateEntrance(wrapperRef, subtaskIds, { subtasks: true })
+  }, [filter, subtaskIds.length])
 
-  if (!data?.length) return null
+  if (!subtaskIds.length) return null
 
   return (
     <Box
       ref={wrapperRef}
       className='flex flex-column relative'
       sx={{ ml: 4, pb: 1 }}>
-      {data.map(subtask => (
+      {subtaskIds.map(id => (
         <SubtaskItem
-          key={subtask.id}
-          data={subtask}
-          onContextMenu={contextMenuHandler}
-          list={data}
-          ref={(el) => {
-            if (el) taskRefs.current[subtask.id] = el
-            else taskRefs.current[subtask.id] = null
-          }}
+          key={id}
+          id={id}
+          listIds={subtaskIds}
+          isParentChecked={isParentChecked}
+          isParentOverdue={isParentOverdue}
+          ref={el => setTaskRef(id, el)}
         />
       ))}
     </Box>

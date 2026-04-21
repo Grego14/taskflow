@@ -1,34 +1,39 @@
 import { useEffect } from 'preact/hooks'
 import useProject from '@hooks/useProject'
-import useTasks from '../useTasks'
+import { taskRegistry } from '@stores/task'
 
 const isNotCancelled = status => status !== 'cancelled'
 
 export default function useTaskMetrics() {
   const { updateMetrics, metrics } = useProject()
-  const { tasks } = useTasks()
+  const registry = taskRegistry.value
 
   useEffect(() => {
-    if (!tasks) return
+    if (!registry.size) return
 
     let totalTasks = 0
     let totalCompletedTasks = 0
 
-    for (const task of tasks) {
-      const parentActive = isNotCancelled(task.status)
+    for (const task of registry.values()) {
+      const isSubtask = !!task.parentId
+      
+      if (isSubtask) {
+        const parent = registry.get(task.parentId)
 
-      if (parentActive) {
-        totalTasks++
-        if (task.status === 'done') totalCompletedTasks++
-
-        if (task.subtasks?.length <= 0) continue
-
-        for (const sub of task.subtasks) {
-          // only count subtasks with pending/non-cancelled parents
-          if (isNotCancelled(sub.status)) {
-            totalTasks++
-            if (sub.status === 'done') totalCompletedTasks++
-          }
+        // only count subtasks if their parent is not cancelled
+        if (
+          parent && 
+          isNotCancelled(parent.status) && 
+          isNotCancelled(task.status)
+        ) {
+          totalTasks++
+          if (task.status === 'done') totalCompletedTasks++
+        }
+      } else {
+        // parent tasks only need to be not cancelled
+        if (isNotCancelled(task.status)) {
+          totalTasks++
+          if (task.status === 'done') totalCompletedTasks++
         }
       }
     }
@@ -39,5 +44,5 @@ export default function useTaskMetrics() {
 
       return hasChanged ? { ...prev, totalTasks, totalCompletedTasks } : prev
     })
-  }, [tasks, updateMetrics])
+  }, [registry, updateMetrics])
 }

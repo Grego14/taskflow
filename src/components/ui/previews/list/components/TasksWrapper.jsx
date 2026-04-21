@@ -7,20 +7,32 @@ import Box from '@mui/material/Box'
 import Divider from '@mui/material/Divider'
 import Typography from '@mui/material/Typography'
 
-import useApp from '@hooks/useApp'
-import useTasks from '@hooks/useTasks'
-import { forwardRef, memo, useRef, useState, useLayoutEffect } from 'preact/compat'
+import { 
+  forwardRef, 
+  memo, 
+  useRef, 
+  useState, 
+  useLayoutEffect, 
+  useMemo,
+  useCallback
+} from 'preact/compat'
 import useLayout from '@hooks/useLayout'
-
+import useTasks from '@hooks/useTasks'
 import useTaskAnimations from '@hooks/tasks/useTaskAnimations'
 
+import { tasksReducer } from '@components/reusable/dialogs/newtask/tasksReducer'
+import { alpha } from '@mui/material/styles'
+
+const accordionStyles = {
+  backgroundColor: 'transparent', 
+  backgroundImage: 'none'
+}
+
 const TasksWrapper = forwardRef(function TasksWrapper(props, ref) {
-  const { isMobile } = useApp()
   const {
     variant = 'body1',
     title,
-    tasks = [],
-    tasksStyles,
+    taskIds = [],
     containerStyles,
     divider = false,
     dragState,
@@ -30,54 +42,61 @@ const TasksWrapper = forwardRef(function TasksWrapper(props, ref) {
     type = null
   } = props
 
-  const { taskRefs } = useTasks()
+  const { setTaskRef } = useTasks()
   const { filter } = useLayout()
+  const [expanded, setExpanded] = useState(expand)
   const wrapperRef = useRef(null)
 
   const isOver = dragState === 'is-over'
-  const hasTasks = tasks?.length > 0
-
-  const [expanded, setExpanded] = useState(expand)
+  const hasTasks = taskIds.length > 0
 
   const { animateEntrance } = useTaskAnimations()
 
   useLayoutEffect(() => {
-    animateEntrance(wrapperRef, tasks, { addDelay: type === 'overdue' })
+    if (hasTasks) 
+      animateEntrance(wrapperRef, taskIds, { addDelay: type === 'overdue' })
   }, [filter])
 
+  const wrapperStyles = useMemo(() => ({
+    display: show ? 'flex' : 'none',
+    gap: 1,
+    mb: divider ? 4 : 0,
+    '&.MuiBox-root:first-of-type': {
+      // if there are not tasks we align the childrens to the middle
+      my: hasTasks ? 4 : 'auto',
+      ...containerStyles
+    },
+    '& .MuiAccordionSummary-root': {
+      '& .MuiAccordionSummary-content': { mr: hasTasks ? 2 : 0 },
+      width: 'fit-content', 
+      mx: 'auto' 
+    }
+  }), [hasTasks, show, divider, containerStyles])
+
+  const detailsStyles = useMemo(() => ({
+    gap: 4,
+    p: 2,
+    mx: { xs: 0.75, mobile: 2 },
+    borderRadius: '12px',
+    border: '2px dashed',
+    borderColor: isOver ? 'primary.main' : 'transparent',
+    backgroundColor: isOver ? alpha('#fff', 0.075) : 'transparent',
+    transition: 'border-color 0.3s ease, background-color 0.3s ease',
+    overflow: 'hidden'
+  }), [isOver])
+
   return (
-    <Box
-      className='flex flex-column'
-      ref={ref}
-      sx={{
-        ...(!show && { display: 'none' }),
-        gap: 1,
-        mb: divider ? 4 : 0,
-        '&.MuiBox-root:first-of-type': {
-          // if there are not tasks we align the childrens to the middle
-          my: hasTasks ? 4 : 'auto',
-          ...containerStyles
-        }
-      }}>
+    <Box className='flex flex-column' ref={ref} sx={wrapperStyles}>
       <Accordion
         elevation={0}
         expanded={expanded}
         disableGutters
-        onChange={(e, newValue) => setExpanded(newValue)}
-        sx={{
-          backgroundColor: 'transparent',
-          backgroundImage: 'none'
-        }}>
+        onChange={(e, val) => setExpanded(val)}
+        sx={accordionStyles}>
         <AccordionSummary
-          sx={{
-            // push the icon more to the right
-            '& .MuiAccordionSummary-content': { mr: 2 },
-            width: 'fit-content',
-            mx: 'auto'
-          }}
           className='text-center'
           expandIcon={
-            tasks?.length !== 0 ?
+            hasTasks ?
               <ChevronLeftIcon fontSize='small' sx={{ rotate: '-90deg' }} />
               : null
           }>
@@ -89,39 +108,21 @@ const TasksWrapper = forwardRef(function TasksWrapper(props, ref) {
             {title}
           </Typography>
         </AccordionSummary>
-        <AccordionDetails
-          className='flex flex-column'
-          sx={[theme => (
-            {
-              gap: 4,
-              p: 2,
-              mx: { xs: 0.75, mobile: 2 },
-              borderRadius: '12px',
-              border: '2px dashed',
-              borderColor: isOver ? 'primary.main' : 'transparent',
-              backgroundColor: isOver ? theme.alpha('#fff', 0.075) : 'transparent',
-              transition: 'border-color 0.3 ease, background-color 0.3 ease',
-              overflow: 'hidden'
-            }),
-            tasksStyles
-          ]}>
+        <AccordionDetails className='flex flex-column' sx={detailsStyles}>
           <Box className='flex flex-column' ref={wrapperRef}>
-            {show &&
-              tasks?.map(task => (
-                <ListTask
-                  key={task.id}
-                  data={task}
-                  ref={(el) => {
-                    if (el) taskRefs.current[task.id] = el
-                    else taskRefs.current[task.id] = null
-                  }}
-                />)
-              )}
+            {show ? taskIds.map(id => (
+              <ListTask 
+                key={id} 
+                id={id}
+                ref={el => setTaskRef(id, el)}
+              />
+            )) : null}
             {children}
           </Box>
-          {(divider && hasTasks) && (
-            <Divider sx={{ mx: 4, width: '80%', alignSelf: 'center' }} />
-          )}
+
+          {(divider && hasTasks) ? (
+            <Divider sx={{ mx: 4, width: '80%', alignSelf: 'center', mt: 2 }} />
+          ) : null}
         </AccordionDetails>
       </Accordion>
     </Box>

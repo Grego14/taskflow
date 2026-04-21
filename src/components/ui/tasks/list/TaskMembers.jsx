@@ -8,15 +8,23 @@ import { useState, useMemo } from 'react'
 import useProject from '@hooks/useProject'
 import { useTranslation } from 'react-i18next'
 
-export default function TaskMembers({ assignedTo = [], subtasks = [], insideTask }) {
+import { taskRegistry } from '@stores/task'
+
+export default function TaskMembers({ assignedTo = [], subtaskIds = [], insideTask }) {
   const { t } = useTranslation('tasks')
   const { projectMembers } = useProject()
 
   const taskMembers = useMemo(() => {
+    const registry = taskRegistry.value
     const assigned = assignedTo || []
-    const subtaskAssigned = (subtasks || []).flatMap(s => s.assignedTo || [])
+
+    const subtaskAssigned = (subtaskIds || []).flatMap(sId => {
+      const subtask = registry.get(sId)
+      return subtask?.assignedTo || []
+    })
+
     return [...new Set([...assigned, ...subtaskAssigned])]
-  }, [assignedTo, subtasks])
+  }, [assignedTo, subtaskIds, taskRegistry.value])
 
   if (taskMembers.length === 0) return null
 

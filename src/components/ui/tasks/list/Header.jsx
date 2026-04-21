@@ -1,4 +1,4 @@
-import { useMemo, useState, Suspense, lazy } from 'preact/compat'
+import { useMemo, useState, Suspense, lazy, useEffect } from 'preact/compat'
 
 import DropdownMenu from '@components/reusable/DropdownMenu'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
@@ -17,119 +17,136 @@ const TaskActions = lazy(() => import('../buttons/TaskActions'))
 
 import useApp from '@hooks/useApp'
 import useProject from '@hooks/useProject'
-import useUser from '@hooks/useUser'
-import { useTranslation } from 'react-i18next'
+import useTasks from '@hooks/useTasks'
 
 import formatTimeAgo from '@utils/formatTimeAgo'
 import formatTimestamp from '@utils/formatTimestamp'
 import getMenuLabel from '@utils/getMenuLabel'
+import getDateByKey from '@utils/tasks/getDateByKey'
 
-export default function Header({ data, insideTask = false, status }) {
+import { taskRegistry } from '@stores/task'
+
+const headerStyles = { p: 0, width: '100%' }
+const headerSlotProps = {
+  action: { sx: { my: 'auto', display: 'flex', gap: 1, mr: 0 } }
+}
+
+const menuSlotProps = { paper: { className: 'task-menu-paper' } }
+
+export default function Header({ id, insideTask = false }) {
   const { isOnlyMobile } = useApp()
-  const { t } = useTranslation('tasks')
   const { isArchived } = useProject()
-  const { preferences } = useUser()
+  const { actions } = useTasks()
 
   const [showTitle, setShowTitle] = useState(false)
   const [open, setOpen] = useState(false)
 
-  const locale = preferences?.locale
-  const isDone = status === 'done'
-  const isCancelled = status === 'cancelled'
+  const taskData = taskRegistry.value.get(id)
 
-  if (!data) return null
+  if (!taskData) return null
 
   const {
-    id,
-    subtasks,
-    subtask,
+    status,
+    subtasks: subtaskIds,
     assignedTo: members,
-    rawDate,
     priority,
     title,
-    dueDate,
-    isParentChecked
-  } = data
+    rawDate: initialDate
+  } = taskData
+  const parentId = taskData?.parentId
 
-  const actionsData = {
-    id,
-    subtask,
-    subtasks,
-    members,
-    rawDate,
-    priority
+  const isDone = status === 'done'
+  const isCancelled = status === 'cancelled'
+  const isChecked = isDone || isCancelled
+
+  const handleDateChange = (newDate, triggerExit) => {
+    triggerExit()
+
+    setTimeout(() => {
+      actions.updateTask({
+        id,
+        parentId,
+        data: { 
+          rawDate: newDate, 
+          dueDate: getDateByKey(newDate) 
+        }
+      })
+    }, 250)
   }
 
-  const isChecked = isDone || isCancelled
+  const isParentChecked = parentId 
+    ? taskRegistry.value.get(parentId)?.status === 'done' 
+    : false
 
   return (
     <CardHeader
       className='flex-center'
-      sx={{ p: 0, width: '100%' }}
+      sx={headerStyles}
       disableTypography
-      slotProps={{
-        action: {
-          sx: { my: 'auto', display: 'flex', gap: 1, mr: 0 },
-          className: !insideTask ? 'task' : 'subtask'
-        }
-      }}
+      slotProps={headerSlotProps}
       title={
         <UpdatableTaskTitle
           title={title}
           taskId={id}
           isChecked={isChecked}
           isCancelled={isCancelled}
-          subtask={subtask}
+          subtask={parentId}
           show={showTitle}
           setShow={setShowTitle}
         />
       }
       action={
-        !showTitle && (
+        !showTitle ? (
           <>
             {/* Show the total time on the parent task */}
-            {!subtask && <TaskTotalTime data={data} />}
+            {!parentId ? <TaskTotalTime id={id} /> : null}
 
-            {(!isChecked && !isParentChecked) && (
-              <SmartActionLabel
-                data={data}
-                insideTask={insideTask}
-              />
-            )}
+            {(!isChecked && !isParentChecked) ? (
+              <SmartActionLabel id={id} insideTask={insideTask} />
+            ): null}
 
             <TaskMembers
               assignedTo={members}
-              subtasks={subtasks}
+              subtaskIds={subtaskIds}
               insideTask={insideTask}
             />
 
-            {!isOnlyMobile && (
+            {!isOnlyMobile ? (
               <TaskCalendar
-                rawDate={rawDate}
-                taskId={id}
-                parentId={subtask}
+                rawDate={initialDate}
                 insideTask={insideTask}
+                onDateChange={handleDateChange}
               />
-            )}
+            ): null}
 
             <DropdownMenu
               icon={<MoreVertIcon fontSize={insideTask ? 'small' : 'medium'} />}
               forceClose={!open}
               tooltipPosition='top'
-              tooltipComponent={TaskTooltip}
               disabled={isArchived}
+              slots={{ tooltip: TaskTooltip }}
+              slotProps={menuSlotProps}
               onClick={() => setOpen(true)}
               label={state => getMenuLabel(state, 'taskActionsLabel', 'tasks')}>
               {(menuOpen, triggerExit) => (
                 <Suspense fallback={<TaskActionsSkeleton />}>
-                  {menuOpen && (
-                    <TaskActions {...actionsData} menuHandler={triggerExit} />
-                  )}
+                  {menuOpen ? (
+                    <TaskActions 
+                      id={id}
+                      parentId={parentId}
+                      subtaskIds={subtaskIds}
+                      members={members}
+                      rawDate={initialDate}
+                      priority={priority}
+                      onDateChange={handleDateChange}
+                      menuHandler={triggerExit}
+                    />
+                  ): null}
                 </Suspense>
               )}
             </DropdownMenu>
           </>
-        )
+        ): null
       }
     />
   )

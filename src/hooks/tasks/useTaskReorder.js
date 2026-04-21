@@ -4,43 +4,78 @@ import sortTasks from '@utils/tasks/sortTasks'
 import taskIsOverdue from '@utils/tasks/taskIsOverdue'
 import getNewPosition from '@utils/tasks/getNewPosition'
 
-export default function useReorder({ tasks, updateTask }) {
-  const handleReorder = useCallback(async (source, taskId, edge) => {
-    const isSubtask = source.type === 'subtask'
-    const list = sortTasks(isSubtask
-      ? tasks.find(t => t.id === source.parentId)?.subtasks
-      : tasks.filter(t => !taskIsOverdue(t)))
+import { taskRegistry, rootTaskIds } from '@stores/task'
 
-    if (!list) return
+export default function useReorder(reorderTask) {
+  const handleReorder = useCallback(async (
+    source, 
+    targetId, 
+    edge, 
+    newStatus = null // only used on KANBAN
+  ) => {
+    // try to drop a task on one of the same task drop indicators
+    if (source.id === targetId) return
 
-    const taskIndex = list.findIndex(t => t.id === taskId)
-    const sourceIndex = list.findIndex(t => t.id === source.id)
+    const registry = taskRegistry.value
+    const isSubtask = !!source.parentId
+    const parentId = source.parentId
+    let list = []
 
-    if (taskIndex === -1 || sourceIndex === -1) return
+    if (isSubtask) {
+      const parent = registry.get(parentId)
+      const subtaskIds = parent?.subtasks || []
 
-    // try to drop a task on the TOP of the task that is ALREADY below it
-    const isAlreadyTop = edge === 'top' && sourceIndex === taskIndex - 1
-
-    // try to drop a task on the BOTTOM of the task that is ALREADY above it
-    const isAlreadyBottom = edge === 'bottom' && sourceIndex === taskIndex + 1
-
-    if (isAlreadyTop || isAlreadyBottom || source.id === taskId) return
-
-    let prevPos, nextPos
-    if (edge === 'top') {
-      prevPos = list[taskIndex - 1]?.position ?? null
-      nextPos = list[taskIndex].position
+      for (const id of subtaskIds) {
+        const subtask = registry.get(id)
+        if (subtask) list.push(subtask)
+      }
     } else {
-      prevPos = list[taskIndex].position
-      nextPos = list[taskIndex + 1]?.position ?? null
+      for (const id of rootTaskIds.value) {
+        const task = registry.get(id)
+        if (task && !taskIsOverdue(task)) list.push(task)
+      }
     }
 
-    updateTask({
-      id: source.id,
-      subtask: isSubtask ? source.parentId : null,
-      data: { position: getNewPosition(prevPos, nextPos) }
+    if (list.length < 2) {
+      // if there's only one task and we are here, it's either a status change 
+      // or an invalid move.
+      if (!newStatus) return
+    }
+
+    // sort to get the current visual order
+    const sortedList = sortTasks(list)
+    const sourceIndex = sortedList.findIndex(t => t.id === source.id)
+    const targetIndex = sortedList.findIndex(t => t.id === targetId)
+
+    if (sourceIndex === -1 || targetIndex === -1) return
+
+    // move UP only if target is NOT the task directly below
+    if (!newStatus && edge === 'top' && 
+        sourceIndex === targetIndex - 1) return
+
+    // move DOWN only if target is NOT the task directly above
+    if (!newStatus && edge === 'bottom' && 
+        sourceIndex === targetIndex + 1) return
+
+    let prevPos, nextPos
+
+    if (edge === 'top') {
+      prevPos = sortedList[targetIndex - 1]?.position ?? null
+      nextPos = sortedList[targetIndex].position
+    } else {
+      prevPos = sortedList[targetIndex].position
+      nextPos = sortedList[targetIndex + 1]?.position ?? null
+    }
+
+    const newPosition = getNewPosition(prevPos, nextPos)
+
+    await reorderTask({
+      taskId: source.id,
+      parentId,
+      newPosition,
+      newStatus
     })
-  }, [tasks, updateTask])
+  }, [reorderTask])
 
   return handleReorder
 }
