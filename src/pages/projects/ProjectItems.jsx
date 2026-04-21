@@ -11,18 +11,42 @@ import List from '@mui/material/List'
 const ToggleProjectDrawer = lazy(() =>
   import('@components/ui/projects/ToggleProjectDrawer'))
 
+const ThemeUpdater = lazy(() => import('@components/ui/buttons/ThemeUpdater'))
+const LangUpdater = lazy(() => import('@components/ui/buttons/LangUpdater'))
+
 import useApp from '@hooks/useApp'
 import useProject from '@hooks/useProject'
 import { useNavigate } from 'react-router-dom'
+import useLayout from '@hooks/useLayout'
 
 export default function ProjectItems({ onMount }) {
   const { isMobile } = useApp()
   const { id } = useProject()
   const navigate = useNavigate()
+  const { isPreview } = useLayout()
 
   const defaultItems =
     <>
       <PreviewSwitcher />
+      {isPreview && (
+        <Suspense fallback={null}>
+          {!isMobile ? (
+            <Box 
+              mr='auto'
+              className='flex flex-center' 
+              gap={1}>
+              <ThemeUpdater />
+              <LangUpdater />
+            </Box>
+          ) : (
+              <>
+                <ThemeUpdater />
+                <LangUpdater longText={false} />
+              </>
+            )}
+        </Suspense>
+      )}
+
       {!isMobile && <ArchiveButton />}
       <FilterButton />
       <AddMembers />

@@ -21,18 +21,15 @@ export default function LangUpdater({ longText = true }) {
     const newLang = lang === 'en' ? 'es' : 'en'
     i18n.changeLanguage(newLang)
 
-      ; (async () => {
-        setUser(prev => ({
-          ...prev,
-          preferences: {
-            ...prev.preferences,
-            lang: newLang
-          }
-        }))
+    setUser(prev => ({
+      ...prev,
+      preferences: {
+        ...prev.preferences,
+        lang: newLang
+      }
+    }))
 
-        if (uid) await update(uid, { lang: newLang })
-
-      })()
+    if (uid) update({ lang: newLang })
   }, [update, uid, i18n, lang])
 
   return (
