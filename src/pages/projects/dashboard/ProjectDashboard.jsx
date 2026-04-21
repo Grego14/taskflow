@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect } from 'preact/compat'
+import { lazy, Suspense, useEffect, memo, useMemo } from 'preact/compat'
 
 import Link from '@components/reusable/Link'
 import CircleLoader from '@components/reusable/loaders/CircleLoader'
@@ -18,28 +18,31 @@ import useLoadResources from '@hooks/useLoadResources'
 import useApp from '@hooks/useApp'
 import useLayout from '@hooks/useLayout'
 import useTaskMetrics from '@hooks/tasks/useTaskMetrics'
-import useTasks from '@hooks/useTasks'
 import { useGSAP } from '@gsap/react'
 
 import gsap from 'gsap'
 import ScrollTrigger from 'gsap/ScrollTrigger'
-
 gsap.registerPlugin(ScrollTrigger)
 
-const ProjectHeader = ({ projectName, isArchived }) => {
+import { taskRegistry } from '@stores/task'
+
+const ProjectHeader = memo(({ projectName, isArchived }) => {
   const { isMobile } = useApp()
   const { t } = useTranslation('projects')
   const { isPreview } = useLayout()
 
+  const containerStyles = useMemo(() => ({
+    display: 'flex',
+    flexDirection: { xs: 'column', tablet: 'row' },
+    gap: 2,
+    alignItems: 'center',
+    mt: 2,
+    px: { xs: 0, tablet: 2 },
+    justifyContent: { xs: 'center', tablet: 'start' }
+  }), [])
+
   return (
-    <Box
-      display='flex'
-      flexDirection={{ xs: 'column', tablet: 'row' }}
-      gap={2}
-      alignItems='center'
-      mt={2}
-      px={{ xs: 0, tablet: 2 }}
-      justifyContent={{ xs: 'center', tablet: 'start' }}>
+    <Box sx={containerStyles}>
       <Breadcrumbs
         separator={<BreadcrumbIcon fontSize='small' />}
         sx={{ width: 'fit-content' }}>
@@ -63,6 +66,7 @@ const ProjectHeader = ({ projectName, isArchived }) => {
         </Suspense>
       )}
 
+      {/* Portal target for the Zen Mode laptop/desktop button */}
       <Box id='zen-portal-root' ml='auto' />
 
       {isArchived && (
@@ -76,20 +80,26 @@ const ProjectHeader = ({ projectName, isArchived }) => {
       )}
     </Box>
   )
-}
+})
 
 export default function ProjectDashBoard() {
   const { t } = useTranslation('projects')
   const { data, isArchived } = useProject()
-  const { tasks } = useTasks()
   const { isMobile } = useApp()
 
-  const projectName = data?.name
+  const registrySize = taskRegistry.value.size
   const loadingResources = useLoadResources('tasks')
 
   useGSAP(() => {
-    ScrollTrigger.refresh()
-  }, { dependencies: [tasks?.length] })
+    // only refresh if we have actual tasks to avoid useless calculations
+    if (registrySize > 0) {
+      const timer = setTimeout(() => {
+        ScrollTrigger.refresh()
+      }, 150)
+
+      return () => clearTimeout(timer)
+    }
+  }, { dependencies: [registrySize] })
 
   useTaskMetrics()
 
