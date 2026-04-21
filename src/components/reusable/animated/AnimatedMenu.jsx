@@ -60,13 +60,13 @@ export default function AnimatedMenu({ children, open, onExitComplete }) {
       opacity: 0,
       y: -15,
       stagger: stagger * 0.5,
-      duration: 0.2,
+      duration: 0.15,
       ease: 'power2.in'
     })
 
     tl.to(menuElement, {
       opacity: 0,
-      duration: 0.2,
+      duration: 0.15,
       ease: 'power1.in'
     }, '<0.1')
   })
@@ -75,6 +75,7 @@ export default function AnimatedMenu({ children, open, onExitComplete }) {
     if (!menuElement || !open) return
 
     const targets = getAnimatableItems(menuElement)
+
     if (!targets?.length) return
 
     const stagger = getDynamicStagger(targets.length)
@@ -94,7 +95,8 @@ export default function AnimatedMenu({ children, open, onExitComplete }) {
         scale: 1,
         ease: 'back.out(2)',
         stagger,
-        overwrite: 'auto'
+        overwrite: 'auto',
+        clearProps: 'transform'
       },
       '<0.1'
     )
