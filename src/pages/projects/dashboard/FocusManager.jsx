@@ -11,16 +11,13 @@ const LazyOverlay = lazy(() => import('./FocusOverlay'))
 const LazyFab = lazy(() => import('./FocusFab'))
 const LazyZenStatus = lazy(() => import('./ZenModeStatus'))
 
-export default function FocusManager() {
+function ActiveFocusSession() {
   const { isMobile } = useApp()
+  const zenRoot = document.getElementById('zen-portal-root')
 
   useDocumentTitleTimer()
   useFocusSession()
   useFocusShortcuts()
-
-  if (!isWorking.value) return null
-
-  const zenRoot = document.getElementById('zen-portal-root')
 
   return (
     <Suspense fallback={null}>
@@ -38,4 +35,10 @@ export default function FocusManager() {
       )}
     </Suspense>
   )
+}
+
+export default function FocusManager() {
+  if (!isWorking.value) return null
+
+  return <ActiveFocusSession />
 }
