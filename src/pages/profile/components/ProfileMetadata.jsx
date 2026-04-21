@@ -30,7 +30,6 @@ export default memo(function ProfileMetadata() {
 
     gsap.from(split.chars, {
       opacity: 0,
-      color: theme.palette.secondary.main,
       textShadow: `0 0 8px ${theme.palette.secondary.main}`,
       y: 10,
       rotateX: -90,
@@ -39,7 +38,9 @@ export default memo(function ProfileMetadata() {
       ease: 'expo.out',
       delay: 0.8
     })
-  }, { scope: containerRef, dependencies: [currentUser?.metadata] })
+  }, { scope: containerRef, 
+      dependencies: [currentUser?.metadata, theme.palette.mode] 
+    })
 
   if (!currentUser?.metadata) return null
 
