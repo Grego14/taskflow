@@ -1,5 +1,4 @@
 import Box from '@mui/material/Box'
-import Divider from '@mui/material/Divider'
 import Paper from '@mui/material/Paper'
 import Typography from '@mui/material/Typography'
 import DescriptionInput from '@components/reusable/projects/DescriptionInput'
@@ -22,9 +21,6 @@ import { SplitText } from 'gsap/SplitText'
 
 gsap.registerPlugin(SplitText)
 
-// used on the animations
-const hidden = { opacity: 0, visibility: 'hidden' }
-
 // used on the enter animation box and the container box
 const containerStyles = {
   display: 'flex',
@@ -34,9 +30,40 @@ const containerStyles = {
   flexGrow: 1
 }
 
+const btnsContainerStyles = {
+  flexDirection: { xs: 'column', tablet: 'row' },
+  justifyContent: { mobile: 'space-between', tablet: 'center' },
+  alignItems: 'center',
+  minWidth: '100%',
+  gap: 2
+}
+
+const formStaticStyles = {
+  px: { xs: 1, mobile: 3 },
+  py: { xs: 2, mobile: 4 },
+  gap: { xs: 2, tablet: 3 },
+  width: '100%',
+  backgroundColor: 'transparent',
+  '& .MuiInputBase-root .MuiInputBase-input::placeholder': {
+    opacity: 0.55
+  },
+  perspective: '1000px',
+  transformOrigin: '25% 100%',
+  maxWidth: 'fit-content'
+}
+
+const getDynamicFormStyles = (theme) => ({
+  ...formStaticStyles,
+  backgroundImage: `linear-gradient(180deg, 
+    ${theme.alpha(theme.palette.background.paper, 0.15)}, 
+    ${theme.alpha(theme.palette.primary.main, 0.075)})`,
+})
+
+const usedResources = ['projects', 'common']
+
 export default function NewProject() {
-  const { t } = useTranslation(['projects', 'common'])
-  const loadingResources = useLoadResources('projects')
+  const { t, i18n } = useTranslation(usedResources)
+  const loadingResources = useLoadResources(usedResources)
   const containerRef = useRef(null)
 
   const [form, setForm] = useState({
@@ -85,26 +112,10 @@ export default function NewProject() {
           {t('projects:createProject')}
         </AnimatedTitle>
 
-        <Paper
-          className='flex flex-column'
-          variant='outlined'
-          sx={t => ({
-            px: { xs: 1, mobile: 3 },
-            py: { xs: 2, mobile: 4 },
-            gap: { xs: 2, tablet: 3 },
-            ...hidden,
-            width: '100%',
-            backgroundColor: 'transparent',
-            backgroundImage: `linear-gradient(180deg, 
-              ${t.alpha(t.palette.background.paper, 0.15)}, 
-              ${t.alpha(t.palette.primary.main, 0.075)})`,
-            '& .MuiInputBase-root .MuiInputBase-input::placeholder': {
-              opacity: 0.55
-            },
-            perspective: '1000px',
-            transformOrigin: '25% 100%',
-            maxWidth: 'fit-content'
-          })}
+        <Paper 
+          className='flex flex-column hide-element' 
+          variant='outlined' 
+          sx={getDynamicFormStyles}
           id='newProjectForm'>
           <Box className='flex flex-grow flex-column' gap='inherit'>
             <NameInput
@@ -130,8 +141,6 @@ export default function NewProject() {
               setPublicTemplate={val => updateField('publicTemplate', val)}
             />
 
-            <Divider sx={{ borderBottomWidth: '2px' }} />
-
             <AddMembers
               members={form.members}
               setMembers={val => updateField('members', val)}
@@ -140,14 +149,9 @@ export default function NewProject() {
           </Box>
         </Paper>
 
-        <Box className='flex flex-column'
-          flexDirection={{ xs: 'column', tablet: 'row' }}
-          justifyContent={{ mobile: 'space-between', tablet: 'center' }}
-          alignItems='center'
-          minWidth='100%'
-          id='newProjectCreate'
-          {...hidden}
-          gap={2}>
+        <Box className='flex flex-column hide-element'
+          sx={btnsContainerStyles}
+          id='newProjectCreate'>
           <CreateProject {...form} errors={errors} sx={{ m: 0 }} />
           <CreateFromTemplate sx={{ flexDirection: 'inherit' }} />
         </Box>

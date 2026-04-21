@@ -9,6 +9,23 @@ import PeopleIcon from '@mui/icons-material/People'
 
 import { useTranslation } from 'react-i18next'
 
+const containerStyles = {
+  gap: { xs: 3, tablet: 2.5 },
+  px: { xs: 0, tablet: 2 }
+}
+
+const getSwitchContainerStyles = (t) => ({
+  width: 'fit-content',
+  p: 1,
+  mr: 2,
+  backgroundColor: 'transparent',
+  backgroundImage: `linear-gradient(-45deg,
+    ${t.alpha(t.palette.secondary.main, 0.075)},
+    ${t.alpha(t.palette.primary.main, 0.5)})`,
+  transition: 'scale 0.2s ease-out',
+  '&:hover': { scale: 0.9 }
+})
+
 export default function MakeTemplate({
   template,
   setTemplate,
@@ -20,10 +37,7 @@ export default function MakeTemplate({
   return (
     <Container
       className='flex flex-column'
-      sx={{
-        gap: { xs: 1.25, tablet: 2.5 },
-        px: { xs: 0, tablet: 2 }
-      }}>
+      sx={containerStyles}>
       <SwitcthContainer
         title={t('newProject.makeTemplate')}
         subtitle={t('newProject.makeTemplateHelpText')}
@@ -62,35 +76,25 @@ function SwitcthContainer({
   disabled
 }) {
   return (
-    <Box className='flex flex-center' gap={2}>
+    <div className='flex flex-center'>
       <Paper
         className='flex flex-center'
         elevation={2}
-        sx={t => ({
-          width: 'fit-content',
-          p: 1,
-          backgroundColor: 'transparent',
-          backgroundImage: `linear-gradient(-45deg,
-            ${t.alpha(t.palette.secondary.main, 0.075)},
-            ${t.alpha(t.palette.primary.main, 0.5)}
-          )`,
-          transition: 'scale 0.2s ease-out',
-          '&:hover': { scale: 0.9 }
-        })}>
+        sx={getSwitchContainerStyles}>
         {icon}
       </Paper>
 
-      <Box>
+      <div>
         <Typography variant='body2' fontWeight={600}>
           {title}
         </Typography>
         <Typography
           variant='caption'
-          color='textSecondary'
-          sx={[theme => ({ lineHeight: 1.25 })]}>
+          color='textSecondary'>
           {subtitle}
         </Typography>
-      </Box>
+      </div>
+
       <Switch
         aria-label={title}
         checked={checked}
@@ -98,6 +102,6 @@ function SwitcthContainer({
         sx={{ ml: 'auto' }}
         disabled={disabled}
       />
-    </Box>
+    </div>
   )
 }

@@ -16,6 +16,7 @@ import { useTranslation } from 'react-i18next'
 import getInteraction from '@utils/getInteraction'
 import validateEmail from '@utils/validateEmail.js'
 import userService from '@services/user'
+import useUser from '@hooks/useUser'
 
 export default memo(function AddMembers({ members, setMembers, isOwner }) {
   const { t } = useTranslation(['projects', 'validations'])
@@ -23,17 +24,18 @@ export default memo(function AddMembers({ members, setMembers, isOwner }) {
   const { currentUser } = useAuth()
   const loadingResources = useLoadResources('validations')
 
+  const { profile } = useUser()
+  const userEmail = profile.email
+
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [email, setEmail] = useState('')
 
-  const userEmail = currentUser?.email || currentUser?.providerData?.[0]?.email
-
   const [open, setOpen] = useState(false)
   const [disableSearchBtn, setDisableSearchBtn] = useState(true)
 
-  const handleSearch = useCallback(async (targetEmail) => {
-    const value = targetEmail?.trim()
+  const handleSearch = useCallback(async () => {
+    const value = email?.trim()
 
     if (!value) return
 
@@ -70,11 +72,11 @@ export default memo(function AddMembers({ members, setMembers, isOwner }) {
     } finally {
       setLoading(false)
     }
-  }, [members, userEmail, t, setMembers])
+  }, [members, userEmail, t, setMembers, email])
 
   const handleKeyDown = (e) => {
     const { isEnter } = getInteraction(e)
-    if (isEnter) handleSearch(email)
+    if (isEnter) handleSearch()
   }
 
   if (loadingResources) return (
@@ -85,7 +87,7 @@ export default memo(function AddMembers({ members, setMembers, isOwner }) {
   )
 
   return (
-    <Box>
+    <div>
       <Box
         className={`flex${isMobile ? ' flex-column' : ''}`}
         alignItems={isMobile ? 'initial' : 'flex-end'}
@@ -118,13 +120,13 @@ export default memo(function AddMembers({ members, setMembers, isOwner }) {
           sx={{ height: '2.5rem', mb: error && 3 }} // align with the input height
           startIcon={<SearchIcon fontSize='small' />}
           variant='contained'
-          onClick={() => handleSearch(email)}
+          onClick={handleSearch}
           disabled={!isOwner || loading || !email}>
           {t('projects:addMembers.search')}
         </Button>
       </Box>
 
       <AddMembersPreview members={members} setMembers={setMembers} />
-    </Box>
+    </div>
   )
 })
