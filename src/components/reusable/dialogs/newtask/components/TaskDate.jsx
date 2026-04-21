@@ -15,6 +15,19 @@ import upperCaseInitialLetter from '@utils/upperCaseInitialLetter'
 
 const getDate = date => (!DATES.includes(date) ? 'nodate' : date)
 
+const containerProps = {
+  className:'flex',
+  sx: {
+    gap: 2,
+    width: '100%',
+    alignItems: 'center',
+    justifyContent:{
+      xs: 'center',
+      mobile: 'initial'
+    }
+  }
+}
+
 export default function TaskDate({ date, setDate }) {
   const { t } = useTranslation('dialogs')
   const { isOnlyMobile } = useApp()
@@ -25,15 +38,7 @@ export default function TaskDate({ date, setDate }) {
   }
 
   return (
-    <Box
-      className='flex'
-      gap={2}
-      width='100%'
-      alignItems='center'
-      justifyContent={{
-        xs: 'center',
-        mobile: 'initial'
-      }}>
+    <Box {...containerProps}>
       <DropdownMenu
         label={t('newtask.taskDateLabel')}
         tooltipPosition='top'
