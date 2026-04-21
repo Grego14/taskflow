@@ -11,8 +11,8 @@ export const taskRegistry = signal(new Map())
 export const rootTaskIds = computed(() => {
   const ids = []
 
-  for (const task of taskRegistry.value.values()) {
-    if (!task.parentId) ids.push(task.id)
+  for (const taskSignal of taskRegistry.value.values()) {
+    if (!taskSignal.peek().parentId) ids.push(taskSignal.peek().id)
   }
   return ids
 })
@@ -24,14 +24,11 @@ export const activeDropIndicator = signal({
 })
 
 export const updateTaskLocal = (id, data) => {
-  const currentMap = taskRegistry.value
-  const task = currentMap.get(id)
+  const registry = taskRegistry.peek()
+  const taskSignal = registry.get(id)
 
-  if (task) {
-    const newMap = new Map(currentMap)
-
-    newMap.set(id, { ...task, ...data }) 
-    taskRegistry.value = newMap
+  if (taskSignal) {
+    taskSignal.value = { ...taskSignal.peek(), ...data }
   }
 }
 
@@ -43,8 +40,8 @@ export const deleteTaskLocal = (id, parentId, deleteSubtasks) => {
   newMap.delete(id)
 
   if (!parentId && deleteSubtasks) {
-    for (const [taskId, task] of map) {
-      if (task.parentId === id) newMap.delete(taskId)
+    for (const [taskId, tSignal] of map) {
+      if (tSignal.peek().parentId === id) newMap.delete(taskId)
     }
   }
 
@@ -52,36 +49,42 @@ export const deleteTaskLocal = (id, parentId, deleteSubtasks) => {
 }
 
 export const createTaskLocal = (task) => {
-  const newMap = new Map(taskRegistry.value)
+  const newMap = new Map(taskRegistry.peek())
 
-  if (!task.subtasks) task.subtasks = []
-  newMap.set(task.id, task)
+  const taskData = { ...task, subtasks: task.subtasks || [] }
+
+  newMap.set(task.id, signal(taskData))
 
   // add the subtasks IDs to the subtasks prop of a task
   const pId = task.parentId
   if (pId && newMap.has(pId)) {
-    const parent = { ...newMap.get(pId) }
+    const parentSignal = newMap.get(pId)
+    const parentData = parentSignal.peek()
 
-    const currentSubtasks = (parent.subtasks || [])
-      .map(id => newMap.get(id)).filter(Boolean)
-    currentSubtasks.push(task)
+    const currentSubtasks = (parentData.subtasks || [])
+    .map(id => newMap.get(id)?.peek())
+    .filter(Boolean)
 
-    parent.subtasks = sortTasks(currentSubtasks).map(t => t.id)
-    newMap.set(pId, parent)
+    currentSubtasks.push(taskData)
+
+    parentSignal.value = {
+      ...parentData,
+      subtasks: sortTasks(currentSubtasks).map(t => t.id)
+    }
   }
 
   taskRegistry.value = newMap
 }
 
 export const archiveTasksLocal = (taskIds) => {
-  const newMap = new Map(taskRegistry.value)
-  
+  const registry = taskRegistry.peek()
+
   for (const id of taskIds) {
-    const task = newMap.get(id)
-    if (task) newMap.set(id, { ...task, isArchived: true })
+    const taskSignal = registry.get(id)
+    if (taskSignal) {
+      taskSignal.value = { ...taskSignal.peek(), isArchived: true }
+    }
   }
-  
-  taskRegistry.value = newMap
 }
 
 export const moveSubtasksLocal = (
@@ -90,7 +93,7 @@ export const moveSubtasksLocal = (
   position, 
   timestamp
 ) => {
-  const currentMap = taskRegistry.value
+  const currentMap = taskRegistry.peek()
   const newMap = new Map(currentMap)
 
   // delete parent task
@@ -98,62 +101,57 @@ export const moveSubtasksLocal = (
 
   // promote each subtask
   for (const sId of subtaskIds) {
-    const subtask = currentMap.get(sId)
+    const subtaskSignal = currentMap.get(sId)
+    if (!subtaskSignal) continue
 
-    if (!subtask) continue
-
-    newMap.set(sId, {
-      ...subtask,
+    subtaskSignal.value = {
+      ...subtaskSignal.peek(),
       status: 'todo',
       parentId: null,
       position,
       createdAt: timestamp,
       updatedAt: timestamp
-    })
+    }
   }
 
   taskRegistry.value = newMap
 }
 
 export const reorderTaskLocal = (id, newPosition, newStatus) => {
-  const currentMap = taskRegistry.value
-  const task = currentMap.get(id)
+  const registry = taskRegistry.peek()
+  const taskSignal = registry.get(id)
 
-  if(!task) return
+  if (!taskSignal) return
 
-  const newMap = new Map(currentMap)
-  const updates = { ...task, position: newPosition }
+  const now = Date.now()
+  const currentTask = taskSignal.peek()
+  
+  const updates = { ...currentTask, position: newPosition }
 
   if (newStatus) {
-    const now = Date.now()
-    const isDone = newStatus === 'done'
-    const isCancelled = newStatus === 'cancelled'
-
     updates.status = newStatus
-    updates.completedDate = isDone ? now : null
-    updates.cancelledDate = isCancelled ? now : null
+    updates.completedDate = newStatus === 'done' ? now : null
+    updates.cancelledDate = newStatus === 'cancelled' ? now : null
   }
 
-  newMap.set(id, updates)
+  taskSignal.value = updates
 
-  const parent = newMap.get(task.parentId)
+  const parentSignal = registry.get(currentTask.parentId)
 
-  if (parent) {
+  if (parentSignal) {
+    const parentData = parentSignal.peek()
+
     // get all siblings including the updated one
-    const siblings = []
-
-    for (const subId of parent.subtasks) {
-      const subtask = newMap.get(subId)
-      if (subtask) siblings.push(subtask)
-    }
-
-    const sortedIds = sortTasks(siblings).map(t => t.id)
+    const siblings = parentData.subtasks
+    .map(subId => registry.get(subId)?.peek())
+    .filter(Boolean)
 
     // update parent with a new array reference to trigger the filteredSubtaskIds
-    newMap.set(task.parentId, { ...parent, subtasks: sortedIds })
+    parentSignal.value = {
+      ...parentData, 
+      subtasks: sortTasks(siblings).map(t => t.id) 
+    }
   }
-
-  taskRegistry.value = newMap
 }
 
 // *** Zen mode ***

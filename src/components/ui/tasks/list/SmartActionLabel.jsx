@@ -17,6 +17,7 @@ import {
   currentSessionSeconds,
   taskRegistry
 } from '@stores/task'
+import { useCallback } from 'preact/hooks'
 
 const LiveTimer = () => {
   if (!activeTaskData.value) return null
@@ -29,14 +30,14 @@ export default function SmartActionLabel({ id, insideTask }) {
   const { toggleWorkingTask } = useTasks()
   const theme = useTheme()
 
-  const taskData = taskRegistry.value.get(id)
+  const taskData = taskRegistry.peek().get(id)?.value
 
   if (!taskData) return null
 
   const isThisTaskWorking = activeTaskData.value?.id === id
   const { label, isOverdue, isToday } = getDueDateLabel(taskData.dueDate)
 
-  const handleToggle = (e) => {
+  const handleToggle = useCallback((e) => {
     e.stopPropagation()
 
     if (isAlarmRinging.value) {
@@ -48,10 +49,10 @@ export default function SmartActionLabel({ id, insideTask }) {
     const willStart = !currentActive || currentActive.id !== id
 
     playSound(willStart ? 'startSession' : 'endSession')
-    
+
     // if working on this task pass nul to stop it, otherwise send the data
     toggleWorkingTask(willStart ? taskData : null)
-  }
+  }, [id])
 
   const hasDate = !!taskData.dueDate
   const canPlayDirectly = isToday || isThisTaskWorking

@@ -41,7 +41,7 @@ export default function Header({ id, insideTask = false }) {
   const [showTitle, setShowTitle] = useState(false)
   const [open, setOpen] = useState(false)
 
-  const taskData = taskRegistry.value.get(id)
+  const taskData = taskRegistry.peek().get(id).value
 
   if (!taskData) return null
 
@@ -62,20 +62,19 @@ export default function Header({ id, insideTask = false }) {
   const handleDateChange = (newDate, triggerExit) => {
     triggerExit()
 
-    setTimeout(() => {
-      actions.updateTask({
-        id,
-        parentId,
-        data: { 
-          rawDate: newDate, 
-          dueDate: getDateByKey(newDate) 
-        }
-      })
-    }, 250)
+    actions.updateTask({
+      id,
+      parentId,
+      data: { 
+        rawDate: newDate, 
+        dueDate: getDateByKey(newDate) 
+      }
+    })
   }
 
-  const isParentChecked = parentId 
-    ? taskRegistry.value.get(parentId)?.status === 'done' 
+  const parentSignal = parentId ? taskRegistry.peek().get(parentId) : null
+  const isParentChecked = parentSignal
+    ? parentSignal.value?.status === 'done' 
     : false
 
   return (
@@ -90,7 +89,7 @@ export default function Header({ id, insideTask = false }) {
           taskId={id}
           isChecked={isChecked}
           isCancelled={isCancelled}
-          subtask={parentId}
+          parentId={parentId}
           show={showTitle}
           setShow={setShowTitle}
         />

@@ -82,14 +82,19 @@ export default function useTaskActions(taskRefs) {
   const actions = useMemo(() => {
     const registry = {}
 
-    registry.updateTask = async ({ id, data, parentId }) => {
+    // get task data without subscription
+    const getTaskData = (id) => taskRegistry.peek().get(id)?.peek()
+
+    registry.updateTask = ({ id, data, parentId }) => {
+      const snapshot = new Map(taskRegistry.peek())
+
+      updateTaskLocal(id, data)
+
+      if (data.status === 'done') playSound('complete')
+
       const updatePromise = import('@logic/tasks/update')
 
       return actionHandler(async () => {
-        updateTaskLocal(id, data)
-
-        if (data.status === 'done') playSound('complete')
-
         const { default: updateTaskAction } = await updatePromise
 
         return updateTaskAction({ 
@@ -100,10 +105,12 @@ export default function useTaskActions(taskRefs) {
           ownerId, 
           projectId
         })
-      })
+      }, snapshot)
     }
 
     registry.deleteTask = async ({ id, parentId, deleteSubtasks }) => {
+      const snapshot = new Map(taskRegistry.peek())
+
       playSound('delete')
       const elements = getContainers(taskRefs, id)
       await animateOut(elements, 'delete')
@@ -111,7 +118,9 @@ export default function useTaskActions(taskRefs) {
       deleteTaskLocal(id, parentId, deleteSubtasks)
 
       return actionHandler(async () => {
-        const { default: deleteTaskAction } = await import('@logic/tasks/delete')
+        const { default: deleteTaskAction } = 
+          await import('@logic/tasks/delete')
+
         return deleteTaskAction({ 
           id, 
           parentId, 
@@ -120,18 +129,17 @@ export default function useTaskActions(taskRefs) {
           ownerId, 
           projectId 
         })
-      })
+      }, snapshot)
     }
 
-    registry.createTask = async ({ data, parentId }) => {
+    registry.createTask = ({ data, parentId }) => {
+      const snapshot = new Map(taskRegistry.peek())
       const id = crypto.randomUUID()
 
-      const listIds = parentId 
-        ? (taskRegistry.value.get(parentId)?.subtasks || [])
-        : rootTaskIds.value
+      const parentData = parentId ? getTaskData(parentId) : null
+      const listIds = parentId ? (parentData?.subtasks || []) : rootTaskIds.value
 
-      const taskList = listIds.map(tid => taskRegistry.value.get(tid))
-
+      const taskList = listIds.map(tid => getTaskData(tid)).filter(Boolean)
       const position = getFirstPosition(taskList)
 
       const newTask = prepareNewTask({ 
@@ -156,12 +164,13 @@ export default function useTaskActions(taskRefs) {
           ownerId,
           projectId
         })
-      })
+      }, snapshot)
     }
 
     registry.archiveTasks = async (taskIds) => {
       if(isPreview) return triggerUpsell('archive')
 
+      const snapshot = new Map(taskRegistry.peek())
       const ids = Array.isArray(taskIds) ? taskIds : [taskIds]
 
       playSound('archive')
@@ -180,10 +189,10 @@ export default function useTaskActions(taskRefs) {
           ownerId,
           projectId
         })
-      })
+      }, snapshot)
     }
 
-    registry.saveWorkingTime = async ({ 
+    registry.saveWorkingTime = ({ 
       id, 
       parentId, 
       startTime, 
@@ -192,8 +201,8 @@ export default function useTaskActions(taskRefs) {
     }) => {
       const now = Date.now()
       const target = targetTime.value
+      const currentTask = getTaskData(id)
 
-      const currentTask = taskRegistry.value.get(id)
       if (!currentTask) return
 
       const endTime = target && (now > target) ? target : now
@@ -204,7 +213,7 @@ export default function useTaskActions(taskRefs) {
       if (!isFocusGuard) {
         updateData = { 
           ...updateData, 
-          ...calculateSessionUpdate(currentTask, sessionDuration, now, target) 
+          ...calculateSessionUpdate(currentTask, sessionDuration, now, target)
         }
 
         clearFocusGoals()
@@ -213,11 +222,11 @@ export default function useTaskActions(taskRefs) {
       return registry.updateTask({ id, parentId, data: updateData })
     }
 
-    registry.toggleWorkingTask = async (taskData = null) => {
+    registry.toggleWorkingTask = (taskData = null) => {
       const active = activeTaskData.value
 
       if (active) {
-        await registry.saveWorkingTime({ 
+        registry.saveWorkingTime({ 
           id: active.id, 
           parentId: active.parentId, 
           startTime: active.startTime, 
@@ -235,11 +244,12 @@ export default function useTaskActions(taskRefs) {
       if (taskData?.id) {
         const { id, title, priority, parentId, timeWorked } = taskData
         let parentTitle = null
+
         showOverlay.value = true
 
         // get the parent task title if the task is a subtask
         if (parentId) {
-          parentTitle = taskRegistry.value.get(parentId)?.title
+          parentTitle = getTaskData(parentId)?.title
         }
 
         activeTaskData.value = {
@@ -250,12 +260,19 @@ export default function useTaskActions(taskRefs) {
       }
     }
 
-    registry.updateStatus = async ({ id, nextStatus, parentId }) => {
-      const taskData = taskRegistry.value.get(id)
+    registry.updateStatus = ({ id, nextStatus, parentId }) => {
+      const taskData = getTaskData(id)
 
       if (!taskData) return
 
-      const statusFields = resolveTaskStatusUpdate(taskData, nextStatus, ownerId, isPreview)
+      const statusFields = resolveTaskStatusUpdate(
+        taskData, 
+        nextStatus, 
+        ownerId, 
+        isPreview
+      )
+
+      updateTaskLocal(id, statusFields)
 
       const sounds = { done: 'complete', cancelled: 'cancel' }
       playSound(sounds[nextStatus] || 'click')
@@ -263,7 +280,7 @@ export default function useTaskActions(taskRefs) {
       return registry.updateTask({ id, parentId, data: statusFields })
     }
 
-    registry.resetSession = async () => {
+    registry.resetSession = () => {
       const active = activeTaskData.value
       if (!active) return
 
@@ -286,19 +303,20 @@ export default function useTaskActions(taskRefs) {
       targetTime.value = now + (currentMinutes.value * 60 * 1000)
       showResetPrompt.value = false
 
-      await registry.updateTask({
+      registry.updateTask({
         id: active.id,
         parentId: active.parentId,
         data: { timeWorked: restoredTotal }
       })
     }
 
-    registry.moveSubtasks = async ({ taskId, subtaskIds }) => {
+    registry.moveSubtasks = ({ taskId, subtaskIds }) => {
+      const snapshot = new Map(taskRegistry.peek())
       const timestamp = Date.now()
 
       const list = rootTaskIds.value
-      .map(id => taskRegistry.value.get(id))
-      .filter(t => !taskIsOverdue(t))
+      .map(id => getTaskData(id))
+      .filter(t => t && !taskIsOverdue(t))
 
       const position = getFirstPosition(list)
 
@@ -316,12 +334,11 @@ export default function useTaskActions(taskRefs) {
           projectId,
           position
         })
-      })
+      }, snapshot)
     }
 
-    registry.handleReorder = async (source, targetId, edge, newStatus) => 
-      await actionHandler(async () => 
-        await handleReorderLogic(source, targetId, edge, newStatus))
+    registry.handleReorder = (source, targetId, edge, newStatus) => 
+      actionHandler(() => handleReorderLogic(source, targetId, edge, newStatus))
 
     return registry
   }, [isPreview, ownerId, projectId])

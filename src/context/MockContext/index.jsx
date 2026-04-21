@@ -86,19 +86,26 @@ export default function MockProvider({ children }) {
     const newMap = new Map()
 
     for (const task of tasks) {
-      newMap.set(task.id, { ...task, subtasks: task.subtasks || [] })
+      newMap.set(task.id, signal({ 
+        ...task, 
+        subtasks: task.subtasks || [] 
+      }))
     }
 
     // link children to parents
     for (const task of tasks) {
-      const pId = task.parentId || task.subtask
+      const pId = task.parentId
 
       if (pId && newMap.has(pId)) {
-        const parent = newMap.get(pId)
+        const parentSignal = newMap.get(pId)
+        const parentData = parentSignal.peek()
 
         // avoid duplicates
-        if (!parent.subtasks.includes(task.id)) {
-          parent.subtasks.push(task.id)
+        if (!parentData.subtasks.includes(task.id)) {
+          parentSignal.value = {
+            ...parentData,
+            subtasks: [...parentData.subtasks, task.id]
+          }
         }
       }
     }

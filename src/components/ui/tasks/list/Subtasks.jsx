@@ -87,7 +87,7 @@ const SubtaskItem = forwardRef(function SubtaskItem(props, ref) {
 
   const { animateItemEntrance } = useTaskAnimations()
 
-  const data = taskRegistry.value.get(id) || {}
+  const data = taskRegistry.peek().get(id)?.value || {}
   const hasData = !!data?.id
 
   const status = data?.status
@@ -140,7 +140,7 @@ const SubtaskItem = forwardRef(function SubtaskItem(props, ref) {
           cursor: 'grab'
         })]}>
         <Box className='flex flex-center' width='100%'>
-          <CompleteButton id={id}  />
+          <CompleteButton id={id} insideTask />
           <Header id={id} insideTask />
         </Box>
       </Card>

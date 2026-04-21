@@ -2,15 +2,16 @@ import TextField from '@mui/material/TextField'
 import useAuth from '@hooks/useAuth'
 import useProject from '@hooks/useProject'
 import useTasks from '@hooks/useTasks'
-import { useRef, useState, useEffect } from 'react'
+import { useRef, useState, useEffect } from 'preact/compat'
 import { useTranslation } from 'react-i18next'
 
 import { setGlobalAlert } from '@stores/ui'
+import { useCallback } from 'preact/hooks'
 
 export default function UpdatableTaskTitle({
   title,
   taskId,
-  subtask,
+  parentId,
   show,
   setShow,
   isChecked,
@@ -27,11 +28,13 @@ export default function UpdatableTaskTitle({
 
   // sync internal state if title prop changes from outside
   useEffect(() => {
-    setTaskTitle(title)
-    lastUpdatedTitle.current = title
+    if(title !== lastUpdatedTitle.current){
+      setTaskTitle(title)
+      lastUpdatedTitle.current = title
+    }
   }, [title])
 
-  const handleUpdate = async (val) => {
+  const handleUpdate = useCallback((val) => {
     const trimmedTitle = val.trim()
 
     // no changes, empty or archived
@@ -47,16 +50,16 @@ export default function UpdatableTaskTitle({
       return
     }
 
-    await actions?.updateTask({
+    lastUpdatedTitle.current = trimmedTitle
+
+    actions.updateTask({
       id: taskId,
       data: { title: trimmedTitle },
-      subtask
+      parentId
     })
+  }, [actions.updateTask, isArchived, taskId, parentId, t])
 
-    lastUpdatedTitle.current = trimmedTitle
-  }
-
-  const onKeyDown = (e) => {
+  const onKeyDown = useCallback((e) => {
     if (e.key === 'Enter') {
       inputRef.current?.blur() // this triggers handleUpdate via onBlur
     }
@@ -66,7 +69,7 @@ export default function UpdatableTaskTitle({
       setShow(false)
       inputRef.current?.blur()
     }
-  }
+  }, [])
 
   return (
     <TextField
@@ -88,7 +91,7 @@ export default function UpdatableTaskTitle({
             py: 0.5,
             pl: 1,
             pr: show ? 1.75 : 0,
-            fontSize: !subtask ? theme.typography.h6.fontSize : '.9rem',
+            fontSize: !parentId ? theme.typography.h6.fontSize : '.9rem',
             textOverflow: 'ellipsis',
             transition: 'color 0.3s ease',
             ...(isChecked && {

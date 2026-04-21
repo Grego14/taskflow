@@ -19,12 +19,13 @@ const DropIndicator = lazy(() => import('./DropIndicator'))
 import useLayout from '@hooks/useLayout'
 import { useTheme } from '@mui/material/styles'
 import useTaskAnimations from '@hooks/tasks/useTaskAnimations'
+import useTask from '@hooks/tasks/useTask'
 
 import taskIsOverdue from '@utils/tasks/taskIsOverdue'
 import { priorityColors } from '@/constants'
 import sortTasks from '@utils/tasks/sortTasks'
 
-import { taskRegistry, rootTaskIds, activeDropIndicator } from '@stores/task'
+import { taskRegistry, activeDropIndicator } from '@stores/task'
 
 const getTaskData = (id, type, isOverdue) => ({ id, type, isOverdue })
 
@@ -76,18 +77,21 @@ const ListTask = forwardRef(({ id, isPromoted = false }, ref) => {
   const theme = useTheme()
   const { animateItemEntrance } = useTaskAnimations()
 
-  const data = taskRegistry.value.get(id) || {}
+  const data = useTask(id)
   const hasData = !!data?.id
 
-  const { status, priority = 'none', subtasks = [] } = data
-  const parentId = data?.parentId
+  if (!data) return null
+
+  const { status, priority = 'none', subtasks = [], parentId } = data
+
+  const parentSignal = taskRegistry.peek().get(parentId)
+  const parentData = parentSignal?.value // subscribe to the parent
+  
+  const isParentChecked = parentData?.status === 'done' || 
+    parentData?.status === 'cancelled'
 
   const isOverdue = taskIsOverdue(data)
   const isChecked = status === 'done' || status === 'cancelled'
-
-  const parentData = taskRegistry.value.get(parentId) || {}
-  const isParentChecked = parentData?.status === 'done' 
-    || parentData?.status === 'cancelled'
 
   const { sourceId, targetId, edge } = activeDropIndicator.value || {}
   const showIndicator = targetId === id && sourceId !== id
@@ -96,11 +100,11 @@ const ListTask = forwardRef(({ id, isPromoted = false }, ref) => {
   const filteredSubtaskIds = useMemo(() => {
     if (!subtasks.length) return []
 
-    const registry = taskRegistry.value
+    const registry = taskRegistry.peek()
     const validSubtasks = []
 
     for (const id of subtasks) {
-      const subtaskData = registry.get(id)
+      const subtaskData = registry.get(id)?.peek()
       if (!subtaskData) continue
 
       // if parent is overdue, show only overdue subtasks if not, show all

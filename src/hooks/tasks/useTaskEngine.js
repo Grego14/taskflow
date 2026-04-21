@@ -16,10 +16,12 @@ export default function useTaskEngine() {
   const { uid } = useUser()
   const { filter } = useLayout()
 
-  const registryValues = [...taskRegistry.value.values()]
+  const registry = taskRegistry.value
 
   return useMemo(() => {
-    if (!registryValues.length) return {
+    const tasks = [...registry.values()]
+
+    if (!tasks.length) return {
       tasksForContainer: [],
       overdueTasks: [],
       othersToArchive: []
@@ -29,11 +31,9 @@ export default function useTaskEngine() {
 
     // sort the tasks before the reduce so the IDs are inserted in the correct
     // order
-    const sortedTasks = registryValues.toSorted((a, b) => {
-      const posA = a.position ?? 0
-      const posB = b.position ?? 0
-      return posA - posB
-    })
+    const sortedTasks = tasks
+    .map(tSignal => tSignal.peek()) 
+    .toSorted((a, b) => (a.position ?? 0) - (b.position ?? 0))
 
     const result = sortedTasks.reduce((acc, task) => {
       const isOverdue = taskIsOverdue(task)
@@ -53,8 +53,7 @@ export default function useTaskEngine() {
 
         // subtask promotion
         if (isSubtask && !isOverdue && isPending) {
-          const parent = taskRegistry.value.get(task.parentId)
-
+          const parent = registry.get(task.parentId)?.peek()
           if (parent && taskIsOverdue(parent)) acc.promotedIds.push(task.id)
         }
 
@@ -69,7 +68,7 @@ export default function useTaskEngine() {
         // or passes it but is overdue
         // to avoid duplication, as they would already be rendered within their parent
         if (isSubtask) {
-          const parent = taskRegistry.value.get(task.parentId)
+          const parent = registry.get(task.parentId)?.peek()
           const parentPassesFilter = parent && 
             checkPassesFilter(parent, filter, uid)
 
@@ -89,5 +88,5 @@ export default function useTaskEngine() {
       othersToArchive: result.archiveIds,
       isDefaultFilter
     }
-  }, [registryValues, filter, uid])
+  }, [registry, filter, uid])
 }

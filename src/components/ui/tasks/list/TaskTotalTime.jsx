@@ -12,7 +12,7 @@ import { taskRegistry } from '@stores/task'
 export default function TaskTotalTime({ id }) {
   const { t } = useTranslation('tasks')
 
-  const taskData = taskRegistry.value.get(id) || {}
+  const taskData = taskRegistry.peek().get(id)?.value || {}
   const { timeWorked = 0, subtasks = [] } = taskData
 
   const totalSeconds = useMemo(() => {

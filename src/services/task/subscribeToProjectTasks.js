@@ -1,5 +1,4 @@
 import { dbAdapter } from '../dbAdapter.js'
-import orderSubtasks from '@utils/tasks/orderSubtasks'
 
 /** 
  * @param {string} user - project owner id
@@ -20,16 +19,14 @@ export default function subscribeToProjectTasks({
 }) {
   if (!user || !project) return null
 
-  const tasksMap = new Map()
-  const subtasksMap = new Map()
+  const rawRegistry = new Map()
+  let tasksLoaded = false
+  let subtasksLoaded = false
 
-  let initialTasksLoaded = false
-  let initialSubtasksLoaded = false
-
-  const handleUpdate = () => {
+  const emit = () => {
     // notify changes only after first full fetch
-    if (!initialTasksLoaded || !initialSubtasksLoaded) return
-    onUpdate(orderSubtasks(tasksMap, subtasksMap))
+    if (!tasksLoaded || !subtasksLoaded) return
+    onUpdate(Array.from(rawRegistry.values()))
   }
 
   const filters = [
@@ -38,43 +35,36 @@ export default function subscribeToProjectTasks({
     ['isArchived', '==', false]
   ]
 
-  const tasksQuery = dbAdapter.getGroupQuery('tasks', ...filters)
-  const subtasksQuery = dbAdapter.getGroupQuery('subtasks', ...filters)
+  const unsubTasks = dbAdapter.listen(
+    dbAdapter.getGroupQuery('tasks', ...filters), 
+    (snap) => {
 
-  const unsubTasks = dbAdapter.listen(tasksQuery, (snap) => {
-    tasksMap.clear()
-
-    if (initialTasksLoaded && onChange) onChange('tasks', snap.docChanges())
+    if (tasksLoaded && onChange) onChange('tasks', snap.docChanges())
 
     for (const doc of snap.docs) {
-      tasksMap.set(doc.id, { ...doc.data(), id: doc.id })
+      const data = doc.data()
+      rawRegistry.set(doc.id, { ...data, id: doc.id })
     }
 
-    initialTasksLoaded = true
-    handleUpdate()
+    tasksLoaded = true
+    emit()
   }, onError)
 
-  const unsubSubtasks = dbAdapter.listen(subtasksQuery, (snap) => {
-    subtasksMap.clear()
+  const unsubSubtasks = dbAdapter.listen(
+    dbAdapter.getGroupQuery('subtasks', ...filters), 
+    (snap) => {
 
-    if (initialSubtasksLoaded && onChange) 
+    if (subtasksLoaded && onChange)
       onChange('subtasks', snap.docChanges())
 
     for (const doc of snap.docs) {
-      // access parent task ID from the subtask path
-      const taskId = doc.ref.parent.parent.id
-      const subtaskData = { ...doc.data(), id: doc.id }
-
-      if (!subtasksMap.has(taskId)) subtasksMap.set(taskId, [])
-      subtasksMap.get(taskId).push(subtaskData)
+      const parentId = doc.ref.parent.parent.id
+      rawRegistry.set(doc.id, { ...doc.data(), id: doc.id, parentId })
     }
 
-    initialSubtasksLoaded = true
-    handleUpdate()
+    subtasksLoaded = true
+    emit()
   }, onError)
 
-  return () => {
-    unsubTasks()
-    unsubSubtasks()
-  }
+  return () => { unsubTasks(); unsubSubtasks() }
 }
