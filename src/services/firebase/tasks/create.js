@@ -7,10 +7,10 @@ export default async function createRemoteTask({
   parentId, 
   task
 }) {
-  if (!ownerId || !projectId || !data) throw Error('createTask: Missing params')
+  if (!ownerId || !projectId || !task) throw Error('createTask: Missing params')
 
   const path = getTaskPath(ownerId, projectId, parentId)
-  const docRef = dbAdapter.getDocRef(path, data.id)
+  const docRef = dbAdapter.getDocRef(path, task.id)
 
   const timestamp = dbAdapter.getServerTimestamp()
 
