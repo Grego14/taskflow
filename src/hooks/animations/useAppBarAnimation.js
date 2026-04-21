@@ -5,7 +5,7 @@ import { APPBAR_HEIGHT } from '@/constants'
 
 export default function useAppBarAnimation(appBarRef, options = {}) {
   const { isMobile } = useApp()
-  const { enabled = true, noRotate = false, top = false } = options
+  const { enabled = true, noRotate = false, top = false, noTexts } = options
   const height = APPBAR_HEIGHT[isMobile ? 'mobile' : 'other']
 
   useGSAP(() => {
@@ -39,8 +39,11 @@ export default function useAppBarAnimation(appBarRef, options = {}) {
         ease: 'expo.out',
         duration: 1
       }, '<0.35')
-      .fromTo('.nav-action__text',
+
+    if(!noTexts){
+      tl.fromTo('.nav-action__text',
         { x: -10, autoAlpha: 0 },
         { x: 0, autoAlpha: 1, stagger: 0.12 }, '<0.5')
+    }
   }, { dependencies: [enabled, noRotate], scope: appBarRef })
 }

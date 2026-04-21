@@ -26,6 +26,7 @@ const AppBar = forwardRef((props, ref) => {
     animate,
     noRotate,
     animateY = false,
+    noTexts = false,
     ...other
   } = props
 
@@ -37,7 +38,10 @@ const AppBar = forwardRef((props, ref) => {
     enabled: animate,
     noRotate,
     top,
-    animateY
+    animateY,
+    // bar doesn't contain texts so we don't try to animate them (avoid 
+    // gsap warning)
+    noTexts 
   })
 
   return (

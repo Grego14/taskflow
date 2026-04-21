@@ -48,6 +48,7 @@ export default function ProjectAppBar() {
       noRotate={!isMobile}
       withDrawer={!isMobile}
       top={!isMobile}
+      noTexts
       sx={theme => ({
         backgroundImage: theme.palette.background.appbar.top,
         boxShadow: theme.palette.shadows.appbar,
