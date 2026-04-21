@@ -1,17 +1,6 @@
 import { dbAdapter } from './dbAdapter'
 import { getFriendlyErrorFormatted } from '@utils/getFriendlyAuthError'
-
-const USER_FIELDS_MAP = {
-  username: 'profile.username',
-  avatar: 'profile.avatar',
-  lang: 'preferences.lang',
-  theme: 'preferences.theme',
-  previewer: 'preferences.previewer',
-  lastEditedProject: 'metadata.lastEditedProject',
-  lastEditedProjectOwner: 'metadata.lastEditedProjectOwner',
-  lastUsedFilter: 'metadata.lastUsedFilter',
-  lastUsedMetricFilter: 'metadata.lastUsedMetricFilter'
-}
+import { USER_FIELDS_MAP } from '@/constants'
 
 const user = {
   /**

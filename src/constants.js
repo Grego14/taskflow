@@ -11,8 +11,6 @@ import {
   green
 } from '@mui/material/colors'
 
-export const QUERY_STALE_TIME = 1 * 60 * 1000
-
 export const priorities = ['urgent', 'high', 'medium', 'low', 'none']
 export const statuses = ['todo', 'done', 'doing', 'cancelled']
 
@@ -79,3 +77,21 @@ export const ONE_DAY_MS = 86400000
 
 export const DRAWER_CONFIG = { widthOpen: 260, widthClosed: 64 }
 export const APPBAR_HEIGHT = { mobile: '3.8rem', other: '3.4rem' }
+
+export const USER_FIELDS_MAP = {
+  // Profile
+  username: 'profile.username',
+  avatar: 'profile.avatar',
+  email: 'profile.email',
+
+  // Preferences
+  theme: 'preferences.theme',
+  lang: 'preferences.lang',
+  previewer: 'preferences.previewer',
+
+  // Metadata
+  lastUsedFilter: 'metadata.lastUsedFilter',
+  lastEditedProject: 'metadata.lastEditedProject',
+  lastEditedProjectOwner: 'metadata.lastEditedProjectOwner',
+  lastUsedMetricFilter: 'metadata.lastUsedMetricFilter'
+}
