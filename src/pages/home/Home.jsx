@@ -16,7 +16,7 @@ import { ScrambleTextPlugin } from 'gsap/ScrambleTextPlugin'
 
 gsap.registerPlugin(ScrambleTextPlugin)
 
-const linkStyles = theme => ({
+const linkStaticStyles = {
   position: 'relative',
   opacity: 0,
   translate: '0 20px',
@@ -34,9 +34,8 @@ const linkStyles = theme => ({
   },
   '&:hover::after': {
     width: '100%'
-  },
-  color: theme.palette.primary.contrast
-})
+  }
+}
 
 const homeLinks = (owner, lastEdited) => [
   { to: '/projects', keyTranslation: 'goToProjects' },
@@ -126,7 +125,8 @@ export default function Home() {
             key={link.to}
             to={link.to}
             className='home-link'
-            sx={linkStyles}
+            sx={linkStaticStyles}
+            color='primary.contrast'
             onMouseEnter={(e) => handleHover(e, true)}
             onMouseLeave={(e) => handleHover(e, false)}>
             <Typography>
