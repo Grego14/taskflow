@@ -8,19 +8,17 @@ import useProject from '@hooks/useProject'
 import useUser from '@hooks/useUser'
 import { useTranslation } from 'react-i18next'
 
-import projectService from '@services/project'
-import taskService from '@services/task'
-import { dbAdapter } from '@services/dbAdapter'
 import notificationService from '@services/notification'
 
 import { setGlobalAlert } from '@stores/ui'
 
-const KickMemberDialog = lazy(() => import('@components/reusable/dialogs/kickMember/KickMemberDialog'))
+const KickMemberDialog = lazy(() => 
+  import('@components/reusable/dialogs/kickMember/KickMemberDialog'))
 
 export default function ProjectMembers() {
   const { uid, profile } = useUser()
   const { t } = useTranslation('projects')
-  const { projectMembers, data, update } = useProject()
+  const { projectMembers, data } = useProject()
 
   const [open, setOpen] = useState(false)
   const [memberId, setMemberId] = useState(null)
@@ -39,9 +37,10 @@ export default function ProjectMembers() {
 
   const removeMember = async () => {
     try {
-      await taskService.removeUserAssignments(memberId, data.createdBy, data.id)
-      await update({ members: dbAdapter.removeFromArray(memberId) })
+      const { default: removeUserAssignments } = 
+        await import('@services/project/removeUserAssignments')
 
+      await removeUserAssignments(memberId, data.createdBy, data.id)
       await notificationService.sendKicked(memberId, profile.username, data.name)
 
       setGlobalAlert({ message: t('notifications.memberKicked') })
