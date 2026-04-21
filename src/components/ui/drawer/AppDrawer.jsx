@@ -1,4 +1,4 @@
-import { useCallback, useRef, Suspense, lazy } from 'react'
+import { useCallback, useRef, Suspense, lazy, useMemo } from 'preact/compat'
 
 import Box from '@mui/material/Box'
 import Drawer from '@mui/material/Drawer'
@@ -35,40 +35,41 @@ export default function AppDrawer() {
   useGSAP(() => {
     if (loadingResources) return
 
-    const timer = requestAnimationFrame(() => toggleDrawer(
-      getItem('drawerOpen')
-    ))
+    toggleDrawer(getItem('drawerOpen'))
+  }, { dependencies: [loadingResources, isMobile], scope: drawerRef })
 
-    return () => cancelAnimationFrame(timer)
-  }, { dependencies: [loadingResources, projectId, isMobile], scope: drawerRef })
+  const memoizedSlotProps = useMemo(() => {
+    const className = 
+      `${drawerOpen ? 'is-open' : 'is-closed'} ${isMobile ? 'is-temporary' : ''}`
+    const drawerWidth = DRAWER_CONFIG[drawerOpen 
+      ? 'widthOpen' 
+      : 'widthClosed']
 
-  const drawerWidth = DRAWER_CONFIG[drawerOpen ? 'widthOpen' : 'widthClosed']
+    return {
+      paper: {
+        ref: drawerRef,
+        className,
+        sx: (theme) => ({
+          willChange: 'width',
+          display: 'flex',
+          textWrap: 'nowrap',
+          width: drawerWidth,
+          backgroundImage: theme.palette.background.drawer,
+          overflow: 'hidden',
+          transition: 'none',
+          translate: `-${drawerWidth}px`,
+          '&.is-closed': {
+            boxShadow: theme.palette.shadows.drawer[shadowWithAppbar ? 'withAppbar' : 'solo']
+          }
+        })
+      },
+      root: { keepMounted: true }
+    }
+  }, [drawerOpen, isMobile, shadowWithAppbar])
 
   return (
     <Drawer
-      slotProps={{
-        paper: {
-          ref: drawerRef,
-          className: `${drawerOpen ? 'is-open' : 'is-closed'} 
-          ${isMobile ? 'is-temporary' : ''}`,
-          sx: theme => ({
-            willChange: 'width',
-            display: 'flex',
-            textWrap: 'nowrap',
-            width: drawerWidth,
-            backgroundImage: theme.palette.background.drawer,
-            overflow: 'hidden',
-            transition: 'none',
-            translate: `-${drawerWidth}px`,
-            '&.is-closed': {
-              boxShadow:
-                theme.palette.shadows.drawer[shadowWithAppbar
-                  ? 'withAppbar' : 'solo']
-            }
-          })
-        },
-        root: { keepMounted: true }
-      }}
+      slotProps={memoizedSlotProps}
       open={drawerOpen}
       onClose={() => toggleDrawer(false, isMobile)}
       variant={isMobile ? 'temporary' : 'permanent'}>

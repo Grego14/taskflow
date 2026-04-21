@@ -1,4 +1,3 @@
-// components
 import GoToProjectIcon from '@mui/icons-material/ChevronRight'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
 import Box from '@mui/material/Box'
@@ -15,7 +14,6 @@ import DropdownMenu from '@components/reusable/DropdownMenu'
 import { lazy, Suspense } from 'preact/compat'
 const ProjectActions = lazy(() => import('./ProjectActions'))
 
-// hooks
 import useAuth from '@hooks/useAuth'
 import useNavigateToProject from '@hooks/useNavigateToProject'
 import useUser from '@hooks/useUser'
@@ -23,21 +21,34 @@ import { useTheme } from '@mui/material/styles'
 import { useTranslation } from 'react-i18next'
 import { useRef } from 'preact/hooks'
 import { useGSAP } from '@gsap/react'
-import useApp from '@hooks/useApp'
 
-// utils
 import formatTimeAgo from '@utils/formatTimeAgo.js'
 import formatTimestamp from '@utils/formatTimestamp.js'
 import getMenuLabel from '@utils/getMenuLabel'
 import gsap from 'gsap'
 
-const hidden = { opacity: 0, visibility: 'hidden' }
+const menuSlotProps = {
+  list: { sx: { py: 0 } },
+  paper: { sx: { minWidth: 'auto', minHeight: 'auto' } },
+  transition: null
+}
+
+const idStyles = { lineHeight: 2 } // align the text with the chips
+const titleStyles = { perspective: '1000px', transformOrigin: '0 50% -50' }
+
+const goBtnTextStyles = { display: { xs: 'none', tablet: 'block' } }
+const goBtnStyles = {
+  fontWeight: 700, 
+  '& .MuiButton-endIcon': { ml: { xs: 0, tablet: 1 }, p: { xs: 1, tablet: 0 } }
+}
+
+const cardContentStyles = { flexGrow: 1, py: 0 }
+const actionsStyles = { p: 2, justifyContent: 'space-between', mt: 'auto' }
 
 export default function ProjectCard({ data, isRecent }) {
   const { t } = useTranslation('projects')
   const theme = useTheme()
   const { uid } = useUser()
-  const { isMobile } = useApp()
   const navigate = useNavigateToProject()
   const { preferences } = useUser()
   const cardRef = useRef(null)
@@ -88,7 +99,6 @@ export default function ProjectCard({ data, isRecent }) {
           `1px solid ${theme.palette.primary.main}` :
           '1px solid transparent',
         maxWidth: '35rem',
-        ...hidden,
         transition: 'none'
       })}>
       <CardHeader
@@ -97,11 +107,7 @@ export default function ProjectCard({ data, isRecent }) {
           <DropdownMenu
             icon={<MoreVertIcon />}
             label={s => getMenuLabel(s, 'projectCardMenuLabel', 'projects')}
-            slotProps={{
-              list: { sx: { py: 0 } },
-              paper: { sx: { minWidth: 'auto', minHeight: 'auto' } },
-              transition: null
-            }}>
+            slotProps={menuSlotProps}>
             <Suspense fallback={null}>
               <ProjectActions
                 id={data?.id}
@@ -114,12 +120,8 @@ export default function ProjectCard({ data, isRecent }) {
         }
         title={
           <Typography
-            className='project-title'
-            sx={{
-              ...hidden,
-              perspective: '1000px',
-              transformOrigin: '0 50% -50'
-            }}
+            className='project-title hide-element'
+            sx={titleStyles}
             variant='h6'
             fontWeight={700}>
             {data?.name}
@@ -128,13 +130,9 @@ export default function ProjectCard({ data, isRecent }) {
         subheader={
           <Box className='flex' gap={1} mt={0.5} flexWrap='wrap'>
             <Typography
-              className='project-id'
+              className='project-id hide-element'
               variant='caption'
-              sx={{
-                ...hidden,
-                // align the text with the chips
-                lineHeight: 2
-              }}
+              sx={idStyles}
               color='textSecondary'>
               {data?.id}
             </Typography>
@@ -156,7 +154,7 @@ export default function ProjectCard({ data, isRecent }) {
           </Box>
         }
       />
-      <CardContent className='flex flex-column' sx={{ flexGrow: 1, py: 0 }}>
+      <CardContent className='flex flex-column' sx={cardContentStyles}>
         <Typography
           className='project-description'
           sx={{
@@ -167,7 +165,7 @@ export default function ProjectCard({ data, isRecent }) {
           {data?.description || t('noDescription')}
         </Typography>
       </CardContent >
-      <CardActions sx={{ p: 2, justifyContent: 'space-between', mt: 'auto' }}>
+      <CardActions sx={actionsStyles}>
         <Typography variant='caption' color='textSecondary'>
           {t('created_date', { date })}
         </Typography>
@@ -177,13 +175,12 @@ export default function ProjectCard({ data, isRecent }) {
             size='small'
             endIcon={<GoToProjectIcon />}
             onClick={() => navigate(data?.id, data?.createdBy)}
-            aria-label={isMobile ? goToProject : null}
-            sx={{
-              fontWeight: 700, '& .MuiButton-endIcon': {
-                ...(isMobile && { ml: 0, p: 1 })
-              }
-            }}>
-            {!isMobile && goToProject}
+            sx={goBtnStyles}>
+            <Typography 
+              variant='subtitle2'
+              sx={goBtnTextStyles}>
+              {goToProject}
+            </Typography>
           </Button>
         </Tooltip>
       </CardActions>

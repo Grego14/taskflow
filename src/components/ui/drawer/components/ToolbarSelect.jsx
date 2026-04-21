@@ -13,70 +13,83 @@ import Typography from '@mui/material/Typography'
 import FolderOpen from '@mui/icons-material/FolderOpen'
 import Box from '@mui/material/Box'
 
-import { dbAdapter } from '@services/dbAdapter'
-import projectService from '@services/project'
-
-const selectStyles = theme => ({
+const selectStyles = {
   '& .MuiSelect-select': {
-    ...theme.typography.subtitle2,
+    fontWeight: 500,
     fontSize: '0.825rem',
     py: 1,
     maxWidth: '12ch'
   }
-})
+}
+
+const labelStyles = {
+  transform: 'translate(38px, 8px) scale(1)',
+  '&.MuiInputLabel-shrink': {
+    transform: 'translate(0px, 4px) scale(0.75)'
+  }
+}
+
+const iconStyles = {
+  fontSize: '1rem',
+  mx: 0.75,
+  color: 'action.active'
+}
+
+const formControlStyles = {
+  minWidth: '10rem',
+  '& .MuiInputBase-root': { mt: 2 }
+}
 
 export default function ToolbarSelect() {
   const { uid, metadata } = useUser()
   const { projectId } = useParams()
   const { t } = useTranslation(['ui', 'projects'])
   const navigate = useNavigate()
-  const {
-    drawerOpen,
-    toggleDrawer,
-    isPreview,
-    triggerUpsell,
-    setDrawerReady
-  } = useLayout()
+  const { drawerOpen, toggleDrawer, isPreview, triggerUpsell } = useLayout()
 
   const [projects, setProjects] = useState([])
   const [loading, setLoading] = useState(true)
   const [isFocused, setIsFocused] = useState(false)
 
-  // trigger drawer animation on mount
-  useEffect(() => {
-    const timer = requestAnimationFrame(() => setDrawerReady(true))
-    return () => cancelAnimationFrame(timer)
-  }, [])
-
   // get the projects data for the drawer (projectId_drawer on the db)
   useEffect(() => {
-    if (!uid) return
+    if (!uid || isPreview) return
 
-    const { userProjects, externalProjects } = projectService.getDrawerQueries(uid)
-    const projectMap = new Map()
+    let unsubUser
+    let unsubExternal
 
-    const updateProjects = (snap) => {
-      for (const change of snap.docChanges()) {
-        const { id } = change.doc
+    const getProjectsDrawerData = async () => {
+      const { default: projectService } = await import('@services/project')
+      const { userProjects, externalProjects } = projectService.getDrawerQueries(uid)
+      const projectMap = new Map()
 
-        if (change.type === 'removed') {
-          projectMap.delete(id)
-        } else {
-          // added or modified
-          projectMap.set(id, projectService.formatDrawerProject(change.doc))
+      const updateProjects = (snap) => {
+        for (const change of snap.docChanges()) {
+          const { id } = change.doc
+
+          if (change.type === 'removed') {
+            projectMap.delete(id)
+          } else {
+            // added or modified
+            projectMap.set(id, projectService.formatDrawerProject(change.doc))
+          }
         }
+
+        setProjects([...projectMap.values()])
+        setLoading(false)
       }
 
-      setProjects([...projectMap.values()])
-      setLoading(false)
+      const { dbAdapter } = await import('@services/dbAdapter')
+
+      unsubUser = dbAdapter.listen(userProjects, updateProjects)
+      unsubExternal = dbAdapter.listen(externalProjects, updateProjects)
     }
 
-    const unsubUser = dbAdapter.listen(userProjects, updateProjects)
-    const unsubExternal = dbAdapter.listen(externalProjects, updateProjects)
+    getProjectsDrawerData()
 
     return () => {
-      unsubUser()
-      unsubExternal()
+      unsubUser?.()
+      unsubExternal?.()
     }
   }, [uid])
 
@@ -126,19 +139,11 @@ export default function ToolbarSelect() {
   return (
     <Box className='hide-element toolbar-select'>
       {(actualProject || hasProjects) ? (
-        <FormControl sx={{
-          minWidth: '10rem',
-          '& .MuiInputBase-root': { mt: 2 }
-        }}>
+        <FormControl sx={formControlStyles}>
           <InputLabel
             id='select-project'
             shrink={shouldShrink}
-            sx={{
-              transform: 'translate(38px, 8px) scale(1)',
-              '&.MuiInputLabel-shrink': {
-                transform: 'translate(0px, 4px) scale(0.75)'
-              }
-            }}>
+            sx={labelStyles}>
             {label}
           </InputLabel>
           <Select
@@ -150,15 +155,7 @@ export default function ToolbarSelect() {
             sx={selectStyles}
             onFocus={() => setIsFocused(true)}
             onBlur={() => setIsFocused(false)}
-            startAdornment={
-              <FolderOpen
-                sx={{
-                  fontSize: '1rem',
-                  mx: 0.75,
-                  color: 'action.active'
-                }}
-              />
-            }>
+            startAdornment={ <FolderOpen sx={iconStyles} /> }>
             {projects.map(p => (
               <MenuItem key={p.id} value={p.id}>
                 {p.name}

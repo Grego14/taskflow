@@ -25,6 +25,14 @@ const ProjectsSection = ({ title, children }) => (
   </Box>
 )
 
+const dividerStyles = { mt: 2, width: 0, opacity: 0 }
+
+const projectCardsContainerStyles = {
+  display: 'grid',
+  gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
+  gap: 3
+}
+
 export default function ProjectsCards({ data, animate, setAnimateButtons }) {
   const { t } = useTranslation('projects')
   const { isMobile } = useApp()
@@ -64,6 +72,30 @@ export default function ProjectsCards({ data, animate, setAnimateButtons }) {
       })
     }
 
+    const CARD_STYLES = { x: -50, autoAlpha: 0 }
+    const CARD_ANIM_SET = { autoAlpha: 0, x: -50, ease: 'power3.out' }
+    const TITLE_ANIM_SET = { 
+      x: -15, 
+      rotateZ: 45, 
+      y: 15, 
+      opacity: 0, 
+      stagger: 0.02
+    }
+    const DESC_ANIM_SET = {
+      x: -15, 
+      rotateZ: -45, 
+      y: 15, 
+      opacity: 0, 
+      stagger: 0.01
+    }
+    const ID_SCRAMBLE_CONFIG = {
+      text: '{original}',
+      chars: 'abcdefghifj1234567890',
+      revealDelay: 0.3
+    }
+
+    const splits = []
+
     for (const card of cards) {
       const titleEl = card.querySelector('.project-title')
       const descEl = card.querySelector('.project-description')
@@ -71,6 +103,8 @@ export default function ProjectsCards({ data, animate, setAnimateButtons }) {
 
       const title = SplitText.create(titleEl, { smartWrap: true, type: 'chars' })
       const description = SplitText.create(descEl, { smartWrap: true, type: 'chars' })
+
+      splits.push(title, description)
 
       const cardTl = gsap.timeline({
         scrollTrigger: {
@@ -81,49 +115,30 @@ export default function ProjectsCards({ data, animate, setAnimateButtons }) {
         defaults: { ease: 'expo.out' }
       })
 
-      gsap.set(card, { x: -50, autoAlpha: 0 })
-      gsap.set(title.chars, { x: -15, rotateZ: 45, y: 15, opacity: 0 })
-      gsap.set(description.chars, { x: -15, rotateZ: -45, y: 15, opacity: 0 })
+      gsap.set(card, CARD_STYLES)
 
       // make the non initial cards appear
       const position = 0.1 * cards.indexOf(card)
 
-      cardTl.to(card, {
-        autoAlpha: 1,
-        x: 0,
-        ease: 'back.out(2)',
-        duration: 1.25,
-        delay: 0.35
-      }, position)
-        .to(title.chars, {
-          x: 0,
-          rotateZ: 0,
-          y: 0,
-          opacity: 1,
-          stagger: 0.02
-        }, '<0.2')
-        .to(idEl, {
-          autoAlpha: 1,
-          scrambleText: {
-            text: '{original}',
-            chars: 'abcdefghifj1234567890',
-            revealDelay: 0.3
-          }
-        }, '<0.3')
-        .to(description.chars, {
-          x: 0,
-          rotateZ: 0,
-          y: 0,
-          opacity: 1,
-          stagger: 0.01
-        }, '<0.2')
+      cardTl.from(card, CARD_ANIM_SET, position)
+        .from(title.chars, TITLE_ANIM_SET, '<0.2')
+        .to(idEl, { autoAlpha: 1, scrambleText: ID_SCRAMBLE_CONFIG }, '<0.3')
+        .from(description.chars, DESC_ANIM_SET, '<0.2')
     }
 
     setAnimateButtons(true)
+
+    return () => {
+      for (const split of splits) {
+        split.revert()
+      }
+    }
   }, {
     dependencies: [userLoaded, lastId, projects.other.length, animate],
     scope: containerRef
   })
+
+  const hasOtherProjects = projects.other?.length > 0
 
   return (
     <Box
@@ -135,27 +150,16 @@ export default function ProjectsCards({ data, animate, setAnimateButtons }) {
       {projects.last && (
         <ProjectsSection title={t('recentProject')}>
           <ProjectCard data={projects.last} isRecent />
-          {projects.other.length > 0 &&
-            <Divider
-              id='divider'
-              sx={{
-                mt: 2,
-                width: 0,
-                opacity: 0
-              }}
-            />
+          {hasOtherProjects &&
+            <Divider id='divider' sx={dividerStyles} />
           }
         </ProjectsSection>
       )}
 
-      {projects.other.length > 0 && (
+      {hasOtherProjects > 0 && (
         <ProjectsSection title={t('lastProjects')}>
           <Box
-            sx={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
-              gap: 3
-            }}>
+            sx={projectCardsContainerStyles}>
             {projects.other.map(project => (
               <ProjectCard data={project} key={project.id} />
             ))}
