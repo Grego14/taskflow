@@ -11,22 +11,24 @@ import Divider from '@mui/material/Divider'
 const ProjectNavFolder = lazy(() => import('./components/ProjectNavFolder'))
 
 import { useParams } from 'react-router-dom'
-import { useTheme, alpha } from '@mui/material/styles'
 import { useGSAP } from '@gsap/react'
 import useApp from '@hooks/useApp'
 import useLayout from '@hooks/useLayout'
 import useLoadResources from '@hooks/useLoadResources'
 
-import { DRAWER_CONFIG, APPBAR_HEIGHT } from '@/constants'
+import { DRAWER_CONFIG } from '@/constants'
 
-import { setItem, getItem } from '@utils/storage.js'
+import { getItem } from '@utils/storage.js'
 import gsap from 'gsap'
+
+import '@styles/components/drawer.css'
+import { isDrawerOpen } from '@stores/ui'
 
 export default function AppDrawer() {
   const { isMobile } = useApp()
   const { projectId } = useParams()
-  const { drawerRef, toggleDrawer, drawerOpen, isPreview } = useLayout()
-  const theme = useTheme()
+  const { drawerRef, toggleDrawer, isPreview } = useLayout()
+  const drawerOpen = isDrawerOpen.value
 
   const loadingResources = useLoadResources('ui')
   const shadowWithAppbar = (projectId && !isMobile) || isPreview
@@ -38,37 +40,27 @@ export default function AppDrawer() {
     toggleDrawer(getItem('drawerOpen'))
   }, { dependencies: [loadingResources, isMobile], scope: drawerRef })
 
-  const memoizedSlotProps = useMemo(() => {
-    const className = 
-      `${drawerOpen ? 'is-open' : 'is-closed'} ${isMobile ? 'is-temporary' : ''}`
-    const drawerWidth = DRAWER_CONFIG[drawerOpen 
-      ? 'widthOpen' 
-      : 'widthClosed']
+  const drawerWidth = DRAWER_CONFIG[drawerOpen ? 'widthOpen' : 'widthClosed']
 
+  const memoizedSlotProps = useMemo(() => {
     return {
-      paper: {
-        ref: drawerRef,
-        className,
-        sx: (theme) => ({
-          willChange: 'width',
-          display: 'flex',
-          textWrap: 'nowrap',
-          width: drawerWidth,
-          backgroundImage: theme.palette.background.drawer,
-          overflow: 'hidden',
-          transition: 'none',
-          translate: `-${drawerWidth}px`,
-          '&.is-closed': {
-            boxShadow: theme.palette.shadows.drawer[shadowWithAppbar ? 'withAppbar' : 'solo']
-          }
-        })
+      paper: { 
+        ref: drawerRef, 
+        className: 'app-drawer-paper flex flex-column'
       },
       root: { keepMounted: true }
     }
-  }, [drawerOpen, isMobile, shadowWithAppbar])
+  }, [isMobile])
 
   return (
     <Drawer
+      style={{
+        '--drawer-width': `${drawerWidth}px`,
+        '--drawer-shadow': shadowWithAppbar 
+          ? 'var(--mui-palette-shadows-drawer-withAppbar)' 
+          : 'var(--mui-palette-shadows-drawer-solo)'
+      }}
+      data-state={drawerOpen ? 'open' : 'closed'}
       slotProps={memoizedSlotProps}
       open={drawerOpen}
       onClose={() => toggleDrawer(false, isMobile)}
@@ -76,14 +68,13 @@ export default function AppDrawer() {
       <Toolbar />
 
       <List
-        className='flex flex-column'
-        sx={{ gap: 1.25, height: '100%' }}
+        className='flex flex-column app-drawer-list'
         disablePadding>
         <DrawerActions />
 
         {projectId && (
           <>
-            <Divider sx={{ my: 1, opacity: 0.8, mx: 1 }} role='none' />
+            <Divider className='app-drawer-divider' role='none' />
             <Suspense fallback={null}>
               <ProjectNavFolder />
             </Suspense>
@@ -91,26 +82,11 @@ export default function AppDrawer() {
         )}
 
         <Box
-          className='flex flex-column'
-          mt='auto'
-          gap={1.5}
-          minHeight='10rem'
+          className='flex flex-column app-drawer-profile-container'
           component='li'>
           <ProfileButton
             showTexts
-            className='drawer-action'
-            sx={{
-              p: 1.5,
-              mr: 'auto',
-              justifyContent: 'center',
-              maxWidth: '100%',
-              mt: 'auto',
-
-              '.is-open &': {
-                justifyContent: 'start',
-                mr: 0
-              }
-            }}
+            className='app-drawer-profile-btn flex drawer-action'
             tooltipPosition='right'
           />
         </Box>

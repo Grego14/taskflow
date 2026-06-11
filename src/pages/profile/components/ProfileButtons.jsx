@@ -25,13 +25,12 @@ export default function ProfileButtons({ saveBtnDisabled }) {
   }, { scope: containerRef })
 
   return (
-    <Box
-      className='flex flex-column flex-center'
-      gap={4}
+    <div
+      className='flex flex-column flex-center profile__buttons-container'
       ref={containerRef}>
       <SaveProfileButton disabled={saveBtnDisabled} />
       <LogoutButton />
       <DeleteAccountButton />
-    </Box>
+    </div>
   )
 }

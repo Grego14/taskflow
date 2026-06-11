@@ -10,17 +10,21 @@ import Stack from '@mui/material/Stack'
 import TextField from '@mui/material/TextField'
 import IconButton from '@mui/material/IconButton'
 import InputAdornment from '@mui/material/InputAdornment'
-import Tooltip from '@components/reusable/tasks/Tooltip'
+import AppTooltip from '@components/reusable/AppTooltip'
 
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft'
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight'
 import TimerIcon from '@mui/icons-material/Timer'
-
 import CustomTimerSelector from './CustomTimerSelector'
+
+import { currentMinutes } from '@stores/task'
 
 const PRESETS = [15, 25, 30, 45, 50, 90]
 
-import { currentMinutes } from '@stores/task'
+const drawerSlotProps = {
+  paper: { className: 'focus-drawer-paper' }, 
+  backdrop: { className: 'focus-drawer-backdrop' } 
+}
 
 export default function FocusDrawer({ onSetTarget }) {
   const { t } = useTranslation('tasks')
@@ -40,10 +44,6 @@ export default function FocusDrawer({ onSetTarget }) {
     setCustomMinutes('')
   }
 
-  const color = theme.palette.common[
-    theme.palette.mode === 'dark' ? 'white' : 'black']
-  const subtitleColor = theme.alpha(color, 0.725)
-
   const handleCustomMinutes = (e) => {
     const minutes = parseInt(e.target.value)
 
@@ -56,79 +56,54 @@ export default function FocusDrawer({ onSetTarget }) {
     setError(null)
   }
 
+  const isDark = theme.palette.mode === 'dark'
+  const subtitleColor = theme.alpha(theme.palette.common[
+    isDark ? 'white' : 'black'
+  ], 0.725)
+
   return (
     <>
       {!open && (
-        <Tooltip
-          title={t('openTimerMenu')}
-          slotProps={{ popper: { sx: { zIndex: t => t.zIndex.zenPriority } } }}
-          placement='left'>
-          <IconButton
-            onClick={() => setOpen(true)}
-            sx={{
-              position: 'fixed',
-              right: 0,
-              top: '50%',
-              transform: 'translateY(-50%)',
-              borderRadius: '12px 0 0 12px',
-              border: `1px solid ${theme.alpha(color, 0.3)}`,
-              borderRight: 'none'
-            }}>
-            <KeyboardArrowLeftIcon sx={{ opacity: 0.65 }} />
+        <AppTooltip title={t('openTimerMenu')} placement='left'>
+          <IconButton 
+            onClick={() => setOpen(true)} 
+            className='focus-drawer-toggle' 
+            variant='outlined'>
+            <KeyboardArrowLeftIcon />
           </IconButton>
-        </Tooltip>
+        </AppTooltip>
       )}
 
       <Drawer
         anchor='right'
         open={open}
+        slotProps={drawerSlotProps}
         onClose={() => setOpen(false)}
-        sx={{ zIndex: t => t.zIndex.zenPriority }}
-        slotProps={{
-          paper: {
-            sx: {
-              width: 280,
-              backgroundImage: t => t.palette.background.drawer,
-              backdropFilter: 'blur(10px)',
-              bgcolor: 'transparent',
-              p: 3,
-              display: 'flex',
-              flexDirection: 'column',
-              gap: 3
-            }
-          }
+        style={{ 
+          zIndex: 'var(--mui-zIndex-zenPriority)', 
+          '--subtitle-color': subtitleColor
         }}>
         <Box className='flex flex-center' gap={1}>
-          <TimerIcon sx={{ color: 'primary.light', fontSize: 20 }} />
-          <Typography
-            sx={{
-              letterSpacing: 2,
-              fontWeight: 700,
-              color: subtitleColor
-            }}>
+          <TimerIcon style={{ fontSize: 20 }} />
+          <Typography className='drawer-section-title'>
             {t('sessionGoal')}
           </Typography>
         </Box>
 
         <Stack spacing={1.5}>
-          <Typography variant='caption' sx={{ color: subtitleColor }}>
+          <Typography 
+            variant='caption' 
+            className='presets-label'>
             {t('presets')}
           </Typography>
-          <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 1 }}>
+          <Box className='presets-grid'>
             {PRESETS.map(mins => (
               <Button
                 key={mins}
                 variant='outlined'
                 size='small'
                 onClick={() => handleApply(mins)}
-                sx={{
-                  borderColor: theme.alpha(color, 0.15),
-                  color: 'white',
-                  '&:hover': {
-                    borderColor: 'primary.main',
-                    bgcolor: theme.alpha(theme.palette.secondary.main, 0.15)
-                  }
-                }}>
+                className='preset-btn'>
                 {mins}m
               </Button>
             ))}
@@ -143,9 +118,9 @@ export default function FocusDrawer({ onSetTarget }) {
 
         <Button
           variant='text'
+          className='drawer-close-btn'
           onClick={() => setOpen(false)}
-          startIcon={<KeyboardArrowRightIcon />}
-          sx={{ mt: 'auto', color: subtitleColor }}>
+          startIcon={<KeyboardArrowRightIcon />}>
           {t('closeTimerMenu')}
         </Button>
       </Drawer>

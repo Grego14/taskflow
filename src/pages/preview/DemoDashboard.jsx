@@ -1,4 +1,4 @@
-import { useState, Suspense, lazy } from 'preact/compat'
+import { useState, Suspense, lazy, useCallback } from 'preact/compat'
 
 import LayoutProvider from '@context/LayoutContext'
 import LayoutManager from '@components/ui/layoutmanager/LayoutManager'
@@ -23,10 +23,10 @@ export default function DemoWrapper() {
   const [showUpsell, setShowUpsell] = useState(false)
   const [upsellContext, setUpsellContext] = useState('')
 
-  const triggerUpsell = (reason) => {
+  const triggerUpsell = useCallback((reason) => {
     setUpsellContext(reason)
     setShowUpsell(true)
-  }
+  }, [])
 
   return (
     <LayoutProvider isPreview triggerUpsell={triggerUpsell}>

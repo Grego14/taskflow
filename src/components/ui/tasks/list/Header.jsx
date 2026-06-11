@@ -11,7 +11,7 @@ import SmartActionLabel from './SmartActionLabel'
 import TaskCalendar from './TaskCalendar'
 import TaskActionsSkeleton from '../buttons/TaskActionsSkeleton'
 import TaskTotalTime from './TaskTotalTime'
-import TaskTooltip from '@components/reusable/tasks/Tooltip'
+import AppTooltip from '@components/reusable/AppTooltip'
 
 const TaskActions = lazy(() => import('../buttons/TaskActions'))
 
@@ -26,11 +26,6 @@ import getDateByKey from '@utils/tasks/getDateByKey'
 
 import { taskRegistry } from '@stores/task'
 
-const headerStyles = { p: 0, width: '100%' }
-const headerSlotProps = {
-  action: { sx: { my: 'auto', display: 'flex', gap: 1, mr: 0 } }
-}
-
 const menuSlotProps = { paper: { className: 'task-menu-paper' } }
 
 export default function Header({ id, insideTask = false }) {
@@ -41,8 +36,7 @@ export default function Header({ id, insideTask = false }) {
   const [showTitle, setShowTitle] = useState(false)
   const [open, setOpen] = useState(false)
 
-  const taskData = taskRegistry.peek().get(id).value
-
+  const taskData = taskRegistry.peek().get(id)?.value
   if (!taskData) return null
 
   const {
@@ -72,17 +66,16 @@ export default function Header({ id, insideTask = false }) {
     })
   }
 
-  const parentSignal = parentId ? taskRegistry.peek().get(parentId) : null
-  const isParentChecked = parentSignal
-    ? parentSignal.value?.status === 'done' 
-    : false
+  let isParentChecked = false
+  if (parentId) {
+    const parentSignal = taskRegistry.peek().get(parentId)
+    isParentChecked = parentSignal?.value?.status === 'done'
+  }
 
   return (
     <CardHeader
-      className='flex-center'
-      sx={headerStyles}
+      className='task-card-header flex-center'
       disableTypography
-      slotProps={headerSlotProps}
       title={
         <UpdatableTaskTitle
           title={title}
@@ -95,14 +88,14 @@ export default function Header({ id, insideTask = false }) {
         />
       }
       action={
-        !showTitle ? (
+        !showTitle && (
           <>
             {/* Show the total time on the parent task */}
-            {!parentId ? <TaskTotalTime id={id} /> : null}
+            {!parentId && <TaskTotalTime id={id} />}
 
-            {(!isChecked && !isParentChecked) ? (
+            {(!isChecked && !isParentChecked) && (
               <SmartActionLabel id={id} insideTask={insideTask} />
-            ): null}
+            )}
 
             <TaskMembers
               assignedTo={members}
@@ -110,26 +103,25 @@ export default function Header({ id, insideTask = false }) {
               insideTask={insideTask}
             />
 
-            {!isOnlyMobile ? (
+            {!isOnlyMobile && (
               <TaskCalendar
                 rawDate={initialDate}
                 insideTask={insideTask}
                 onDateChange={handleDateChange}
               />
-            ): null}
+            )}
 
             <DropdownMenu
               icon={<MoreVertIcon fontSize={insideTask ? 'small' : 'medium'} />}
               forceClose={!open}
               tooltipPosition='top'
               disabled={isArchived}
-              slots={{ tooltip: TaskTooltip }}
               slotProps={menuSlotProps}
               onClick={() => setOpen(true)}
               label={state => getMenuLabel(state, 'taskActionsLabel', 'tasks')}>
               {(menuOpen, triggerExit) => (
                 <Suspense fallback={<TaskActionsSkeleton />}>
-                  {menuOpen ? (
+                  {menuOpen && (
                     <TaskActions 
                       id={id}
                       parentId={parentId}
@@ -140,12 +132,12 @@ export default function Header({ id, insideTask = false }) {
                       onDateChange={handleDateChange}
                       menuHandler={triggerExit}
                     />
-                  ): null}
+                  )}
                 </Suspense>
               )}
             </DropdownMenu>
           </>
-        ): null
+        )
       }
     />
   )

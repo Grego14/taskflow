@@ -16,6 +16,8 @@ import { useLocation } from 'react-router-dom'
 
 const PROJECT_ACTIONS = ['/settings', '/metrics']
 
+import '@styles/components/ui/appbar/projectAppBar.css'
+
 export default function ProjectAppBar() {
   const { t } = useTranslation('ui')
   const { pathname } = useLocation()
@@ -35,30 +37,34 @@ export default function ProjectAppBar() {
     }
   }, [pathname, id])
 
-  // trigger the app bar animation again if the user moves from one
+  // trigger the appbar animation again if the user moves from one
   // projectSubRoute to the dashboard so the other bar actions are animated
   useEffect(() => {
     if (action === '/') setIsReady(false)
-  }, [pathname])
+
+    // trigger the appbar animation manually as the ToggleProjectDrawer isn't
+    // rendered on this condition
+    if(isProjectSubRoute && !isMobile) setIsReady(true)
+  }, [pathname, isMobile, isProjectSubRoute])
+
+  const actionContainerClass = [
+    'project-action-container',
+    `${isMobile ? 'flex flex-column' : 'flex flex-center'}`
+  ].join(' ')
+
+  const appBarClass = 
+    `project-appbar ${isProjectSubRoute ? 'is-project-subrute' : ''}`
 
   return (
     <AppBar
+      className={appBarClass}
       animate={isReady}
       animateY
       noRotate={!isMobile}
       withDrawer={!isMobile}
       top={!isMobile}
       noTexts
-      sx={theme => ({
-        backgroundImage: theme.palette.background.appbar.top,
-        boxShadow: theme.palette.shadows.appbar,
-        px: {
-          xs: 2,
-          mobile: 4,
-          // reset the padding when the appbar is on top
-          tablet: 2
-        }
-      })}>
+      shadow='var(--mui-palette-shadows-appbar)'>
       {isProjectSubRoute ? (
         <Box className='flex flex-grow' gap={2}>
           {isMobile && (
@@ -70,22 +76,13 @@ export default function ProjectAppBar() {
             </Suspense>
           )}
 
-          <Box
-            className={`${isMobile ? 'flex flex-column' : 'flex flex-center'}`}
-            gap={{ mobile: 0, tablet: 2 }}>
-            <Typography
-              variant='h1'
-              sx={[theme => ({ ...theme.typography.h5, fontWeight: 600 })]}>
+          <Box className={actionContainerClass}>
+            <Typography variant='h1' className='project-action-title'>
               {t(`projectActions.${action?.replace('/', '')}`)}
             </Typography>
             <Typography
+              className='project-id-text'
               variant='body2'
-              sx={[
-                theme => ({
-                  ...theme.typography.body2,
-                  ml: { mobile: 0, tablet: 'auto' }
-                })
-              ]}
               color='textSecondary'>
               {id}
             </Typography>

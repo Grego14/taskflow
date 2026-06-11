@@ -19,7 +19,7 @@ export default function ArchiveProject({ id, owner, asButton, disabled }) {
           color='warning'
           variant='outlined'
           onClick={() => setOpen(true)}
-          sx={{ width: { xs: '100%', tablet: 'auto' } }}
+          className='project-action'
           disabled={disabled}>
           {t('archiveProject')}
         </Button>
@@ -29,11 +29,7 @@ export default function ArchiveProject({ id, owner, asButton, disabled }) {
           text={t('archiveProject')}
           icon={<ArchiveIcon color='warning' fontSize='small' />}
           disabled={disabled}
-          sx={[
-            theme => ({
-              '& .MuiListItemText-root': { color: theme.palette.warning.light }
-            })
-          ]}
+          className='archive-menu-action'
         />
       )}
 

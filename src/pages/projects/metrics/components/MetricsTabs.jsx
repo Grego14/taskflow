@@ -6,9 +6,14 @@ import { useTranslation } from 'react-i18next'
 import DashboardIcon from '@mui/icons-material/Dashboard'
 import PeopleIcon from '@mui/icons-material/People'
 
+const tabs = [
+  { value: 'project', icon: <DashboardIcon fontSize='small' /> },
+  { value: 'members', icon: <PeopleIcon fontSize='small' /> }
+]
+
 export default function MetricsTabs({ preview, setPreview }) {
   const { t } = useTranslation('metrics')
-  const { isOnlyMobile, isMobile } = useApp()
+  const { isMobile } = useApp()
 
   return (
     <Tabs
@@ -17,15 +22,10 @@ export default function MetricsTabs({ preview, setPreview }) {
       aria-label={t('previewSwitcher')}
       indicatorColor={'primary'}
       slotProps={{
-        list: {
-          className: isMobile ? 'flex flex-column flex-center' : ''
-        }
+        list: { className: isMobile ? 'flex flex-column flex-center' : '' }
       }}
       centered>
-      {[
-        { value: 'project', icon: <DashboardIcon fontSize='small' /> },
-        { value: 'members', icon: <PeopleIcon fontSize='small' /> }
-      ].map(tab => (
+      {tabs.map(tab => (
         <Tab
           label={t(`tabs.${tab.value}`)}
           aria-label={t(`tabs.${tab.value}`)}

@@ -60,7 +60,6 @@ export default function Projects() {
   const loadingResources = useLoadResources('projects')
 
   const projectsRef = useRef(null)
-  const [animateCards, setAnimateCards] = useState(false)
   const [animateButtons, setAnimateButtons] = useState(false)
 
   // get the user projects and external projects he is working on
@@ -126,8 +125,7 @@ export default function Projects() {
           <Box className='flex' gap={1}>
             <AnimatedTitle
               id='projects-title'
-              textAlign='start'
-              onComplete={() => setAnimateCards(true)}>
+              textAlign='start'>
               {t('text')}
             </AnimatedTitle>
             <Typography component='span' variant='h4' fontWeight={700}>
@@ -138,7 +136,6 @@ export default function Projects() {
           <Suspense fallback={null}>
             <ProjectsCards
               data={projects}
-              animate={animateCards}
               setAnimateButtons={setAnimateButtons}
             />
           </Suspense>

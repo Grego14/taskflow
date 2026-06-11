@@ -5,29 +5,22 @@ import { forwardRef, useRef } from 'preact/compat'
 import useLayout from '@hooks/useLayout'
 import useAppBarAnimation from '@hooks/animations/useAppBarAnimation'
 
-import { DRAWER_CONFIG, APPBAR_HEIGHT } from '@/constants'
+import { APPBAR_HEIGHT } from '@/constants'
 
-const appBarMobileStyles = {
-  py: 1,
-  justifyContent: 'space-around',
-  top: 'auto',
-  bottom: 0,
-  left: 0,
-  right: 'auto'
-}
+import '@styles/components/ui/appbar/appBar.css'
 
 const AppBar = forwardRef((props, ref) => {
   const {
     children,
     withDrawer,
     top = false,
-    sx,
     shadow,
     animate,
     noRotate,
     animateY = false,
     noTexts = false,
-    ...other
+    className,
+    style
   } = props
 
   const { isMobile } = useApp()
@@ -44,26 +37,28 @@ const AppBar = forwardRef((props, ref) => {
     noTexts 
   })
 
+  const classNames = [
+    'app-bar flex',
+    isMobile ? 'app-bar--mobile' : '',
+    top ? 'app-bar--top' : '',
+    withDrawer ? 'app-bar--with-drawer' : '',
+    className
+  ].filter(Boolean).join(' ')
+
+  const translateFrom = `${top ? '-' : ''}${height}`
+
   return (
     <MUIAppBar
       ref={ref || appBarRef}
       color='inherit'
       variant='outlined'
       elevation={0}
-      position={isMobile && !top ? 'fixed' : 'relative'}
-      sx={theme => ({
-        height,
-        transition: 'width .25s ease-out',
-        ...(withDrawer && { borderLeftWidth: 0, borderTopWidth: 0 }),
-        px: 2,
-        boxShadow: shadow,
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        flexDirection: 'row',
-        ...(isMobile && appBarMobileStyles),
-        ...(typeof sx === 'function' ? sx(theme) : sx),
-        ...(animateY && { translate: `0px ${top ? '-' : ''}${height}` })
-      })}>
+      className={classNames}
+      style={{ 
+        '--appbar-shadow': shadow,
+        '--appbar-translate-from': translateFrom,
+        ...style
+      }}>
       {children}
     </MUIAppBar>
   )

@@ -22,7 +22,10 @@ export default function Metrics({ filter }) {
 
   return (
     <Box className='flex flex-center' flexWrap='wrap' gap={8}>
-      <MetricGauge value={averageCompletedOnTime} title={t('averageCompletedOnTime')} />
+      <MetricGauge 
+        value={averageCompletedOnTime} 
+        title={t('averageCompletedOnTime')} 
+      />
 
       <ProjectTotals />
 

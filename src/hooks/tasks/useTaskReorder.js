@@ -16,22 +16,22 @@ export default function useReorder(reorderTask) {
     // try to drop a task on one of the same task drop indicators
     if (source.id === targetId) return
 
-    const registry = taskRegistry.value
+    const registry = taskRegistry.peek()
     const isSubtask = !!source.parentId
     const parentId = source.parentId
     let list = []
 
     if (isSubtask) {
-      const parent = registry.get(parentId)
+      const parent = registry.get(parentId).peek()
       const subtaskIds = parent?.subtasks || []
 
       for (const id of subtaskIds) {
-        const subtask = registry.get(id)
+        const subtask = registry.get(id).peek()
         if (subtask) list.push(subtask)
       }
     } else {
-      for (const id of rootTaskIds.value) {
-        const task = registry.get(id)
+      for (const id of rootTaskIds.peek()) {
+        const task = registry.get(id).peek()
         if (task && !taskIsOverdue(task)) list.push(task)
       }
     }

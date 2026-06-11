@@ -22,24 +22,7 @@ export default function ProjectTotals() {
   } = projectMetrics
 
   return (
-    <Box
-      sx={{
-        display: 'flex',
-        flexWrap: 'wrap',
-        gap: 2,
-        width: '100%',
-        justifyContent: 'center',
-        '& > *': {
-          flex: {
-            xs: '1 1 calc(50% - 16px)',
-            laptop: '1 1 180px'
-          },
-          maxWidth: {
-            xs: 'calc(50% - 8px)',
-            laptop: '300px'
-          }
-        }
-      }}>
+    <div className='flex flex-wrap project-totals-container'>
       <StatCard
         label={t('metrics.completed')}
         total={completedTasks.total}
@@ -71,6 +54,6 @@ export default function ProjectTotals() {
         icon={<CancelIcon />}
         color='warning'
       />
-    </Box>
+    </div>
   )
 }

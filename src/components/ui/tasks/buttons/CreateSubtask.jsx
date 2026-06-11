@@ -25,8 +25,8 @@ export default function CreateSubtask({ id, showMenu }) {
         handler={handleOpen}
         icon={<AddIcon fontSize='small' />}
         styles={{
-          color: 'primary.main',
-          '& .MuiListItemIcon-root': { color: 'primary.main' }
+          color: 'primary.light',
+          '& .MuiListItemIcon-root': { color: 'primary.light' }
         }}
       />
 

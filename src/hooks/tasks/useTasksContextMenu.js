@@ -13,6 +13,7 @@ export default function useTasksContextMenu() {
 
     // get the closest element with a task id
     const taskEl = e.target.closest('[data-task-id]')
+
     if (!taskEl) return
 
     e.preventDefault()

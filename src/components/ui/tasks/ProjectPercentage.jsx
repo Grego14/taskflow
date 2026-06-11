@@ -44,7 +44,7 @@ function PercentageText({ text, amount }) {
     trigger: textRef,
     decimals: 1,
     revert: true,
-    delay: 0.35
+    delay: 0.18
   })
 
   return (

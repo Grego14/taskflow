@@ -1,0 +1,38 @@
+.profile-btn {
+  min-width: 0;
+  text-transform: none;
+}
+
+/* used on the landing or when the drawer is closed */
+.profile-btn--only-icon {
+  border-radius: 50%;
+  padding: 0
+}
+
+/* name and email container */
+.profile-btn-text {
+  align-items: flex-start;
+  left: 4.25rem;
+  visibility: hidden
+}
+
+[data-state='open'] .profile-btn-text { visibility: visible }
+
+@media (--laptop) {
+  .profile-btn-text { left: 3.5rem }
+}
+
+.profile-btn-name {
+  font: var(--mui-font-subtitle2);
+  color: var(--mui-palette-text-primary);
+  line-height: 1.2
+}
+
+.profile-btn-email {
+  font: var(--mui-font-caption);
+  color: var(--mui-palette-text-secondary)
+}
+
+.profile-btn-avatar .MuiAvatar-root {
+  border: 2px solid var(--profile-status-color, green)
+}

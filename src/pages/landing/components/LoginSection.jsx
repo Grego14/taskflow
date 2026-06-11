@@ -10,46 +10,19 @@ import gsap from 'gsap'
 import { SplitText } from 'gsap/SplitText'
 import { useTranslation } from 'react-i18next'
 
-const loginBtnStyles = (t) => ({
-  borderRadius: '12px',
-  px: 4,
-  py: 1.5,
-  textTransform: 'none',
-  fontWeight: 600,
-  borderColor: t.palette.divider,
-  color: t.palette.text.primary,
-  '&:hover': {
-    backgroundColor: t.alpha(t.palette.primary.main, 0.05),
-    borderColor: t.palette.primary.main
-  }
-})
-
-const signUpBtnStyles = (t) => ({
-  borderRadius: 3.5,
-  px: 4,
-  py: 1.5,
-  textTransform: 'none',
-  boxShadow: `0 6px 16px ${t.alpha(t.palette.primary.main, 0.3)}`,
-  background:
-    `linear-gradient(45deg, ${t.palette.primary.main}, ${t.palette.primary.dark})`,
-  '&:hover': {
-    boxShadow: `0 10px 20px ${t.alpha(t.palette.primary.main, 0.4)}`,
-    transform: 'translateY(-2px)'
-  },
-  transition: 'transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out',
-  textRendering: 'optimizeLegibility'
-})
+const circle1Positions = { bottom: '35%', left: '-25%' }
+const circle2Positions = { top: '10%', right: '-5%' }
 
 export default function LoginSection({ prefetchAuth }) {
   const { isOnlyMobile } = useApp()
-  const { t } = useTranslation('landing')
+  const { t, i18n } = useTranslation('landing')
+  const lang = i18n.language
 
   useGSAP(() => {
     document.fonts.ready.then(() => {
       const loginText = SplitText.create('#login-text', { type: 'words' })
 
       gsap.set('#login-text', { opacity: 1 })
-      gsap.set(['#login-btn', '#signup-btn'], { autoAlpha: 0, y: 30 })
       gsap.set('.blur-circle', { opacity: 0, scale: 0.8 })
 
       gsap.to('.blur-circle', {
@@ -85,111 +58,74 @@ export default function LoginSection({ prefetchAuth }) {
         ease: 'power3.out',
         duration: 1
       })
-        .to(['#login-btn', '#signup-btn'], {
-          y: 0,
-          autoAlpha: 1,
-          stagger: 0.2,
-          ease: 'back.out(1.2)',
-          duration: 0.8,
-          onComplete() {
-            gsap.to('#signup-btn', {
-              scale: 1.05,
-              duration: 0.8,
-              repeat: -1,
-              yoyo: true,
-              ease: 'sine.inOut'
-            })
-          }
-        }, '-=0.3')
+
+      const btns = ['#login-btn', '#signup-btn']
+      gsap.set(btns, { y: 30 })
+
+      tl.to(btns, {
+        y: 0,
+        autoAlpha: 1,
+        stagger: 0.15,
+        ease: 'elastic(1.3, 0.6)',
+        duration: 0.8,
+        onComplete() {
+          gsap.to('#signup-btn', {
+            scale: 1.05,
+            duration: 2,
+            repeat: -1,
+            yoyo: true,
+            ease: 'sine.inOut'
+          })
+        }
+      })
     })
-  })
+  }, { dependencies: [lang], revertOnUpdate: true })
 
   return (
     <Section
-      id='login'
-      sx={{
-        position: 'relative',
-        overflow: 'hidden',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center'
-      }}>
+      className='flex flex-column relative flex-center login-section'
+      id='login'>
       <div className='flex flex-column flex-center' style={{ zIndex: 2 }}>
         <Typography
+          key={`loginText-${lang}`}
           variant='h3'
-          className='text-center'
-          sx={{
-            mx: 2,
-            opacity: 0,
-            maxWidth: '30ch',
-            fontWeight: 700,
-            lineHeight: 1.2,
-            perspective: '1000px',
-            transformOrigin: '0 50% -50',
-          }}
+          className='text-center login-title'
           id='login-text'>
           {t('login')}
         </Typography>
-        <Box
-          className={isOnlyMobile ? 'flex flex-column' : 'flex'}
-          gap={{ xs: 2, mobile: 3 }}
-          mt={6}>
+
+        <Box className={`login-btns ${isOnlyMobile ? 'flex flex-column' : 'flex'}`}>
           <LoginButton
+            key={`loginBtn-${lang}`}
             variant='outlined'
             id='login-btn'
             onMouseEnter={prefetchAuth}
-            sx={loginBtnStyles}
+            className='login-btn-custom hide-element'
           />
           <SignUpButton
+            key={`signupBtn-${lang}`}
             id='signup-btn'
             onMouseEnter={prefetchAuth}
-            sx={signUpBtnStyles}
+            className='signup-btn-custom hide-element'
           />
         </Box>
       </div>
 
-      <Box
-        className='flex'
-        gap={1}
-        mt={6}
-        sx={t => ({
-          '& .githubLink': {
-            color: t.darken(t.palette.primary.main, 0.1),
-            textShadow: `0 1px 2px ${t.palette.secondary.main}`,
-            ...(t.applyStyles('dark', {
-              color: t.lighten(t.palette.primary.main, 0.25),
-            })),
-            transition: 'opacity 0.2s ease-out',
-            textDecoration: 'none',
-            ...t.typography.h6,
-            '&:hover': {
-              opacity: 0.8
-            }
-          }
-        })}>
-        <Typography variant='h6'>
-          {t('buildBy')}
+      <div className='built-by flex flex-center'>
+        <Typography variant='h6' key={`builtBy-${lang}`}>
+          {t('builtBy')}
         </Typography>
         <a
-          className='githubLink'
+          className='github-link'
           target='_blank'
           href='https://github.com/Grego14'>
           Gregorio Piñero
         </a>
-      </Box>
+      </div>
 
-      <BlurredCircle
-        className='blur-circle'
-        positions={{ bottom: '10%', left: '-5%' }}
-        color='primary'
-      />
-      <BlurredCircle
-        className='blur-circle'
-        positions={{ top: '10%', right: '-5%' }}
-        color='secondary'
-      />
-    </Section >
+      <BlurredCircle positions={circle1Positions} color='primary' />
+      <BlurredCircle positions={circle2Positions} color='secondary' />
+    </Section>
   )
 }
 
@@ -197,21 +133,17 @@ function BlurredCircle({ positions, color = 'secondary', blur = 80, className })
   const { preferences } = useUser()
   const isDark = preferences?.theme === 'dark'
 
+  const alpha = isDark ? '0.5' : '0.5'
+
   return (
     <Box
-      className={className}
-      sx={theme => ({
-        width: 250,
-        height: 250,
-        borderRadius: '50%',
-        backgroundColor:
-          theme.alpha(theme.palette[color].main, isDark ? 0.3 : 0.18),
-        position: 'absolute',
+      className='blur-circle absolute'
+      style={{
+        backgroundColor: 
+          `rgb(var(--mui-palette-${color}-mainChannel) / ${alpha})`,
         filter: `blur(${blur}px)`,
-        zIndex: 1,
-        opacity: 0,
         ...positions
-      })}
+      }}
     />
   )
 }

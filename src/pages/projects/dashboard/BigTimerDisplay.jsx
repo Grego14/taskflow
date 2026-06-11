@@ -7,12 +7,8 @@ export default function BigTimerDisplay() {
   return (
     <Typography
       variant='h1'
-      fontWeight={800}
-      sx={{
-        fontVariantNumeric: 'tabular-nums',
-        letterSpacing: -2,
-        '&:after': { content: () => `'${formatTimer(currentSessionSeconds)}'` }
-      }}
+      className='big-timer-display'
+      style={{ '--current-time': `'${formatTimer(currentSessionSeconds)}'` }}
     />
   )
 }

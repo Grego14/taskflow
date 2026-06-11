@@ -12,59 +12,28 @@ const MAX_TIME = 120
 const STEP = 5
 
 export default function CustomTimerSelector({ value, onChange, handleApply }) {
-  const {t} = useTranslation('tasks')
+  const { t } = useTranslation('tasks')
 
-  const handleIncrement = () => {
-    if (value < MAX_TIME) onChange(value + STEP)
-  }
-
-  const handleDecrement = () => {
-    if (value > MIN_TIME) onChange(value - STEP)
-  }
+  const handleIncrement = () => (value < MAX_TIME) && onChange(value + STEP)
+  const handleDecrement = () => (value >= MIN_TIME) && onChange(value - STEP)
 
   return (
-    <Box 
-      className='flex flex-center flex-column'
-      sx={{ 
-        gap: 3,
-        p: 2,
-        bgcolor: (theme) => theme.palette.mode === 'dark' 
-          ? 'rgba(255, 255, 255, 0.05)' 
-          : 'rgba(0, 0, 0, 0.03)',
-        borderRadius: '16px',
-        mx: 'auto',
-        width: '100%'
-      }}>
-      <Box className='flex flex-center' width='100%' justifyContent='space-between'>
+    <Box className='flex flex-center flex-column custom-timer-container'>
+      <Box className='flex flex-center selector-row'>
         <IconButton 
           onClick={handleDecrement}
-          disabled={value <= MIN_TIME}
-          sx={{ 
-            bgcolor: 'background.paper',
-            boxShadow: 1,
-            '&:hover': { bgcolor: 'background.paper', opacity: 0.8 }
-          }}>
+          disabled={value < MIN_TIME}
+          className='step-btn'>
           <RemoveRounded />
         </IconButton>
 
-        <Box sx={{ textAlign: 'center', minWidth: '80px' }}>
-          <Typography 
-            variant='h4' 
-            sx={{ 
-              fontWeight: 700, 
-              lineHeight: 1,
-              color: 'primary.main' 
-            }}>
+        <Box className='time-display text-center'>
+          <Typography className='time-value' variant='h4'>
             {value}
           </Typography>
           <Typography 
             variant='caption' 
-            sx={{ 
-              textTransform: 'uppercase', 
-              letterSpacing: 1,
-              fontWeight: 500,
-              opacity: 0.7
-            }}>
+            className='time-label'>
             {t('minutes')}
           </Typography>
         </Box>
@@ -72,11 +41,7 @@ export default function CustomTimerSelector({ value, onChange, handleApply }) {
         <IconButton 
           onClick={handleIncrement}
           disabled={value >= MAX_TIME}
-          sx={{ 
-            bgcolor: 'background.paper',
-            boxShadow: 1,
-            '&:hover': { bgcolor: 'background.paper', opacity: 0.8 }
-          }}>
+          className='step-btn'>
           <AddRounded />
         </IconButton>
       </Box>
@@ -84,16 +49,7 @@ export default function CustomTimerSelector({ value, onChange, handleApply }) {
       <IconButton 
         color='primary'
         onClick={() => handleApply(value)}
-        sx={{ 
-          bgcolor: 'primary.main', 
-          color: 'white',
-          width: '45px',
-          height: '45px',
-          boxShadow: (theme) => `0 4px 14px ${theme.palette.primary.main}50`,
-          '&:hover': { bgcolor: 'primary.dark', transform: 'translateY(-2px)' },
-          '&:active': { transform: 'translateY(2px)' },
-          transition: 'transform 0.2s ease-in-out'
-        }}>
+        className='apply-timer-btn'>
         <PlayArrowIcon />
       </IconButton>
     </Box>

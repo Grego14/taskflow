@@ -13,18 +13,7 @@ import useUser from '@hooks/useUser'
 import useApp from '@hooks/useApp'
 import useAuth from '@hooks/useAuth'
 
-const appBarStyles = {
-  flexDirection: 'row',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-  px: 2,
-  width: '100%',
-  border: 'none',
-  position: 'fixed',
-  top: 0,
-  backgroundColor: 'transparent',
-  zIndex: 100
-}
+import '@styles/components/ui/appbar/landingAppBar.css'
 
 export default function LandingAppBar() {
   const { currentUser } = useAuth()
@@ -44,48 +33,34 @@ export default function LandingAppBar() {
   })
 
   return (
-    <AppBar color='inherit' sx={appBarStyles} animate noRotate top>
-      <Link
-        href='/'
-        className='flex flex-center nav-item'
-        color='textPrimary'
-        sx={(t) => ({
-          ...t.typography.h5,
-          textDecoration: 'none',
-          display: 'flex',
-          alignItems: 'center',
-          gap: 1
-        })}>
-        <Box>
+    <AppBar color='inherit' className='landing-appbar' animate noRotate top>
+      <Link href='/' className='flex flex-center nav-item landing-logo__link'>
+        <div>
           <img
+            className='landing-appbar__logo'
             width='40'
             height='40'
             alt='TaskFlow Logo'
             src={`/taskflow-logo-${userTheme}.svg`}
             fetchPriority='high'
           />
-        </Box>
-        <Typography
-          component='span'
-          sx={[t => ({ ...t.typography.h6, ml: -1.25, fontWeight: 400 })]}>
+        </div>
+        <Typography className='landing-logo__text' component='span'>
           TaskFlow
         </Typography>
       </Link>
 
-      <Box className='flex flex-center nav-item' sx={{ display: 'flex', gap: 2 }}>
+      <div className='flex flex-center nav-item landing-appbar__actions'>
         <ThemeUpdater />
         <LangUpdater reloadOnChange />
-        {currentUser && (<ProfileButton
-          onlyIcon
-          sx={{
-            '& .MuiAvatar-root': {
-              width: 30,
-              height: 30
-            }
-          }}
-          tooltipPosition='bottom-start'
-        />)}
-      </Box>
+        {currentUser && (
+          <ProfileButton
+            onlyIcon
+            className='landing-appbar__profile-avatar'
+            tooltipPosition='bottom-start'
+          />
+        )}
+      </div>
     </AppBar>
   )
 }

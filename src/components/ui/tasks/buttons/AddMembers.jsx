@@ -2,7 +2,7 @@ import { lazy, Suspense } from 'preact/compat'
 
 import PersonAddIcon from '@mui/icons-material/PersonAdd'
 import IconButton from '@mui/material/IconButton'
-import Tooltip from '@mui/material/Tooltip'
+import AppTooltip from '@components/reusable/AppTooltip'
 import ButtonListItem from '@components/reusable/buttons/ButtonListItem'
 
 const AddMembersDialog = lazy(() =>
@@ -32,7 +32,7 @@ export default function AddMembers() {
 
   return (
     <>
-      <Tooltip title={t('buttons.addMembers')}>
+      <AppTooltip title={t('buttons.addMembers')}>
         <ButtonListItem
           component={IconButton}
           btnProps={{
@@ -42,7 +42,7 @@ export default function AddMembers() {
           }}>
           <PersonAddIcon fontSize='medium' />
         </ButtonListItem>
-      </Tooltip>
+      </AppTooltip>
 
       <Suspense fallback={null}>
         {open && <AddMembersDialog open={open} setOpen={setOpen} />}

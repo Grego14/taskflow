@@ -2,7 +2,7 @@ import Checkbox from '@mui/material/Checkbox'
 import CloseIcon from '@mui/icons-material/Close'
 import DoneIcon from '@mui/icons-material/Done'
 import Box from '@mui/material/Box'
-import TaskTooltip from '@components/reusable/tasks/Tooltip'
+import AppTooltip from '@components/reusable/AppTooltip'
 
 import { useRef, useMemo } from 'preact/hooks'
 import useProject from '@hooks/useProject'
@@ -13,7 +13,6 @@ import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
 
 import { taskRegistry } from '@stores/task'
-import { useTheme } from '@mui/material'
 
 const STATUS_CYCLE = {
   todo: 'done',
@@ -26,8 +25,6 @@ export default function CompleteButton({ id, insideTask }) {
   const { actions } = useTasks()
   const { data: projectData } = useProject()
   const isArchived = projectData?.isArchived
-
-  const theme = useTheme()
 
   const btnRef = useRef(null)
   const actualAnim = useRef(null)
@@ -91,21 +88,8 @@ export default function CompleteButton({ id, insideTask }) {
 
   if (!taskData) return null
 
-  const checkBoxStyles = useMemo(() => ({
-    color: 'text.secondary',
-    '&.Mui-checked .MuiSvgIcon-root': {
-      border: `2px solid ${theme.palette.grey[800]}`,
-      ...theme.applyStyles('dark', {border: `2px solid ${theme.palette.grey[400]}`}),
-
-      borderRadius: 1,
-      p: '1px'
-    },
-    '&:hover': { backgroundColor: 'action.hover' }
-  }), [theme.palette.mode])
-
   return (
-    <TaskTooltip
-      key={`tt-${id}`}
+    <AppTooltip
       title={t('buttons.complete_newStatus', {
         newStatus: STATUS_CYCLE[status]
       })}>
@@ -117,16 +101,16 @@ export default function CompleteButton({ id, insideTask }) {
         disableRipple
         checked={isChecked}
         disabled={isArchived}
-        sx={checkBoxStyles}
+        className='task-complete-checkbox'
         checkedIcon={
-          <Box display='flex'>
+          <div className='flex'>
             {status === 'done'
               ? <DoneIcon fontSize={btnIconSize} color='success' />
               : <CloseIcon fontSize={btnIconSize} color='error' />
             }
-          </Box>
+          </div>
         }
       />
-    </TaskTooltip>
+    </AppTooltip>
   )
 }

@@ -1,98 +1,81 @@
 import Avatar from '@mui/material/Avatar'
-import AvatarGroup from '@mui/material/AvatarGroup'
 import Box from '@mui/material/Box'
-import PersonIcon from '@mui/icons-material/PersonOutline'
-import TaskTooltip from '@components/reusable/tasks/Tooltip'
+import AppTooltip from '@components/reusable/AppTooltip'
 
-import { useState, useMemo } from 'react'
+import { useMemo } from 'react'
 import useProject from '@hooks/useProject'
 import { useTranslation } from 'react-i18next'
 
 import { taskRegistry } from '@stores/task'
 
+const avatarSlotProps = { img: { fetchPriority: 'high' } }
+
 export default function TaskMembers({ assignedTo = [], subtaskIds = [], insideTask }) {
   const { t } = useTranslation('tasks')
   const { projectMembers } = useProject()
 
+  // register to subtasks deletion
+  const registry = taskRegistry.value
+
   const taskMembers = useMemo(() => {
-    const registry = taskRegistry.value
     const assigned = assignedTo || []
 
     const subtaskAssigned = (subtaskIds || []).flatMap(sId => {
-      const subtask = registry.get(sId)
+      const subtask = registry.get(sId).peek()
       return subtask?.assignedTo || []
     })
 
     return [...new Set([...assigned, ...subtaskAssigned])]
-  }, [assignedTo, subtaskIds, taskRegistry.value])
+  }, [assignedTo, subtaskIds, registry])
 
   if (taskMembers.length === 0) return null
 
   const avatarSize = !insideTask ? 24 : 20
 
-  // helper to render the full list inside the Tooltip
-  const membersPreview = (
-    <Box sx={{ p: 0.5 }}>
-      <AvatarGroup max={4} spacing='small'>
-        {taskMembers.map(id => {
-          const m = projectMembers?.find(pm => pm.id === id)
-          return <Avatar key={id} src={m?.avatar} sx={{ width: avatarSize, height: avatarSize }} />
-        })}
-      </AvatarGroup>
-    </Box>
-  )
+  const membersPreview = useMemo(() => {
+    let members = ''
+
+    const l = taskMembers.length
+    for(let i = 0; i < l; i++){
+      const member = projectMembers.find(pm => pm.id === taskMembers[i])
+
+      if(!member) continue
+
+      const template = member.username
+      const isNotLast = i !== l - 1
+
+      members += `${template}${isNotLast ? '\n' : ''}`
+    }
+
+    return members
+  }, [taskMembers])
 
   const firstMember = projectMembers?.find(m => m.id === taskMembers[0])
 
   return (
-    <TaskTooltip title={membersPreview}>
-      <Box
-        className='flex-center'
-        sx={theme => ({
-          display: { xs: 'none', mobile: 'flex' },
-          cursor: 'pointer',
-          ml: 'auto',
-          p: 1,
-          transition: 'background-color .3s ease-in-out',
-          borderRadius: 50,
-          '&:hover': {
-            backgroundColor: theme.palette.action.hover
-          }
-        })}>
+    <AppTooltip title={membersPreview}>
+      <div
+        className='task-members-trigger flex-center'
+        style={{ '--avatar-size': `${avatarSize}px` }}>
         {taskMembers.length === 1 ? (
           <Avatar
             src={firstMember?.avatar}
             alt={t('avatar_name', { name: firstMember?.username })}
-            slotProps={{ img: { fetchPriority: 'high' } }}
-            sx={{
-              width: avatarSize,
-              height: avatarSize,
-              border: '1px solid currentColor'
-            }}
+            slotProps={avatarSlotProps}
+            className='task-member-avatar-single'
           />
         ) : (
-          <Box className='relative flex flex-center'>
+          <div className='relative flex flex-center'>
             <Avatar
               src={firstMember?.avatar}
-              sx={{ width: 20, height: 20, zIndex: 2 }}
+              className='task-member-avatar-stacked'
             />
-            <Box className='flex flex-center'
-              sx={{
-                ml: -1,
-                width: 20,
-                height: 20,
-                borderRadius: '50%',
-                backgroundColor: 'primary.main',
-                color: 'white',
-                fontSize: '0.65rem',
-                border: '2px solid white',
-                zIndex: 1
-              }}>
+            <div className='task-members-badge flex flex-center'>
               +{taskMembers.length - 1}
-            </Box>
-          </Box>
+            </div>
+          </div>
         )}
-      </Box>
-    </TaskTooltip>
+      </div>
+    </AppTooltip>
   )
 }

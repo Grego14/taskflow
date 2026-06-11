@@ -2,6 +2,7 @@ import Button from '@mui/material/Button'
 import OpenInFullIcon from '@mui/icons-material/OpenInFull'
 
 import { useTranslation } from 'react-i18next'
+import { useMemo } from 'preact/hooks'
 
 import formatTimer from '@utils/formatTimer'
 import { priorityColors } from '@/constants'
@@ -19,8 +20,8 @@ const ZenTimer = () => {
   if (!task) return null
 
   return (
-    <span>
-      {t('zenMode')} • {formatTimer(currentSessionSeconds)}
+    <span className='zen-timer-text'>
+      {t('zenMode')} • {formatTimer(currentSessionSeconds.value)}
     </span>
   )
 }
@@ -30,8 +31,15 @@ export default function ZenModeStatus() {
 
   if (!task) return null
 
-  const priority = task.priority || 'none'
-  const [fgColor] = priorityColors[priority]
+  const dynamicStyles = useMemo(() => {
+    const priority = task.priority || 'none'
+    const [fgColor, bgColor] = priorityColors[priority]
+
+    return { 
+      '--fg-priority': fgColor,
+      '--bg-priority': bgColor
+    }
+  }, [task?.priority])
 
   return (
     <Button
@@ -39,18 +47,8 @@ export default function ZenModeStatus() {
       size='small'
       onClick={() => (showOverlay.value = true)}
       startIcon={<OpenInFullIcon />}
-      sx={theme => ({
-        borderColor: fgColor,
-        color: fgColor,
-        textTransform: 'none',
-        borderRadius: 2,
-        '&:hover': {
-          borderColor: fgColor,
-          backgroundColor: theme.alpha(fgColor, 0.08)
-        },
-        ...theme.typography.body2,
-        fontWeight: 600
-      })}>
+      className='zen-status-btn'
+      style={dynamicStyles}>
       <ZenTimer />
     </Button>
   )

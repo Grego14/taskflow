@@ -10,8 +10,9 @@ import resolveTaskStatusUpdate from '@utils/tasks/taskStatusResolver'
 
 describe('Task Store', () => {
   it('Should initialize with an empty Map', () => {
-    expect(taskRegistry.value instanceof Map).toBe(true)
-    expect(taskRegistry.value.size).toBe(0)
+    const registry = taskRegistry.peek()
+    expect(registry instanceof Map).toBe(true)
+    expect(registry.size).toBe(0)
   })
 
   it('createTaskLocal should insert a task correctly', () => {
@@ -21,8 +22,9 @@ describe('Task Store', () => {
     const mockTask = { id, title }
     createTaskLocal(mockTask)
 
-    expect(taskRegistry.value.has(id)).toBe(true)
-    expect(taskRegistry.value.get(id).title).toBe(title)
+    const registry = taskRegistry.peek()
+    expect(registry.has(id)).toBe(true)
+    expect(registry.get(id).peek().title).toBe(title)
   })
 })
 
@@ -33,10 +35,9 @@ describe('Task Store - Deletion', () => {
   it('should remove a single task by ID', () => {
     const id = 'task-1'
     createTaskLocal({ id, title: 'Single Task' })
-    
     deleteTaskLocal(id)
     
-    expect(taskRegistry.value.has(id)).toBe(false)
+    expect(taskRegistry.peek().has(id)).toBe(false)
   })
 
   const parentId = 'parent-1'
@@ -52,9 +53,11 @@ describe('Task Store - Deletion', () => {
     // delete parent with cascade flag
     deleteTaskLocal(parentId, null, true)
 
-    expect(taskRegistry.value.has(parentId)).toBe(false)
-    expect(taskRegistry.value.has(subtaskId)).toBe(false)
-    expect(taskRegistry.value.size).toBe(0)
+    const registry = taskRegistry.peek()
+
+    expect(registry.has(parentId)).toBe(false)
+    expect(registry.has(subtaskId)).toBe(false)
+    expect(registry.size).toBe(0)
   })
 
   it('should NOT remove subtasks if it is NOT a parent deletion', () => {
@@ -64,8 +67,10 @@ describe('Task Store - Deletion', () => {
     // delete subtask only
     deleteTaskLocal(subtaskId, parentId, false)
 
-    expect(taskRegistry.value.has(subtaskId)).toBe(false)
-    expect(taskRegistry.value.has(parentId)).toBe(true)
+    const registry = taskRegistry.peek()
+
+    expect(registry.has(subtaskId)).toBe(false)
+    expect(registry.has(parentId)).toBe(true)
   })
 })
 
@@ -90,7 +95,9 @@ describe('Task Store - Updates', () => {
     // Update only the title
     updateTaskLocal(id, { title: updatedTitle })
 
-    const updatedTask = taskRegistry.value.get(id)
+    const registry = taskRegistry.peek()
+    const updatedTask = registry.get(id).peek()
+
     expect(updatedTask.title).toBe(updatedTitle)
     expect(updatedTask.priority).toBe(priority)
     expect(updatedTask.timeWorked).toBe(timeWorked)
@@ -98,7 +105,7 @@ describe('Task Store - Updates', () => {
 
   it('should do nothing if the task ID does not exist', () => {
     updateTaskLocal('non-existent', { title: 'Ghost' })
-    expect(taskRegistry.value.size).toBe(0)
+    expect(taskRegistry.peek().size).toBe(0)
   })
 })
 
@@ -114,19 +121,21 @@ describe('Task Store - Atomic Registry', () => {
     createTaskLocal({ id: parentId, title: parentTitle, subtasks: [] })
     createTaskLocal({ id: subtaskId, title: 'Subtask', parentId: parentId })
 
-    const registry = taskRegistry.value
-    const roots = rootTaskIds.value
+    const registry = taskRegistry.peek()
+    const roots = rootTaskIds.peek()
+
+    const parentTask = registry.get(parentId).peek()
 
     // the registry should have both tasks
     expect(registry.size).toBe(2)
-    expect(registry.get(parentId).title).toBe(parentTitle)
+    expect(parentTask.title).toBe(parentTitle)
 
     // rootTaskIds should only have the id of the parent
     expect(roots.length).toBe(1)
     expect(roots[0]).toBe(parentId)
     
     // the parent task should have the subtask id inside his subtasks field
-    expect(registry.get(parentId).subtasks).toContain(subtaskId)
+    expect(parentTask.subtasks).toContain(subtaskId)
   })
 
   it('should maintain atomic integrity when a task is updated', () => {
@@ -137,7 +146,9 @@ describe('Task Store - Atomic Registry', () => {
     createTaskLocal({ id, title: 'Old Title', status: 'todo' })
     updateTaskLocal(id, { title: newTitle, status: newStatus })
     
-    const task = taskRegistry.value.get(id)
+    const registry = taskRegistry.peek()
+    const task = registry.get(id).peek()
+
     expect(task.title).toBe(newTitle)
     expect(task.status).toBe(newStatus)
   })
@@ -151,9 +162,10 @@ it('should mark multiple tasks as archived in the Map', () => {
   
   archiveTasksLocal(['t1', 't2'])
   
-  expect(taskRegistry.value.get('t1').isArchived).toBe(true)
-  expect(taskRegistry.value.get('t2').isArchived).toBe(true)
-  expect(taskRegistry.value.get('t3').isArchived).toBe(false)
+  const registry = taskRegistry.peek()
+  expect(registry.get('t1').peek().isArchived).toBe(true)
+  expect(registry.get('t2').peek().isArchived).toBe(true)
+  expect(registry.get('t3').peek().isArchived).toBe(false)
 })
 
 // *** wasOnTime task metric ***

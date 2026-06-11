@@ -12,11 +12,6 @@ import useProject from '@hooks/useProject'
 
 import { taskRegistry } from '@stores/task'
 
-const getColor = (theme) => ({
-  color: theme.palette.error.light,
-  ...theme.applyStyles('dark', { color: theme.palette.error.main })
-})
-
 export default function DeleteTask({
   id,
   parentId,
@@ -47,7 +42,7 @@ export default function DeleteTask({
     const registry = taskRegistry.value
 
     const hasPendingSubtasks = !parentId && subtaskIds?.some(sId => {
-      const subtask = registry.get(sId)
+      const subtask = registry.get(sId).peek()
       if (!subtask) return false
 
       return subtask.status !== 'done' && subtask.status !== 'cancelled'
@@ -66,8 +61,8 @@ export default function DeleteTask({
     <>
       <MenuAction
         text={t('delete_x', { x: t('task') })}
-        icon={<DeleteIcon fontSize='small' sx={getColor} />}
-        styles={getColor}
+        icon={<DeleteIcon fontSize='small' className='delete-task-icon' />}
+        className='delete-task-label'
         handler={handleDelete}
       />
 

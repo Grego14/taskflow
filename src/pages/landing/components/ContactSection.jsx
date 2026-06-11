@@ -32,53 +32,31 @@ export default function ContactSection({ setAnimationEnded }) {
       duration: 2.5,
       ease: 'sine.inOut'
     })
-  }, [])
+  })
 
   return (
-    <Container maxWidth='tablet' sx={{ py: 10, textAlign: 'center' }}>
-      <Box
-        className='flex flex-column'
-        id='contact-box'
-        sx={theme => ({
-          p: { xs: 4, tablet: 6 },
-          borderRadius: '24px',
-          background: theme.alpha(theme.palette.primary.main, 0.03),
-          border: `1px dashed ${theme.alpha(theme.palette.primary.main, 0.4)}`,
-          alignItems: 'center'
-        })}>
-        <Typography
-          variant='h5'
-          sx={{
-            fontWeight: 800,
-            mb: 2,
-            letterSpacing: '-0.01em'
-          }}>
+    <Container className='text-center contact-container' maxWidth='tablet'>
+      <div
+        className='flex flex-column contact-box'
+        id='contact-box'>
+        <Typography variant='h5' className='contact-title'>
           {t('contact.title')}
         </Typography>
 
-        <Typography color='text.secondary' sx={{ mb: 4, maxWidth: '400px' }}>
+        <Typography color='text.secondary' className='contact-description'>
           {t('contact.text')}
         </Typography>
 
         <Button
           variant='contained'
           id='contact-btn'
+          className='contact-btn'
           startIcon={<EmailIcon />}
           href='mailto:gre208981@gmail.com'
-          disableElevation
-          sx={{
-            borderRadius: '12px',
-            textTransform: 'none',
-            px: 5,
-            py: 1.5,
-            fontSize: '1rem',
-            fontWeight: 700,
-            boxShadow:
-              t => `0 10px 20px ${t.alpha(t.palette.primary.main, 0.2)}`
-          }}>
+          disableElevation>
           {t('contact.button', 'Get in Touch')}
         </Button>
-      </Box>
+      </div>
     </Container>
   )
 }

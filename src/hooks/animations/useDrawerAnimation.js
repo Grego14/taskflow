@@ -62,7 +62,14 @@ export default function useDrawerAnimation(drawerRef, { onStart, onComplete }) {
           toolbarSelect
         ],
         { autoAlpha: 0, x: -20, scale: 0.8, width: 0 },
-        { autoAlpha: 1, x: 0, scale: 1, stagger: 0.05, width: 'auto' },
+        { 
+          autoAlpha: 1, 
+          x: 0, 
+          scale: 1, 
+          stagger: 0.05, 
+          width: 'auto', 
+          clearProps: 'transform' 
+        },
         'start+=0.4')
         .fromTo(labels,
           { x: -15, autoAlpha: 0 },

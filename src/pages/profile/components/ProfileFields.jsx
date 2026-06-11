@@ -1,5 +1,4 @@
 import RegisterComponent from '@components/reusable/RegisterComponent'
-import Box from '@mui/material/Box'
 import AvatarUploader from './AvatarUploader'
 import LangSelector from './LangSelector'
 import ThemeSelector from './ThemeSelector'
@@ -83,17 +82,9 @@ export default function ProfileFields({
   }
 
   return (
-    <Box
+    <div
       ref={containerRef}
-      className='flex flex-column flex-center'
-      gap={2.5}
-      width='100%'
-      sx={{
-        '& .MuiFormControl-root': {
-          // UsernameInput, ThemeSelector and LangSelector widths
-          width: 'clamp(260px, 260px + 7.5vw, 350px)'
-        }
-      }}>
+      className='flex flex-column flex-center profile__fields-container'>
       {FIELDS_CONFIG.map(field => {
         const isAvatar = field.name === 'avatar'
         const defaultProps = { key: field.name, control, ...field }
@@ -111,6 +102,6 @@ export default function ProfileFields({
           />
         )
       })}
-    </Box>
+    </div>
   )
 }

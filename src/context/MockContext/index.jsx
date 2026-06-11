@@ -4,6 +4,7 @@ import {
   useMemo, 
   useRef
 } from 'preact/compat'
+import { signal } from '@preact/signals'
 import useUser from '@hooks/useUser'
 
 import TasksBaseProvider from '@context/TasksContext/TaskBaseProvider'

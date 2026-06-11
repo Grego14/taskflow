@@ -2,13 +2,13 @@ import {
   createTheme,
   responsiveFontSizes,
   darken,
-  lighten,
-  alpha
+  lighten
 } from '@mui/material/styles'
 import { grey } from '@mui/material/colors'
 import Zoom from '@mui/material/Zoom'
 import { APPBAR_HEIGHT } from './constants'
 
+// same breakpoints used on the vite postcss config
 export const BREAKPOINTS = {
   xs: 0,
   mobile: 420,
@@ -31,12 +31,18 @@ const darkColors = {
   error: '#FFA3A3'
 }
 
-const uiShadow = {
-  light: grey[400],
-  dark: grey[800]
-}
+const LANDING_TITLE_GRADIENT = `linear-gradient(
+  90deg, 
+  var(--mui-palette-primary-main) 0%, 
+  var(--mui-palette-secondary-main) 35%, 
+  var(--mui-palette-primary-light) 50%, 
+  var(--mui-palette-secondary-main) 65%, 
+  var(--mui-palette-primary-main))`
 
 const baseTheme = createTheme({
+  cssVariables: {
+    colorSchemeSelector: 'class'
+  },
   ui: {
     taskCardMaxWidth: '27.5rem'
   },
@@ -57,49 +63,61 @@ const baseTheme = createTheme({
         secondary: { main: lightColors.secondary },
         background: {
           app: `
-          linear-gradient(
-            ${alpha(lightColors.secondary, 0.05)},
-            ${alpha(lightColors.primary, 0.15)}),
-          linear-gradient(
-            225deg, ${alpha('#fff', 0.5)}, 
-            ${alpha(lightColors.primary, 0.25)})`,
+            linear-gradient(
+              rgba(var(--mui-palette-secondary-mainChannel) / 0.05),
+              rgba(var(--mui-palette-primary-mainChannel) / 0.15)
+            ),
+            linear-gradient(
+              225deg, 
+              rgba(255 255 255 / 0.5), 
+              rgba(var(--mui-palette-primary-mainChannel) / 0.25))`,
 
-          drawer: `
-          linear-gradient(
-            ${alpha(lightColors.secondary, 0.03)},
-            ${alpha(lightColors.primary, 0.45)})`,
+          drawer: `linear-gradient(
+            rgba(var(--mui-palette-secondary-mainChannel) / 0.03),
+            rgba(var(--mui-palette-primary-mainChannel) / 0.45))`,
 
-          appbar: {
-            bottom: `linear-gradient(
-            ${alpha(lightColors.secondary, 0.03)},
-            ${alpha(lightColors.primary, 0.3)})`,
+          // the top style matchs with the drawer 
+          // (appbar is on top on laptop/desktop devices, when the drawer is
+          // temporary)
+          appbarTop: `linear-gradient(45deg, 
+            rgba(var(--mui-palette-secondary-mainChannel) / 0.03), 
+            rgba(var(--mui-palette-primary-mainChannel) / 0.225))`,
 
-            // the top style matchs with the drawer 
-            // (appbar is on top on laptop/desktop devices, when the drawer is
-            // temporary)
-            top: `linear-gradient(45deg,
-            ${alpha(lightColors.secondary, 0.03)},
-            ${alpha(lightColors.primary, 0.225)})`
-          },
+          appbarBottom: `linear-gradient(
+            rgba(var(--mui-palette-secondary-mainChannel) / 0.03), 
+            rgba(var(--mui-palette-primary-mainChannel) / 0.3))`,
+
           profile: `
-            radial-gradient(at 0% 0%, ${alpha(lightColors.secondary, 0.25)} 0px, 
+            radial-gradient(
+            at 0% 0%, 
+            rgba(var(--mui-palette-secondary-mainChannel) / 0.25) 0px, 
             transparent 60%),
-            radial-gradient(at 100% 100%, ${alpha(lightColors.primary, 0.15)} 0px,
+            radial-gradient(
+            at 100% 100%, 
+            rgba(var(--mui-palette-primary-mainChannel) / 0.15) 0px, 
             transparent 60%),
-            #ffffff`,
-          landingMainText:
-            `radial-gradient(at 0% 0%, ${alpha(lightColors.primary, 0.35)} 0px, 
+            #fff`,
+
+          landingMainBlur: `
+            radial-gradient(
+            at 0% 0%, 
+            rgba(var(--mui-palette-primary-mainChannel) / 0.35) 0px, 
             transparent 50%),
-            radial-gradient(at 100% 0%, ${alpha(lightColors.secondary, 0.4)} 0px, 
-            transparent 50%)`
+            radial-gradient(
+            at 100% 0%, 
+            rgba(var(--mui-palette-secondary-mainChannel) / 0.4) 0px, 
+            transparent 50%)`,
+
+          landingMainTitle: LANDING_TITLE_GRADIENT
         },
         error: { main: lightColors.error },
         shadows: {
           drawer: {
-            solo: `0 0 3px ${uiShadow.light}`,
-            withAppbar: `0 ${APPBAR_HEIGHT.other} 3px ${uiShadow.light}`
+            solo: `0 0 1px rgba(var(--mui-palette-primary-mainChannel) / 0.1), 
+              4px 0 12px -3px rgba(var(--mui-palette-primary-mainChannel) / 0.08)`,
+            withAppbar: `0 ${APPBAR_HEIGHT.other} 15px -5px rgba(0, 0, 0, 0.1)`
           },
-          appbar: `0 0 3px ${uiShadow.light}`
+          appbar: `0 2px 10px -3px rgba(var(--mui-palette-primary-mainChannel) / 0.1)`
         }
       }
     },
@@ -112,37 +130,51 @@ const baseTheme = createTheme({
         secondary: { main: darkColors.secondary },
         background: {
           app: `
-          linear-gradient(
-            ${alpha(darkColors.secondary, 0.05)},
-            ${alpha(darkColors.primary, 0.25)}),
-          linear-gradient(
-            225deg, ${alpha('#121212', 0.1)}, 
-            ${alpha(darkColors.primary, 0.2)})`,
+            linear-gradient(
+              rgba(var(--mui-palette-secondary-mainChannel) / 0.05),
+              rgba(var(--mui-palette-primary-mainChannel) / 0.25)
+            ),
+            linear-gradient(
+              225deg, 
+              rgba(18 18 18 / 0.1), 
+              rgba(var(--mui-palette-primary-mainChannel) / 0.2)
+            )
+            var(--mui-palette-background-default)`,
 
           drawer: `linear-gradient(
-              ${alpha(darkColors.secondary, 0.1)},
-              ${alpha(darkColors.primary, 0.18)})`,
+            rgba(var(--mui-palette-secondary-mainChannel) / 0.1),
+            rgba(var(--mui-palette-primary-mainChannel) / 0.18))`,
+          
+          appbarTop: `linear-gradient(45deg, 
+            rgba(var(--mui-palette-secondary-mainChannel) / 0.1), 
+            rgba(var(--mui-palette-primary-mainChannel) / 0.18))`,
 
-          appbar: {
-            bottom: `linear-gradient(
-            ${alpha(darkColors.secondary, 0.03)},
-            ${alpha(darkColors.primary, 0.45)})`,
+          appbarBottom: `linear-gradient(
+            rgba(var(--mui-palette-secondary-mainChannel) / 0.03), 
+            rgba(var(--mui-palette-primary-mainChannel) / 0.45))`,
 
-            top: `linear-gradient(45deg,
-            ${alpha(darkColors.secondary, 0.1)},
-            ${alpha(darkColors.primary, 0.18)})`
-          },
           profile: `
-            radial-gradient(at 0% 0%, ${alpha(darkColors.secondary, 0.3)} 0px, 
+            radial-gradient(
+            at 0% 0%, 
+            rgba(var(--mui-palette-secondary-mainChannel) / 0.3) 0px, 
             transparent 50%),
-            radial-gradient(at 100% 0%, ${alpha(darkColors.primary, 0.2)} 0px, 
+            radial-gradient(
+            at 100% 0%, 
+            rgba(var(--mui-palette-primary-mainChannel) / 0.2) 0px, 
             transparent 50%),
             #121212`,
-          landingMainText:
-            `radial-gradient(at 0% 0%, ${alpha(darkColors.primary, 0.35)} 0px, 
+
+          landingMainBlur: `
+            radial-gradient(
+            at 0% 0%, 
+            rgba(var(--mui-palette-primary-mainChannel) / 0.35) 0px, 
             transparent 50%),
-            radial-gradient(at 100% 0%, ${alpha(darkColors.secondary, 0.3)} 0px, 
-            transparent 50%)`
+            radial-gradient(
+            at 100% 0%, 
+            rgba(var(--mui-palette-secondary-mainChannel) / 0.3) 0px, 
+            transparent 50%)`,
+
+          landingMainTitle: LANDING_TITLE_GRADIENT
         },
         action: {
           selected: 'rgba(255, 255, 255, 0.65)'
@@ -150,10 +182,10 @@ const baseTheme = createTheme({
         error: { main: darkColors.error },
         shadows: {
           drawer: {
-            solo: `0 0 3px ${uiShadow.dark}`,
-            withAppbar: `0 ${APPBAR_HEIGHT.other} 3px ${uiShadow.darh}`
+            solo: `0 0 2px rgba(0, 0, 0, 0.5), 8px 0 20px -10px rgba(0, 0, 0, 0.8)`,
+            withAppbar: `0 ${APPBAR_HEIGHT.other} 20px -8px rgba(0, 0, 0, 0.9)`
           },
-          appbar: `0 0 3px ${uiShadow.dark}`
+          appbar: `0 4px 12px -5px rgba(0, 0, 0, 0.8)`
         }
       }
     }
@@ -194,7 +226,7 @@ const baseTheme = createTheme({
     },
     MuiTooltip: {
       defaultProps: {
-        slots: { transition: Zoom },
+        // slots: { transition: Zoom },
         arrow: true,
         enterDelay: 350
       }
@@ -215,13 +247,26 @@ const baseTheme = createTheme({
           const providedColor = color || ownerState.color
 
           return {
-            color: providedColor || theme.palette.primary.main
+            color: providedColor || 'var(--mui-palette-primary-main)'
           }
         }
       }
     },
     MuiCssBaseline: {
       styleOverrides: {
+        ':root': {
+          '--mui-transitions-duration-standard': '0.3s',
+          '--mui-transitions-duration-shorter': '0.2s',
+          '--mui-transitions-duration-shortest': '0.15s',
+          '--mui-transitions-duration-complex': '0.375s',
+
+          '--mui-transitions-easing-easeInOut': 'cubic-bezier(0.4, 0, 0.2, 1)',
+          '--mui-transitions-easing-easeOut': 'cubic-bezier(0, 0, 0.2, 1)',
+
+          '--appbar-height-mobile': APPBAR_HEIGHT.mobile,
+          '--appbar-height-other': APPBAR_HEIGHT.other,
+          '--laptop-bp': `${BREAKPOINTS.laptop}px`
+        },
         '@font-face': {
           fontFamily: 'Rubik',
           src: 'url(/fonts/Rubik-VariableFont_wght.woff2) format("woff2")',
@@ -248,11 +293,6 @@ const baseTheme = createTheme({
         '.hide-element': {
           opacity: 0,
           visibility: 'hidden'
-        },
-        '@keyframes profileGradient': {
-          '0%': { backgroundPosition: '0% 0%, 100% 100%' },
-          '50%': { backgroundPosition: '25% 20%, 75% 80%' },
-          '100%': { backgroundPosition: '0% 0%, 100% 100%' }
         },
         '.task-menu-paper': {
           maxWidth: `${TASK_MENU_WIDTH} !important`,

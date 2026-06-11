@@ -1,4 +1,3 @@
-import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 
 import useAuth from '@hooks/useAuth'
@@ -48,14 +47,8 @@ export default memo(function ProfileMetadata() {
   const lastLogin = new Date(currentUser.metadata?.lastSignInTime)
 
   return (
-    <Box
-      className='flex flex-column'
-      alignItems='center'
-      sx={{
-        gap: 1,
-        perspective: '1000px',
-        perspectiveOrigin: '0 50%'
-      }}
+    <div
+      className='flex flex-column profile__metadata-container'
       ref={containerRef}>
       <Typography variant='body2'>
         {t('accountCreated')}
@@ -69,6 +62,6 @@ export default memo(function ProfileMetadata() {
           {' '}{formatTimeAgo(lastLogin, locale)}
         </span>
       </Typography>
-    </Box>
+    </div>
   )
 })

@@ -20,6 +20,9 @@ import useAuth from '@hooks/useAuth'
 import { SplitText } from 'gsap/SplitText'
 
 import setPageTitle from '@utils/setPageTitle'
+import { APPBAR_HEIGHT } from '@/constants'
+
+import '@styles/pages/landing.css'
 
 gsap.registerPlugin(useGSAP, SplitText)
 
@@ -32,15 +35,17 @@ const handlePrefetch = () => {
   authPrefetched = true
 }
 
+const resources = ['landing', 'common']
+
 export default function Landing() {
   const { initAuth } = useAuth()
-  const { t } = useTranslation(['landing', 'common'])
+  const { t } = useTranslation(resources)
 
   const theme = useTheme()
-  const { isOnlyMobile } = useApp()
+  const { isMobile } = useApp()
 
   // common is already loaded by the AppRoutes
-  const loadingResources = useLoadResources('landing')
+  const loadingResources = useLoadResources(resources)
 
   const [showAppBar, setShowAppBar] = useState(false)
   const [mainEnded, setMainEnded] = useState(false)
@@ -96,6 +101,9 @@ export default function Landing() {
 
   return (
     <Box
+      style={{
+        '--appbar-height': APPBAR_HEIGHT[isMobile ? 'mobile' : 'other']
+      }}
       sx={{
         backgroundImage: `
         radial-gradient(circle at 15% 25%, ${theme.palette.primary.main}18 0%, transparent 60%),

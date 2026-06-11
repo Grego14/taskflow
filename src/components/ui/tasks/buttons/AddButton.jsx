@@ -2,7 +2,7 @@ import { Suspense, lazy, useState } from 'react'
 
 import AddIcon from '@mui/icons-material/Add'
 import IconButton from '@mui/material/IconButton'
-import Tooltip from '@mui/material/Tooltip'
+import AppTooltip from '@components/reusable/AppTooltip'
 import ButtonListItem from '@components/reusable/buttons/ButtonListItem'
 
 import useApp from '@hooks/useApp'
@@ -22,21 +22,17 @@ export default function AddButton({ isPreview }) {
 
   return (
     <>
-      <Tooltip title={t('buttons.add')}>
+      <AppTooltip title={t('buttons.add')}>
         <ButtonListItem
           component={IconButton}
           btnProps={{
             onClick: () => setTaskDialogOpen(true),
             disabled: data?.isArchived,
-            sx: {
-              minWidth: 'auto',
-              borderRadius: '50%'
-            },
-            className: 'hide-element'
+            className: 'project-action-btn add-task-btn hide-element'
           }}>
           <AddIcon fontSize='medium' />
         </ButtonListItem>
-      </Tooltip>
+      </AppTooltip>
 
       {taskDialogOpen && (
         <Suspense fallback={null}>

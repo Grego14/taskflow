@@ -51,7 +51,7 @@ export default function getMetrics(tasks) {
 
       const period = getMetricPeriod(rawDate)
 
-      if (!period) continueR
+      if (!period) continue
 
       const target = isDone ? metrics.completedTasks : metrics.cancelledTasks
       const periodsToUpdate = getMetricsToUpdate(period)

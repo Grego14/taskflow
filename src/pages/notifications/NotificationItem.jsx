@@ -29,6 +29,51 @@ const itemStyles = theme => ({
   maxWidth: '30rem'
 })
 
+const getMissingProjectStyles = theme => ({
+  mt: 2,
+  display: 'flex',
+  alignItems: 'center',
+  gap: 1,
+  color: 'error.main',
+  bgcolor: theme.alpha(theme.palette.error.main, 0.05),
+  p: 1,
+  borderRadius: '8px'
+})
+const missingProjectTextStyles = { fontWeight: 600 }
+
+const btnsContainerStyles = { display: 'flex', gap: 1 }
+const declineBtnStyles = { borderRadius: '8px', textTransform: 'none' }
+const acceptBtnStyles = { 
+  borderRadius: '8px', 
+  textTransform: 'none', 
+  boxShadow: 'none'
+}
+
+const declinedStatusStyles = { fontStyle: 'italic', opacity: 0.6 }
+
+const notifHeaderStyles = { 
+  justifyContent: 'space-between', 
+  alignItems: 'flex-start' 
+}
+const notifTypeStyles = {
+  fontWeight: 800,
+  letterSpacing: 1.2,
+  textTransform: 'uppercase'
+}
+const notifDeleteBtnStyles = {
+  mt: -0.5,
+  opacity: 0.5,
+  '&:hover': { opacity: 1, color: 'error.main' }
+}
+
+const goToProjectBtnStyles = {
+  alignSelf: 'flex-start',
+  textTransform: 'none',
+  fontWeight: 600,
+  p: 0,
+  '&:hover': { bgcolor: 'transparent', textDecoration: 'underline' }
+}
+
 export default function NotificationItem({
   notification,
   onAccept,
@@ -65,7 +110,14 @@ export default function NotificationItem({
       gsap.fromTo(
         cardRef.current,
         { x: -4 },
-        { x: 0, duration: 0.1, repeat: 3, yoyo: true, ease: 'linear' }
+        { 
+          x: 0, 
+          duration: 0.1, 
+          repeat: 3, 
+          yoyo: true, 
+          ease: 'linear', 
+          clearProps: 'x'
+        }
       )
     }
   }, [error])
@@ -82,30 +134,17 @@ export default function NotificationItem({
       id={`notif-${id}`}
       className='notification-card'
       sx={itemStyles}>
-      <Box
-        sx={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'flex-start'
-        }}>
+      <Box className='flex' sx={notifHeaderStyles}>
         <Typography
           variant='caption'
           color='primary'
-          sx={{
-            fontWeight: 800,
-            letterSpacing: 1.2,
-            textTransform: 'uppercase'
-          }}>
+          sx={notifTypeStyles}>
           {t(`types.${type}.title`)}
         </Typography>
         <IconButton
           size='small'
           onClick={() => onDelete(id)}
-          sx={{
-            mt: -0.5,
-            opacity: 0.5,
-            '&:hover': { opacity: 1, color: 'error.main' }
-          }}
+          sx={notifDeleteBtnStyles}
           aria-label={t('actions.delete')}>
           <DeleteIcon fontSize='small' />
         </IconButton>
@@ -142,13 +181,7 @@ export default function NotificationItem({
           onClick={goToProject}
           // use important to override the icon default size
           endIcon={<ArrowForwardIcon sx={{ fontSize: '10px !important' }} />}
-          sx={{
-            alignSelf: 'flex-start',
-            textTransform: 'none',
-            fontWeight: 600,
-            p: 0,
-            '&:hover': { bgcolor: 'transparent', textDecoration: 'underline' }
-          }}>
+          sx={goToProjectBtnStyles}>
           {t('actions.goToProject')}
         </Button>
       )}
@@ -156,46 +189,29 @@ export default function NotificationItem({
       {declined && (
         <Typography
           variant='caption'
-          sx={{ fontStyle: 'italic', opacity: 0.6 }}>
+          sx={declinedStatusStyles}>
           {t('status.declined')}
         </Typography>
       )}
 
       {/* missing project (deleted before the user accept/decline the invitation) */}
       {isProjectMissing && (
-        <Box
-          sx={{
-            mt: 2,
-            display: 'flex',
-            alignItems: 'center',
-            gap: 1,
-            color: 'error.main',
-            bgcolor: theme => theme.alpha(theme.palette.error.main, 0.05),
-            p: 1,
-            borderRadius: '8px'
-          }}>
+        <Box sx={getMissingProjectStyles}>
           <ErrorIcon fontSize='small' />
-          <Typography variant='caption' sx={{ fontWeight: 600 }}>
+          <Typography variant='caption' sx={missingProjectTextStyles}>
             {t('errors.projectNotFound')}
           </Typography>
         </Box>
       )}
 
       {isInvitation && !accepted && !declined && (
-        <Box sx={{ display: 'flex', gap: 1 }}>
+        <Box sx={btnsContainerStyles}>
           <Button
             variant='contained'
             size='small'
             startIcon={<CheckIcon />}
             onClick={() => onAccept(actionProps)}
-            data-notification-id={id}
-            data-project-owner={projectOwner}
-            data-project-id={projectId}
-            sx={{
-              borderRadius: '8px',
-              textTransform: 'none',
-              boxShadow: 'none'
-            }}>
+            sx={acceptBtnStyles}>
             {t('actions.accept')}
           </Button>
           <Button
@@ -204,10 +220,7 @@ export default function NotificationItem({
             color='inherit'
             startIcon={<ClearIcon />}
             onClick={() => onDecline(actionProps)}
-            data-notification-id={id}
-            data-project-owner={projectOwner}
-            data-project-id={projectId}
-            sx={{ borderRadius: '8px', textTransform: 'none' }}>
+            sx={declineBtnStyles}>
             {t('actions.decline')}
           </Button>
         </Box>

@@ -2,7 +2,7 @@ import Avatar from '@mui/material/Avatar'
 import Badge from '@mui/material/Badge'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
-import Tooltip from '@mui/material/Tooltip'
+import AppTooltip from '../AppTooltip'
 import Typography from '@mui/material/Typography'
 
 import useAuth from '@hooks/useAuth'
@@ -12,41 +12,45 @@ import useLoadResources from '@hooks/useLoadResources'
 import useLayout from '@hooks/useLayout'
 import useRoute from '@hooks/useRoute'
 
+import '@styles/components/ui/buttons/profileButton.css'
+
+const preloadProfileComponent = async () => {
+  try {
+    await import('@pages/profile/Profile.jsx')
+  } catch (err) {
+    console.error('ProfileButton: error preloading the Profile component.')
+  }
+}
+
 export default function ProfileButton({
   showTexts,
   tooltipPosition = 'top',
   onlyIcon = false,
-  sx,
   className
 }) {
   const { t } = useTranslation('ui')
   const { navigateTo } = useRoute()
   const { isPreview, triggerUpsell } = useLayout()
-
   const { isOffline, currentUser } = useAuth()
   const { profile } = useUser()
+
   const avatar = profile?.avatar || currentUser?.avatar
-
-  // we use this component on the Landing page so we need to get the ui
-  // resources...
-  const loadingResource = useLoadResources('ui')
-
-  const borderColor = isOffline ? 'red' : 'green'
   const username = profile?.username || currentUser?.username
   const email = profile?.email || currentUser?.email
 
-  const preloadProfileComponent = async () => {
-    if (isPreview) return
+  // we use this component on the Landing page so we need to get the ui
+  // resources...
+  useLoadResources('ui')
 
-    try {
-      await import('@pages/profile/Profile.jsx')
-    } catch (err) {
-      console.error('ProfileButton: error preloading the Profile component.')
-    }
-  }
+  const statusColor = isOffline 
+    ? 'var(--mui-palette-error-main)' 
+    : 'var(--mui-palette-success-main)'
+
+  const onlyIconClass = onlyIcon ? 'profile-btn--only-icon' : ''
+  const classNames = `profile-btn ${onlyIconClass} ${className}`
 
   return (
-    <Tooltip
+    <AppTooltip
       title={t('buttons.profileButtonLabel')}
       placement={tooltipPosition}>
       <Button
@@ -54,66 +58,33 @@ export default function ProfileButton({
         onClick={() => isPreview
           ? triggerUpsell('profile')
           : navigateTo('/profile')}
-        onMouseEnter={preloadProfileComponent}
-        sx={{
-          borderRadius: onlyIcon ? '50%' : 0,
-          ...(onlyIcon && { p: 0 }),
-          ...sx
-        }}
+        onMouseEnter={!isPreview ? preloadProfileComponent : null}
+        style={{ '--profile-status-color': statusColor }}
         aria-label={t('buttons.profileButtonLabel')}
-        className={className}>
+        className={classNames}>
         <Badge
           className={`profile-btn-avatar ${showTexts ? 'hide-element' : ''}`}
           variant='dot'
           overlap='circular'
           anchorOrigin={{ vertical: 'bottom' }}
           color={isOffline ? 'error' : 'success'}>
-          <Avatar
-            alt={`${username} avatar`}
-            src={avatar}
-            sx={{
-              border: `2px solid ${borderColor}`
-            }}
-          />
+          <Avatar alt={`${username} avatar`} src={avatar} />
         </Badge>
 
         {showTexts && (
-          <Box
-            className='hide-element profile-btn-text flex flex-column'
-            sx={{
-              alignItems: 'start',
-              position: 'absolute',
-              left: { xs: '4.25rem', laptop: '3.5rem' },
-              visibility: 'hidden',
-
-              '.is-open &': {
-                visibility: 'visible'
-              }
-            }}>
-            <Typography
-              sx={[theme => ({
-                ...theme.typography.subtitle2,
-                opacity: 1,
-                color: 'text.primary'
-              })
-              ]}>
+          <Box 
+            className='hide-element profile-btn-text flex flex-column absolute'>
+            <Typography className='profile-btn-name'>
               {username}
             </Typography>
             {email && (
-              <Typography
-                variant='caption'
-                sx={[theme => ({
-                  ...theme.typography.caption,
-                  opacity: 1,
-                  color: 'text.secondary'
-                })
-                ]}>
+              <Typography className='profile-btn-email' variant='caption'>
                 {email}
               </Typography>
             )}
           </Box>
         )}
       </Button>
-    </Tooltip>
+    </AppTooltip>
   )
 }

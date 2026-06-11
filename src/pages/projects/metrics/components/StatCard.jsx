@@ -1,11 +1,8 @@
 import { useRef, useState } from 'preact/hooks'
 
-import Box from '@mui/material/Box'
-import Paper from '@mui/material/Paper'
 import Typography from '@mui/material/Typography'
 import MetricPaper from './MetricPaper'
 
-import { alpha, useTheme } from '@mui/material/styles'
 import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
 import useCounterAnimation from '@hooks/animations/useCounterAnimation'
@@ -18,15 +15,13 @@ export default function StatCard({
   pulse = false
 }) {
   const cardRef = useRef(null)
-  const theme = useTheme()
-
   const animatedCount = useCounterAnimation(total, { trigger: cardRef })
 
   useGSAP(() => {
     if (pulse && total > 0) {
       gsap.to(cardRef.current, {
-        boxShadow: `0px 0px 15px ${alpha(theme.palette[color].main, 0.4)}`,
-        borderColor: alpha(theme.palette[color].main, 0.8),
+        boxShadow: `0px 0px 15px var(--stat-color-alpha-40)`,
+        borderColor: 'var(--stat-color-alpha-80)',
         duration: 1.5,
         repeat: -1,
         yoyo: true,
@@ -35,24 +30,23 @@ export default function StatCard({
     }
   }, { dependencies: [total, pulse], scope: cardRef })
 
+  const dynamicColorStyle = {
+    '--stat-color-main': `var(--mui-palette-${color}-main)`,
+    '--stat-color-main-channel': `var(--mui-palette-${color}-mainChannel)`,
+    '--stat-color-alpha-40': `rgb(var(--mui-palette-${color}-mainChannel) / 0.4)`,
+    '--stat-color-alpha-80': `rgb(var(--mui-palette-${color}-mainChannel) / 0.8)`
+  }
+
   return (
     <MetricPaper
-      className='flex flex-column flex-center'
+      className='flex flex-column flex-center metric-paper'
       color={color}
       ref={cardRef}
+      style={dynamicColorStyle}
       elevation={0}>
-      <Box
-        className='flex'
-        sx={theme => ({
-          color: theme.palette[color]?.main,
-          bgcolor: alpha(theme.palette[color]?.main ||
-            theme.palette.primary.main, 0.1),
-          p: 1,
-          borderRadius: '50%',
-          mb: 1
-        })}>
+      <div className='flex stat-card-icon-box'>
         {icon}
-      </Box>
+      </div>
       <Typography variant='h4' fontWeight={700}>
         {animatedCount}
       </Typography>

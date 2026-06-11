@@ -2,8 +2,6 @@ import { signal, computed, effect } from '@preact/signals'
 import { playSound } from '@services/audio'
 import sortTasks from '@utils/tasks/sortTasks'
 
-// *** Tasks ***
-
 // plain tasks (task and subtasks on the same nest level)
 export const taskRegistry = signal(new Map())
 
@@ -17,6 +15,30 @@ export const rootTaskIds = computed(() => {
   return ids
 })
 
+// this signal is only used to notify tasks position changes
+export const taskVersion = signal(0)
+
+export const tasksToArchiveIds = computed(() => {
+  const toArchive = []
+
+  // subscribe to task deletions (in case the user deletes a task to archive)
+  const registry = taskRegistry.value
+  const _version = taskVersion.value  // subscribe to some specific app changes
+
+  for (const taskSignal of registry.values()) {
+    const task = taskSignal.peek() 
+    if (!task) continue
+
+    const { status, isArchived, id, parentId } = task
+    const isProcessable = status === 'done' || status === 'cancelled'
+
+    if (!parentId && !isArchived && isProcessable) toArchive.push(id)
+  }
+  
+  return toArchive
+})
+
+
 export const activeDropIndicator = signal({
   sourceId: null,
   targetId: null,
@@ -27,8 +49,16 @@ export const updateTaskLocal = (id, data) => {
   const registry = taskRegistry.peek()
   const taskSignal = registry.get(id)
 
-  if (taskSignal) {
-    taskSignal.value = { ...taskSignal.peek(), ...data }
+  if(!taskSignal) return
+
+  const previousTask = taskSignal.peek()
+  taskSignal.value = { ...previousTask, ...data }
+
+  const statusChanged = data.status && data.status !== previousTask.status
+
+  if (statusChanged) {
+    // helps update the ArchiveButton count
+    taskVersion.value++
   }
 }
 
@@ -141,10 +171,11 @@ export const reorderTaskLocal = (id, newPosition, newStatus) => {
   if (parentSignal) {
     const parentData = parentSignal.peek()
 
-    // get all siblings including the updated one
+    // get all siblings including the updated one (use the fresh 'updates' if is
+    // the ordered task)
     const siblings = parentData.subtasks
-    .map(subId => registry.get(subId)?.peek())
-    .filter(Boolean)
+      .map(subId => (subId === id ? updates : registry.get(subId)?.peek()))
+      .filter(Boolean)
 
     // update parent with a new array reference to trigger the filteredSubtaskIds
     parentSignal.value = {
@@ -152,6 +183,8 @@ export const reorderTaskLocal = (id, newPosition, newStatus) => {
       subtasks: sortTasks(siblings).map(t => t.id) 
     }
   }
+
+  taskVersion.value++
 }
 
 // *** Zen mode ***

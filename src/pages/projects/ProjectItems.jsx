@@ -19,58 +19,43 @@ import useProject from '@hooks/useProject'
 import { useNavigate } from 'react-router-dom'
 import useLayout from '@hooks/useLayout'
 
+// custom appbar buttons styles
+import '@styles/components/ui/projects/dashboard/projectActions.css'
+
 export default function ProjectItems({ onMount }) {
   const { isMobile } = useApp()
   const { id } = useProject()
   const navigate = useNavigate()
   const { isPreview } = useLayout()
 
-  const defaultItems =
+  useEffect(() => {
+    // let the ToggleProjectDrawer trigger the animation
+    if (!isMobile) onMount?.()
+  }, [onMount, isMobile])
+
+  const defaultItems = (
     <>
       <PreviewSwitcher />
       {isPreview && (
         <Suspense fallback={null}>
-          {!isMobile ? (
-            <Box 
-              mr='auto'
-              className='flex flex-center' 
-              gap={1}>
-              <ThemeUpdater />
-              <LangUpdater />
-            </Box>
-          ) : (
-              <>
-                <ThemeUpdater />
-                <LangUpdater longText={false} />
-              </>
-            )}
+          <div 
+            className='flex flex-center project-items-preferences' 
+            // align perfectly with the other list items on mobile devices
+            style={{ display: isMobile ? 'contents' : 'block' }}>
+            <ThemeUpdater />
+            <LangUpdater longText={!isMobile} />
+          </div>
         </Suspense>
       )}
-
       {!isMobile && <ArchiveButton />}
       <FilterButton />
       <AddMembers />
       <AddButton />
     </>
-
-  useEffect(() => {
-    // let the ToggleProjectDrawer trigger the animation
-    if (isMobile) return
-
-    const timer = requestAnimationFrame(() => onMount?.())
-    return () => cancelAnimationFrame(timer)
-  }, [onMount])
+  )
 
   return (
-    <List
-      disablePadding
-      className='flex flex-center'
-      sx={{
-        display: 'flex',
-        justifyContent: 'space-between',
-        gap: 1,
-        flexGrow: 1
-      }}>
+    <List disablePadding className='flex flex-center project-items-list'>
       {!isMobile ? defaultItems
         : (
           <>

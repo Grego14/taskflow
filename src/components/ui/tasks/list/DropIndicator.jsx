@@ -15,7 +15,7 @@ export default function DropIndicator({ maxWidth, isTop, isSubtask }) {
         borderRadius: 1,
         pointerEvents: 'none',
         maxWidth: !isSubtask 
-          ? `calc(${theme.ui.taskCardMaxWidth} - 5rem)` 
+          ? `calc(var(--mui-ui-taskCardMaxWidth) - 5rem)` 
           : '100%'
       }}
       role='none'

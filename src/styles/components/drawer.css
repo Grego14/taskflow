@@ -1,0 +1,114 @@
+.app-drawer-paper.app-drawer-paper {
+  will-change: width;
+  white-space: nowrap;
+  width: var(--drawer-width);
+  background-image: var(--mui-palette-background-drawer);
+  overflow: hidden;
+  transition: none;
+  border: none
+}
+
+[data-state='closed'] .app-drawer-paper.app-drawer-paper {
+  box-shadow: var(--drawer-shadow)
+}
+
+.app-drawer-list.app-drawer-list {
+  gap: calc(var(--mui-spacing) * 1.25);
+  height: 100%
+}
+
+.app-drawer-divider.app-drawer-divider {
+  margin: var(--mui-spacing);
+  opacity: 0.8
+}
+
+.app-drawer-profile-container.app-drawer-profile-container {
+  margin-top: auto;
+  gap: calc(var(--mui-spacing) * 3);
+  min-height: calc(var(--mui-spacing) * 20)
+}
+
+.app-drawer-profile-btn.app-drawer-profile-btn {
+  padding: calc(var(--mui-spacing) * 1.5);
+  margin-right: auto;
+  justify-content: center;
+  max-width: 100%;
+  margin-top: auto
+}
+
+[data-state='open'] .app-drawer-profile-btn.app-drawer-profile-btn {
+  justify-content: flex-start;
+  margin-right: 0
+}
+
+.app-drawer-toolbar-wrapper.app-drawer-toolbar-wrapper {
+  margin-bottom: calc(var(--mui-spacing) * 2)
+}
+
+.app-drawer-toolbar.app-drawer-toolbar {
+  height: calc(var(--appbar-height) - 1px);
+  padding-inline: var(--mui-spacing)
+}
+
+.app-drawer-toolbar-divider.app-drawer-toolbar-divider {
+  display: block;
+}
+
+.toggle-drawer-btn.toggle-drawer-btn {
+  margin-left: 0;
+}
+
+[data-state='open'] .toggle-drawer-btn.toggle-drawer-btn {
+  margin-left: auto
+}
+
+[data-state='closed'] .toggle-drawer-btn .collapse,
+[data-state='open'] .toggle-drawer-btn .expand { 
+  display: none 
+}
+
+/* ToolbarSelect component */
+
+.toolbar-select.toolbar-select {
+  padding-inline: var(--mui-spacing);
+  justify-content: center
+}
+
+[data-state='closed'] .toolbar-select.toolbar-select { padding-inline: 0 }
+
+.toolbar-select-form.toolbar-select-form { min-width: 10rem }
+
+.toolbar-select-form .MuiInputBase-root {
+  margin-top: calc(var(--mui-spacing) * 2)
+}
+
+.toolbar-select-el .MuiSelect-select {
+  font-weight: 500;
+  font-size: 0.825rem;
+  padding-top: var(--mui-spacing);
+  padding-bottom: var(--mui-spacing);
+  max-width: 12ch
+}
+
+.toolbar-select-label.toolbar-select-label {
+  transform: translate(38px, 8px) scale(1);
+  transition: transform 
+    var(--mui-transitions-duration-shorter) 
+    var(--mui-transitions-easing-easeInOut)
+}
+
+.toolbar-select-label.MuiInputLabel-shrink {
+  transform: translate(0px, 4px) scale(0.75)
+}
+
+.toolbar-select-icon {
+  font-size: 1rem;
+  margin-inline: calc(var(--mui-spacing) * 0.75);
+  color: var(--mui-palette-action-active)
+}
+
+.toolbar-new-project-btn {
+  width: 100%;
+  text-transform: none;
+  font-weight: 600
+}

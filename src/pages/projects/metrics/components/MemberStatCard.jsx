@@ -1,4 +1,3 @@
-import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import Avatar from '@mui/material/Avatar'
 import Paper from '@mui/material/Paper'
@@ -12,14 +11,14 @@ import { useTranslation } from 'react-i18next'
 
 const MetricRow = ({ count, text, color }) => {
   return (
-    <Box className='text-center'>
+    <div className='text-center'>
       <Typography variant='h6' fontWeight={800} color={`${color}.main`}>
         {count}
       </Typography>
       <Typography variant='caption' color='textSecondary' fontWeight={600}>
         {text}
       </Typography>
-    </Box>
+    </div>
   )
 }
 
@@ -41,56 +40,28 @@ export default function MemberStatCard({ member, metrics }) {
 
   const isOwner = member?.id === data?.createdBy
 
+  if(!member) return null
+
   return (
     <Paper
       ref={cardRef}
       elevation={0}
-      sx={{
-        p: 3,
-        mb: 2,
-        borderRadius: 4,
-        border: `1px solid ${theme.palette.divider}`,
-        display: 'flex',
-        flexWrap: 'wrap',
-        alignItems: 'center',
-        gap: { xs: 1, mobile: 2 },
-        transition: 'translate 0.2s ease-in-out, background-color 0.2s ease-in-out',
-        '&:hover': {
-          bgcolor: alpha(theme.palette.action.hover, 0.04),
-          translate: '0 -5px'
-        },
-        bgcolor: 'transparent',
-        maxWidth: '30rem',
-        mx: 'auto',
-        px: 4
-      }}>
-      <Box className='flex flex-center'
-        sx={{
-          gap: 2,
-          minWidth: { xs: 200, mobile: '100%' },
-          flex: { tablet: 1 },
-          justifyContent: 'start'
-        }}>
-        <Avatar
-          src={member?.avatar}
-          sx={{
-            width: 56,
-            height: 56,
-            border: `2px solid ${theme.palette.primary.main}`
-          }}>
+      className='member-stat-card flex flex-wrap'>
+      <div className='flex flex-center member-info-wrapper'>
+        <Avatar src={member?.avatar} className='member-avatar'>
           {member?.username?.charAt(0)}
         </Avatar>
-        <Box>
+        <div>
           <Typography variant='subtitle1' fontWeight={700}>
             {member?.username}
           </Typography>
           <Typography variant='caption' color='textSecondary'>
             {t(isOwner ? 'ownerLabel' : 'memberLabel')}
           </Typography>
-        </Box>
-      </Box>
+        </div>
+      </div>
 
-      <Box className='flex flex-center' gap={3} sx={{ flex: 2 }}>
+      <div className='flex flex-center member-metrics-row'>
         <MetricRow
           count={animatedCompleted}
           text={t('metrics.completed')}
@@ -103,20 +74,15 @@ export default function MemberStatCard({ member, metrics }) {
           count={animatedOverdue}
           text={t('metrics.overdue')}
           color='error' />
-      </Box>
+      </div>
 
-      <Box sx={{
-        minWidth: 100,
-        display: 'flex',
-        justifyContent: 'flex-end',
-        mx: 'auto'
-      }}>
+      <div className='gauge-container-wrapper flex'>
         <MetricGauge
           value={efficiency}
           size={100}
           title={t('completedOnTimeTasks')}
         />
-      </Box>
+      </div>
     </Paper>
   )
 }

@@ -6,14 +6,16 @@ import useApp from '@hooks/useApp'
 import useDrawerAnimation from '@hooks/animations/useDrawerAnimation'
 
 import LayoutContext from './context'
-import { getItem, setItem } from '@utils/storage'
+import { setItem } from '@utils/storage'
 import { FILTERS } from '@/constants'
+import { isDrawerOpen } from '@stores/ui'
 
 export default function LayoutProvider({ children, isPreview, triggerUpsell }) {
   const { isMobile } = useApp()
   const { userLoaded, update, metadata } = useUser()
-  const [drawerOpen, setDrawerOpen] = useState(getItem('drawerOpen'))
   const [filter, setFilter] = useState('default')
+
+  const drawerOpen = isDrawerOpen.value
 
   const [opening, setOpening] = useState(null)
   const drawerRef = useRef(null)
@@ -49,18 +51,16 @@ export default function LayoutProvider({ children, isPreview, triggerUpsell }) {
     // drawerOpen state to hide/show the text and align the icons
     if (typeof opening === 'boolean') return
 
-    setDrawerOpen(newVal)
+    isDrawerOpen.value = newVal
     setItem('drawerOpen', newVal)
 
     // do not animate the exit if the drawer is temporary
     if (isTemporary && newVal === false) return
 
     drawerAnim(newVal)
-  }, [drawerAnim, opening])
+  }, [drawerAnim, opening, drawerOpen])
 
   const value = useMemo(() => ({
-    drawerOpen,
-    setDrawerOpen,
     toggleDrawer: animateDrawer,
     filter,
     setFilter,
@@ -70,11 +70,9 @@ export default function LayoutProvider({ children, isPreview, triggerUpsell }) {
     isPreview,
     triggerUpsell,
   }), [
-      drawerOpen, 
       filter, 
       debounceUpdater, 
       isMobile, 
-      animateDrawer, 
       isPreview
     ])
 

@@ -1,6 +1,6 @@
 import { dbAdapter } from '@services/dbAdapter'
-import { taskRegistry } from '@store/tasks'
-import preparePromotedSubtask from './utils/preparePromotedSubtask'
+import { taskRegistry } from '@stores/task'
+import preparePromotedSubtask from '@logic/tasks/utils/preparePromotedSubtask'
 
 export default async function moveSubtasksService({ user, project, task, subtaskIds, position }) {
   if (!user || !project) throw Error('moveSubtasks: Invalid user or project')

@@ -1,7 +1,7 @@
 import Button from '@mui/material/Button'
 import PlayIcon from '@mui/icons-material/PlayArrow'
 import PauseIcon from '@mui/icons-material/Pause'
-import TaskTooltip from '@components/reusable/tasks/Tooltip'
+import AppTooltip from '@components/reusable/AppTooltip'
 
 import { useTranslation } from 'react-i18next'
 import useTasks from '@hooks/useTasks'
@@ -17,18 +17,18 @@ import {
   currentSessionSeconds,
   taskRegistry
 } from '@stores/task'
-import { useCallback } from 'preact/hooks'
+import { useCallback, useMemo } from 'preact/hooks'
+
+import '@styles/components/buttons/smartActionLabel.css'
 
 const LiveTimer = () => {
   if (!activeTaskData.value) return null
-
   return <span>{formatTimer(currentSessionSeconds.value)}</span>
 }
 
 export default function SmartActionLabel({ id, insideTask }) {
   const { t } = useTranslation(['ui', 'tasks'])
   const { toggleWorkingTask } = useTasks()
-  const theme = useTheme()
 
   const taskData = taskRegistry.peek().get(id)?.value
 
@@ -54,52 +54,45 @@ export default function SmartActionLabel({ id, insideTask }) {
     toggleWorkingTask(willStart ? taskData : null)
   }, [id])
 
+  const dynamicStyles = useMemo(() => {
+    const hasDate = !!taskData.dueDate
+    const canPlayDirectly = isToday || isThisTaskWorking
+
+    const colorVar = isOverdue 
+      ? 'var(--mui-palette-error-main)' 
+      : isToday 
+        ? 'var(--mui-palette-primary-main)' 
+        : 'var(--mui-palette-text-secondary)'
+
+    const finalColor = hasDate || isThisTaskWorking 
+      ? colorVar 
+      : 'var(--mui-palette-text-secondary)'
+
+    return {
+      '--btn-color': finalColor,
+      '--bg-hover': `color-mix(in srgb, ${finalColor}, transparent 85%)`,
+      '--btn-size': !insideTask ? '40px' : '36px',
+      '--font-weight': (isOverdue || isToday) ? 600 : 400,
+      '--play-opacity': canPlayDirectly || !hasDate ? 0.6 : 0
+    }
+  }, [isOverdue, isToday, taskData.dueDate, isThisTaskWorking, insideTask])
+
   const hasDate = !!taskData.dueDate
-  const canPlayDirectly = isToday || isThisTaskWorking
-
-  const btnColor = (isOverdue || isToday) && hasDate
-    ? theme.palette[isOverdue ? 'error' : 'primary'].main
-    : theme.palette.text.secondary
-
-  const btnSize = !insideTask ? '40px' : '36px'
 
   return (
-    <TaskTooltip
+    <AppTooltip
       title={isThisTaskWorking ? t('tasks:pauseTask') : t('tasks:workOnTask')}>
-      <Button
-        onClick={handleToggle}
-        sx={theme => ({
-          color: btnColor,
-          display: 'inline-flex',
-          alignItems: 'center',
-          alignSelf: 'center',
-          gap: 0.5,
-          cursor: 'pointer',
-          userSelect: 'none',
-          '&:hover': { backgroundColor: theme.alpha(btnColor, 0.15) },
-          ...theme.typography.caption,
-          fontWeight: (isOverdue || isToday) ? 600 : 400,
-          '&:hover .play-icon': { opacity: 1 },
-          fontVariantNumeric: 'tabular-nums',
-          minWidth: btnSize,
-          minHeight: btnSize
-        })}>
+      <Button 
+        onClick={handleToggle} 
+        style={dynamicStyles} 
+        className='smart-action-btn'>
         {isThisTaskWorking ? (
-          <PauseIcon sx={{ fontSize: 12 }} />
+          <PauseIcon className='smart-action-icon' />
         ) : (
-          <PlayIcon
-            className='play-icon'
-            sx={{
-              fontSize: 12,
-              transition: 'opacity 0.2s ease',
-              opacity: canPlayDirectly || !hasDate ? 0.6 : 0,
-              '&:hover': { opacity: 1 }
-            }}
-          />
-        )}
+          <PlayIcon className='smart-action-icon' />)}
 
         {isThisTaskWorking ? <LiveTimer /> : (hasDate ? label : null)}
       </Button>
-    </TaskTooltip>
+    </AppTooltip>
   )
 }

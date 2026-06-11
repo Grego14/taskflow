@@ -13,20 +13,9 @@ import useProject from '@hooks/useProject'
 import useTasks from '@hooks/useTasks'
 import { useTranslation } from 'react-i18next'
 
-const getIconStyles = theme => ({
-  color: theme.palette.info.light,
-  ...theme.applyStyles('dark', { color: theme.palette.info.dark })
-})
+import '@styles/components/buttons/assignMembers.css'
 
-const getButtonStyles = theme => ({
-  justifyContent: 'start',
-  gap: 1.5,
-  color: 'text.secondary',
-  '&:hover': { backgroundColor: theme.alpha(theme.palette.action.hover, 0.1) },
-  py: 1.065,
-  px: 2,
-  width: '100%'
-})
+const itemTextSlotProps = { primary: { variant: 'body2', noWrap: true } }
 
 const renderMembersList = (props) => {
   const { projectMembers, taskMembers, onToggle, triggerExit } = props
@@ -45,36 +34,25 @@ const renderMembersList = (props) => {
         key={member.id}
         button
         onClick={handleClick}
-        sx={{ gap: 1, py: 0.5 }}>
-        <ListItemAvatar sx={{ minWidth: 40 }}>
-          <Avatar
-            src={member.avatar}
-            sx={{ width: 30, height: 30, fontSize: '0.85rem' }}>
+        className='assign-member-item'>
+        <ListItemAvatar className='assign-member-avatar-box'>
+          <Avatar src={member.avatar} className='assign-member-avatar'>
             {member.username?.charAt(0)}
           </Avatar>
         </ListItemAvatar>
-        <ListItemText
-          primary={member.username}
-          slotProps={{ primary: { variant: 'body2', noWrap: true } }}
-        />
+        <ListItemText primary={member.username} slotProps={itemTextSlotProps} />
         <Checkbox
           edge='end'
           checked={isSelected}
           size='small'
           disableRipple
-          sx={{ ml: 'auto' }}
+          className='assign-member-checkbox'
         />
       </ListItem>
     )
   }
 
-  return <List
-    sx={{
-      p: 0,
-      minWidth: 200,
-      maxHeight: 300,
-      overflowY: 'auto'
-    }}>
+  return <List className='assign-members-list'>
     {items}
   </List>
 }
@@ -113,19 +91,18 @@ export default function AssignMembers({
   }
 
   const label = t('actions.assignMembers')
-  const icon = <PersonAddIcon fontSize='small' sx={getIconStyles} />
+  const icon = <PersonAddIcon fontSize='small' className='assign-members-icon' />
 
   const menuText = <Box className='flex flex-center' gap={1}>
     {icon}
-    <Typography variant='body2'
-      sx={[theme => ({
-        color: theme.palette.info.light,
-        ...theme.applyStyles('dark', { color: theme.palette.info.dark }),
-        my: 0.5
-      })]}>
+    <Typography variant='body2' className='assign-members-label'>
       {label}
     </Typography>
   </Box>
+
+  const rootClassName = `
+    assign-members-trigger 
+    ${creatingTask ? 'is-creating' : ''}`
 
   return (
     <DropdownMenu
@@ -136,19 +113,10 @@ export default function AssignMembers({
       tooltipPosition='top'
       slotProps={{
         root: {
-          sx: theme => ({ ...getButtonStyles(theme), ...sx }),
-          ...(creatingTask && { 'aria-label': label, sx: { p: 1.5 } })
+          className: rootClassName,
+          ...(creatingTask && { 'aria-label': label })
         },
-        paper: {
-          sx: theme => ({
-            backgroundColor: theme.palette.mode === 'dark'
-              ? theme.lighten(theme.palette.background.paper, 0.05)
-              : theme.palette.background.paper,
-            border: `1px solid ${theme.alpha(theme.palette.info.main, 0.5)}`,
-            boxShadow: theme.shadows[8],
-            backgroundImage: 'none'
-          })
-        }
+        paper: { className: 'assign-members-menu-paper' }
       }}>
       {(_, triggerExit) => renderMembersList({
         projectMembers,

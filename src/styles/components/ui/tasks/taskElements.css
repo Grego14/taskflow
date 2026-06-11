@@ -1,0 +1,264 @@
+/* Tasks components START*/
+
+.task-wrapper {
+  margin-bottom: calc(var(--mui-spacing) * 3.5);
+
+  &.removing, &:last-child { margin-bottom: 0 }
+}
+
+/* base structure for ListTask and SubtaskItem */
+.task-card {
+  width: 100%;
+  background-image: none;
+  transition-property: opacity, background-color, transform, border-color;
+  transition-duration: var(--mui-transitions-duration-shortest);
+  transition-timing-function: var(--mui-transitions-easing-easeInOut);
+  cursor: grab;
+  will-change: transform, opacity;
+
+  &.is-overdue { opacity: 0.75 }
+
+  &:hover {
+    border-color: var(--mui-palette-primary-main);
+    box-shadow: var(--mui-shadows-10)
+  }
+}
+
+/* ListTask */
+.task-main {
+  border-radius: calc(var(--mui-shape-borderRadius) * 3);
+  border: 1px solid var(--mui-palette-divider);
+  margin-inline: auto;
+  border-left: 4px solid var(--task-priority-color);
+
+  max-width: var(--mui-ui-taskCardMaxWidth);
+  background-color: var(--task-bg-color);
+  opacity: var(--task-opacity);
+  cursor: grab;
+
+  /* task focused using the link on inside a promoted subtask */
+  &[data-focused='true'] { box-shadow: 0 0 0 2px var(--task-priority-color) }
+}
+
+.task-content-padding { padding: calc(var(--mui-spacing) * 1.15) }
+
+.subtasks-container {
+  margin-left: calc(var(--mui-spacing) * 4);
+  padding-bottom: calc(var(--mui-spacing) * 1);
+}
+
+/* SubtaskItem */
+.subtask-item {
+  background-color: transparent !important;
+  border-radius: 0;
+  overflow: visible;
+  padding: /* p: 1, pr: 2 */
+    var(--mui-spacing)
+    calc(var(--mui-spacing) * 2) 
+    var(--mui-spacing) 
+    var(--mui-spacing)
+}
+
+.subtask-item::after {
+  content: "";
+  position: absolute;
+  left: calc(var(--mui-spacing) * -2);
+  top: 50%;
+  transform: translateY(-50%) scale(0.3);
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--task-priority-color);
+  opacity: 0;
+  transition: 
+    opacity 
+    var(--mui-transitions-duration-standard) 
+    var(--mui-transitions-easing-easeInOut), 
+    transform 
+    var(--mui-transitions-duration-complex) 
+    cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  pointer-events: none
+}
+
+.subtask-item:hover::after {
+  opacity: 1;
+  transform: translateY(-50%) scale(1)
+}
+
+.subtask-item::before {
+  content: "";
+  position: absolute;
+  left: 0; 
+  top: 0; 
+  bottom: 0;
+  width: 2px;
+  background-color: transparent;
+  border-radius: 4px;
+  transform: scaleY(0);
+  transform-origin: center;
+  transition: transform 
+    var(--mui-transitions-duration-complex)
+    cubic-bezier(0.4, 0, 0.2, 1), 
+    opacity 
+    var(--mui-transitions-duration-standard) 
+    var(--mui-transitions-easing-easeInOut)
+}
+
+.subtask-item:hover::before {
+  background-color: var(--task-priority-color);
+  transform: scaleY(1)
+}
+
+/* Tasks components END*/
+
+/* CompleteButton START */
+
+.task-complete-checkbox {
+  color: var(--mui-palette-text-secondary);
+  transition: background-color 
+    var(--mui-transitions-duration-shortest) 
+    var(--mui-transitions-easing-easeInOut);
+
+  --cb-border-color: rgb(var(--mui-palette-common-onBackgroundChannel) / 0.6);
+
+  &:hover { background-color: var(--mui-palette-action-hover) }
+
+  &.Mui-checked .MuiSvgIcon-root {
+    border: 2px solid var(--cb-border-color);
+    border-radius: var(--mui-shape-borderRadius);
+    padding: 1px
+  }
+}
+
+.dark .task-complete-checkbox{
+  --cb-border-color: var(--mui-palette-grey-400)
+}
+
+/* CompleteButton END */
+
+/* TaskMembers START */
+
+.task-members-trigger {
+  display: none;
+  cursor: pointer;
+  margin-left: auto;
+  padding: var(--mui-spacing);
+  border-radius: 50%;
+  
+  transition: background-color 
+    var(--mui-transitions-duration-standard) 
+    var(--mui-transitions-easing-easeInOut);
+
+  &:hover { background-color: var(--mui-palette-action-hover) }
+}
+
+@media (--mobile) {
+  .task-members-trigger { display: flex }
+}
+
+.task-member-avatar-single {
+  border: 1px solid currentColor;
+  width: var(--avatar-size);
+  height: var(--avatar-size)
+}
+
+.task-member-avatar-stacked {
+  width: 20px;
+  height: 20px;
+  z-index: 2;
+}
+
+.task-members-badge {
+  margin-left: calc(var(--mui-spacing) * -1);
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: var(--mui-palette-primary-main);
+  color: var(--mui-palette-primary-contrastText, #fff);
+  font-size: 0.65rem;
+  border: 2px solid var(--mui-palette-background-paper);
+  z-index: 1;
+}
+
+/* TaskMembers END */
+
+/* UpdatableTaskTitle START */
+
+.task-title-field {
+  & .MuiOutlinedInput-notchedOutline {
+    border: 1px solid transparent;
+    transition-property: box-shadow, border-color;
+    transition-duration: var(--mui-transitions-duration-shorter);
+    transition-timing-function: var(--mui-transitions-easing-easeInOut);
+    box-shadow: none
+  }
+
+  &.is-editing .MuiOutlinedInput-notchedOutline {
+    border-width: 1px;
+    border-style: solid;
+    border-color: var(--mui-palette-primary-main);
+    box-shadow: 0 0 6px 2px var(--mui-palette-action-focus)
+  }
+}
+
+.task-title-input {
+  padding-block: calc(var(--mui-spacing) * 0.5);
+  padding-left: var(--mui-spacing);
+  padding-right: 0;
+  text-overflow: ellipsis;
+  transition: color var(--mui-transitions-duration-standard) ease;
+  
+  font: var(--title-font);
+  font-weight: 400;
+
+  &.is-editing { padding-right: calc(var(--mui-spacing) * 1.75) }
+
+  &.is-checked {
+    color: var(--title-checked-color);
+
+    &.is-cancelled {
+      text-decoration: line-through;
+      text-decoration-color: var(--mui-palette-error-main);
+      text-decoration-thickness: 2px;
+      font-style: italic
+    }
+  }
+}
+
+/* UpdatableTaskTitle END */
+
+.task-total-time-container {
+  color: var(--mui-palette-text-secondary);
+  opacity: 0.8;
+  margin-right: calc(var(--mui-spacing) * 0.5)
+}
+
+/* Header START */
+
+.task-card-header {
+  padding: 0;
+  width: 100%;
+
+  & .MuiCardHeader-action{
+    margin-block: auto;
+    margin-right: 0;
+    margin-left: calc(var(--mui-spacing) * 1);
+    display: flex;
+    align-items: center;
+    gap: var(--mui-spacing)
+  }
+}
+
+/* Delete Task Action */
+
+.delete-task-icon,
+.delete-task-label {
+  color: var(--mui-palette-error-light)
+}
+
+.dark .delete-task-icon,
+.dark .delete-task-label {
+  color: var(--mui-palette-error-main)
+}
+
+/* Header END */

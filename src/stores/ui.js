@@ -1,4 +1,5 @@
 import { signal } from '@preact/signals'
+import { getItem } from '@utils/storage'
 
 export const globalAlert = signal(null)
 
@@ -23,3 +24,15 @@ export const closeGlobalAlert = () => {
 
   globalAlert.value = { ...globalAlert.value, open: false }
 }
+
+export const tooltipOpen = signal(false)
+export const tooltipTitle = signal(null)
+export const tooltipIsWarm = signal(false)
+
+// element used to calculate the position
+export const tooltipTarget = signal(null)
+
+// custom tooltip props (ex. enterDelay, placement)
+export const tooltipProps = signal({})
+
+export const isDrawerOpen = signal(getItem('drawerOpen'))

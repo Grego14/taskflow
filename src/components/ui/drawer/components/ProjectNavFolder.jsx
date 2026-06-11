@@ -1,186 +1,170 @@
+import { useState, useRef, useEffect } from 'preact/compat'
+import { useTranslation } from 'react-i18next'
+import { useLocation, useParams } from 'react-router-dom'
+import { useGSAP } from '@gsap/react'
+import useLayout from '@hooks/useLayout'
+
 import Box from '@mui/material/Box'
 import List from '@mui/material/List'
 import Button from '@mui/material/Button'
 import Typography from '@mui/material/Typography'
 import Collapse from '@mui/material/Collapse'
 import AccountTreeIcon from '@mui/icons-material/AccountTree'
-import NavAction from '@components/reusable/NavAction'
-import Tooltip from '@mui/material/Tooltip'
-import ButtonListItem from '@components/reusable/buttons/ButtonListItem'
-
 import ExpandIcon from '@mui/icons-material/ExpandLess'
 
-import { useState, useRef } from 'react'
-import { useTranslation } from 'react-i18next'
-import { useLocation, useParams } from 'react-router-dom'
-import { useGSAP } from '@gsap/react'
-import useLayout from '@hooks/useLayout'
+import NavAction from '@components/reusable/NavAction'
+import AppTooltip from '@components/reusable/AppTooltip'
+import ButtonListItem from '@components/reusable/buttons/ButtonListItem'
 
 import { getProjectNavigation } from '@constants/navigation'
 import gsap from 'gsap'
 
-const LABEL_PROPS = {
-  variant: 'caption',
-  textTransform: 'uppercase',
-  fontWeight: 700,
-  color: 'text.secondary',
-  letterSpacing: '0.5px'
-}
+import { isDrawerOpen } from '@stores/ui'
 
-export default function ProjectCollapsibleSection() {
+import '@styles/components/buttons/projectNavFolder.css'
+
+export default function ProjectNavFolder() {
   const { projectOwner, projectId } = useParams()
   const { pathname } = useLocation()
   const { t } = useTranslation('ui')
   const containerRef = useRef(null)
   const [open, setOpen] = useState(true)
-  const { drawerOpen, toggleDrawer, isPreview } = useLayout()
+  const { toggleDrawer, isPreview } = useLayout()
+
+  const drawerOpen = isDrawerOpen.value
+
+  useEffect(() => {
+    if(!drawerOpen && open) setOpen(false)
+  }, [drawerOpen, open])
 
   useGSAP(() => {
-    const labels = '.nav-action__text'
-    const icons = '.nav-action__icon'
+    if(!drawerOpen){
+      gsap.set('.project-nav-item', { autoAlpha: 0, x: -10 })
+      gsap.set(['.nav-action__icon', '.nav-action__text'], { autoAlpha: 0 })
+      return
+    }
 
     const tl = gsap.timeline({
       defaults: {
-        ease: 'power2.out',
-        overwrite: 'auto',
-        stagger: 0.2
+        ease: 'expo.out',
+        overwrite: 'auto'
       }
     })
 
-    if (drawerOpen) {
-      if (open) {
-        tl.to('.nav-action', { autoAlpha: 1, y: 0, x: 0 }, 'openStart')
+    if (open) {
+      tl.to('.project-nav-item', { 
+        autoAlpha: 1, 
+        y: 0, 
+        x: 0, 
+        stagger: 0.08 
+      }, 'start')
 
-        tl.fromTo(icons,
-          { autoAlpha: 0, x: -10, rotateZ: -90 },
-          { autoAlpha: 1, x: 0, rotateZ: 0, duration: 0.35 }, 'openStart+=0.25')
-          .fromTo(labels,
-            { autoAlpha: 0, x: -20, y: -25 },
-            { autoAlpha: 1, x: 0, y: 0 },
-            '<0.15')
-      } else {
-        tl.to('.nav-action', { x: -10, y: -25, autoAlpha: 0, stagger: 0.15 })
-      }
+      tl.fromTo('.nav-action__icon',
+        { 
+          autoAlpha: 0, 
+          scale: 0.5, 
+          rotateY: -45,
+          z: -50 
+        },
+        { 
+          autoAlpha: 1, 
+          scale: 1, 
+          rotateY: 0, 
+          z: 0,
+          duration: 0.8,
+          ease: 'back.out(1.7)',
+          stagger: 0.05
+        }, 'start+=0.1')
+
+      tl.fromTo('.nav-action__text',
+        { 
+          autoAlpha: 0, 
+          x: -12,
+          filter: 'blur(4px)'
+        },
+        { 
+          autoAlpha: 1, 
+          x: 0, 
+          filter: 'blur(0px)',
+          duration: 0.6,
+          stagger: 0.075
+        }, 'start+=0.1')
+
+    } else {
+      tl.to('.project-nav-item', {
+        x: -8, 
+        autoAlpha: 0, 
+        stagger: { each: 0.04, from: 'end' },
+        ease: 'power3.in' 
+      })
     }
   }, { dependencies: [open, drawerOpen], scope: containerRef })
 
   if (!projectId) return null
 
   const handleToggle = () => {
-    if (!drawerOpen) {
-      toggleDrawer(true)
-      return
-    }
-
+    if (!drawerOpen) toggleDrawer(true)
     setOpen(!open)
   }
 
   const projectItems = getProjectNavigation(projectOwner, projectId)
 
-  const navElements = []
-  for (const item of projectItems) {
-    // NavAction component uses "to" instead of "href"
-    const { to, translation, href, ...other } = item
-    const link = { ...other, to: href, translation: t(translation) }
-
-    const isActive = item.href.endsWith('/')
-      ? pathname === item.href || pathname === item.href.slice(0, -1)
-      : pathname.startsWith(item.href)
-
-    navElements.push(
-      <Box
-        key={item.key}
-        component='li'
-        sx={{
-          listStyle: 'none',
-          overflow: 'hidden',
-          perspective: '1000px',
-          perspectiveOrigin: '0 50%'
-        }}>
-        <NavAction
-          link={link}
-          showText={drawerOpen}
-          isActive={isActive}
-          onClick={() => toggleDrawer(false)}
-        />
-      </Box>
-    )
-  }
-
   return (
-    <List
-      className='drawer-action'
-      ref={containerRef}
-      disablePadding
-      sx={{ mt: 0.5 }}>
-      <Tooltip title={t('projectActions.navFolder')} placement='right'>
+    <div className='drawer-action'>
+      <AppTooltip title={t('projectActions.navFolder')} placement='right'>
         <ButtonListItem
           component={Button}
-          sx={{
-            display: 'flex',
-            justifyContent: 'center',
-            '.is-open &': {
-              justifyContent: 'initial'
-            }
-          }}
-          btnProps={{
-            onClick: handleToggle,
-            sx: {
-              width: '100%',
-              px: 1.5,
-              py: 1.5
-            }
+          btnProps={{ 
+            onClick: handleToggle, 
+            className: 'project-nav-trigger flex'
           }}>
-          <Box
-            className='flex flex-center'
-            sx={{ mr: 0, '.is-open &': { mr: 'auto' } }}>
+
+          <Box className='flex flex-center project-nav-label-container'>
             <AccountTreeIcon
               fontSize='small'
-              sx={{
-                minWidth: 0,
-                mr: 0,
-                '.is-open &': { mr: 1.5 },
-                justifyContent: 'center',
-                color: 'text.secondary'
-              }}
+              className='project-nav-folder-icon'
             />
-
             <Typography
-              className='nav-folder-text'
-              {...LABEL_PROPS}
-              sx={{
-                '.is-closed &': {
-                  position: 'absolute',
-                  opacity: 0,
-                  visibility: 'hidden'
-                }
-              }}>
+              className='nav-folder-text project-nav-label'
+              variant='caption'>
               {t('projectActions.navFolder')}
             </Typography>
           </Box>
 
-          <>
-            <ExpandIcon
-              fontSize='small'
-              sx={{
-                transition: 'rotate 0.15s ease-in-out',
-                rotate: open ? '180deg' : 0,
-                '.is-closed &': {
-                  position: 'absolute',
-                  opacity: 0,
-                  visibility: 'hidden'
-                }
-              }}
-            />
-          </>
+          <ExpandIcon fontSize='small' className='project-nav-expand-icon' />
         </ButtonListItem>
-      </Tooltip>
+      </AppTooltip>
 
-      <Collapse in={open && drawerOpen} timeout='auto'>
-        <List sx={{ pl: 1.25 }} disablePadding>
-          {navElements}
+      <Collapse in={open && drawerOpen}>
+        <List 
+          className='project-nav-collapse-list' 
+          disablePadding 
+          ref={containerRef}>
+          {projectItems.map((item) => {
+            const isActive = item.href.endsWith('/')
+              ? pathname === item.href || pathname === item.href.slice(0, -1)
+              : pathname.startsWith(item.href)
+
+            return (
+              <Box 
+                key={item.key} 
+                component='li' 
+                className='project-nav-item hide-element'>
+                <NavAction
+                  link={{ 
+                    ...item, 
+                    to: item.href, 
+                    translation: t(item.translation) 
+                  }}
+                  showText={drawerOpen}
+                  isActive={isActive}
+                  onClick={() => toggleDrawer(false)}
+                />
+              </Box>
+            )
+          })}
         </List>
       </Collapse>
-    </List>
+    </div>
   )
 }

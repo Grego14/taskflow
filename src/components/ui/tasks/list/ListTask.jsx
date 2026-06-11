@@ -17,7 +17,6 @@ const Content = lazy(() => import('./Content'))
 const DropIndicator = lazy(() => import('./DropIndicator'))
 
 import useLayout from '@hooks/useLayout'
-import { useTheme } from '@mui/material/styles'
 import useTaskAnimations from '@hooks/tasks/useTaskAnimations'
 import useTask from '@hooks/tasks/useTask'
 
@@ -27,6 +26,8 @@ import sortTasks from '@utils/tasks/sortTasks'
 
 import { taskRegistry, activeDropIndicator } from '@stores/task'
 
+import '@styles/components/ui/tasks/taskElements.css'
+
 const getTaskData = (id, type, isOverdue) => ({ id, type, isOverdue })
 
 const getCardOpacity = (showIndicator, isOverdue, status, isDefaultFilter) =>
@@ -35,46 +36,8 @@ const getCardOpacity = (showIndicator, isOverdue, status, isDefaultFilter) =>
     ? 0.75
     : 1
 
-const getTaskCardStyles = (t, priority) => {
-  const [fg] = priorityColors[priority]
-
-  return {
-    borderLeftColor: fg,
-    backgroundImage: 'unset',
-    backgroundColor: t.alpha(t.palette.grey[50], 0.075),
-    '&[data-focused]': { boxShadow: `0 0 0 2px ${fg}` },
-    maxWidth: t.ui.taskCardMaxWidth
-  }
-}
-
-const wrapperStyles = {
-  opacity: 0,
-  visibility: 'hidden',
-  marginBottom: 3.5,
-  '&:last-child, &.removing': { marginBottom: 0 },
-}
-
-const staticCardStyles = {
-  borderRadius: '12px',
-  border: '1px solid',
-  borderColor: 'divider',
-  '&:hover': {
-    borderColor: 'primary.main',
-    boxShadow: '0 4px 20px rgba(0,0,0,0.12)'
-  },
-  width: '100%',
-  mx: 'auto',
-  borderLeftWidth: 4,
-  transitionProperty: 'opacity, background-color',
-  cursor: 'grab',
-  willChange: 'transform, opacity'
-}
-
-const headerWrapperStyles = { width: '100%', alignItems: 'center', gap: 0.5 }
-
 const ListTask = forwardRef(({ id, isPromoted = false }, ref) => {
   const { filter } = useLayout()
-  const theme = useTheme()
   const { animateItemEntrance } = useTaskAnimations()
 
   const data = useTask(id)
@@ -127,63 +90,53 @@ const ListTask = forwardRef(({ id, isPromoted = false }, ref) => {
     if (isNew) animateItemEntrance(id)
   }, [hasData])
 
-  const cardStyles = useMemo(() => {
-    if (!hasData) return {}
+  const [priorityColor] = priorityColors[priority]
+  const opacity = getCardOpacity(
+    showIndicator, 
+    isOverdue, 
+    status, 
+    filter === 'default'
+  )
 
-    const opacity = getCardOpacity(
-      showIndicator, 
-      isOverdue, 
-      status, 
-      filter === 'default'
-    )
-
-    return {
-      opacity,
-      ...staticCardStyles,
-      ...getTaskCardStyles(theme, priority),
-    }
-  }, [
-      hasData, 
-      showIndicator, 
-      isOverdue, 
-      status, 
-      filter, 
-      priority, 
-      theme.palette.mode
-    ])
+  const dynamicVars = {
+    '--task-priority-color': priorityColor,
+    '--task-opacity': opacity,
+    '--task-bg-color': 
+      'color-mix(in srgb, var(--mui-palette-grey-50), transparent 92.5%)'
+  }
 
   if (!data) return null
 
+  const containerClass = 
+    `task-wrapper relative flex flex-center flex-column hide-element
+    ${isOverdue ? 'is-overdue' : ''}`
+
   return (
-    <Box
-      className='task relative flex flex-center flex-column'
-      sx={wrapperStyles}
+    <div
+      className={containerClass}
       data-task-id={id}
       data-type='task'
       data-parent-id={parentId}
       data-is-overdue={isOverdue}>
       <Suspense fallback={null}>
-        {showIndicator && ( <DropIndicator isTop={indicatorEdge === 'top'} />)}
+        {showIndicator && (<DropIndicator isTop={indicatorEdge === 'top'} />)}
       </Suspense>
 
       <Card
-        className='flex flex-column'
+        className='task-card task-main flex flex-column'
         ref={ref}
         elevation={3}
-        sx={cardStyles}>
-        <Box
-          className='flex flex-column'
-          p={1.15}>
-          <Box className='flex'
-            sx={headerWrapperStyles}>
+        style={dynamicVars}>
+        <div className='task-content-padding flex flex-column'>
+          <div className='flex task-header-row'>
             <CompleteButton id={id} />
             <Header id={id} />
-          </Box>
+          </div>
 
           <Suspense fallback={null}>
             {(isOverdue || isParentChecked || isPromoted) && <Content id={id} />}
           </Suspense>
-        </Box>
+        </div>
 
         {filteredSubtaskIds.length > 0 && (
           <Subtasks
@@ -193,7 +146,7 @@ const ListTask = forwardRef(({ id, isPromoted = false }, ref) => {
           />
         )}
       </Card>
-    </Box>
+    </div>
   )
 })
 

@@ -33,7 +33,7 @@ export default memo(function LayoutManager({ children }) {
         component='main'
         minHeight='100dvh'
         pl={`${!isMobile ? DRAWER_CONFIG.widthClosed : 0}px`}
-        sx={theme => ({ backgroundImage: theme.palette.background.app })}
+        sx={{ background: 'var(--mui-palette-background-app)' }}
         className='flex flex-column'
         pb={isMobile ? APPBAR_HEIGHT.mobile : 0}>
         <Suspense fallback={null}>

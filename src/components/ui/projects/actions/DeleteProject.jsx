@@ -94,7 +94,7 @@ export default function DeleteProject({ id, owner, asButton, disabled, onDelete 
           color='error'
           variant='outlined'
           disabled={disabled}
-          sx={{ width: { xs: '100%', tablet: 'auto' } }}
+          className='project-action'
           onClick={() => setOpen(true)}>
           {t('deleteProject', { ns: 'projects' })}
         </Button>
@@ -104,11 +104,7 @@ export default function DeleteProject({ id, owner, asButton, disabled, onDelete 
           text={t('deleteProject', { ns: 'projects' })}
           icon={<Delete color='error' fontSize='small' />}
           disabled={disabled}
-          sx={[
-            theme => ({
-              '& .MuiListItemText-root': { color: theme.palette.error.light }
-            })
-          ]}
+          className='delete-menu-action'
         />
       )}
 
@@ -121,13 +117,12 @@ export default function DeleteProject({ id, owner, asButton, disabled, onDelete 
           open={open}
           acceptTitle={status.stage ? t('projects.deleting', { ns: 'dialogs' }) : 'Delete'}
           disableButtons={!!status.stage} >
-          <Box sx={{ minHeight: 80, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <Box className='dialog-status-container flex flex-center'>
             <Typography
               ref={textRef}
               variant='body1'
               color='error'
-              textAlign='center'
-              sx={{ fontWeight: 500 }}>
+              className='dialog-status-text text-center'>
               {getStatusMessage()}
             </Typography>
           </Box>

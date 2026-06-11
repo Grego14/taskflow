@@ -14,26 +14,23 @@ import { SplitText } from 'gsap/SplitText'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { ScrambleTextPlugin } from 'gsap/ScrambleTextPlugin'
 
+import '@styles/components/ui/projects/main/projectCards.css'
+
 gsap.registerPlugin(SplitText, ScrollTrigger, ScrambleTextPlugin)
 
 const ProjectsSection = ({ title, children }) => (
-  <Box className='flex flex-column' gap={1.5} minWidth='100%'>
-    <Typography variant='overline' color='textSecondary' sx={{ fontSize: '0.85rem' }}>
+  <div className='flex flex-column projects-section'>
+    <Typography 
+      variant='overline' 
+      color='textSecondary' 
+      className='projects-section-title'>
       {title}
     </Typography>
     {children}
-  </Box>
+  </div>
 )
 
-const dividerStyles = { mt: 2, width: 0, opacity: 0 }
-
-const projectCardsContainerStyles = {
-  display: 'grid',
-  gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
-  gap: 3
-}
-
-export default function ProjectsCards({ data, animate, setAnimateButtons }) {
+export default function ProjectsCards({ data, setAnimateButtons }) {
   const { t } = useTranslation('projects')
   const { isMobile } = useApp()
   const { metadata, userLoaded } = useUser()
@@ -54,7 +51,7 @@ export default function ProjectsCards({ data, animate, setAnimateButtons }) {
   }, [data, lastId])
 
   useGSAP(() => {
-    if (!userLoaded || !data || !animate) return
+    if (!userLoaded || !data) return
 
     // wait until the last is ready
     if (lastId && !projects.last && data.length > 0) return
@@ -135,38 +132,35 @@ export default function ProjectsCards({ data, animate, setAnimateButtons }) {
       }
     }
   }, {
-    dependencies: [userLoaded, lastId, projects.other.length, animate],
+    dependencies: [userLoaded, lastId, projects.other.length],
     scope: containerRef
   })
 
   const hasOtherProjects = projects.other?.length > 0
 
   return (
-    <Box
+    <div
       ref={containerRef}
-      className={`flex flex-column ${isMobile ? 'flex-center' : ''}`}
-      gap={4}
-      my={3}
+      className={`flex flex-column projects-container ${isMobile ? 'flex-center' : ''}`}
       id='cards'>
       {projects.last && (
         <ProjectsSection title={t('recentProject')}>
           <ProjectCard data={projects.last} isRecent />
           {hasOtherProjects &&
-            <Divider id='divider' sx={dividerStyles} />
+            <Divider id='divider' className='projects-divider' />
           }
         </ProjectsSection>
       )}
 
       {hasOtherProjects > 0 && (
         <ProjectsSection title={t('lastProjects')}>
-          <Box
-            sx={projectCardsContainerStyles}>
+          <div className='projects-grid'>
             {projects.other.map(project => (
               <ProjectCard data={project} key={project.id} />
             ))}
-          </Box>
+          </div>
         </ProjectsSection>
       )}
-    </Box>
+    </div>
   )
 }

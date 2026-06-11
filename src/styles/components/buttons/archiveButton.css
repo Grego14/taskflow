@@ -1,0 +1,38 @@
+.archive-btn {
+  --archive-btn-color: 
+    color-mix(in srgb, var(--mui-palette-warning-main), #fff 12.5%);
+  color: var(--archive-btn-color);
+
+  border-radius: var(--mui-spacing);
+  padding: var(--mui-spacing);
+  display: inline-flex;
+  transition: opacity 
+    var(--mui-transitions-duration-shorter) 
+    var(--mui-transitions-easing-easeInOut);
+  opacity: 0;
+  visibility: hidden;
+  display: none;
+  border-color: 
+    color-mix(in srgb, var(--mui-palette-warning-main), #000 25%);
+
+  &.has-items {
+    display: inline-flex;
+    visibility: visible;
+    opacity: 1
+  }
+}
+
+.dark .archive-btn {
+  --archive-btn-color: 
+    color-mix(in srgb, var(--mui-palette-warning-main), #000 12.5%)
+}
+
+.archive-btn__badge .MuiBadge-badge {
+  font-size: 0.65rem;
+  height: 1rem;
+  min-width: 1rem
+}
+
+@media (--tablet) {
+  .archive-btn { border-radius: 50% }
+}

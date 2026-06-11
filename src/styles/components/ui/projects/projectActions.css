@@ -1,0 +1,25 @@
+/* DeleteProject */
+
+.delete-menu-action .MuiListItemText-root {
+  color: var(--mui-palette-error-light)
+}
+
+.dialog-status-container { min-height: calc(var(--mui-spacing) * 10) }
+.dialog-status-text { font-weight: 500 }
+
+/* ArchiveProject */
+
+.archive-menu-action .MuiListItemText-root {
+  color: var(--mui-palette-warning-light)
+}
+
+/* AbandonProject */
+
+.abandon-menu-action .MuiListItemText-root {
+  color: var(--mui-palette-info-light);
+}
+
+/* common styles */
+
+.project-action { width: 100% }
+@media (--tablet) { .project-action { width: auto } }

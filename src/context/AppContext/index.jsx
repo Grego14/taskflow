@@ -10,11 +10,14 @@ import { useColorScheme } from '@mui/material/styles'
 import UserProvider from '@context/UserContext'
 import AppContext from './context'
 import AppRoutes from '@/AppRoutes.jsx'
+import GlobalTooltipHandler from '@components/reusable/GlobalTooltipHandler'
 
 const GlobalAlert = lazy(() => import('@components/ui/alert/GlobalAlert'))
+const GlobalTooltipUI = 
+  lazy(() => import('@components/reusable/GlobalTooltipUI'))
 
 import { BREAKPOINTS } from '@/theme'
-import { globalAlert, setGlobalAlert } from '@stores/ui'
+import { globalAlert, setGlobalAlert, tooltipTarget } from '@stores/ui'
 
 export default function AppProvider({ children }) {
   const { mode } = useColorScheme()
@@ -68,6 +71,14 @@ export default function AppProvider({ children }) {
           </div>
         </div>
       </UserProvider>
+
+      <GlobalTooltipHandler/>
+
+      {tooltipTarget.value && (
+        <Suspense fallback={null}>
+          <GlobalTooltipUI />
+        </Suspense>
+      )}
 
       {globalAlert.value?.open && (
         <Suspense fallback={null}>

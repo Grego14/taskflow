@@ -12,16 +12,14 @@ export default function MembersMetrics() {
   const { t } = useTranslation('metrics')
   const { membersMetrics } = useProjectMetrics()
 
-  const { loading, projectMembersError, projectMembers } = useProjectMembers({
-    members: membersMetrics?.map(member => member.id) || [],
-    projectsFetched: true,
-    hasAccess: true
-  })
+  const { loading, projectMembersError, projectMembers } = useProjectMembers(
+    membersMetrics?.map(member => member.id) || [], 
+    true)
 
   if (loading) return <CircleLoader text={t('loadingMembers')} />
 
   return (
-    <Box sx={{ width: '100%', maxWidth: 'laptop', mx: 'auto', p: 1 }}>
+    <div className='members-metrics-container'>
       {membersMetrics.map((metrics) => {
         const memberInfo = projectMembers.find(m => m.id === metrics.id)
 
@@ -33,6 +31,6 @@ export default function MembersMetrics() {
           />
         )
       })}
-    </Box>
+    </div>
   )
 }

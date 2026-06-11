@@ -11,6 +11,8 @@ import { useTranslation } from 'react-i18next'
 import useApp from '@hooks/useApp'
 import useRoute from '@hooks/useRoute'
 
+import '@styles/pages/profile.css'
+
 export default function Profile() {
   const { lastRute, navigateTo } = useRoute()
   const { t } = useTranslation('common')
@@ -22,17 +24,11 @@ export default function Profile() {
     return <CircleLoader text={t('loading')} height='100dvh' />
 
   return (
-    <Box className='flex flex-column' alignItems='center'
-      sx={{
-        gap: 4,
-        py: 4,
-        px: 2,
-        background: (t) => t.palette.background.profile,
-        backgroundSize: '125% 125%',
-        animation: 'profileGradient 7.5s ease infinite',
-        transition: 'background 0.3s ease'
-      }}>
-      <GoBackButton handler={() => navigateTo(lastRute)} sx={{ mr: 'auto' }} />
+    <Box className='flex flex-column profile-container'>
+      <GoBackButton 
+        handler={() => navigateTo(lastRute)} 
+        className='profile__go-back-btn' 
+      />
 
       <ProfileForm setSaveBtnDisabled={setSaveBtnDisabled} />
       <ProfileMetadata />

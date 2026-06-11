@@ -24,7 +24,7 @@ export default memo(function AnimatedTitle({
       <Typography
         id={id}
         variant='h1'
-        sx={theme => ({ ...theme.typography.h4, fontWeight: 700, ...sx })}
+        sx={theme => ({ ...theme.typography.h4, fontWeight: 900, ...sx })}
         {...otherProps}>
         {children}
       </Typography>

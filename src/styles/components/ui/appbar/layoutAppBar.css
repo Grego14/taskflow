@@ -1,0 +1,21 @@
+.layout-appbar {
+  margin-left: auto;
+  backdrop-filter: blur(10px);
+  perspective: 1000px;
+  transform-origin: 0 50%;
+  
+  background-color: var(--layout-ab-bg);
+  background-image: var(--layout-ab-img);
+  
+  justify-content: space-around
+}
+
+@media (--tablet) { .layout-appbar { justify-content: space-between } }
+
+.layout-ab-container {
+  width: 100%;
+  justify-content: space-evenly;
+  gap: 0
+}
+
+@media (--mobile) { .layout-ab-container { gap: var(--mui-spacing) } }

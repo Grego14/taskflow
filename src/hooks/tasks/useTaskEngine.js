@@ -4,7 +4,7 @@ import useLayout from '@hooks/useLayout'
 import taskIsOverdue from '@utils/tasks/taskIsOverdue'
 import taskIsPending from '@utils/tasks/taskIsPending'
 
-import { taskRegistry } from '@stores/task'
+import { taskRegistry, taskVersion } from '@stores/task'
 
 const checkPassesFilter = (task, filter, uid) => {
   if (filter === 'assignedToMe') return task.assignedTo?.includes(uid)
@@ -17,9 +17,10 @@ export default function useTaskEngine() {
   const { filter } = useLayout()
 
   const registry = taskRegistry.value
+  const _version = taskVersion.value
 
   return useMemo(() => {
-    const tasks = [...registry.values()]
+    const tasks = Array.from(registry.values()).map(tSignal => tSignal.peek())
 
     if (!tasks.length) return {
       tasksForContainer: [],
@@ -32,7 +33,6 @@ export default function useTaskEngine() {
     // sort the tasks before the reduce so the IDs are inserted in the correct
     // order
     const sortedTasks = tasks
-    .map(tSignal => tSignal.peek()) 
     .toSorted((a, b) => (a.position ?? 0) - (b.position ?? 0))
 
     const result = sortedTasks.reduce((acc, task) => {
@@ -88,5 +88,5 @@ export default function useTaskEngine() {
       othersToArchive: result.archiveIds,
       isDefaultFilter
     }
-  }, [registry, filter, uid])
+  }, [registry, filter, uid, _version])
 }

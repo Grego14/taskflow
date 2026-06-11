@@ -1,0 +1,56 @@
+.assign-members-icon,
+.assign-members-label {
+  color: var(--mui-palette-info-light)
+}
+
+.assign-members-label { margin-block: calc(var(--mui-spacing) * 0.5) }
+
+.assign-members-trigger {
+  justify-content: flex-start;
+  gap: calc(var(--mui-spacing) * 1.5);
+  color: var(--mui-palette-text-secondary);
+  padding-block: 8.5px;
+  padding-inline: calc(var(--mui-spacing) * 2);
+  width: 100%;
+
+  &:hover {
+    background-color: var(--mui-palette-action-hover)
+  }
+
+  /* modifier when is used inside the NewTaskDialog */
+  &.is-creating {
+    padding: calc(var(--mui-spacing) * 1.5);
+    width: auto
+  }
+}
+
+.assign-members-menu-paper {
+  background-color: var(--mui-palette-background-paper);
+  border: 1px solid rgb(var(--mui-palette-info-mainChannel) / 0.5);
+  box-shadow: var(--mui-shadows-8);
+  background-image: none
+}
+
+/* Internal members list */
+
+.assign-members-list {
+  padding: 0;
+  min-width: 200px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.assign-member-item {
+  gap: calc(var(--mui-spacing) * 1);
+  padding-block: calc(var(--mui-spacing) * 0.5)
+}
+
+.assign-member-avatar-box { min-width: 40px }
+
+.assign-member-avatar {
+  width: 30px;
+  height: 30px;
+  font-size: 0.85rem;
+}
+
+.assign-member-checkbox { margin-left: auto }

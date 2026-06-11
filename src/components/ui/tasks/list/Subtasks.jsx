@@ -22,61 +22,6 @@ import useTaskAnimations from '@hooks/tasks/useTaskAnimations'
 
 import { taskRegistry, activeDropIndicator } from '@stores/task'
 
-const subtaskStyles = (theme, priority) => {
-  const priorityColor = priorityColors[priority][0]
-
-  return {
-    width: '100%',
-    p: 1,
-    pr: 2,
-    backgroundColor: 'transparent',
-    borderRadius: 0,
-    overflow: 'visible',
-    position: 'relative',
-    transition: 'opacity 0.3s ease-out',
-    '&:hover': {
-      '&::after': {
-        opacity: 1,
-        transform: 'translateY(-50%) scale(1)' // bullet pop effect
-      },
-      '&::before': {
-        opacity: 1,
-        transform: 'scaleY(1)'
-      }
-    },
-    '&::after': {
-      content: '""',
-      position: 'absolute',
-      left: -16,
-      top: '50%',
-      transform: 'translateY(-50%) scale(0.3)',
-      width: 8,
-      height: 8,
-      borderRadius: '50%',
-      backgroundColor: priorityColor,
-      opacity: 0,
-      transition:
-        'opacity 0.3s ease, transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
-      pointerEvents: 'none'
-    },
-    '&:hover::before': { backgroundColor: priorityColor },
-    '&::before': {
-      content: '""',
-      position: 'absolute',
-      left: 0,
-      top: 0,
-      bottom: 0,
-      width: '2px',
-      backgroundColor: 'transparent',
-      borderRadius: '4px',
-      transform: 'scaleY(0)',
-      transformOrigin: 'center',
-      transition:
-        'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease, background-color 0.3s ease'
-    }
-  }
-}
-
 const SubtaskItem = forwardRef(function SubtaskItem(props, ref) {
   const { 
     id, 
@@ -114,6 +59,15 @@ const SubtaskItem = forwardRef(function SubtaskItem(props, ref) {
 
   if (!hasData) return null
 
+  const [priorityColor] = priorityColors[priority]
+
+  const dynamicStyles = {
+    '--task-priority-color': priorityColor,
+    opacity: isChecked 
+      ? 0.6 
+      : (showIndicator || (isOverdue && !isParentOverdue) ? 0.4 : 1)
+  }
+
   return (
     <Box className='relative'
       data-task-id={id}
@@ -131,14 +85,10 @@ const SubtaskItem = forwardRef(function SubtaskItem(props, ref) {
       </Suspense>
 
       <Card
+        className='task-card subtask-item relative'
         ref={ref}
         elevation={0}
-        sx={[theme => ({
-          ...subtaskStyles(theme, priority),
-          opacity: isChecked ? 0.6 : 1,
-          ...(showIndicator || (isOverdue && !isParentOverdue) && { opacity: 0.4 }),
-          cursor: 'grab'
-        })]}>
+        style={dynamicStyles}>
         <Box className='flex flex-center' width='100%'>
           <CompleteButton id={id} insideTask />
           <Header id={id} insideTask />
@@ -170,8 +120,7 @@ export default memo(function Subtasks(props) {
   return (
     <Box
       ref={wrapperRef}
-      className='flex flex-column relative'
-      sx={{ ml: 4, pb: 1 }}>
+      className='flex flex-column relative subtasks-container'>
       {subtaskIds.map(id => (
         <SubtaskItem
           key={id}

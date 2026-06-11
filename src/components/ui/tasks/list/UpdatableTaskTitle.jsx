@@ -2,7 +2,7 @@ import TextField from '@mui/material/TextField'
 import useAuth from '@hooks/useAuth'
 import useProject from '@hooks/useProject'
 import useTasks from '@hooks/useTasks'
-import { useRef, useState, useEffect } from 'preact/compat'
+import { useRef, useState, useEffect, useMemo } from 'preact/compat'
 import { useTranslation } from 'react-i18next'
 
 import { setGlobalAlert } from '@stores/ui'
@@ -69,7 +69,26 @@ export default function UpdatableTaskTitle({
       setShow(false)
       inputRef.current?.blur()
     }
-  }, [])
+  }, [setShow])
+
+  const fieldClassName = `task-title-field ${show ? 'is-editing' : ''}`
+
+  const inputClassName = `
+    task-title-input 
+    ${show ? 'is-editing' : ''} 
+    ${isChecked ? 'is-checked' : ''} 
+    ${isCancelled ? 'is-cancelled' : ''}`
+
+  const inputStyles = useMemo(() => {
+    const checkedColor = !isCancelled 
+      ? 'var(--mui-palette-success-light)' 
+      : 'var(--mui-palette-text-secondary)'
+
+    return {
+      '--title-font': !parentId ? 'var(--mui-font-h6)' : '0.9rem',
+      '--title-checked-color': checkedColor
+    }
+  }, [parentId, isCancelled])
 
   return (
     <TextField
@@ -85,32 +104,11 @@ export default function UpdatableTaskTitle({
         setShow(false)
         handleUpdate(e.target.value)
       }}
+      className={fieldClassName}
       slotProps={{
         htmlInput: {
-          sx: theme => ({
-            py: 0.5,
-            pl: 1,
-            pr: show ? 1.75 : 0,
-            fontSize: !parentId ? theme.typography.h6.fontSize : '.9rem',
-            textOverflow: 'ellipsis',
-            transition: 'color 0.3s ease',
-            ...(isChecked && {
-              textDecoration: isCancelled ? 'line-through' : 'none',
-              textDecorationColor: isCancelled ? theme.palette.error.main : 'initial',
-              textDecorationThickness: isCancelled ? 2 : 1,
-              fontStyle: isCancelled ? 'italic' : 'inherit',
-              color: !isCancelled ?
-                theme.lighten(theme.palette.success.main, 0.25)
-                : 'text.secondary'
-            })
-          })
-        }
-      }}
-      sx={{
-        '& .MuiOutlinedInput-notchedOutline': {
-          border: show ? 1 : '1px solid transparent',
-          transition: 'box-shadow .25s ease-in-out, border-color .25s ease-in-out',
-          boxShadow: show ? theme => `0 0 6px 2px ${theme.palette.action.focus}` : 'none'
+          className: inputClassName,
+          style: inputStyles
         }
       }}
     />

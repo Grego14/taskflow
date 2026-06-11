@@ -1,0 +1,360 @@
+/* FOCUS-OVERLAY START */
+
+.focus-overlay.focus-overlay {
+  --circle-size: clamp(245px, 200px + 12.5vw, 400px);
+  --fg-priority: var(--mui-palette-text-primary);
+  --task-title-color: #FFFFFFBB;
+  --task-parent-title-color: #FFFFFFDD; 
+  
+  position: fixed;
+  inset: 0;
+  z-index: var(--mui-zIndex-zenOverlay);
+  background-color: rgb(var(--mui-palette-background-defaultChannel) / 0.95);
+  justify-content: space-between;
+  overflow: hidden;
+
+  /* Minimize button */
+  .minimize-btn {
+    position: absolute;
+    top: 24px;
+    right: 24px
+  }
+
+  /* Titles */
+  .focus-title-container {
+    margin-top: calc(var(--mui-spacing) * 6);
+    margin-inline: calc(var(--mui-spacing) * 6);
+
+    .parent-title {
+      color: var(--task-parent-title-color);
+      font-weight: 800;
+      line-break: anywhere
+    }
+
+    .current-task-title {
+      font-weight: 500;
+      color: var(--task-title-color)
+    }
+  }
+
+  /* Central circle */
+  .focus-circle {
+    position: relative;
+    width: var(--circle-size);
+    height: var(--circle-size);
+    padding: calc(var(--mui-spacing) * 3) calc(var(--mui-spacing) * 6);
+    border-radius: 50%;
+    background-color: rgb(20 20 20 /  0.7);
+    border: 1px solid rgb(255 255 255 / 0.1);
+    box-shadow: 0 8px 32px 0 rgb(0 0 0 / 0.8), 
+                inset 0 0 0 1px color-mix(in srgb, var(--bg-priority), transparent 88%);
+    color: var(--fg-priority);
+
+    &::after {
+      content: "";
+      position: absolute;
+      bottom: -2px;
+      left: 10%;
+      width: 80%;
+      height: 1px;
+      background: 
+        linear-gradient(90deg, transparent, var(--fg-priority), transparent);
+      opacity: 0.75
+    }
+
+    .goal-label {
+      position: absolute;
+      top: 20%;
+      letter-spacing: 1.5px;
+      font-weight: 700;
+      opacity: 0.6;
+      animation: 
+        fadeIn 
+        var(--mui-transitions-duration-standard) 
+        var(--mui-transitions-easing-easeInOut)
+    }
+  }
+
+  /* Finish button */
+  .finish-btn.finish-btn {
+    margin-bottom: calc(var(--mui-spacing) * 6);
+    padding: calc(var(--mui-spacing) * 1.5) calc(var(--mui-spacing) * 4);
+    height: auto;
+    text-transform: none;
+    font-size: 1.2rem;
+    font-weight: 600;
+    border-radius: calc(var(--mui-spacing) * 5);
+    transition-property: background-color, color;
+    transition-duration: var(--mui-transitions-duration-shorter);
+    transition-timing-function: var(--mui-transitions-easing-easeInOut);
+
+    & .MuiSvgIcon-root {
+      font-size: 30px;
+      margin-right: calc(var(--mui-spacing) * 1.5)
+    }
+
+    &:hover {
+      background-color: var(--mui-palette-primary-main);
+      color: var(--mui-palette-background-paper);
+      filter: brightness(1.2)
+    }
+
+    &.alarm-ringing {
+      background-color: var(--fg-priority);
+      color: #000;
+      border: 1px solid color-mix(in srgb, var(--bg-priority), black 65%);
+      animation: pulse-button 1.5s infinite
+    }
+  }
+}
+
+@keyframes pulse-button {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--fg-priority), transparent 80%);
+  }
+  50% {
+    transform: scale(1.1);
+    box-shadow: 0 0 0 15px color-mix(in srgb, var(--fg-priority), transparent 40%);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 20px color-mix(in srgb, var(--bg-priority), transparent 100%);
+  }
+}
+
+@keyframes fadeIn { from { opacity: 0 } to { opacity: 0.6 } }
+
+@media (--tablet) { .parent-title { line-break: normal } }
+
+/* FOCUS-OVERLAY END */
+
+/* FOCUS-DRAWER START */
+
+.focus-drawer-toggle {
+  position: fixed;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  border-radius: 12px 0 0 12px;
+  border: 1px solid rgb(var(--mui-palette-primary-mainChannel) / 0.6);
+  border-right: none;
+  background-color: rgb(var(--mui-palette-background-paperChannel) / 0.5);
+  transition: 
+    transform var(--mui-transitions-duration-standard),
+    background-color var(--mui-transitions-duration-shortest);
+  transition-timing-function: var(--mui-transitions-easing-easeInOut);
+
+  &:hover {
+    border-color: var(--mui-palette-primary-main);
+    background-color: rgb(var(--mui-palette-secondary-mainChannel) / 0.3);
+  }
+}
+
+.focus-drawer-backdrop { background-color: transparent }
+
+.focus-drawer-paper {
+  width: 280px;
+  background-image: var(--mui-palette-background-drawer);
+  background-color: rgb(var(--mui-palette-background-paperChannel) / 0.9);
+  backdrop-filter: blur(5px);
+  padding: calc(var(--mui-spacing) * 3);
+  gap: calc(var(--mui-spacing) * 3);
+  border-left: 1px solid rgb(255 255 255 / 0.1);
+}
+
+.drawer-section-title {
+  letter-spacing: 2px;
+  font-weight: 700;
+  color: var(--subtitle-color);
+  text-transform: uppercase;
+  font-size: 0.75rem;
+}
+
+.presets-label { color: var(--subtitle-color) }
+
+.presets-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: calc(var(--mui-spacing) * 1);
+}
+
+.preset-btn {
+  border-color: 
+    color-mix(in srgb, var(--mui-palette-background-paperChannel), 
+    transparent 85%);
+  color: var(--subtitle-color);
+  transition-property: border-color, background-color;
+  transition-duration: (--mui-transitions-duration-shortest);
+  transition-timing-function: var(--mui-transitions-easing-easeInOut);
+
+  &:hover {
+    border-color: var(--mui-palette-primary-main);
+    background-color: 
+      color-mix(in srgb, 
+      var(--mui-palette-secondary-main), 
+      transparent 85%)
+  }
+}
+
+.drawer-close-btn {
+  margin-top: auto;
+  color: var(--subtitle-color);
+  transition: color, background-color;
+  transition-duration: var(--mui-transitions-duration-shortest);
+  transition-timing-function: var(--mui-transitions-easing-easeInOut);
+
+  &:hover { 
+    color: var(--mui-palette-background-paper);
+    background-color: var(--mui-palette-secondary-main)
+  }
+}
+
+/* FOCUS-DRAWER END */
+
+/* CUSTOM-TIMER-SELECTOR START */
+
+.custom-timer-container {
+  gap: calc(var(--mui-spacing) * 3);
+  padding: calc(var(--mui-spacing) * 2);
+  background-color: rgb(var(--mui-palette-common-onBackgroundChannel) / 0.05);
+  border-radius: 16px;
+  margin-inline: auto;
+  width: 100%;
+}
+
+/* increment and decrement buttons */
+.step-btn.step-btn {
+  --step-btn-bg-alpha: 0.5;
+  --step-btn-bg: 
+    rgb(var(--mui-palette-background-paperChannel) / var(--step-btn-bg-alpha));
+
+  background-color: var(--step-btn-bg);
+  box-shadow: var(--mui-shadows-1);
+  transition-property: opacity, background-color;
+  transition-duration: var(--mui-transitions-duration-shortest);
+  transition-timing-function: var(--mui-transitions-easing-easeInOut);
+
+  &:hover:not(:disabled) {
+    --step-btn-bg-alpha: 1;
+    opacity: 0.8;
+  }
+
+  &:disabled { opacity: 0.5 }
+}
+
+.selector-row {
+  justify-content: space-between;
+  width: 100%
+}
+
+.time-display {
+  min-width: 80px;
+
+  .time-value {
+    font: var(--mui-font-h4);
+    font-weight: 700;
+    line-height: 1;
+    color: var(--mui-palette-primary-main);
+  }
+
+  .time-label {
+    font: var(--mui-font-caption);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 500;
+    opacity: 0.7;
+    display: block
+  }
+}
+
+
+/* apply timer button */
+.apply-timer-btn {
+  background-color: var(--mui-palette-primary-main);
+  color: var(--mui-palette-common-white);
+  width: 45px;
+  height: 45px;
+  box-shadow: 0 4px 14px rgb(var(--mui-palette-primary-mainChannel) / 0.3);
+  transition: background-color, transform, box-shadow;
+  transition-duration: 
+    var(--mui-transitions-duration-shortest), 
+    var(--mui-transitions-duration-shorter);
+  transition-timing-function: var(--mui-transitions-easing-easeInOut);
+
+  &:hover {
+    background-color: var(--mui-palette-primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgb(var(--mui-palette-primary-mainChannel) / 0.45)
+  }
+
+  &:active { transform: translateY(2px) }
+}
+
+/* CUSTOM-TIMER-SELECTOR END */
+
+/* BiG-TIMER-DISPLAY, FAB and ZEN-MODE START */
+
+.big-timer-display {
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -2px;
+
+  /* dynamically added variable (inside BigTimerDisplay component) */
+  &::after { content: var(--current-time) }
+}
+
+.focus-fab {
+  --fab-bottom-offset: calc(var(--appbar-height-mobile) + 1rem);
+  
+  position: fixed;
+  bottom: var(--fab-bottom-offset);
+  right: 24px;
+  z-index: var(--mui-zIndex-speedDial);
+  
+  background-color: var(--fg-priority);
+  color: var(--mui-palette-background-paper);
+  gap: calc(var(--mui-spacing) * 1.5);
+  padding-inline: calc(var(--mui-spacing) * 2);
+  
+  transition-property: background-color, transform;
+  transition-duration: var(--mui-transitions-duration-shortest);
+  transition-timing-function: var(--mui-transitions-easing-easeInOut);
+
+  &:hover {
+    background-color: color-mix(in srgb, var(--fg-priority), transparent 10%);
+    transform: scale(1.05)
+  }
+}
+
+.fab-timer-text {
+  font: var(--mui-font-caption);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums
+}
+
+.fab-icon { font-size: 1.25rem }
+
+.zen-status-btn {
+  font: var(--mui-font-body2);
+  font-weight: 600;
+  
+  text-transform: none;
+  border-radius: calc(var(--mui-shape-borderRadius) * 1);
+  border-color: var(--fg-priority);
+  color: var(--fg-priority);
+  
+  transition-property: background-color, border-color;
+  transition-duration: var(--mui-transitions-duration-standard);
+  transition-timing-function: var(--mui-transitions-easing-easeInOut);
+
+  &:hover {
+    background-color: color-mix(in srgb, var(--bg-priority), transparent 8%);
+  }
+}
+
+.zen-timer-text { 
+  font-variant-numeric: tabular-nums;
+}
+
+/* BIG-TIMER-DISPLAY, FAB and ZEN-MODE END */

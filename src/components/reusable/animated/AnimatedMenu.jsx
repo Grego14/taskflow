@@ -82,15 +82,15 @@ export default function AnimatedMenu({ children, open, onExitComplete }) {
     const tl = gsap.timeline()
 
     tl.fromTo(menuElement,
-      { opacity: 0 },
-      { opacity: 1, duration: 0.3 }
+      { autoAlpha: 0 },
+      { autoAlpha: 1, duration: 0.3 }
     )
 
     tl.fromTo(targets,
-      { opacity: 0, y: 15, scale: 0.8 },
+      { autoAlpha: 0, y: 15, scale: 0.8 },
       {
         ...ANIM_CONFIG,
-        opacity: 1,
+        autoAlpha: 1,
         y: 0,
         scale: 1,
         ease: 'back.out(2)',

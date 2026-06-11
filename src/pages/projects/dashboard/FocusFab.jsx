@@ -2,29 +2,27 @@ import Fab from '@mui/material/Fab'
 import Typography from '@mui/material/Typography'
 import OpenInFullIcon from '@mui/icons-material/OpenInFull'
 
-import { useRef } from 'preact/hooks'
+import { useRef, useMemo } from 'preact/hooks'
 import { useGSAP } from '@gsap/react'
 
 import gsap from 'gsap'
 import { APPBAR_HEIGHT, priorityColors } from '@/constants'
 import formatTimer from '@utils/formatTimer'
 
-import { activeTaskData, globalClock, isWorking, showOverlay }
-  from '@stores/task'
+import { 
+  activeTaskData, 
+  isWorking, 
+  showOverlay, 
+  currentSessionSeconds
+} from '@stores/task'
 
 const FabTimer = () => {
   const task = activeTaskData.value
-
   if (!task) return null
 
-  const elapsed = Math.floor((globalClock.value - task.startTime) / 1000)
-
   return (
-    <Typography
-      variant='caption'
-      fontWeight={800}
-      sx={{ fontVariantNumeric: 'tabular-nums' }}>
-      {formatTimer(task.initialSeconds + elapsed)}
+    <Typography variant='caption' className='fab-timer-text'>
+      {formatTimer(currentSessionSeconds.value)}
     </Typography>
   )
 }
@@ -46,31 +44,23 @@ export default function FocusFAB() {
     }
   }, { dependencies: [working, showingOverlay] })
 
-  if (!task) return null
+  const dynamicStyles = useMemo(() => {
+    if (!task) return {}
 
-  const priority = task.priority || 'none'
-  const [fgColor] = priorityColors[priority]
+    const priority = task.priority || 'none'
+    const [fgColor] = priorityColors[priority]
+    return { '--fg-priority': fgColor }
+  }, [task?.priority])
+
+  if (!task || showingOverlay || !working) return null
 
   return (
     <Fab
       ref={fabRef}
       variant='extended'
       onClick={() => (showOverlay.value = true)}
-      sx={theme => ({
-        position: 'fixed',
-        bottom: `calc(${APPBAR_HEIGHT.mobile} + 1rem)`,
-        right: 24,
-        zIndex: theme.zIndex.speedDial,
-        backgroundColor: fgColor,
-        color: theme.palette.background.paper,
-        gap: 1.5,
-        px: 2,
-        '&:hover': {
-          backgroundColor: theme.alpha(fgColor, 0.9),
-          transform: 'scale(1.05)'
-        },
-        transition: 'background-color 0.2s, transform 0.2s'
-      })}>
+      style={dynamicStyles}
+      className='focus-fab flex flex-center'>
       <OpenInFullIcon size='small' />
       <FabTimer />
     </Fab>

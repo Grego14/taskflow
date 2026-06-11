@@ -2,7 +2,7 @@ import { memo, useState } from 'preact/compat'
 import Button from '@mui/material/Button'
 import IconButton from '@mui/material/IconButton'
 import Menu from '@mui/material/Menu'
-import Tooltip from '@mui/material/Tooltip'
+import AppTooltip from './AppTooltip'
 import AnimatedMenu from '@components/reusable/animated/AnimatedMenu'
 import ButtonListItem from './buttons/ButtonListItem'
 
@@ -39,7 +39,7 @@ export default memo(function DropdownMenu(props) {
   }
 
   const RootButton = slots.root || (!text ? IconButton : Button)
-  const TooltipComponent = slots.tooltip || Tooltip
+  const TooltipComponent = slots.tooltip || AppTooltip
   
   const tooltipTitle = typeof label === 'function' ? label(isMenuOpen) : label
   const buttonContent = text || icon
@@ -60,6 +60,7 @@ export default memo(function DropdownMenu(props) {
     transitionDuration: 0,
     ...slotProps.menu,
     slotProps: {
+      ...slotProps,
       backdrop: {
         sx: { bgcolor: 'rgba(0,0,0,0.3)' },
         ...slotProps.menu?.slotProps?.backdrop
@@ -67,10 +68,10 @@ export default memo(function DropdownMenu(props) {
       list: {
         sx: { overflow: 'hidden' },
         ...slotProps.menu?.slotProps?.list
-      }
-    }
+      },
+    },
   }
-
+  
   const renderButton = () => {
     const trigger = asListItem ? (
       <ButtonListItem 

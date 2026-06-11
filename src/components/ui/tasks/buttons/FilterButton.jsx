@@ -27,8 +27,7 @@ const getFilterLabel = (label, t) => {
   )
 }
 
-const buttonSlotProps = { root: { sx: { px: 1 }, className: 'hide-element' } }
-const textStyles = { px: 2, py: 1 }
+const slotProps = { root: { className: 'project-action-btn hide-element' } }
 
 export default function FilterButton() {
   const { metadata } = useUser()
@@ -42,18 +41,16 @@ export default function FilterButton() {
       setSelected(lastUsed)
   }, [lastUsed])
 
-  const changeSelectedOption = useCallback(
-    (value, triggerExit) => {
-      triggerExit?.()
+  const changeSelectedOption = useCallback((value, triggerExit) => {
+    console.log(value)
+    triggerExit?.()
 
-      setSelected(value)
-      setFilter(value)
+    setSelected(value)
+    setFilter(value)
 
-      // update the LocalStorage/firestore
-      updateFilter(value)
-    },
-    [updateFilter, setFilter]
-  )
+    // update the LocalStorage/firestore
+    updateFilter(value)
+  }, [updateFilter, setFilter])
 
   const filterOptions = FILTERS.map(f => ({
     label: getFilterLabel(f, t),
@@ -66,10 +63,13 @@ export default function FilterButton() {
       label={state => getMenuLabel(state, 'buttons.filter', 'tasks')}
       tooltipPosition='bottom'
       asListItem
-      slotProps={buttonSlotProps}>
-      {(_, triggerExit) => (
+      slotProps={slotProps}>
+      {(open, triggerExit) => open && (
         <>
-          <Typography variant='body2' color='textSecondary' sx={textStyles}>
+          <Typography 
+            variant='body2' 
+            color='textSecondary' 
+            className='filter-menu-help-text'>
             {t('buttons.filterHelpText')}
           </Typography>
           {filterOptions.map(filter => (

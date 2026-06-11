@@ -6,7 +6,7 @@ export default function useProjectMembers(members, enabled) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
 
-  const membersKey = (members || []).join(',')
+  const membersKey = (members || [])?.join(',')
 
   useEffect(() => {
     if (!enabled || !members?.length) return

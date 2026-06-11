@@ -9,10 +9,12 @@ import useNotifications from '@hooks/useNotifications'
 import useLoadResources from '@hooks/useLoadResources'
 import { useTranslation } from 'react-i18next'
 import { useGSAP } from '@gsap/react'
-import { useEffect } from 'preact/hooks'
+import { useEffect, useMemo } from 'preact/hooks'
 
 import gsap from 'gsap'
 import formatTimestamp from '@utils/formatTimestamp'
+
+const containerStyles = { pt: 6, flexGrow: 1 }
 
 export default function Notifications() {
   const { t } = useTranslation('notifications')
@@ -30,7 +32,9 @@ export default function Notifications() {
 
   // mark as read when data is ready
   useEffect(() => {
-    const isDataReady = !loading && !loadingResources && notifications.length > 0
+    const isDataReady = !loading 
+      && !loadingResources 
+      && notifications.length > 0
 
     if (isDataReady) {
       const unreadIds = []
@@ -72,28 +76,33 @@ export default function Notifications() {
     })
   })
 
-  if (loadingResources || loading) return <LogoLoader />
+  const items = useMemo(() => {
+    const itemsArr = []
 
-  const items = []
-  if (notifications.length > 0) {
-    const sorted = notifications.toSorted((a, b) => {
-      const timeA = formatTimestamp(a.notificationDate).raw
-      const timeB = formatTimestamp(b.notificationDate).raw
-      return timeB - timeA
-    })
+    if (notifications.length > 0) {
+      const sorted = notifications.toSorted((a, b) => {
+        const timeA = formatTimestamp(a.notificationDate).raw
+        const timeB = formatTimestamp(b.notificationDate).raw
+        return timeB - timeA
+      })
 
-    for (const notif of sorted) {
-      items.push(
-        <NotificationItem
-          key={notif.id}
-          notification={notif}
-          onAccept={onAccept}
-          onDecline={onDecline}
-          onDelete={handleDelete}
-        />
-      )
+      for (const notif of sorted) {
+        items.push(
+          <NotificationItem
+            key={notif.id}
+            notification={notif}
+            onAccept={onAccept}
+            onDecline={onDecline}
+            onDelete={handleDelete}
+          />
+        )
+      }
     }
-  }
+
+    return itemsArr
+  }, [notifications, onAccept, onDecline, handleDelete])
+
+  if (loadingResources || loading) return <LogoLoader />
 
   const hasNotifications = notifications.length > 0
 
@@ -101,13 +110,12 @@ export default function Notifications() {
     <Container
       className='flex flex-column'
       maxWidth='sm'
-      sx={{ pt: 6, flexGrow: 1 }}>
+      sx={containerStyles}>
       <AnimatedTitle
         id='notifications-title'
         textAlign='center'
         sx={{
           mb: hasNotifications ? 5 : 0,
-          fontWeight: 900,
           letterSpacing: '-0.5px'
         }}>
         {t('title')}
@@ -122,7 +130,7 @@ export default function Notifications() {
           {t('empty')}
         </Typography>
       ) : (
-        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <Box className='flex flex-column flex-center'>
           {items}
         </Box>
       )}

@@ -1,0 +1,52 @@
+.project-action-btn.project-action-btn {
+  padding-inline: calc(var(--mui-spacing) * 1);
+  min-width: auto
+}
+
+/* AddButton */
+.add-task-btn { border-radius: 50% }
+
+/* FilterButton internal text */
+.filter-menu-help-text {
+  padding: calc(var(--mui-spacing) * 1) calc(var(--mui-spacing) * 2)
+}
+
+/* PreviewSwitcher component */
+
+.preview-switcher-wrapper {
+  height: min-content;
+  min-width: 40px
+}
+
+@media (--tablet) {
+  .preview-switcher-wrapper{
+    min-width: 12rem;
+    margin-right: auto
+  }
+}
+
+/* Common styles for both Tabs (desktop) and MenuAction (mobile) */
+.preview-option-item {
+  min-height: 0;
+  padding: 0.6rem 1.5rem;
+  color: var(--mui-palette-grey-600);
+  font: var(--mui-font-caption);
+
+  .MuiSvgIcon-root { color: var(--mui-palette-grey-600) }
+
+  &.Mui-selected {
+    color: var(--mui-palette-primary-light);
+    font-weight: 700;
+
+    .MuiSvgIcon-root { color: var(--mui-palette-primary-light) }
+
+    .MuiListItemText-root {
+      color: var(--mui-palette-primary-light);
+      font-weight: bold
+    }
+  }
+}
+
+/* specific tab adjustment */
+.preview-tabs-container.preview-tabs-container { min-height: 0 }
+

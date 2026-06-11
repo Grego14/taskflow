@@ -34,7 +34,7 @@ export default function UpdatePriority({ priority, id, parentId, showMenu }) {
         },
       }}>
       {(_, triggerExit) => renderPriorityMenu(priority, 
-          (val) => handleUpdate(val, triggerExit), t)}
+          (val) => handleUpdatePriority(val, triggerExit), t)}
     </DropdownMenu>
   )
 }

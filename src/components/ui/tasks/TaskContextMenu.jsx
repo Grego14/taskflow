@@ -1,5 +1,4 @@
 import { useMemo } from 'preact/hooks'
-import { useTheme } from '@mui/material/styles'
 
 import Menu from '@mui/material/Menu'
 import TaskActions from '@components/ui/tasks/buttons/TaskActions'
@@ -13,12 +12,11 @@ const menuSlotProps = {
 }
 
 export default function TaskContextMenu({ data, open, setOpen }) {
-  const theme = useTheme()
-  
   const taskData = useMemo(() => {
     if (!data?.id) return null
 
-    return taskRegistry.value.get(data.id)
+    const registry = taskRegistry.peek()
+    return registry.get(data.id)?.peek()
   }, [data?.id])
 
   if(!data?.id) return null
@@ -32,7 +30,6 @@ export default function TaskContextMenu({ data, open, setOpen }) {
     rawDate: taskData.rawDate,
     priority: taskData.priority
   }
-
   
   return (
     <AnimatedMenu open={open} onExitComplete={() => setOpen(null)}>

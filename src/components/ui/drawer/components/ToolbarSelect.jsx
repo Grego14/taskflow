@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from 'react'
+import { useEffect, useState, useMemo, useCallback } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import useUser from '@hooks/useUser'
@@ -13,39 +13,12 @@ import Typography from '@mui/material/Typography'
 import FolderOpen from '@mui/icons-material/FolderOpen'
 import Box from '@mui/material/Box'
 
-const selectStyles = {
-  '& .MuiSelect-select': {
-    fontWeight: 500,
-    fontSize: '0.825rem',
-    py: 1,
-    maxWidth: '12ch'
-  }
-}
-
-const labelStyles = {
-  transform: 'translate(38px, 8px) scale(1)',
-  '&.MuiInputLabel-shrink': {
-    transform: 'translate(0px, 4px) scale(0.75)'
-  }
-}
-
-const iconStyles = {
-  fontSize: '1rem',
-  mx: 0.75,
-  color: 'action.active'
-}
-
-const formControlStyles = {
-  minWidth: '10rem',
-  '& .MuiInputBase-root': { mt: 2 }
-}
-
 export default function ToolbarSelect() {
   const { uid, metadata } = useUser()
   const { projectId } = useParams()
   const { t } = useTranslation(['ui', 'projects'])
   const navigate = useNavigate()
-  const { drawerOpen, toggleDrawer, isPreview, triggerUpsell } = useLayout()
+  const { toggleDrawer, isPreview, triggerUpsell } = useLayout()
 
   const [projects, setProjects] = useState([])
   const [loading, setLoading] = useState(true)
@@ -103,14 +76,14 @@ export default function ToolbarSelect() {
     return { ...found, isLast: !projectId }
   }, [projects, projectId, metadata?.lastEditedProject])
 
-  const handleProjectChange = (e) => {
+  const handleProjectChange = useCallback((e) => {
     const project = projects.find(p => p.id === e.target.value)
 
     if (project) {
       const cleanId = project.id.replace('_drawer', '')
       navigate(`/projects/${project.owner}/${cleanId}`)
     }
-  }
+  }, [projects])
 
   const hasProjects = projects.length > 0
   const toolbarKey = actualProject?.isLast ? 'lastProject' : 'actualProject'
@@ -137,13 +110,13 @@ export default function ToolbarSelect() {
   }
 
   return (
-    <Box className='hide-element toolbar-select'>
+    <div className='hide-element toolbar-select flex'>
       {(actualProject || hasProjects) ? (
-        <FormControl sx={formControlStyles}>
+        <FormControl className='toolbar-select-form'>
           <InputLabel
             id='select-project'
             shrink={shouldShrink}
-            sx={labelStyles}>
+            className='toolbar-select-label'>
             {label}
           </InputLabel>
           <Select
@@ -152,10 +125,10 @@ export default function ToolbarSelect() {
             value={actualProject?.id || ''}
             label={shouldShrink ? label : ''}
             onChange={handleProjectChange}
-            sx={selectStyles}
+            className='toolbar-select-el'
             onFocus={() => setIsFocused(true)}
             onBlur={() => setIsFocused(false)}
-            startAdornment={ <FolderOpen sx={iconStyles} /> }>
+            startAdornment={<FolderOpen className='toolbar-select-icon' />}>
             {projects.map(p => (
               <MenuItem key={p.id} value={p.id}>
                 {p.name}
@@ -164,10 +137,12 @@ export default function ToolbarSelect() {
           </Select>
         </FormControl>
       ) : (
-        <Button onClick={handleNewProject}>
-          {t('ui:drawer.toolbar.newProject')}
-        </Button>
-      )}
-    </Box>
+          <Button 
+            onClick={handleNewProject} 
+            className='toolbar-new-project-btn'>
+            {t('ui:drawer.toolbar.newProject')}
+          </Button>
+        )}
+    </div>
   )
 }

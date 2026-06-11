@@ -1,4 +1,4 @@
-import { memo, useRef, useCallback } from 'react'
+import { memo, useRef, useMemo } from 'preact/compat'
 
 import AppBar from '@components/ui/appbar/AppBar'
 import Box from '@mui/material/Box'
@@ -7,66 +7,79 @@ import ProfileButton from '@components/reusable/buttons/ProfileButton'
 
 import { useTranslation } from 'react-i18next'
 import useApp from '@hooks/useApp'
-import useMediaQuery from '@mui/material/useMediaQuery'
 import { useGSAP } from '@gsap/react'
 import useLoadResources from '@hooks/useLoadResources'
 import { useLocation } from 'react-router-dom'
+import { useTheme } from '@mui/material/styles'
 
 import { NAV_LINKS } from '@constants/navigation'
+import { BREAKPOINTS } from '@/theme'
 import gsap from 'gsap'
+
+import '@styles/components/ui/appbar/layoutAppBar.css'
 
 const LayoutAppBar = memo(function LayoutAppBar() {
   const { t } = useTranslation('ui')
   const { isMobile } = useApp()
-  const noSpace = useMediaQuery('(max-width: 35rem)')
+  const theme = useTheme()
   const appBarRef = useRef(null)
-  const loadingResources = useLoadResources('ui')
-
   const { pathname } = useLocation()
 
+  const loadingResources = useLoadResources('ui')
   const { contextSafe } = useGSAP({ scope: appBarRef })
 
-  const handleLinkClick = useCallback(contextSafe((e) => {
-    if (!noSpace) return
+  const handleLinkClick = contextSafe((e) => {
+    if (window.innerWidth > BREAKPOINTS.tablet) return
 
-    gsap.to('.appbar-link', { scale: 1, overwrite: true })
-    gsap.to(e.currentTarget, { scale: 1.25, duration: 0.3, overwrite: true })
-  }), [noSpace])
+    const tl = gsap.timeline()
+
+    tl.to('.nav-action', {
+      scale: 1, 
+      rotate: 0,
+      y: 0,
+      duration: 0.4, 
+      ease: 'power2.out'
+    }).fromTo(e.currentTarget, 
+        { scale: 0.75, rotate: -20 },
+        { 
+          scale: 1.1, 
+          rotate: 0,
+          ease: 'elastic.out(1.5, 0.5)'
+        }, '<0.1')
+  })
+
+  const dynamicStyles = useMemo(() => {
+    const isDark = theme.palette.mode === 'dark'
+    const bgColor = isDark ? theme.palette.grey[900] : theme.palette.grey[100]
+
+    return {
+      '--layout-ab-bg': theme.alpha(bgColor, 0.8),
+      '--layout-ab-img': theme.palette.background[isMobile 
+        ? 'appbarBottom' 
+        : 'appbarTop']
+    }
+  }, [theme.palette.mode, isMobile])
 
   if (!isMobile || loadingResources) return null
-
-  const items = []
-  for (const link of NAV_LINKS) {
-    items.push(
-      <NavAction
-        key={link.key}
-        noSpace={noSpace}
-        showText={!noSpace}
-        link={{ ...link, translation: t(link.translation) }}
-        onClick={handleLinkClick}
-        isActive={pathname === link.to}
-      />
-    )
-  }
 
   return (
     <AppBar
       animate
-      noRotate={!noSpace}
       ref={appBarRef}
-      sx={theme => ({
-        justifyContent: noSpace ? 'space-around' : 'space-between',
-        ml: 'auto',
-        backgroundColor: theme.palette.mode === 'dark'
-          ? 'rgba(0, 0, 0, 0.25)'
-          : 'rgba(255,255,255, 0.5)',
-        backgroundImage: theme.palette.background.appbar[isMobile ? 'bottom' : 'top'],
-        perspective: '1000px',
-        transformOrigin: '0 50% -50'
-      })}>
-      {noSpace ? items : <Box className='flex' gap={1}>{items}</Box>}
-
-      <ProfileButton open onlyIcon sx={{ ml: 1.5 }} />
+      className='layout-appbar'
+      style={dynamicStyles}>
+      <Box className='layout-ab-container flex'>
+        {NAV_LINKS.map(link => (
+          <NavAction
+            key={link.key}
+            link={{ ...link, translation: t(link.translation) }}
+            onClick={handleLinkClick}
+            isActive={pathname === link.to}
+            showBg
+          />
+        ))}
+        <ProfileButton open onlyIcon />
+      </Box>
     </AppBar>
   )
 })

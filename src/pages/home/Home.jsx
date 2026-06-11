@@ -1,16 +1,13 @@
-import { useRef } from 'react'
+import { useRef, useMemo } from 'preact/hooks'
 
-// components
 import Link from '@components/reusable/Link'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 
-// hooks
 import { useGSAP } from '@gsap/react'
 import useUser from '@hooks/useUser'
 import { useTranslation } from 'react-i18next'
 
-// utils
 import gsap from 'gsap'
 import { ScrambleTextPlugin } from 'gsap/ScrambleTextPlugin'
 
@@ -18,10 +15,17 @@ gsap.registerPlugin(ScrambleTextPlugin)
 
 const linkStaticStyles = {
   position: 'relative',
-  opacity: 0,
-  translate: '0 20px',
-  visibility: 'hidden',
   display: 'inline-block',
+
+  willChange: 'translate',
+  transition: 'translate 0.25s ease-in-out',
+
+  '&:hover, &:focus-visible': {
+    translate: '5px',
+    textDecorationColor: 'currentColor',
+    outline: 'none'
+  },
+
   '&::after': {
     content: '""',
     position: 'absolute',
@@ -32,19 +36,24 @@ const linkStaticStyles = {
     backgroundColor: 'currentColor',
     transition: 'width 0.3s ease'
   },
-  '&:hover::after': {
-    width: '100%'
-  }
+  '&:hover::after, &:focus-visible::after': { width: '100%' }
 }
 
-const homeLinks = (owner, lastEdited) => [
-  { to: '/projects', keyTranslation: 'goToProjects' },
-  { to: '/projects/new', keyTranslation: 'createProject' },
-  { to: `/projects/${owner}/${lastEdited}`, keyTranslation: 'lastEditedProject' }
+const getUsernameStyles = theme => ({
+  color: 'primary.main',
+  textShadow: `0 0 10px ${theme.palette.primary.main}75`,
+  ...theme.typography.h4,
+  fontWeight: 700
+})
+
+const HOME_LINKS_SCHEMA = [
+  { to: '/projects', key: 'goToProjects' },
+  { to: '/projects/new', key: 'createProject' },
+  { to: 'DYNAMIC_LAST_EDITED', key: 'lastEditedProject' }
 ]
 
 export default function Home() {
-  const { t } = useTranslation(['common', 'ui'])
+  const { t } = useTranslation('ui')
   const { profile, metadata, userLoaded } = useUser()
   const containerRef = useRef(null)
 
@@ -52,17 +61,15 @@ export default function Home() {
   const lastEdited = metadata?.lastEditedProject
   const owner = metadata?.lastEditedProjectOwner
 
-  const links = homeLinks(owner, lastEdited)
-
-  const { contextSafe } = useGSAP({ scope: containerRef })
-
-  const handleHover = contextSafe((e, isEnter) => {
-    gsap.to(e.currentTarget, {
-      x: isEnter ? 5 : 0,
-      duration: 0.3,
-      ease: 'power2.out'
+  // 3. Solo calculamos el link dinámico si cambian los datos
+  const links = useMemo(() => {
+    return HOME_LINKS_SCHEMA.map(link => {
+      if (link.to === 'DYNAMIC_LAST_EDITED') {
+        return { ...link, to: `/projects/${owner}/${lastEdited}` }
+      }
+      return link
     })
-  })
+  }, [owner, lastEdited])
 
   useGSAP(() => {
     if (!userLoaded || !username) return
@@ -79,16 +86,19 @@ export default function Home() {
             chars: 'upperCase',
             speed: 0.4,
             revealDelay: 0.2
-          }
+          },
+          clearProps: 'all'
         }, '<')
 
-      tl.to('.home-link', {
-        y: 0,
-        autoAlpha: 1,
-        duration: 0.6,
-        stagger: 0.15,
-        ease: 'power2.out'
-      }, '-=0.5')
+      tl.fromTo('.home-link', { y: 15 },
+        {
+          y: 0,
+          autoAlpha: 1,
+          duration: 0.6,
+          stagger: 0.15,
+          ease: 'expo.out',
+          clearProps: 'transform'
+        }, '<0.25')
     })
   }, { dependencies: [username, userLoaded], scope: containerRef })
 
@@ -99,17 +109,13 @@ export default function Home() {
       ref={containerRef}>
       <Typography
         variant='h4'
-        sx={{ opacity: 0, visibility: 'hidden' }}
+        className='hide-element'
         id='welcome'
         aria-hidden='true'>
-        {t('welcome', { ns: 'common' })}{' '}
+        {t('common:welcome')}{' '}
         <Typography
-          variant='span'
-          sx={theme => ({
-            color: 'primary.main',
-            fontWeight: 700,
-            textShadow: `0 0 10px ${theme.palette.primary.main}75`,
-          })}
+          component='span'
+          sx={getUsernameStyles}
           id='username'>
           {username}
         </Typography>
@@ -124,13 +130,11 @@ export default function Home() {
           <Link
             key={link.to}
             to={link.to}
-            className='home-link'
+            className='home-link hide-element'
             sx={linkStaticStyles}
-            color='primary.contrast'
-            onMouseEnter={(e) => handleHover(e, true)}
-            onMouseLeave={(e) => handleHover(e, false)}>
+            color='primary.contrast'>
             <Typography>
-              {t(`home.${link.keyTranslation}`, { ns: 'ui' })}
+              {t(`home.${link.key}`)}
             </Typography>
           </Link>
         ))}

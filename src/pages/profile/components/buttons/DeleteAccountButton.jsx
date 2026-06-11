@@ -13,11 +13,6 @@ const DeleteUserDialog = lazy(
   () => import('@components/reusable/dialogs/deleteuser/DeleteUserDialog')
 )
 
-const getIconColor = (theme) => ({
-  color: theme.palette.error.light,
-  ...theme.applyStyles('dark', { color: theme.palette.error.main })
-})
-
 export default function DeleteAccountButton() {
   const { t } = useTranslation('profile')
   const { preferences, uid } = useUser()
@@ -76,7 +71,8 @@ export default function DeleteAccountButton() {
         onClick={() => setOpen(true)}
         variant='outlined'
         disabled={open}
-        endIcon={<DeleteIcon sx={getIconColor} />}
+        endIcon={<DeleteIcon className='profile__delete-acc-btn__icon' />}
+        className='profile__delete-acc-btn'
         color='error'>
         {t('deleteAccount')}
       </Button>

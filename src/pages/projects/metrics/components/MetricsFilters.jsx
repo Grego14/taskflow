@@ -1,10 +1,10 @@
 import { memo, Suspense, lazy } from 'preact/compat'
-import Box from '@mui/material/Box'
 import FormControl from '@mui/material/FormControl'
 import InputLabel from '@mui/material/InputLabel'
 import Select from '@mui/material/Select'
 import MenuItem from '@mui/material/MenuItem'
 import Avatar from '@mui/material/Avatar'
+import Chip from '@mui/material/Chip'
 import ListItemButton from '@mui/material/ListItemButton'
 import ListItemText from '@mui/material/ListItemText'
 
@@ -22,6 +22,26 @@ const DATE_OPTIONS = [
   { value: 'month', labelKey: 'lastMonth' }
 ]
 
+const calculateStartDate = (value) => {
+  const now = new Date()
+
+  if (value === 'today') return new Date(now.setHours(0, 0, 0, 0))
+  if (value === 'week') return new Date(now.setDate(now.getDate() - 7))
+  if (value === 'month') return new Date(now.setMonth(now.getMonth() - 1))
+
+  return null
+}
+
+function Item(props) {
+  const { label, onDelete, ...other } = props;
+  return (
+    <div {...other}>
+      <span>{label}</span>
+      <CloseIcon onClick={onDelete} />
+    </div>
+  )
+}
+
 const MetricsFilters = memo(({ preview }) => {
   const { t } = useTranslation('metrics')
   const { projectMembers = [] } = useProject()
@@ -32,24 +52,13 @@ const MetricsFilters = memo(({ preview }) => {
   } = useProjectMetrics()
 
   const handleDateChange = (e) => {
-    const value = e.target.value
-    const now = new Date()
-    let start = null
-
-    if (value === 'today') {
-      start = new Date(now.setHours(0, 0, 0, 0))
-    } else if (value === 'week') {
-      start = new Date(now.setDate(now.getDate() - 7))
-    } else if (value === 'month') {
-      start = new Date(now.setMonth(now.getMonth() - 1))
-    }
-
+    const start = calculateStartDate(e.target.value)
     updateRange(start, null)
   }
 
   return (
-    <Box className='flex flex-center' flexWrap='wrap' mb={2} gap={2}>
-      <FormControl size='small' sx={{ minWidth: 160 }}>
+    <div className='metrics-filters-wrapper flex flex-center flex-wrap'>
+      <FormControl size='small' className='filter-select-form'>
         <InputLabel id='date-range-label'>{t('dateRange')}</InputLabel>
         <Select
           labelId='date-range-label'
@@ -70,19 +79,20 @@ const MetricsFilters = memo(({ preview }) => {
             multiple
             size='small'
             options={projectMembers}
+            className='members-filter'
             renderOption={(props, option) => {
               const { key, ...otherProps } = props
               return (
                 <ListItemButton
                   key={key}
                   {...otherProps}
-                  className='flex flex-center'
-                  sx={{ gap: 2, px: 2, py: 1 }}>
+                  className='flex flex-center member-option-item'>
                   <Avatar
                     src={option.avatar || ''}
-                    sx={{ width: 24, height: 24 }}
                     aria-hidden='true'
-                  />
+                    className='member-option-avatar'>
+                    {option?.username[0]}
+                  </Avatar>
                   <ListItemText variant='body2'>
                     {option.username || option.email}
                   </ListItemText>
@@ -94,17 +104,23 @@ const MetricsFilters = memo(({ preview }) => {
             value={projectMembers.filter(m => selectedMembers.includes(m.id))}
             onChange={(_, newValue) =>
               setSelectedMembers(newValue.map(m => m.id))}
+            renderValue={(value, getItemProps) => (
+              <Chip 
+                label={value?.[0]?.username} 
+                {...getItemProps()} 
+                className='member-filter-chip' />
+            )}
             renderInput={(params) => (
               <TextField
                 {...params}
                 label={t('filterMembers')}
-                sx={{ minWidth: 280 }}
+                className='member-search-input'
               />
             )}
           />
         )}
       </Suspense>
-    </Box>
+    </div>
   )
 })
 

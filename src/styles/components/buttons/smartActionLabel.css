@@ -1,0 +1,41 @@
+.smart-action-btn.smart-action-btn {
+  --btn-color: var(--mui-palette-text-secondary);
+  --bg-hover: rgba(var(--mui-palette-text-secondaryChannel) / 0.08);
+  --btn-size: 36px;
+  --font-weight: 400;
+  --play-opacity: 0;
+
+  color: var(--btn-color);
+  display: inline-flex;
+  align-items: center;
+  align-self: center;
+  gap: calc(var(--mui-spacing) * 0.5);
+  cursor: pointer;
+  user-select: none;
+  
+  font: var(--mui-font-caption);
+  font-weight: var(--font-weight);
+  
+  font-variant-numeric: tabular-nums;
+  min-width: var(--btn-size);
+  min-height: var(--btn-size);
+  text-transform: none;
+
+  transition: background-color 
+    var(--mui-transitions-duration-shortest) 
+    var(--mui-transitions-easing-easeInOut);
+
+  &:hover {
+    background-color: var(--bg-hover);
+
+    .smart-action-icon { opacity: 1 }
+  }
+
+  .smart-action-icon {
+    font-size: 12px;
+    transition: opacity 
+      var(--mui-transitions-duration-shorter) 
+      var(--mui-transitions-easing-easeInOut);
+    opacity: var(--play-opacity);
+  }
+}

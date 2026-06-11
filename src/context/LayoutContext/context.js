@@ -1,14 +1,14 @@
 import { createContext } from 'react'
 
 const LayoutContext = createContext({
-  drawerOpen: false,
-  setDrawerOpen: () => { },
+  toggleDrawer: () => null,
   filter: 'default',
-  setFilter: (filter) => { },
-  updatePreviewer: (previewer) => { },
-  updateFilter: (filter) => { },
+  setFilter: (filter) => null,
+  updatePreviewer: (previewer) => null,
+  updateFilter: (filter) => null,
   isPreview: false,
-  triggerUpsell: (reason) => { }
+  triggerUpsell: (reason) => null,
+  drawerRef: null
 })
 
 export default LayoutContext

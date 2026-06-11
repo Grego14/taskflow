@@ -1,0 +1,41 @@
+.project-appbar {
+  background-image: var(--mui-palette-background-appbarTop);
+  padding-inline: calc(var(--mui-spacing) * 2);
+  align-items: start
+}
+
+/* items container (ProjectItems and ProjectItemSkeleton) */
+.project-items-list {
+  flex-direction: row;
+  justify-content: space-between;
+  gap: var(--mui-spacing);
+  flex-grow: 1;
+  min-height: 48px;
+  width: 100%
+}
+
+.project-items-preferences { gap: var(--mui-spacing); margin-right: 0 }
+
+.project-skeleton-rect {
+  border-radius: calc(var(--mui-shape-borderRadius) * 2);
+  margin-right: auto
+}
+
+.is-project-subrute .project-action-container { justify-content: center }
+.is-project-subrute.project-appbar { padding-block: 0 }
+
+@media (--mobile) {
+  .project-appbar { padding-inline: calc(var(--mui-spacing) * 4) }
+  .project-action-container { gap: 0; }
+}
+
+@media (--tablet) {
+  /* reset the padding when the bar is on top */
+  .project-appbar { padding-inline: calc(var(--mui-spacing) * 2) }
+  .project-id-text { margin-left: auto }
+  .project-action-container { gap: calc(var(--mui-spacing) * 2) }
+  .project-items-preferences { margin-right: auto }
+}
+
+.project-action-title { font: var(--mui-font-h6); font-weight: 600 }
+.project-id-text { font: var(--mui-font-body2) }

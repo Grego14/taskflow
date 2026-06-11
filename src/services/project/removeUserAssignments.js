@@ -8,7 +8,7 @@ import { getFriendlyErrorFormatted } from '@utils/getFriendlyAuthError'
  *
  * removes a user from all assigned tasks within a specific project 
 */
-export default function removeUserAssignments(uid, ownerId, projectId) {
+export default async function removeUserAssignments(uid, ownerId, projectId) {
   if (!uid || !ownerId || !projectId) 
     throw Error('removeUserAssignments: Missing params')
 

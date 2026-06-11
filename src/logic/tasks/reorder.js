@@ -11,7 +11,6 @@ export default async function reorderTaskAction(params) {
     isPreview 
   } = params
 
-  console.log({ taskId, parentId, newPosition })
   if (isPreview) {
     const localData = getItem('preview', {})
     const tasks = localData.tasks || []

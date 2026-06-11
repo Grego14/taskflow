@@ -17,10 +17,9 @@ export default function AbandonProject({ id, owner, asButton, disabled }) {
           startIcon={<ExitToAppIcon fontSize='small' />}
           color='info'
           variant='outlined'
-          fullWidth
           onClick={() => setOpen(true)}
           disabled={disabled}
-        >
+          className='project-action'>
           {t('abandoneProject')}
         </Button>
       ) : (
@@ -28,11 +27,7 @@ export default function AbandonProject({ id, owner, asButton, disabled }) {
           handler={() => setOpen(true)}
           text={t('abandoneProject')}
           icon={<ExitToAppIcon fontSize='small' color='info' />}
-          sx={[
-            theme => ({
-              '& .MuiListItemText-root': { color: theme.palette.info.light }
-            })
-          ]}
+          className='abandon-menu-action'
         />
       )}
 

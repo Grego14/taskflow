@@ -12,33 +12,32 @@ import MenuIcon from '@mui/icons-material/Menu'
 import ToolbarSelect from './ToolbarSelect'
 
 import { APPBAR_HEIGHT } from '@/constants'
+import { isDrawerOpen } from '@stores/ui'
 
-export default function DrawerToolbar({ open }) {
+export default function DrawerToolbar() {
   const { isMobile } = useApp()
   const { t } = useTranslation('ui')
-  const { toggleDrawer, drawerOpen } = useLayout()
+  const { toggleDrawer } = useLayout()
+  const drawerOpen = isDrawerOpen.value
+
+  const currentBarHeight = APPBAR_HEIGHT[isMobile ? 'mobile' : 'other']
 
   return (
-    <Box mb={2}>
-      <Box
-        className='flex flex-center'
-        sx={{
-          minHeight:
-            `calc(${(APPBAR_HEIGHT[isMobile ? 'mobile' : 'other'])} - 1px)`,
-          px: 1
-        }}>
+    <div className='app-drawer-toolbar-wrapper'>
+      <div
+        className='app-drawer-toolbar flex flex-center'
+        style={{ '--appbar-height': currentBarHeight }}>
         <ToolbarSelect />
 
         <IconButton
           className='toggle-drawer-btn'
           aria-label={t(`drawer.toolbar.${drawerOpen ? 'collapse' : 'expand'}`)}
-          onClick={() => toggleDrawer(!drawerOpen, isMobile)}
-          sx={{ ml: 0, '.is-open &': { ml: 'auto' } }}>
-          <ChevronLeftIcon fontSize='small' sx={{ '.is-closed &': { display: 'none' } }} />
-          <MenuIcon fontSize='small' sx={{ '.is-open &': { display: 'none' } }} />
+          onClick={() => toggleDrawer(!drawerOpen, isMobile)}>
+          <ChevronLeftIcon fontSize='small' className='collapse'/>
+          <MenuIcon fontSize='small' className='expand' />
         </IconButton>
-      </Box>
-      <Divider sx={{ display: 'block' }} />
-    </Box>
+      </div>
+      <Divider className='app-drawer-toolbar-divider' />
+    </div>
   )
 }

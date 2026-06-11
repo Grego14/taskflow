@@ -12,7 +12,6 @@ import Box from '@mui/material/Box'
 import Section from './Section'
 
 import { useGSAP } from '@gsap/react'
-import useUser from '@hooks/useUser'
 import { useTranslation } from 'react-i18next'
 import useApp from '@hooks/useApp'
 
@@ -51,37 +50,16 @@ const CARDS_DATA = [
   }
 ]
 
-const cardStyles = (t, isDark) => ({
-  overflow: 'visible',
-  backgroundColor: isDark
-    ? t.alpha(t.palette.background.paper, 0.4)
-    : t.alpha('#fff', 0.6),
-  border: `1px solid ${t.alpha(t.palette.secondary.main, 0.3)}`,
-  borderRadius: 3,
-  height: '100%',
-  transition: 'transform 0.3s ease-in-out',
-  '&:hover': {
-    transform: 'translateY(-8px)',
-    border: `1px solid ${t.palette.secondary.main}`
-  },
-  backgroundImage: 'none',
-  width: '100%',
-  maxWidth: { xs: '100%', tablet: '40rem' },
-  mx: 'auto'
-})
-
 export default function Cards({ setAnimationEnded, bg, showAppBar, pluginsReady }) {
   const { t } = useTranslation('landing')
   const { isMobile } = useApp()
-  const { preferences } = useUser()
-  const isDark = preferences?.theme === 'dark'
 
   useGSAP(() => {
     if (!pluginsReady) return
 
     showAppBar()
 
-    gsap.from('.card', {
+    gsap.from('.landing-card', {
       scrollTrigger: {
         trigger: '#cards',
         start: `top ${isMobile ? '40%' : '60%'}`,
@@ -102,41 +80,22 @@ export default function Cards({ setAnimationEnded, bg, showAppBar, pluginsReady 
   return (
     <Section
       id='cards'
-      sx={{
-        gap: { xs: 2, laptop: 4 },
-        padding: { xs: 3, laptop: 8 },
-        display: 'grid',
-        backgroundImage: `linear-gradient(rgba(0,0,0,0), ${bg})`,
-        gridTemplateColumns: {
-          xs: '1fr',
-          tablet: 'repeat(3, 1fr)'
-        },
-        height: 'auto'
-      }}>
+      className='cards-grid-container'
+      style={{ '--cards-bg-color': bg }}>
       {CARDS_DATA.map(({ type, icon: Icon, gridArea }) => (
         <Card
           key={type}
-          sx={t => ({ ...cardStyles(t, isDark), gridArea })}
-          className='card'
+          style={{ '--grid-area': !isMobile ? gridArea.tablet : 'auto' }}
+          className='landing-card'
           elevation={0}>
           <CardHeader
             avatar={
-              <Box sx={{
-                p: 1.5,
-                borderRadius: '12px',
-                background: t => t.alpha(t.palette.primary.main, 0.1),
-                display: 'flex'
-              }}>
+              <Box className='card-icon-container flex'>
                 <Icon color='primary' fontSize='large' />
               </Box>
             }
             title={
-              <Typography
-                variant='h2'
-                sx={[theme => ({
-                  ...theme.typography.h5,
-                  fontWeight: 600,
-                })]}>
+              <Typography variant='h5' fontWeight={600}>
                 {t(`cards.${type}.title`)}
               </Typography>
             }
