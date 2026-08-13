@@ -23,8 +23,13 @@ providers.google.addScope('email')
 providers.github.addScope('email')
 
 export const login = async ({ email, password }) => {
-  const { user } = await signInWithEmailAndPassword(auth, email, password)
-  return user
+  try {
+    const { user } = await signInWithEmailAndPassword(auth, email, password)
+
+    return user
+  } catch (err) {
+    throw err
+  }
 }
 
 export const loginWithProvider = async (providerId, preferences) => {
@@ -61,19 +66,23 @@ export const loginWithProvider = async (providerId, preferences) => {
 }
 
 export const signup = async ({ email, password, username, preferences }) => {
-  const { user } = await createUserWithEmailAndPassword(auth, email, password)
+  try {
+    const { user } = await createUserWithEmailAndPassword(auth, email, password)
 
-  await updateProfile(user, { displayName: username })
+    await updateProfile(user, { displayName: username })
+    
+    await sendEmailVerification(user)
 
-  await sendEmailVerification(user)
+    // create user db document
+    const { locale, ...otherPrefs } = preferences
+    await userService.create({ ...user, email }, otherPrefs)
 
-  // create user db document
-  const { locale, ...otherPrefs } = preferences
-  await userService.create({ ...user, email }, otherPrefs)
+    await notificationService.sendWelcome(user.uid)
 
-  await notificationService.sendWelcome(user.uid)
-
-  return user
+    return user
+  } catch (err) {
+    throw err
+  }
 }
 
 export const resendVerification = async () => {
@@ -91,10 +100,16 @@ export const resendVerification = async () => {
         // we should tell the user to re-authenticate.
         throw Error('REAUTHENTICATE_REQUIRED')
       }
+
+      throw error
     }
   }
 
-  return await sendEmailVerification(user)
+  try {
+    return await sendEmailVerification(user)
+  } catch (err) {
+    throw err
+  }
 }
 
 export const logout = async () => {
