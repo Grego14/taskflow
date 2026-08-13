@@ -42,7 +42,6 @@ export default function FilterButton() {
   }, [lastUsed])
 
   const changeSelectedOption = useCallback((value, triggerExit) => {
-    console.log(value)
     triggerExit?.()
 
     setSelected(value)

@@ -11,8 +11,7 @@ export default function CreateProject() {
         fontWeight: 'bold',
         width: 'fit-content',
         alignSelf: 'center'
-      }}
-      onClick={() => console.log('creating project to')}>
+      }}>
       {t('projects.createProject')}
     </Button>
   )
