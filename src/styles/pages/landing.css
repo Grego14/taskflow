@@ -1,10 +1,13 @@
 /* MainText START */
 
 .landing-section-main {
-  padding-inline: calc(var(--mui-spacing) * 2);
+  --section-padding: calc(var(--appbar-height) * 1.5);
+
+  padding-inline: calc(var(--mui-spacing) * 4);
   justify-content: flex-start;
-  align-items: center;
-  padding-top: calc(var(--appbar-height) * 1.35)
+  padding-top: var(--section-padding);
+  align-items: start;
+  flex-direction: row
 }
 
 .landing-bg-overlay {
@@ -14,11 +17,13 @@
   background-image: var(--mui-palette-background-landingMainBlur)
 }
 
+.hero-main { height: calc(100% - var(--section-padding)) }
+
 .main-title.main-title {
   font: var(--mui-font-h1);
-  font-weight: 800;
+  font-weight: 900;
   opacity: 0;
-  line-height: 1.3;
+  line-height: 1.1;
   perspective: 1000px;
   margin-bottom: calc(var(--mui-spacing) * 2);
   background: var(--mui-palette-background-landingMainTitle);
@@ -28,21 +33,25 @@
   -webkit-text-fill-color: transparent;
   text-shadow: 0 0 25px rgb(var(--mui-palette-primary-mainChannel) / 0.35);
   max-width: 12ch;
-  font-size: clamp(2.75rem, 2.25rem + 3vw, 3.8rem)
+  font-size: clamp(2.75rem, 2.25rem + 3vw, 5rem);
+  text-wrap: balance;
+  letter-spacing: 1px
 }
 
 .main-subtitle.main-subtitle {
   font: var(--mui-font-h5);
   opacity: 0;
-  line-height: 1.45;
+  line-height: 1.5;
   perspective: 1000px;
   color: rgb(var(--mui-palette-text-primaryChannel) / 0.85);
-  max-width: 30ch
+  max-width: 50ch;
+  font-size: clamp(1.125rem, 1rem + 0.7vw, 2rem);
+  text-wrap: balance;
+  margin-block: calc(var(--mui-spacing) * 3 + 0.5vh);
 }
 
 .hero-actions-container {
   gap: calc(var(--mui-spacing) * 2);
-  margin-top: calc(var(--mui-spacing) * 3);
 }
 
 .btn-hero.btn-hero {
@@ -72,29 +81,104 @@
     linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.18), transparent)
 }
 
-@media (--mobile) {
-  .landing-section-main { padding-top: calc(var(--appbar-height) * 2) }
+.hero-visual-container {
+  width: 80%;
+  min-height: 420px;
+  perspective: 1200px
 }
 
-@media (--tablet) {
+.hero-visual-image {
+  border-radius: 12px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4),
+              0 0 30px rgb(var(--mui-palette-primary-mainChannel) / 0.15); 
+  transition: transform cubic-bezier(0.16, 1, 0.3, 1), box-shadow ease;
+  transition-duration: var(--mui-transitions-duration-standard);
+  will-change: transform;
+  user-select: none
+}
+
+.hero-visual-image:hover {
+  transform: translateZ(40px) scale(1.03);
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6),
+              0 0 45px rgb(var(--mui-palette-primary-mainChannel) / 0.35);
+  z-index: 10
+}
+
+/* task element */
+.hero-visual-image.list_task_preview {
+  top: 30%;
+  left: 10%;
+  width: 78%;
+  max-width: 380px;
+  z-index: 4;
+  transform: rotateX(6deg) rotateY(-8deg) translateZ(20px)
+}
+
+/* metric element */
+.hero-visual-image.metric {
+  top: 5%;
+  right: 5%;
+  width: 55%;
+  max-width: 260px;
+  z-index: 2;
+  transform: rotateX(10deg) rotateY(-12deg) translateZ(-30px);
+  filter: brightness(0.9)
+}
+
+/* project card */
+.hero-visual-image.project_card {
+  bottom: 8%;
+  right: 8%;
+  width: 65%;
+  max-width: 320px;
+  z-index: 3;
+  transform: rotateX(6deg) rotateY(-6deg) translateZ(-10px)
+}
+
+/* notification element */
+.hero-visual-image.notification {
+  top: 10%;
+  left: 2%;
+  width: 60%;
+  max-width: 300px;
+  z-index: 1;
+  transform: rotateX(12deg) rotateY(-14deg) translateZ(-60px);
+  filter: brightness(0.85)
+}
+
+@media (--is-tablet) {
+  .hero-visual-container {
+    min-height: 350px;
+    margin-top: 2rem
+  }
+  
+  .hero-visual-image.list_task_preview {
+    width: 90%;
+    left: 5%
+  }
+
+  .hero-visual-image.metric,
+  .hero-visual-image.notification { display: none; }
+
+  .hero-visual-image.project_card {
+    width: 80%;
+    right: 5%;
+    bottom: 0
+  }
+}
+
+@media (--is-mobile){
+  .hero-visual-container { display: none }
+  .hero-actions-container { margin-top: auto }
+}
+
+@media (--is-only-mobile){
+  .hero-actions-container { flex-direction: column }
+
   .landing-section-main { 
-    padding-top: calc(var(--appbar-height) * 2.75);
-    padding-top: 0;
-    justify-content: center
+    align-items: center; 
+    text-align: center
   }
-
-  .hero-actions-container {
-    flex-direction: row;
-    margin-top: calc(var(--mui-spacing) * 5)
-  }
-
-  .main-title.main-title { max-width: 18ch }
-  .main-subtitle.main-subtitle { max-width: 40ch }
-}
-
-@media (--laptop) {
-  .hero-actions-container { margin-top: calc(var(--mui-spacing) * 4) }
-  .main-subtitle.main-subtitle { max-width: 45ch }
 }
 
 /* MainText END */

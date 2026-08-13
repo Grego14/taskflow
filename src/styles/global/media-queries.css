@@ -3,5 +3,6 @@
 @custom-media --laptop (min-width: 1024px);
 @custom-media --desktop (min-width: 1360px);
 
+@custom-media --is-tablet (max-width: 900px);
 @custom-media --is-mobile (max-width: 639px);
 @custom-media --is-only-mobile (max-width: 419px);
