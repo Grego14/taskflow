@@ -61,11 +61,12 @@ export default function Home() {
   const lastEdited = metadata?.lastEditedProject
   const owner = metadata?.lastEditedProjectOwner
 
-  // 3. Solo calculamos el link dinámico si cambian los datos
   const links = useMemo(() => {
     return HOME_LINKS_SCHEMA.map(link => {
       if (link.to === 'DYNAMIC_LAST_EDITED') {
-        return { ...link, to: `/projects/${owner}/${lastEdited}` }
+        return lastEdited 
+          ? { ...link, to: `/projects/${owner}/${lastEdited}` } 
+          : null 
       }
       return link
     })
@@ -126,7 +127,7 @@ export default function Home() {
       </span>
 
       <Box className='flex flex-column flex-center' gap={2} mt={3}>
-        {links.map((link) => (
+        {links.map((link) => link && (
           <Link
             key={link.to}
             to={link.to}
