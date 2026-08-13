@@ -1,11 +1,9 @@
-import { Suspense, lazy, useEffect, useState } from 'preact/compat'
+import { useEffect, useState } from 'preact/compat'
 
 import Button from '@mui/material/Button'
 import Typography from '@mui/material/Typography'
 import Section from './Section'
 import Box from '@mui/material/Box'
-
-const ScrollIndicator = lazy(() => import('./ScrollIndicator'))
 
 import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
@@ -16,6 +14,13 @@ import useUser from '@hooks/useUser'
 import { SplitText } from 'gsap/SplitText'
 import { APPBAR_HEIGHT } from '@/constants'
 
+const images = {
+  task: 'list_task_preview',
+  metric: 'metric',
+  notification: 'notification',
+  project: 'project_card'
+}
+
 export default function MainText({
   setAnimationEnded,
   prefetchAuth,
@@ -24,6 +29,7 @@ export default function MainText({
   const { t, i18n } = useTranslation('landing')
   const { preferences } = useUser()
   const lang = preferences?.lang
+  const theme = preferences?.theme
   const navigate = useNavigate()
 
   const resourceExists = i18n.getResourceBundle(lang, 'landing')
@@ -86,12 +92,11 @@ export default function MainText({
   const getPaddingTop = (ammount) => `calc(${APPBAR_HEIGHT.other} * ${ammount})`
 
   return (
-    <Section 
-      className='landing-section-main relative text-center flex flex-column'
-      id='main-text'>
-      <Box className='landing-bg-overlay absolute' />
+    <Section className='landing-section-main relative flex' id='main-text'>
+      <div className='landing-bg-overlay absolute' />
 
-      <Box className='relative'>
+    <div className='hero-main flex flex-column'>
+      <div className='relative'>
         <Typography
           key={`big-${lang}`}
           id='bigText'
@@ -104,9 +109,9 @@ export default function MainText({
         <span className='sr-only'>
           {t('title0')}
         </span>
-      </Box>
+      </div>
 
-      <Box className='relative'>
+      <div className='relative'>
         <Typography
           key={`short-${lang}`}
           variant='body1'
@@ -119,9 +124,9 @@ export default function MainText({
         <span className='sr-only'>
           {t('title1')}
         </span>
-      </Box>
+      </div>
 
-      <Box className='flex flex-center flex-column hero-actions-container'>
+      <div className='flex hero-actions-container'>
         <Button
           variant='contained'
           className='btn-hero btn-hero--primary hide-element relative'
@@ -138,13 +143,18 @@ export default function MainText({
           onClick={() => navigate('preview')}>
           {t('livePreview')}
         </Button>
-      </Box>
+      </div>
+    </div>
 
-      {animationEnded && (
-        <Suspense fallback={null}>
-          <ScrollIndicator nextSectionId='cards' />
-        </Suspense>
-      )}
+    <div className='hero-visual-container flex flex-center relative'>
+      {Object.values(images).map(image => (
+        <img 
+          className={`hero-visual-image ${image} absolute`}
+          src={`/images/landing/${image}_${theme}.png`} 
+          alt={`${image.replace('_', ' ')} preview`}
+        />
+      ))}
+    </div>
     </Section>
   )
 }

@@ -98,12 +98,10 @@ export default function Landing() {
   }
 
   const bgColor = { backgroundColor: landingBg }
+  const appBarHeight = APPBAR_HEIGHT[isMobile ? 'mobile' : 'other']
 
   return (
-    <Box
-      style={{
-        '--appbar-height': APPBAR_HEIGHT[isMobile ? 'mobile' : 'other']
-      }}
+    <Box style={{ '--appbar-height': appBarHeight }}
       sx={{
         backgroundImage: `
         radial-gradient(circle at 15% 25%, ${theme.palette.primary.main}18 0%, transparent 60%),
