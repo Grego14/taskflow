@@ -10,7 +10,9 @@ import { taskRegistry, taskVersion } from '@stores/task'
 // helper to evaluate time-based filters
 const checkPassesTimeFilter = (task, timeFilter) => {
   if (timeFilter === 'allTasks') return true
-  if (typeof task.dueDate !== 'object' || !('toDate' in task.dueDate)) return false
+
+  if(task.dueDate === null || typeof task.dueDate !== 'object') return false
+  if(!('toDate' in task.dueDate)) return false
 
   const taskDate = new Date(task.dueDate?.toDate())
   taskDate.setHours(0, 0, 0, 0)
