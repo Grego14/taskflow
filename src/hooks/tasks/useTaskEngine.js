@@ -3,10 +3,32 @@ import useUser from '@hooks/useUser'
 import useLayout from '@hooks/useLayout'
 import taskIsOverdue from '@utils/tasks/taskIsOverdue'
 import taskIsPending from '@utils/tasks/taskIsPending'
+import { serverTimestamp } from 'firebase/firestore'
 
 import { taskRegistry, taskVersion } from '@stores/task'
 
+// helper to evaluate time-based filters
+const checkPassesTimeFilter = (task, timeFilter) => {
+  if (timeFilter === 'allTasks') return true
+  if (typeof task.dueDate !== 'object' || !('toDate' in task.dueDate)) return false
+
+  const taskDate = new Date(task.dueDate?.toDate())
+  taskDate.setHours(0, 0, 0, 0)
+
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+
+  if (timeFilter === 'today') return taskDate.getTime() === today.getTime()
+  if (timeFilter === 'upcoming') return taskDate.getTime() > today.getTime()
+
+  return true
+}
+
 const checkPassesFilter = (task, filter, uid) => {
+  if (['allTasks', 'today', 'upcoming'].includes(filter)) {
+    return checkPassesTimeFilter(task, filter)
+  }
+
   if (filter === 'assignedToMe') return task.assignedTo?.includes(uid)
   if (filter === 'overdue') return taskIsOverdue(task)
   return task.status === filter

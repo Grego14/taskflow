@@ -46,6 +46,12 @@ export const FILTERS = [
   'assignedToMe'
 ]
 
+export const DATE_FILTERS = [
+  'allTasks',
+  'today',
+  'upcoming'
+]
+
 export const DATES = [
   'nodate',
   'today',

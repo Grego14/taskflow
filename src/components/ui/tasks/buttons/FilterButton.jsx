@@ -16,7 +16,7 @@ import i18n from '@/i18n'
 import getMenuLabel from '@utils/getMenuLabel'
 import upperCaseInitialLetter from '@utils/upperCaseInitialLetter'
 
-import { FILTERS } from '@/constants'
+import { FILTERS, DATE_FILTERS } from '@/constants'
 
 const getFilterLabel = (label, t) => {
   return upperCaseInitialLetter(
@@ -51,7 +51,12 @@ export default function FilterButton() {
     updateFilter(value)
   }, [updateFilter, setFilter])
 
-  const filterOptions = FILTERS.map(f => ({
+  const priorityFilterOptions = FILTERS.map(f => ({
+    label: getFilterLabel(f, t),
+    value: f
+  }))
+
+  const dateFilterOptions = DATE_FILTERS.map(f => ({
     label: getFilterLabel(f, t),
     value: f
   }))
@@ -64,14 +69,15 @@ export default function FilterButton() {
       asListItem
       slotProps={slotProps}>
       {(open, triggerExit) => open && (
-        <>
+        <div className='filter-menu-container flex'>
+        <div className='filter-menu-left'>
           <Typography 
             variant='body2' 
             color='textSecondary' 
             className='filter-menu-help-text'>
-            {t('buttons.filterHelpText')}
+            {t('buttons.filterHelpText1')}
           </Typography>
-          {filterOptions.map(filter => (
+          {dateFilterOptions.map(filter => (
             <MenuAction
               key={filter.label}
               text={filter.label}
@@ -79,7 +85,24 @@ export default function FilterButton() {
               handler={() => changeSelectedOption(filter.value, triggerExit)}
             />
           ))}
-        </>
+        </div>
+        <div>
+          <Typography 
+            variant='body2' 
+            color='textSecondary' 
+            className='filter-menu-help-text'>
+            {t('buttons.filterHelpText2')}
+          </Typography>
+            {priorityFilterOptions.map(filter => (
+              <MenuAction
+                key={filter.label}
+                text={filter.label}
+                selected={filter.value === selected}
+                handler={() => changeSelectedOption(filter.value, triggerExit)}
+              />
+            ))}
+          </div>
+        </div>
       )}
     </DropdownMenu>
   )

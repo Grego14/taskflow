@@ -55,7 +55,8 @@
   "buttons": {
     "add": "Crear una tarea o sub tarea",
     "filter": "menu de filtrado",
-    "filterHelpText": "Filtrar tareas por:",
+    "filterHelpText1": "Por fecha:",
+    "filterHelpText2": "Por prioridad:",
     "filterOptions": {
       "todo": "para hacer",
       "doing": "en progreso",
@@ -68,7 +69,10 @@
       "overdue_other": "vencidas",
       "default": "por defecto",
       "assignedToMe_one": "asignada para mi",
-      "assignedToMe_other": "asignadas para mi"
+      "assignedToMe_other": "asignadas para mi",
+      "allTasks": "Todas las tareas",
+      "today": "Hoy",
+      "upcoming": "Próximas"
     },
     "archive": "Archivar completadas",
     "archiveCount": "Archivar {{count}} tareas",

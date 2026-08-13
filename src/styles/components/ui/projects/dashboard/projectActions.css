@@ -6,7 +6,16 @@
 /* AddButton */
 .add-task-btn { border-radius: 50% }
 
-/* FilterButton internal text */
+/* FilterButton */
+
+.filter-menu-left {
+  border-right: 2px solid var(--mui-palette-grey-300);
+  margin-right: 0.5rem;
+  padding-right: 0.5rem
+}
+
+.dark .filter-menu-left { border-color: var(--mui-palette-grey-800) }
+
 .filter-menu-help-text {
   padding: calc(var(--mui-spacing) * 1) calc(var(--mui-spacing) * 2)
 }

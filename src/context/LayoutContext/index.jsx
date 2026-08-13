@@ -7,7 +7,7 @@ import useDrawerAnimation from '@hooks/animations/useDrawerAnimation'
 
 import LayoutContext from './context'
 import { setItem } from '@utils/storage'
-import { FILTERS } from '@/constants'
+import { DATE_FILTERS, FILTERS } from '@/constants'
 import { isDrawerOpen } from '@stores/ui'
 
 export default function LayoutProvider({ children, isPreview, triggerUpsell }) {
@@ -26,7 +26,7 @@ export default function LayoutProvider({ children, isPreview, triggerUpsell }) {
 
     const fieldsToUpdate = {}
     
-    if(filter && !FILTERS.includes(filter)) return
+    if(filter && (!FILTERS.includes(filter) || !DATE_FILTERS.includes(filter))) return
     if(previewer && (previewer !== 'list' && previewer !== 'kanban')) return
 
     if (previewer) fieldsToUpdate.previewer = previewer

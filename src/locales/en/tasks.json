@@ -55,6 +55,8 @@
     "add": "Add task or sub task",
     "filter": "filter menu",
     "filterHelpText": "Filter tasks by:",
+    "filterHelpText1": "By date:",
+    "filterHelpText2": "By priority:",
     "filterOptions": {
       "todo": "Todo",
       "doing": "Doing",
@@ -62,7 +64,10 @@
       "cancelled": "Cancelled",
       "overdue": "Overdue",
       "default": "Default",
-      "assignedToMe": "Assigned to me"
+      "assignedToMe": "Assigned to me",
+      "allTasks": "All tasks",
+      "today": "Today",
+      "upcoming": "Upcoming"
     },
     "archive": "Archive completed",
     "archiveCount": "Archive {{count}} tasks",
