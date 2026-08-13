@@ -87,7 +87,7 @@ export default function Notifications() {
       })
 
       for (const notif of sorted) {
-        items.push(
+        itemsArr.push(
           <NotificationItem
             key={notif.id}
             notification={notif}

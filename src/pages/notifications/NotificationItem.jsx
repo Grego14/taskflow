@@ -21,9 +21,9 @@ const itemStyles = theme => ({
   p: 2,
   mb: 2,
   borderRadius: '16px',
-  bgcolor: theme.palette.background.paper,
-  border: `1px solid ${theme.alpha(theme.palette.divider, 0.08)}`,
-  boxShadow: `0 4px 20px ${theme.alpha('#000', 0.03)}`,
+  bgcolor: theme.alpha(theme.palette.background.paperChannel, 0.05),
+  border: `1px solid ${theme.palette.divider}`,
+  boxShadow: `0 4px 20px ${theme.alpha('0 0 0', 0.03)}`,
   position: 'relative',
   width: '100%',
   maxWidth: '30rem'
