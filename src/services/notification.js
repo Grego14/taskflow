@@ -48,7 +48,7 @@ const notificationService = {
       const batch = dbAdapter.createBatch()
       for (const id of notificationIds) {
         const notifRef = notificationService.getNotifRef(uid, id)
-        batch.update(ref, { read: true })
+        batch.update(notifRef, { read: true })
       }
       await batch.commit()
     } catch (err) {
