@@ -1,4 +1,10 @@
-import { useState, useMemo, useCallback, startTransition } from 'preact/compat'
+import {
+  useState,
+  useMemo,
+  useCallback,
+  useEffect,
+  startTransition
+} from 'preact/compat'
 import { Outlet } from 'react-router-dom'
 import ProjectMetricsContext from './context'
 
@@ -17,39 +23,43 @@ export default function ProjectMetricsProvider() {
   const [dateRange, setDateRange] = useState({ start: null, end: null })
   const [selectedMembers, setSelectedMembers] = useState([])
 
-  const fetchMetrics = useCallback(async (start = null, end = null) => {
-    setLoading(true)
-    setDateRange({ start, end })
+  const fetchMetrics = useCallback(
+    async (start = null, end = null) => {
+      setLoading(true)
+      setDateRange({ start, end })
 
-    try {
-      await metricsService.getProjectTasksForMetrics({
-        owner: data?.createdBy,
-        project: data?.id,
-        startDate: start,
-        endDate: end,
-        onUpdate: (fetchedTasks) => {
-          startTransition(() => {
-            setTasks(fetchedTasks)
-            setLoading(false)
-          })
-        }
-      })
-    } catch (err) {
-      setLoading(false)
-      console.error(err)
-    }
-  }, [data?.createdBy, data?.id])
+      try {
+        await metricsService.getProjectTasksForMetrics({
+          owner: data?.createdBy,
+          project: data?.id,
+          startDate: start,
+          endDate: end,
+          onUpdate: fetchedTasks => {
+            startTransition(() => {
+              setTasks(fetchedTasks)
+              setLoading(false)
+            })
+          }
+        })
+      } catch (err) {
+        setLoading(false)
+        console.error(err)
+      }
+    },
+    [data?.createdBy, data?.id]
+  )
 
-  useMemo(() => {
+  useEffect(() => {
     if (data?.id) fetchMetrics()
   }, [data?.id, fetchMetrics])
 
   const value = useMemo(() => {
     const rawMembersMetrics = getMembersMetrics(tasks, projectMembers) || []
 
-    const filteredMembersMetrics = selectedMembers.length > 0
-      ? rawMembersMetrics.filter(m => selectedMembers.includes(m.id))
-      : rawMembersMetrics
+    const filteredMembersMetrics =
+      selectedMembers.length > 0
+        ? rawMembersMetrics.filter(m => selectedMembers.includes(m.id))
+        : rawMembersMetrics
 
     return {
       loading,
