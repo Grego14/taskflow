@@ -28,7 +28,7 @@ export default function NotificationsProvider({ children }) {
 
     const unsubscribe = dbAdapter.listen(
       query,
-      (snap) => {
+      snap => {
         const data = []
 
         for (const doc of snap.docs) {
@@ -43,7 +43,7 @@ export default function NotificationsProvider({ children }) {
             if (change.type === 'added') {
               const newNotif = change.doc.data()
               // check if the notification was created in less than 10 seconds
-              const isRecent = (Date.now() - (newNotif.createdAt || 0)) < 10000
+              const isRecent = Date.now() - (newNotif.createdAt || 0) < 10000
 
               // play the sound only if the task is new and is not readed
               if (!newNotif.read && isRecent) {
@@ -61,7 +61,7 @@ export default function NotificationsProvider({ children }) {
         setNotifications(data)
         setLoading(false)
       },
-      (err) => {
+      err => {
         console.error('Notification Listener Error:', err)
         setError(err.message)
         setLoading(false)
@@ -71,55 +71,72 @@ export default function NotificationsProvider({ children }) {
     return () => unsubscribe()
   }, [uid])
 
-  const onAccept = useCallback(async (e) => {
-    const { id, projectOwner, projectId } = data
-    await notificationService.manageInvitation({
-      user: uid,
-      notification: id,
-      action: 'accept',
-      projectOwner,
-      projectId
-    })
-  }, [uid])
+  const onAccept = useCallback(
+    async data => {
+      const { id, projectOwner, projectId } = data
+      await notificationService.manageInvitation({
+        user: uid,
+        notification: id,
+        action: 'accept',
+        projectOwner,
+        projectId
+      })
+    },
+    [uid]
+  )
 
-  const onDecline = useCallback(async (data) => {
-    const { id, projectOwner, projectId } = data
-    await notificationService.manageInvitation({
-      user: uid,
-      notification: id,
-      action: 'decline',
-      projectOwner,
-      projectId
-    })
-  }, [uid])
+  const onDecline = useCallback(
+    async data => {
+      const { id, projectOwner, projectId } = data
+      await notificationService.manageInvitation({
+        user: uid,
+        notification: id,
+        action: 'decline',
+        projectOwner,
+        projectId
+      })
+    },
+    [uid]
+  )
 
-  const deleteNotification = useCallback(async (id) => {
-    await notificationService.delete(uid, id)
-  }, [uid])
+  const deleteNotification = useCallback(
+    async id => {
+      await notificationService.delete(uid, id)
+    },
+    [uid]
+  )
 
-  const markNotificationsAsRead = useCallback(async (ids) => {
-    if (!uid || !ids.length) return
-    await notificationService.markAsRead(uid, ids)
-  }, [uid])
+  const markNotificationsAsRead = useCallback(
+    async ids => {
+      if (!uid || !ids.length) return
+      await notificationService.markAsRead(uid, ids)
+    },
+    [uid]
+  )
 
   const unreadCount = notifications.filter(notif => notif.read === false).length
 
-  const value = useMemo(() => ({
-    notifications,
-    onAccept,
-    onDecline,
-    deleteNotification,
-    markNotificationsAsRead,
-    error,
-    loading,
-    unreadCount
-  }), [notifications,
-    onAccept,
-    onDecline,
-    deleteNotification,
-    error,
-    loading,
-    markNotificationsAsRead, unreadCount]
+  const value = useMemo(
+    () => ({
+      notifications,
+      onAccept,
+      onDecline,
+      deleteNotification,
+      markNotificationsAsRead,
+      error,
+      loading,
+      unreadCount
+    }),
+    [
+      notifications,
+      onAccept,
+      onDecline,
+      deleteNotification,
+      error,
+      loading,
+      markNotificationsAsRead,
+      unreadCount
+    ]
   )
 
   return (
