@@ -25,9 +25,10 @@ export default function LayoutProvider({ children, isPreview, triggerUpsell }) {
     const { previewer, filter } = data
 
     const fieldsToUpdate = {}
-    
-    if(filter && (!FILTERS.includes(filter) || !DATE_FILTERS.includes(filter))) return
-    if(previewer && (previewer !== 'list' && previewer !== 'kanban')) return
+
+    if (filter && !FILTERS.includes(filter) && !DATE_FILTERS.includes(filter))
+      return
+    if (previewer && previewer !== 'list' && previewer !== 'kanban') return
 
     if (previewer) fieldsToUpdate.previewer = previewer
     if (filter) fieldsToUpdate.lastUsedFilter = filter
@@ -44,41 +45,41 @@ export default function LayoutProvider({ children, isPreview, triggerUpsell }) {
     onComplete: () => setOpening(null)
   })
 
-  const animateDrawer = useCallback((open, isTemporary) => {
-    const newVal = typeof open === 'boolean' ? open : !drawerOpen
+  const animateDrawer = useCallback(
+    (open, isTemporary) => {
+      const newVal = typeof open === 'boolean' ? open : !drawerOpen
 
-    // prevent transition errors as drawer sub-components depends of the
-    // drawerOpen state to hide/show the text and align the icons
-    if (typeof opening === 'boolean') return
+      // prevent transition errors as drawer sub-components depends of the
+      // drawerOpen state to hide/show the text and align the icons
+      if (typeof opening === 'boolean') return
 
-    isDrawerOpen.value = newVal
-    setItem('drawerOpen', newVal)
+      isDrawerOpen.value = newVal
+      setItem('drawerOpen', newVal)
 
-    // do not animate the exit if the drawer is temporary
-    if (isTemporary && newVal === false) return
+      // do not animate the exit if the drawer is temporary
+      if (isTemporary && newVal === false) return
 
-    drawerAnim(newVal)
-  }, [drawerAnim, opening, drawerOpen])
+      drawerAnim(newVal)
+    },
+    [drawerAnim, opening, drawerOpen]
+  )
 
-  const value = useMemo(() => ({
-    toggleDrawer: animateDrawer,
-    filter,
-    setFilter,
-    updatePreviewer: previewer => debounceUpdater({ previewer, type: 'previewer' }),
-    updateFilter: filter => debounceUpdater({ filter, type: 'filter' }),
-    drawerRef,
-    isPreview,
-    triggerUpsell,
-  }), [
-      filter, 
-      debounceUpdater, 
-      isMobile, 
-      isPreview
-    ])
+  const value = useMemo(
+    () => ({
+      toggleDrawer: animateDrawer,
+      filter,
+      setFilter,
+      updatePreviewer: previewer =>
+        debounceUpdater({ previewer, type: 'previewer' }),
+      updateFilter: filter => debounceUpdater({ filter, type: 'filter' }),
+      drawerRef,
+      isPreview,
+      triggerUpsell
+    }),
+    [filter, debounceUpdater, isMobile, isPreview]
+  )
 
   return (
-    <LayoutContext.Provider value={value}>
-      {children}
-    </LayoutContext.Provider>
+    <LayoutContext.Provider value={value}>{children}</LayoutContext.Provider>
   )
 }
