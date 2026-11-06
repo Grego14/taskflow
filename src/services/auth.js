@@ -70,7 +70,7 @@ export const signup = async ({ email, password, username, preferences }) => {
     const { user } = await createUserWithEmailAndPassword(auth, email, password)
 
     await updateProfile(user, { displayName: username })
-    
+
     await sendEmailVerification(user)
 
     // create user db document
@@ -95,8 +95,8 @@ export const resendVerification = async () => {
     try {
       return await verifyBeforeUpdateEmail(user, email)
     } catch (err) {
-      if (error.code === 'auth/requires-recent-login') {
-        // this error happens if the session is old. 
+      if (err.code === 'auth/requires-recent-login') {
+        // this error happens if the session is old.
         // we should tell the user to re-authenticate.
         throw Error('REAUTHENTICATE_REQUIRED')
       }
