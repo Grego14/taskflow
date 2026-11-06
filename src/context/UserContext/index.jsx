@@ -40,7 +40,7 @@ export default function UserProvider({ children }) {
     if (isPreviewPath) {
       const demoData = getItem('preview')
 
-      if(!demoData) return baseState
+      if (!demoData) return baseState
 
       const savedUser = demoData.user
 
@@ -62,8 +62,8 @@ export default function UserProvider({ children }) {
   const updatePlaceholder = useRef(null)
 
   // function to update the user document/local storage data
-  const update = useCallback((data) => {
-    if (updatePlaceholder) return updatePlaceholder.current?.(data)
+  const update = useCallback(data => {
+    if (updatePlaceholder.current) return updatePlaceholder.current?.(data)
   }, [])
 
   // update MUI internal theme and i18next internal language if the user db
