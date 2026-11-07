@@ -14,7 +14,7 @@ const containerStyles = {
   px: { xs: 0, tablet: 2 }
 }
 
-const getSwitchContainerStyles = (t) => ({
+const getSwitchContainerStyles = t => ({
   width: 'fit-content',
   p: 1,
   mr: 2,
@@ -35,9 +35,7 @@ export default function MakeTemplate({
   const { t } = useTranslation('projects')
 
   return (
-    <Container
-      className='flex flex-column'
-      sx={containerStyles}>
+    <Container className='flex flex-column' sx={containerStyles}>
       <SwitcthContainer
         title={t('newProject.makeTemplate')}
         subtitle={t('newProject.makeTemplateHelpText')}
@@ -88,9 +86,7 @@ function SwitcthContainer({
         <Typography variant='body2' fontWeight={600}>
           {title}
         </Typography>
-        <Typography
-          variant='caption'
-          color='textSecondary'>
+        <Typography variant='caption' color='textSecondary'>
           {subtitle}
         </Typography>
       </div>

@@ -1,20 +1,20 @@
-import { useCallback, useRef, Suspense, lazy, useMemo } from 'preact/compat'
+import { Suspense, lazy, useCallback, useMemo, useRef } from 'preact/compat'
 
+import ProfileButton from '@components/reusable/buttons/ProfileButton'
 import Box from '@mui/material/Box'
+import Divider from '@mui/material/Divider'
 import Drawer from '@mui/material/Drawer'
 import List from '@mui/material/List'
-import ProfileButton from '@components/reusable/buttons/ProfileButton'
 import DrawerActions from './components/DrawerActions'
 import Toolbar from './components/Toolbar'
-import Divider from '@mui/material/Divider'
 
 const ProjectNavFolder = lazy(() => import('./components/ProjectNavFolder'))
 
-import { useParams } from 'react-router-dom'
 import { useGSAP } from '@gsap/react'
 import useApp from '@hooks/useApp'
 import useLayout from '@hooks/useLayout'
 import useLoadResources from '@hooks/useLoadResources'
+import { useParams } from 'react-router-dom'
 
 import { DRAWER_CONFIG } from '@/constants'
 
@@ -34,30 +34,33 @@ export default function AppDrawer() {
   const shadowWithAppbar = (projectId && !isMobile) || isPreview
 
   // trigger when dependencies change (for temporary drawer initial animation)
-  useGSAP(() => {
-    if (loadingResources) return
+  useGSAP(
+    () => {
+      if (loadingResources) return
 
-    toggleDrawer(getItem('drawerOpen'))
-  }, { dependencies: [loadingResources, isMobile], scope: drawerRef })
+      toggleDrawer(getItem('drawerOpen'))
+    },
+    { dependencies: [loadingResources, isMobile], scope: drawerRef }
+  )
 
   const drawerWidth = DRAWER_CONFIG[drawerOpen ? 'widthOpen' : 'widthClosed']
 
   const memoizedSlotProps = useMemo(() => {
     return {
-      paper: { 
-        ref: drawerRef, 
+      paper: {
+        ref: drawerRef,
         className: 'app-drawer-paper flex flex-column'
       },
       root: { keepMounted: true }
     }
-  }, [isMobile])
+  }, [drawerRef])
 
   return (
     <Drawer
       style={{
         '--drawer-width': `${drawerWidth}px`,
-        '--drawer-shadow': shadowWithAppbar 
-          ? 'var(--mui-palette-shadows-drawer-withAppbar)' 
+        '--drawer-shadow': shadowWithAppbar
+          ? 'var(--mui-palette-shadows-drawer-withAppbar)'
           : 'var(--mui-palette-shadows-drawer-solo)'
       }}
       data-state={drawerOpen ? 'open' : 'closed'}
@@ -67,14 +70,12 @@ export default function AppDrawer() {
       variant={isMobile ? 'temporary' : 'permanent'}>
       <Toolbar />
 
-      <List
-        className='flex flex-column app-drawer-list'
-        disablePadding>
+      <List className='flex flex-column app-drawer-list' disablePadding>
         <DrawerActions />
 
         {projectId && (
           <>
-            <Divider className='app-drawer-divider' role='none' />
+            <Divider className='app-drawer-divider' role='separator' />
             <Suspense fallback={null}>
               <ProjectNavFolder />
             </Suspense>

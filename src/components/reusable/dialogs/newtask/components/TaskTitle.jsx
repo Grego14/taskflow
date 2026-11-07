@@ -4,7 +4,7 @@ import Typography from '@mui/material/Typography'
 import useDebounce from '@hooks/useDebounce'
 import useUser from '@hooks/useUser'
 import { useTheme } from '@mui/material/styles'
-import { useState, useCallback } from 'preact/hooks'
+import { useCallback, useState } from 'preact/hooks'
 import { useTranslation } from 'react-i18next'
 
 export default function TaskTitle({ updateTitle, updateError, error = false }) {

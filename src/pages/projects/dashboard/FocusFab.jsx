@@ -1,19 +1,19 @@
+import OpenInFullIcon from '@mui/icons-material/OpenInFull'
 import Fab from '@mui/material/Fab'
 import Typography from '@mui/material/Typography'
-import OpenInFullIcon from '@mui/icons-material/OpenInFull'
 
-import { useRef, useMemo } from 'preact/hooks'
 import { useGSAP } from '@gsap/react'
+import { useMemo, useRef } from 'preact/hooks'
 
-import gsap from 'gsap'
 import { APPBAR_HEIGHT, priorityColors } from '@/constants'
 import formatTimer from '@utils/formatTimer'
+import gsap from 'gsap'
 
-import { 
-  activeTaskData, 
-  isWorking, 
-  showOverlay, 
-  currentSessionSeconds
+import {
+  activeTaskData,
+  currentSessionSeconds,
+  isWorking,
+  showOverlay
 } from '@stores/task'
 
 const FabTimer = () => {
@@ -33,19 +33,23 @@ export default function FocusFAB() {
   const working = isWorking.value
   const showingOverlay = showOverlay.value
 
-  useGSAP(() => {
-    if (!fabRef.current) return
+  useGSAP(
+    () => {
+      if (!fabRef.current) return
 
-    if (isWorking && !showingOverlay) {
-      gsap.fromTo(fabRef.current,
-        { scale: 0, rotation: -45 },
-        { scale: 1, rotation: 0, duration: 0.5, ease: 'back.out(2)' }
-      )
-    }
-  }, { dependencies: [working, showingOverlay] })
+      if (isWorking && !showingOverlay) {
+        gsap.fromTo(
+          fabRef.current,
+          { scale: 0, rotation: -45 },
+          { scale: 1, rotation: 0, duration: 0.5, ease: 'back.out(2)' }
+        )
+      }
+    },
+    { dependencies: [working, showingOverlay] }
+  )
 
   const dynamicStyles = useMemo(() => {
-    if (!task) return {}
+    if (!task?.priority) return {}
 
     const priority = task.priority || 'none'
     const [fgColor] = priorityColors[priority]
@@ -58,7 +62,9 @@ export default function FocusFAB() {
     <Fab
       ref={fabRef}
       variant='extended'
-      onClick={() => (showOverlay.value = true)}
+      onClick={() => {
+        showOverlay.value = true
+      }}
       style={dynamicStyles}
       className='focus-fab flex flex-center'>
       <OpenInFullIcon size='small' />

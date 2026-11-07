@@ -1,16 +1,16 @@
+import PriorityHighIcon from '@mui/icons-material/PriorityHigh'
+import Box from '@mui/material/Box'
 import ListItemButton from '@mui/material/ListItemButton'
 import ListItemIcon from '@mui/material/ListItemIcon'
 import ListItemText from '@mui/material/ListItemText'
-import PriorityHighIcon from '@mui/icons-material/PriorityHigh'
-import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 
 import useApp from '@hooks/useApp'
 
-import { alpha, darken, lighten } from '@mui/material/styles'
-import upperCaseInitialLetter from '@utils/upperCaseInitialLetter'
 import { priorities, priorityColors } from '@/constants'
 import i18n from '@/i18n'
+import { alpha, darken, lighten } from '@mui/material/styles'
+import upperCaseInitialLetter from '@utils/upperCaseInitialLetter'
 
 export const getMenuItemStyles = (isSelected, color) => [
   {
@@ -42,11 +42,12 @@ export const renderPriorityMenu = (selected, onSelect, t) => {
         sx={getMenuItemStyles(isSelected, { fg, bg })}
         key={option}
         selected={isSelected}>
-        <ListItemIcon sx={{
-          minWidth: 32,
-          color: isSelected ? 'inherit' : fg,
-          '& svg': { fontSize: '1.2rem' }
-        }}>
+        <ListItemIcon
+          sx={{
+            minWidth: 32,
+            color: isSelected ? 'inherit' : fg,
+            '& svg': { fontSize: '1.2rem' }
+          }}>
           <PriorityHighIcon />
         </ListItemIcon>
         <ListItemText
@@ -63,7 +64,7 @@ export const renderPriorityMenu = (selected, onSelect, t) => {
   return items
 }
 
-export const getPriorityLabel = (priority) => {
+export const getPriorityLabel = priority => {
   const { isOnlyMobile } = useApp()
 
   const t = i18n.getFixedT(i18n.language, 'tasks')
@@ -74,14 +75,14 @@ export const getPriorityLabel = (priority) => {
   const label = isNone
     ? upperCaseInitialLetter(rawText)
     : t('priorities.priority_p', {
-      p: isEnglish ? upperCaseInitialLetter(rawText) : rawText
-    })
+        p: isEnglish ? upperCaseInitialLetter(rawText) : rawText
+      })
 
   return (
     <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
       <PriorityHighIcon sx={{ fontSize: '1rem', mr: 1 }} />
       <Typography variant='body2' sx={{ my: 0.5 }}>
-        { /* show the priority without the "priority" text if there's no much space */ }
+        {/* show the priority without the "priority" text if there's no much space */}
         {!isOnlyMobile ? label : upperCaseInitialLetter(priority)}
       </Typography>
     </Box>

@@ -1,7 +1,10 @@
 .nav-action.nav-action {
   /* this properties are only used on the nav actions of the drawer */
-  --nav-action-hover-bg: linear-gradient(90deg, rgba(255, 255, 255, 0.4) 50%, 
-    transparent 50%);
+  --nav-action-hover-bg: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.4) 50%,
+    transparent 50%
+  );
   --nav-action-hover-shadow: inset 4px 0 0 0 var(--mui-palette-primary-main);
   --nav-action-icon-hover-bg: var(--mui-palette-primary-main);
   --active-color: var(--mui-palette-primary-contrast);
@@ -10,34 +13,36 @@
   padding: var(--mui-spacing);
   color: var(--mui-palette-text-secondary);
   align-items: center;
-  transition-property: transform, background-position, background-color, box-shadow;
-  transition-duration: 
-    var(--mui-transitions-duration-standard),
+  transition-property: transform, background-position, background-color,
+    box-shadow;
+  transition-duration: var(--mui-transitions-duration-standard),
     var(--mui-transitions-duration-standard),
     var(--mui-transitions-duration-shorter);
-  transition-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1), 
+  transition-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1),
     var(--mui-transitions-easing-easeInOut);
   overflow: hidden;
 
   background-size: 200% 100%;
   background-position: 100% 0%;
   background-repeat: no-repeat;
-  width: fit-content
+  width: fit-content;
 }
 
 .dark .nav-action.nav-action {
   --nav-action-hover-bg: linear-gradient(
-    90deg, 
-    rgba(255, 255, 255, 0.1) 0%, 
-    rgba(255, 255, 255, 0.02) 50%, 
+    90deg,
+    rgba(255, 255, 255, 0.1) 0%,
+    rgba(255, 255, 255, 0.02) 50%,
     transparent 50%
-    );
+  );
   --nav-action-hover-shadow: inset 4px 0 0 0 var(--mui-palette-primary-light);
   --nav-action-icon-hover-bg: var(--mui-palette-primary-light);
   --active-color: var(--mui-palette-primary-light);
 }
 
-[data-state='closed'] .nav-action.nav-action { justify-content: center }
+[data-state='closed'] .nav-action.nav-action {
+  justify-content: center;
+}
 
 .nav-action__icon.nav-action__icon {
   transition-property: border-color, background-color;
@@ -46,39 +51,43 @@
   border-radius: 50%;
   background-color: var(--active-bg-mobile, transparent);
   border: 2px solid var(--active-border-mobile, transparent);
-  box-shadow: var(--active-shadow-mobile, none)
+  box-shadow: var(--active-shadow-mobile, none);
 }
 
 .nav-action__text.nav-action__text {
-  margin-left: calc(var(--mui-spacing) / 1.5)
+  margin-left: calc(var(--mui-spacing) / 1.5);
 }
 
-.nav-action.--active { 
+.nav-action.--active {
   color: var(--active-color);
 
-  & .nav-action__text { font-weight: 500 }
+  & .nav-action__text {
+    font-weight: 500;
+  }
 }
 
 .nav-action__text.is-hidden {
   position: absolute;
   opacity: 0;
-  visibility: hidden
+  visibility: hidden;
 }
 
-.nav-action__badge-icon { font-size: 1.5rem }
+.nav-action__badge-icon {
+  font-size: 1.5rem;
+}
 
-.on--drawer{
+.on--drawer {
   /* used on the LayoutAppBar*/
   @media (--is-mobile) {
     .nav-action.nav-action {
-      --floating-btn-color: black; 
+      --floating-btn-color: black;
 
       padding-inline: calc(var(--mui-spacing) * 1.5);
       border-radius: var(--mui-shape-borderRadius);
-      background-image: none
+      background-image: none;
     }
 
-    .dark .nav-action.nav-action{
+    .dark .nav-action.nav-action {
       --floating-btn-color: white;
     }
 
@@ -88,11 +97,13 @@
       transition-duration: var(--mui-transitions-duration-standard);
       transition-timing-function: var(--mui-transitions-easing-easeInOut);
 
-      will-change: transform
+      will-change: transform;
     }
 
     /* floating active button */
-    .nav-action.active .nav-action__icon { color: var(--floating-btn-color) }
+    .nav-action.active .nav-action__icon {
+      color: var(--floating-btn-color);
+    }
 
     /* bottom pill indicator */
     .nav-action.active::after {
@@ -119,11 +130,21 @@
 
 @media (--tablet) {
   @keyframes icon-wiggle {
-    0% { transform: rotate(0deg) scale(1) }
-    25% { transform: rotate(-12deg) scale(1.1) }
-    50% { transform: rotate(10deg) scale(1.1) }
-    75% { transform: rotate(-5deg) scale(1.1) }
-    100% { transform: rotate(0deg) scale(1.05) }
+    0% {
+      transform: rotate(0deg) scale(1);
+    }
+    25% {
+      transform: rotate(-12deg) scale(1.1);
+    }
+    50% {
+      transform: rotate(10deg) scale(1.1);
+    }
+    75% {
+      transform: rotate(-5deg) scale(1.1);
+    }
+    100% {
+      transform: rotate(0deg) scale(1.05);
+    }
   }
 
   .nav-action.nav-action {
@@ -142,12 +163,13 @@
   }
 
   .dark .nav-action.nav-action:hover .nav-action__icon {
-    filter: drop-shadow(0 0 5px 
-      rgba(var(--mui-palette-primary-mainChannel) / 0.4))
+    filter: drop-shadow(
+      0 0 5px rgba(var(--mui-palette-primary-mainChannel) / 0.4)
+    );
   }
 
   [data-state='open'] .nav-action.nav-action:hover {
-    box-shadow: var(--nav-action-hover-shadow)
+    box-shadow: var(--nav-action-hover-shadow);
   }
 
   .nav-action__icon.nav-action__icon {
@@ -156,13 +178,12 @@
     background-color: transparent;
     border: none;
     box-shadow: none;
-    transform-origin: center; 
-    transition: color 
-      var(--mui-transitions-duration-shorter) 
-      var(--mui-transitions-easing-easeInOut)
+    transform-origin: center;
+    transition: color var(--mui-transitions-duration-shorter)
+      var(--mui-transitions-easing-easeInOut);
   }
 
   .nav-action__badge-icon {
-    font-size: 1.25rem
+    font-size: 1.25rem;
   }
 }

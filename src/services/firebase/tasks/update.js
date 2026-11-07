@@ -1,11 +1,11 @@
 import { dbAdapter } from '@services/dbAdapter'
 import getTaskPath from '@utils/tasks/getTaskPath'
 
-export default async function updateRemoteTask({ 
-  ownerId, 
-  projectId, 
-  taskId, 
-  parentId, 
+export default async function updateRemoteTask({
+  ownerId,
+  projectId,
+  taskId,
+  parentId,
   data
 }) {
   if (!ownerId || !projectId || !taskId) throw Error('updateTask: Missing IDs')

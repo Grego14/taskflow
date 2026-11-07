@@ -1,6 +1,6 @@
-import HouseIcon from '@mui/icons-material/House'
 import ArticleIcon from '@mui/icons-material/Article'
 import FolderOpen from '@mui/icons-material/FolderOpen'
+import HouseIcon from '@mui/icons-material/House'
 import NotificationsIcon from '@mui/icons-material/Notifications'
 
 import BarChartIcon from '@mui/icons-material/BarChart'
@@ -9,18 +9,46 @@ import SettingsIcon from '@mui/icons-material/Settings'
 
 export const NAV_LINKS = [
   { key: 'home', icon: HouseIcon, to: '/home', translation: 'drawer.home' },
-  { key: 'projects', icon: FolderOpen, to: '/projects', translation: 'drawer.projects' },
-  { key: 'templates', icon: ArticleIcon, to: '/templates', translation: 'drawer.templates' },
   {
-    id: 'notifications', icon: NotificationsIcon, to: '/notifications',
-    translation: 'drawer.notifications', isNotifications: true
+    key: 'projects',
+    icon: FolderOpen,
+    to: '/projects',
+    translation: 'drawer.projects'
+  },
+  {
+    key: 'templates',
+    icon: ArticleIcon,
+    to: '/templates',
+    translation: 'drawer.templates'
+  },
+  {
+    id: 'notifications',
+    icon: NotificationsIcon,
+    to: '/notifications',
+    translation: 'drawer.notifications',
+    isNotifications: true
   }
 ]
 
 export const RAW_PROJECT_LINKS = [
-  { key: 'dashboard', translation: 'projectActions.dashboard', icon: DashboardIcon, to: '' },
-  { key: 'metrics', translation: 'projectActions.metrics', icon: BarChartIcon, to: 'metrics' },
-  { key: 'settings', translation: 'projectActions.settings', icon: SettingsIcon, to: 'settings' }
+  {
+    key: 'dashboard',
+    translation: 'projectActions.dashboard',
+    icon: DashboardIcon,
+    to: ''
+  },
+  {
+    key: 'metrics',
+    translation: 'projectActions.metrics',
+    icon: BarChartIcon,
+    to: 'metrics'
+  },
+  {
+    key: 'settings',
+    translation: 'projectActions.settings',
+    icon: SettingsIcon,
+    to: 'settings'
+  }
 ]
 
 export const getProjectNavigation = (owner, id) => {

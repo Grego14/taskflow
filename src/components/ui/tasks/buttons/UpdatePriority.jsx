@@ -2,11 +2,11 @@ import DropdownMenu from '@components/reusable/DropdownMenu'
 import PriorityButton from '@components/reusable/tasks/PriorityButton'
 
 import useProject from '@hooks/useProject'
-import { useTranslation } from 'react-i18next'
 import useTasks from '@hooks/useTasks'
+import { useTranslation } from 'react-i18next'
 
 import { priorityColors } from '@/constants'
-import { renderPriorityMenu, getPriorityLabel } from '@utils/tasks/priorityUI'
+import { getPriorityLabel, renderPriorityMenu } from '@utils/tasks/priorityUI'
 
 export default function UpdatePriority({ priority, id, parentId, showMenu }) {
   const { t } = useTranslation('tasks')
@@ -31,10 +31,15 @@ export default function UpdatePriority({ priority, id, parentId, showMenu }) {
           priority,
           isArchived,
           children: getPriorityLabel(priority)
-        },
+        }
       }}>
-      {(_, triggerExit) => renderPriorityMenu(priority, 
-          (val) => handleUpdatePriority(val, triggerExit), t)}
+      {(_, triggerExit) =>
+        renderPriorityMenu(
+          priority,
+          val => handleUpdatePriority(val, triggerExit),
+          t
+        )
+      }
     </DropdownMenu>
   )
 }

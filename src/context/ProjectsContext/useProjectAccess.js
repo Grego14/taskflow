@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react'
 import useUser from '@hooks/useUser'
 import projectService from '@services/project'
+import { useEffect, useState } from 'react'
 
 export default function useProjectAccess({ projectId, owner }) {
   const { uid } = useUser()
@@ -11,7 +11,7 @@ export default function useProjectAccess({ projectId, owner }) {
   useEffect(() => {
     if (!owner || !projectId) return
 
-    const unsubscribe = projectService.listenProject(owner, projectId, (data) => {
+    const unsubscribe = projectService.listenProject(owner, projectId, data => {
       if (data.exists) {
         setProjectData(data)
         setHasAccess(data.members?.includes(uid))

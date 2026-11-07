@@ -1,4 +1,4 @@
-import { setItem, getItem } from '@utils/storage'
+import { getItem, setItem } from '@utils/storage'
 
 export default async function deleteTaskAction(params) {
   const { id, parentId, deleteSubtasks, isPreview, ownerId, projectId } = params
@@ -19,7 +19,9 @@ export default async function deleteTaskAction(params) {
   }
 
   try {
-    const { default: deleteRemoteTask } = await import('@services/firebase/tasks/delete')
+    const { default: deleteRemoteTask } = await import(
+      '@services/firebase/tasks/delete'
+    )
     await deleteRemoteTask({
       ownerId,
       projectId,

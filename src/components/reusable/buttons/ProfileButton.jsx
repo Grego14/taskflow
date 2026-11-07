@@ -2,15 +2,15 @@ import Avatar from '@mui/material/Avatar'
 import Badge from '@mui/material/Badge'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
-import AppTooltip from '../AppTooltip'
 import Typography from '@mui/material/Typography'
+import AppTooltip from '../AppTooltip'
 
 import useAuth from '@hooks/useAuth'
+import useLayout from '@hooks/useLayout'
+import useLoadResources from '@hooks/useLoadResources'
+import useRoute from '@hooks/useRoute'
 import useUser from '@hooks/useUser'
 import { useTranslation } from 'react-i18next'
-import useLoadResources from '@hooks/useLoadResources'
-import useLayout from '@hooks/useLayout'
-import useRoute from '@hooks/useRoute'
 
 import '@styles/components/ui/buttons/profileButton.css'
 
@@ -42,8 +42,8 @@ export default function ProfileButton({
   // resources...
   useLoadResources('ui')
 
-  const statusColor = isOffline 
-    ? 'var(--mui-palette-error-main)' 
+  const statusColor = isOffline
+    ? 'var(--mui-palette-error-main)'
     : 'var(--mui-palette-success-main)'
 
   const onlyIconClass = onlyIcon ? 'profile-btn--only-icon' : ''
@@ -55,9 +55,9 @@ export default function ProfileButton({
       placement={tooltipPosition}>
       <Button
         disableRipple={onlyIcon}
-        onClick={() => isPreview
-          ? triggerUpsell('profile')
-          : navigateTo('/profile')}
+        onClick={() =>
+          isPreview ? triggerUpsell('profile') : navigateTo('/profile')
+        }
         onMouseEnter={!isPreview ? preloadProfileComponent : null}
         style={{ '--profile-status-color': statusColor }}
         aria-label={t('buttons.profileButtonLabel')}
@@ -72,11 +72,8 @@ export default function ProfileButton({
         </Badge>
 
         {showTexts && (
-          <Box 
-            className='hide-element profile-btn-text flex flex-column absolute'>
-            <Typography className='profile-btn-name'>
-              {username}
-            </Typography>
+          <Box className='hide-element profile-btn-text flex flex-column absolute'>
+            <Typography className='profile-btn-name'>{username}</Typography>
             {email && (
               <Typography className='profile-btn-email' variant='caption'>
                 {email}

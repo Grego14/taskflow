@@ -1,14 +1,14 @@
-import Accordion from '@mui/material/Accordion'
-import AccordionSummary from '@mui/material/AccordionSummary'
-import AccordionDetails from '@mui/material/AccordionDetails'
-import Typography from '@mui/material/Typography'
-import Box from '@mui/material/Box'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
+import Accordion from '@mui/material/Accordion'
+import AccordionDetails from '@mui/material/AccordionDetails'
+import AccordionSummary from '@mui/material/AccordionSummary'
+import Box from '@mui/material/Box'
 import Container from '@mui/material/Container'
+import Typography from '@mui/material/Typography'
 
 import { useGSAP } from '@gsap/react'
-import { useTranslation } from 'react-i18next'
 import useApp from '@hooks/useApp'
+import { useTranslation } from 'react-i18next'
 
 import gsap from 'gsap'
 
@@ -37,21 +37,22 @@ export default function FAQSection({ setAnimationEnded }) {
       ease: 'power3.out'
     })
 
-    tl.from('.faq-item', {
-      opacity: 0,
-      y: 30,
-      stagger: 0.15,
-      duration: 0.8,
-      ease: 'power2.out',
-      onComplete: setAnimationEnded
-    }, '-=0.4')
+    tl.from(
+      '.faq-item',
+      {
+        opacity: 0,
+        y: 30,
+        stagger: 0.15,
+        duration: 0.8,
+        ease: 'power2.out',
+        onComplete: setAnimationEnded
+      },
+      '-=0.4'
+    )
   }, [isMobile])
 
   return (
-    <Container
-      id='faq-container'
-      maxWidth='md'
-      className='faq-container'>
+    <Container id='faq-container' maxWidth='md' className='faq-container'>
       <Typography
         variant='h4'
         component='h2'
@@ -62,10 +63,7 @@ export default function FAQSection({ setAnimationEnded }) {
 
       <Box className='flex flex-column' gap={2}>
         {FAQ_KEYS.map(key => (
-          <Accordion
-            key={key}
-            disableGutters
-            className='faq-item'>
+          <Accordion key={key} disableGutters className='faq-item'>
             <AccordionSummary
               expandIcon={<ExpandMoreIcon color='primary' />}
               className='faq-summary-container'>

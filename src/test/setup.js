@@ -1,14 +1,17 @@
 import { cleanup } from '@testing-library/preact'
 import { afterEach, vi } from 'vitest'
 
-afterEach(() => { cleanup(); vi.clearAllMocks() })
+afterEach(() => {
+  cleanup()
+  vi.clearAllMocks()
+})
 
 vi.mock('@services/audio', () => ({ playSound: vi.fn(), stopSound: vi.fn() }))
 
 vi.mock('react-router-dom', () => ({
   useParams: () => ({}),
   useNavigate: () => ({}),
-  useLocation: () => ({}) 
+  useLocation: () => ({})
 }))
 
 // Mock GSAP globally
@@ -17,14 +20,14 @@ vi.mock('@gsap/react', () => ({
 }))
 
 // Mock i18next globally with a generic translator
-vi.mock('react-i18next', async (importOriginal) => {
+vi.mock('react-i18next', async importOriginal => {
   const actual = await importOriginal()
   return {
     ...actual,
     useTranslation: () => ({
-      t: (key) => key.split('.').pop(),
+      t: key => key.split('.').pop(),
       // we are using the english translations so we pass 'en'
-      i18n: { language: 'en', changeLanguage: vi.fn() } 
+      i18n: { language: 'en', changeLanguage: vi.fn() }
     })
   }
 })

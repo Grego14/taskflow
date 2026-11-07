@@ -1,14 +1,14 @@
-import { useState, useEffect, useMemo, useRef, useCallback } from 'preact/hooks'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'preact/hooks'
 
-import useUser from '@hooks/useUser'
-import useDebounce from '@hooks/useDebounce'
-import useApp from '@hooks/useApp'
 import useDrawerAnimation from '@hooks/animations/useDrawerAnimation'
+import useApp from '@hooks/useApp'
+import useDebounce from '@hooks/useDebounce'
+import useUser from '@hooks/useUser'
 
-import LayoutContext from './context'
-import { setItem } from '@utils/storage'
 import { DATE_FILTERS, FILTERS } from '@/constants'
 import { isDrawerOpen } from '@stores/ui'
+import { setItem } from '@utils/storage'
+import LayoutContext from './context'
 
 export default function LayoutProvider({ children, isPreview, triggerUpsell }) {
   const { isMobile } = useApp()
@@ -76,7 +76,7 @@ export default function LayoutProvider({ children, isPreview, triggerUpsell }) {
       isPreview,
       triggerUpsell
     }),
-    [filter, debounceUpdater, isMobile, isPreview]
+    [filter, debounceUpdater, isPreview, animateDrawer, triggerUpsell]
   )
 
   return (

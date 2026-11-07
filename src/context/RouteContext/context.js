@@ -2,7 +2,7 @@ import { createContext } from 'preact/compat'
 
 const RouteContext = createContext({
   lastRute: '/',
-  navigateTo: () => { }
+  navigateTo: () => {}
 })
 
 export default RouteContext

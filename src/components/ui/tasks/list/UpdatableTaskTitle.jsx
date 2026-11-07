@@ -1,8 +1,8 @@
-import TextField from '@mui/material/TextField'
 import useAuth from '@hooks/useAuth'
 import useProject from '@hooks/useProject'
 import useTasks from '@hooks/useTasks'
-import { useRef, useState, useEffect, useMemo } from 'preact/compat'
+import TextField from '@mui/material/TextField'
+import { useEffect, useMemo, useRef, useState } from 'preact/compat'
 import { useTranslation } from 'react-i18next'
 
 import { setGlobalAlert } from '@stores/ui'
@@ -28,48 +28,58 @@ export default function UpdatableTaskTitle({
 
   // sync internal state if title prop changes from outside
   useEffect(() => {
-    if(title !== lastUpdatedTitle.current){
+    if (title !== lastUpdatedTitle.current) {
       setTaskTitle(title)
       lastUpdatedTitle.current = title
     }
   }, [title])
 
-  const handleUpdate = useCallback((val) => {
-    const trimmedTitle = val.trim()
+  const handleUpdate = useCallback(
+    val => {
+      const trimmedTitle = val.trim()
 
-    // no changes, empty or archived
-    if (!trimmedTitle || trimmedTitle === lastUpdatedTitle.current || isArchived) {
-      setTaskTitle(lastUpdatedTitle.current)
-      return
-    }
+      // no changes, empty or archived
+      if (
+        !trimmedTitle ||
+        trimmedTitle === lastUpdatedTitle.current ||
+        isArchived
+      ) {
+        setTaskTitle(lastUpdatedTitle.current)
+        return
+      }
 
-    if (isOffline) {
-      setGlobalAlert({ message: t('noUpdate'), status: 'error' })
-      setTaskTitle(lastUpdatedTitle.current)
-      inputRef.current?.blur()
-      return
-    }
+      if (isOffline) {
+        setGlobalAlert({ message: t('noUpdate'), status: 'error' })
+        setTaskTitle(lastUpdatedTitle.current)
+        inputRef.current?.blur()
+        return
+      }
 
-    lastUpdatedTitle.current = trimmedTitle
+      lastUpdatedTitle.current = trimmedTitle
 
-    actions.updateTask({
-      id: taskId,
-      data: { title: trimmedTitle },
-      parentId
-    })
-  }, [actions.updateTask, isArchived, taskId, parentId, t])
+      actions.updateTask({
+        id: taskId,
+        data: { title: trimmedTitle },
+        parentId
+      })
+    },
+    [actions.updateTask, isArchived, taskId, parentId, t, isOffline]
+  )
 
-  const onKeyDown = useCallback((e) => {
-    if (e.key === 'Enter') {
-      inputRef.current?.blur() // this triggers handleUpdate via onBlur
-    }
+  const onKeyDown = useCallback(
+    e => {
+      if (e.key === 'Enter') {
+        inputRef.current?.blur() // this triggers handleUpdate via onBlur
+      }
 
-    if (e.key === 'Escape') {
-      setTaskTitle(lastUpdatedTitle.current)
-      setShow(false)
-      inputRef.current?.blur()
-    }
-  }, [setShow])
+      if (e.key === 'Escape') {
+        setTaskTitle(lastUpdatedTitle.current)
+        setShow(false)
+        inputRef.current?.blur()
+      }
+    },
+    [setShow]
+  )
 
   const fieldClassName = `task-title-field ${show ? 'is-editing' : ''}`
 
@@ -80,8 +90,8 @@ export default function UpdatableTaskTitle({
     ${isCancelled ? 'is-cancelled' : ''}`
 
   const inputStyles = useMemo(() => {
-    const checkedColor = !isCancelled 
-      ? 'var(--mui-palette-success-light)' 
+    const checkedColor = !isCancelled
+      ? 'var(--mui-palette-success-light)'
       : 'var(--mui-palette-text-secondary)'
 
     return {

@@ -7,24 +7,24 @@ import Box from '@mui/material/Box'
 import Divider from '@mui/material/Divider'
 import Typography from '@mui/material/Typography'
 
-import { 
-  forwardRef, 
-  memo, 
-  useRef, 
-  useState, 
-  useLayoutEffect, 
-  useMemo,
-  useCallback
-} from 'preact/compat'
+import useTaskAnimations from '@hooks/tasks/useTaskAnimations'
 import useLayout from '@hooks/useLayout'
 import useTasks from '@hooks/useTasks'
-import useTaskAnimations from '@hooks/tasks/useTaskAnimations'
+import {
+  forwardRef,
+  memo,
+  useCallback,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState
+} from 'preact/compat'
 
 import { tasksReducer } from '@components/reusable/dialogs/newtask/tasksReducer'
 import { alpha } from '@mui/material/styles'
 
 const accordionStyles = {
-  backgroundColor: 'transparent', 
+  backgroundColor: 'transparent',
   backgroundImage: 'none'
 }
 
@@ -53,37 +53,43 @@ const TasksWrapper = forwardRef(function TasksWrapper(props, ref) {
   const { animateEntrance } = useTaskAnimations()
 
   useLayoutEffect(() => {
-    if (hasTasks) 
+    if (hasTasks)
       animateEntrance(wrapperRef, taskIds, { addDelay: type === 'overdue' })
-  }, [filter])
+  }, [type, taskIds, hasTasks, animateEntrance])
 
-  const wrapperStyles = useMemo(() => ({
-    display: show ? 'flex' : 'none',
-    gap: 1,
-    mb: divider ? 4 : 0,
-    '&.MuiBox-root:first-of-type': {
-      // if there are not tasks we align the childrens to the middle
-      my: hasTasks ? 4 : 'auto',
-      ...containerStyles
-    },
-    '& .MuiAccordionSummary-root': {
-      '& .MuiAccordionSummary-content': { mr: hasTasks ? 2 : 0 },
-      width: 'fit-content', 
-      mx: 'auto' 
-    }
-  }), [hasTasks, show, divider, containerStyles])
+  const wrapperStyles = useMemo(
+    () => ({
+      display: show ? 'flex' : 'none',
+      gap: 1,
+      mb: divider ? 4 : 0,
+      '&.MuiBox-root:first-of-type': {
+        // if there are not tasks we align the childrens to the middle
+        my: hasTasks ? 4 : 'auto',
+        ...containerStyles
+      },
+      '& .MuiAccordionSummary-root': {
+        '& .MuiAccordionSummary-content': { mr: hasTasks ? 2 : 0 },
+        width: 'fit-content',
+        mx: 'auto'
+      }
+    }),
+    [hasTasks, show, divider, containerStyles]
+  )
 
-  const detailsStyles = useMemo(() => ({
-    gap: 4,
-    p: 2,
-    mx: { xs: 0.75, mobile: 2 },
-    borderRadius: '12px',
-    border: '2px dashed',
-    borderColor: isOver ? 'primary.main' : 'transparent',
-    backgroundColor: isOver ? alpha('#fff', 0.075) : 'transparent',
-    transition: 'border-color 0.3s ease, background-color 0.3s ease',
-    overflow: 'hidden'
-  }), [isOver])
+  const detailsStyles = useMemo(
+    () => ({
+      gap: 4,
+      p: 2,
+      mx: { xs: 0.75, mobile: 2 },
+      borderRadius: '12px',
+      border: '2px dashed',
+      borderColor: isOver ? 'primary.main' : 'transparent',
+      backgroundColor: isOver ? alpha('#fff', 0.075) : 'transparent',
+      transition: 'border-color 0.3s ease, background-color 0.3s ease',
+      overflow: 'hidden'
+    }),
+    [isOver]
+  )
 
   return (
     <Box className='flex flex-column' ref={ref} sx={wrapperStyles}>
@@ -96,9 +102,9 @@ const TasksWrapper = forwardRef(function TasksWrapper(props, ref) {
         <AccordionSummary
           className='text-center'
           expandIcon={
-            hasTasks ?
+            hasTasks ? (
               <ChevronLeftIcon fontSize='small' sx={{ rotate: '-90deg' }} />
-              : null
+            ) : null
           }>
           <Typography
             className='text-center text-balance'
@@ -110,17 +116,15 @@ const TasksWrapper = forwardRef(function TasksWrapper(props, ref) {
         </AccordionSummary>
         <AccordionDetails className='flex flex-column' sx={detailsStyles}>
           <Box className='flex flex-column' ref={wrapperRef}>
-            {show ? taskIds.map(id => (
-              <ListTask 
-                key={id} 
-                id={id}
-                ref={el => setTaskRef(id, el)}
-              />
-            )) : null}
+            {show
+              ? taskIds.map(id => (
+                  <ListTask key={id} id={id} ref={el => setTaskRef(id, el)} />
+                ))
+              : null}
             {children}
           </Box>
 
-          {(divider && hasTasks) ? (
+          {divider && hasTasks ? (
             <Divider sx={{ mx: 4, width: '80%', alignSelf: 'center', mt: 2 }} />
           ) : null}
         </AccordionDetails>

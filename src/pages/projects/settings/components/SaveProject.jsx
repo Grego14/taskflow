@@ -2,9 +2,9 @@ import Button from '@mui/material/Button'
 
 import useApp from '@hooks/useApp'
 import useProject from '@hooks/useProject'
-import { useTranslation } from 'react-i18next'
-import { getFriendlyAuthError } from '@utils/getFriendlyAuthError'
 import useUser from '@hooks/useUser'
+import { getFriendlyAuthError } from '@utils/getFriendlyAuthError'
+import { useTranslation } from 'react-i18next'
 
 import { setGlobalAlert } from '@stores/ui'
 

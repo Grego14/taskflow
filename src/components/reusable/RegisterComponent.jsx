@@ -1,7 +1,8 @@
 import { useController } from 'react-hook-form'
 
 export default function RegisterComponent(props) {
-  const { name,
+  const {
+    name,
     control,
     rules,
     handler,
@@ -15,12 +16,11 @@ export default function RegisterComponent(props) {
     fieldState: { error }
   } = useController({ name, control, rules })
 
-  const handleChange = (e) => {
+  const handleChange = e => {
     const val = e?.target ? e.target.value : e
     onChange(val)
     handler?.(e)
   }
-
 
   return (
     <Component

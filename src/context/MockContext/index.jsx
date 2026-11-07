@@ -1,31 +1,20 @@
-import {
-  useState, 
-  useEffect, 
-  useMemo, 
-  useRef
-} from 'preact/compat'
-import { signal } from '@preact/signals'
 import useUser from '@hooks/useUser'
+import { signal } from '@preact/signals'
+import { useEffect, useMemo, useRef, useState } from 'preact/compat'
 
 import TasksBaseProvider from '@context/TasksContext/TaskBaseProvider'
 import ProjectContext from '@pages/projects/context'
 
-import { getItem, setItem } from '@utils/storage'
-import getFirstPosition from '@utils/tasks/getFirstPosition'
 import { USER_FIELDS_MAP } from '@/constants'
 import getLocale from '@utils/getLocale'
+import { getItem, setItem } from '@utils/storage'
+import getFirstPosition from '@utils/tasks/getFirstPosition'
 
 import { taskRegistry } from '@stores/task'
 
 export default function MockProvider({ children }) {
-  const { 
-    uid, 
-    updatePlaceholder, 
-    setUser, 
-    preferences, 
-    profile, 
-    metadata
-  } = useUser()
+  const { uid, updatePlaceholder, setUser, preferences, profile, metadata } =
+    useUser()
   const [data, setData] = useState(() => getItem('preview'))
   const project = data?.projects?.[0]
 
@@ -36,7 +25,7 @@ export default function MockProvider({ children }) {
     totalCompletedTasks: 0
   })
 
-  updatePlaceholder.current = async (dataToUpdate) => {
+  updatePlaceholder.current = async dataToUpdate => {
     try {
       const updatedUser = {
         profile: { ...profile, ...data.user?.profile },
@@ -55,9 +44,9 @@ export default function MockProvider({ children }) {
 
         // update the property on it's section
         if (updatedUser[section]) {
-          updatedUser[section] = { 
-            ...updatedUser[section], 
-            [field]: value 
+          updatedUser[section] = {
+            ...updatedUser[section],
+            [field]: value
           }
 
           hasChanged = true
@@ -87,10 +76,13 @@ export default function MockProvider({ children }) {
     const newMap = new Map()
 
     for (const task of tasks) {
-      newMap.set(task.id, signal({ 
-        ...task, 
-        subtasks: task.subtasks || [] 
-      }))
+      newMap.set(
+        task.id,
+        signal({
+          ...task,
+          subtasks: task.subtasks || []
+        })
+      )
     }
 
     // link children to parents
@@ -114,25 +106,26 @@ export default function MockProvider({ children }) {
     taskRegistry.value = newMap
   }, [])
 
-  const projectValue = useMemo(() => ({
-    id: project?.id,
-    data: project,
-    isArchived: false,
-    isOwner: true,
-    hasAccess: true,
-    validating: false,
-    loading: false,
-    error: null,
-    projectMembers: project?.members,
-    metrics,
-    updateMetrics: setMetrics
-  }), [project, metrics])
+  const projectValue = useMemo(
+    () => ({
+      id: project?.id,
+      data: project,
+      isArchived: false,
+      isOwner: true,
+      hasAccess: true,
+      validating: false,
+      loading: false,
+      error: null,
+      projectMembers: project?.members,
+      metrics,
+      updateMetrics: setMetrics
+    }),
+    [project, metrics]
+  )
 
   return (
     <ProjectContext.Provider value={projectValue}>
-      <TasksBaseProvider taskRefs={taskRefs}>
-        {children}
-      </TasksBaseProvider>
+      <TasksBaseProvider taskRefs={taskRefs}>{children}</TasksBaseProvider>
     </ProjectContext.Provider>
   )
 }

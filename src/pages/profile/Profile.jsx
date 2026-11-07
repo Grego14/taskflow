@@ -5,11 +5,11 @@ import ProfileButtons from './components/ProfileButtons'
 import ProfileForm from './components/ProfileForm'
 import ProfileMetadata from './components/ProfileMetadata'
 
+import useApp from '@hooks/useApp'
 import useLoadResources from '@hooks/useLoadResources.js'
+import useRoute from '@hooks/useRoute'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import useApp from '@hooks/useApp'
-import useRoute from '@hooks/useRoute'
 
 import '@styles/pages/profile.css'
 
@@ -25,9 +25,9 @@ export default function Profile() {
 
   return (
     <Box className='flex flex-column profile-container'>
-      <GoBackButton 
-        handler={() => navigateTo(lastRute)} 
-        className='profile__go-back-btn' 
+      <GoBackButton
+        handler={() => navigateTo(lastRute)}
+        className='profile__go-back-btn'
       />
 
       <ProfileForm setSaveBtnDisabled={setSaveBtnDisabled} />

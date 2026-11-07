@@ -1,17 +1,17 @@
-import { useMemo, useState, Suspense, lazy, useEffect } from 'preact/compat'
+import { Suspense, lazy, useEffect, useMemo, useState } from 'preact/compat'
 
+import AppTooltip from '@components/reusable/AppTooltip'
 import DropdownMenu from '@components/reusable/DropdownMenu'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
 import Box from '@mui/material/Box'
 import CardHeader from '@mui/material/CardHeader'
 import Typography from '@mui/material/Typography'
-import UpdatableTaskTitle from './UpdatableTaskTitle'
-import TaskMembers from './TaskMembers'
+import TaskActionsSkeleton from '../buttons/TaskActionsSkeleton'
 import SmartActionLabel from './SmartActionLabel'
 import TaskCalendar from './TaskCalendar'
-import TaskActionsSkeleton from '../buttons/TaskActionsSkeleton'
+import TaskMembers from './TaskMembers'
 import TaskTotalTime from './TaskTotalTime'
-import AppTooltip from '@components/reusable/AppTooltip'
+import UpdatableTaskTitle from './UpdatableTaskTitle'
 
 const TaskActions = lazy(() => import('../buttons/TaskActions'))
 
@@ -59,9 +59,9 @@ export default function Header({ id, insideTask = false }) {
     actions.updateTask({
       id,
       parentId,
-      data: { 
-        rawDate: newDate, 
-        dueDate: getDateByKey(newDate) 
+      data: {
+        rawDate: newDate,
+        dueDate: getDateByKey(newDate)
       }
     })
   }
@@ -93,7 +93,7 @@ export default function Header({ id, insideTask = false }) {
             {/* Show the total time on the parent task */}
             {!parentId && <TaskTotalTime id={id} />}
 
-            {(!isChecked && !isParentChecked) && (
+            {!isChecked && !isParentChecked && (
               <SmartActionLabel id={id} insideTask={insideTask} />
             )}
 
@@ -122,7 +122,7 @@ export default function Header({ id, insideTask = false }) {
               {(menuOpen, triggerExit) => (
                 <Suspense fallback={<TaskActionsSkeleton />}>
                   {menuOpen && (
-                    <TaskActions 
+                    <TaskActions
                       id={id}
                       parentId={parentId}
                       subtaskIds={subtaskIds}

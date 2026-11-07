@@ -1,6 +1,6 @@
-import { dbAdapter } from './dbAdapter'
-import { getFriendlyErrorFormatted } from '@utils/getFriendlyAuthError'
 import { USER_FIELDS_MAP } from '@/constants'
+import { getFriendlyErrorFormatted } from '@utils/getFriendlyAuthError'
+import { dbAdapter } from './dbAdapter'
 
 const user = {
   /**
@@ -44,7 +44,7 @@ const user = {
   /**
    * Performs a cascading delete of the user and all related sub-collections
    */
-  delete: async (uid) => {
+  delete: async uid => {
     if (!uid || typeof uid !== 'string')
       throw Error('user.delete: Invalid user param')
 
@@ -101,10 +101,10 @@ const user = {
   },
 
   /**
-     * Finds a user by email and returns their profile and id
-     * Used for project invitations
-     */
-  getByEmail: async (email) => {
+   * Finds a user by email and returns their profile and id
+   * Used for project invitations
+   */
+  getByEmail: async email => {
     if (!email || typeof email !== 'string') return null
 
     try {
@@ -135,8 +135,7 @@ const user = {
    * Initializes a new user document in Firestore after Auth sign-up
    */
   create: async (userData, preferences = {}) => {
-    if (!userData?.uid)
-      throw Error('user.create: Missing user UID')
+    if (!userData?.uid) throw Error('user.create: Missing user UID')
 
     const { uid, displayName, email, photoURL } = userData
 
@@ -172,7 +171,7 @@ const user = {
         message: getFriendlyErrorFormatted('createUser', e.message).message
       }
     }
-  },
+  }
 }
 
 export default user

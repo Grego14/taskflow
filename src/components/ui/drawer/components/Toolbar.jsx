@@ -1,13 +1,13 @@
-import { Suspense, lazy } from 'react'
-import { useTranslation } from 'react-i18next'
 import useApp from '@hooks/useApp'
 import useLayout from '@hooks/useLayout'
+import { Suspense, lazy } from 'react'
+import { useTranslation } from 'react-i18next'
 
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
+import MenuIcon from '@mui/icons-material/Menu'
 import Box from '@mui/material/Box'
 import Divider from '@mui/material/Divider'
 import IconButton from '@mui/material/IconButton'
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
-import MenuIcon from '@mui/icons-material/Menu'
 
 import ToolbarSelect from './ToolbarSelect'
 
@@ -33,7 +33,7 @@ export default function DrawerToolbar() {
           className='toggle-drawer-btn'
           aria-label={t(`drawer.toolbar.${drawerOpen ? 'collapse' : 'expand'}`)}
           onClick={() => toggleDrawer(!drawerOpen, isMobile)}>
-          <ChevronLeftIcon fontSize='small' className='collapse'/>
+          <ChevronLeftIcon fontSize='small' className='collapse' />
           <MenuIcon fontSize='small' className='expand' />
         </IconButton>
       </div>

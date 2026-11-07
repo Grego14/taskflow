@@ -1,8 +1,8 @@
 import NavAction from '@components/reusable/NavAction'
 
-import { useLocation, useParams } from 'react-router-dom'
-import { useTranslation } from 'react-i18next'
 import useLayout from '@hooks/useLayout'
+import { useTranslation } from 'react-i18next'
+import { useLocation, useParams } from 'react-router-dom'
 
 import { NAV_LINKS } from '@constants/navigation'
 import { isDrawerOpen } from '@stores/ui'
@@ -27,9 +27,12 @@ export default function DrawerActions() {
           className='on--drawer'
           // run the drawer animation only if the user clicks and the drawer is
           // closed
-          onClick={() => drawerOpen
-            ? animateDrawer(false)
-            : isDrawerOpen.value = false}
+          onClick={() => {
+            if (drawerOpen) animateDrawer(false)
+            else {
+              isDrawerOpen.value = false
+            }
+          }}
           isActive={pathname === link.to}
           tooltipPlacement='right'
           showBg

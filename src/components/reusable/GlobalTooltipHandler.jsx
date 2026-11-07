@@ -1,11 +1,11 @@
-import { useEffect } from 'preact/hooks'
-import { 
-  tooltipTarget, 
-  tooltipOpen, 
-  tooltipTitle,
+import {
   tooltipIsWarm,
-  tooltipProps
+  tooltipOpen,
+  tooltipProps,
+  tooltipTarget,
+  tooltipTitle
 } from '@stores/ui'
+import { useEffect } from 'preact/hooks'
 
 import '@styles/components/globalTooltip.css'
 
@@ -22,9 +22,9 @@ let warmTimeoutId = null
 
 export default function GlobalTooltipHandler() {
   useEffect(() => {
-    let openTimeout = null
+    const openTimeout = null
 
-    const handleOpen = (e) => {
+    const handleOpen = e => {
       // find the closest element with a tooltip attribute
       const target = e.target.closest('[data-tooltip]')
 
@@ -39,7 +39,7 @@ export default function GlobalTooltipHandler() {
 
       const title = target.getAttribute('data-tooltip')
       const placement = target.getAttribute('data-tooltip-placement') || 'top'
-      
+
       const alreadyOpen = tooltipOpen.peek()
       const actualTarget = tooltipTarget.peek()
       const isWarm = tooltipIsWarm.peek()
@@ -60,12 +60,13 @@ export default function GlobalTooltipHandler() {
         tooltipProps.value = { ...DEFAULT_PROPS, placement }
       }
 
-      openTimeoutId = setTimeout(updateState, showInstant 
-        ? 0
-        : DEFAULT_PROPS.enterDelay)
+      openTimeoutId = setTimeout(
+        updateState,
+        showInstant ? 0 : DEFAULT_PROPS.enterDelay
+      )
     }
 
-    const handleClose = (e) => {
+    const handleClose = e => {
       const target = e.target?.closest?.('[data-tooltip]')
 
       if (!target) {
@@ -77,7 +78,7 @@ export default function GlobalTooltipHandler() {
         return
       }
 
-      // check if the element the user is moving to is still inside the same 
+      // check if the element the user is moving to is still inside the same
       // tooltip target
       const related = e.relatedTarget
       if (related && target.contains(related)) return
@@ -97,10 +98,10 @@ export default function GlobalTooltipHandler() {
       }, WARM_TIMEOUT_MS)
     }
 
-    const handleClick = (e) => {
+    const handleClick = e => {
       const target = e.target.closest('[data-tooltip]')
 
-      if(target){
+      if (target) {
         tooltipTarget.value = null
         tooltipTitle.value = null
         tooltipTitle.open = false

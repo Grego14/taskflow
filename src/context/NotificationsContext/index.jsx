@@ -1,11 +1,11 @@
 import NotificationsContext from './context'
 
-import { useEffect, useState, useCallback, useMemo } from 'react'
 import useUser from '@hooks/useUser'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import notificationService from '@services/notification'
 import { dbAdapter } from '@services/dbAdapter'
+import notificationService from '@services/notification'
 
 import { playSound } from '@services/audio'
 import flashTitle from '@utils/notifications/titleNotification'
@@ -69,7 +69,7 @@ export default function NotificationsProvider({ children }) {
     )
 
     return () => unsubscribe()
-  }, [uid])
+  }, [uid, t])
 
   const onAccept = useCallback(
     async data => {

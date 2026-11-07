@@ -21,7 +21,7 @@ const audioCache = {}
  * @param {boolean} loop - If true, the sound will repeat until stopSound is called
  */
 export function playSound(name, loop = false) {
-  let soundPath = SOUND_PATHS[name]
+  const soundPath = SOUND_PATHS[name]
   // check if we already have an instance, otherwise create it
 
   if (!audioCache[name] && soundPath) {
@@ -36,7 +36,7 @@ export function playSound(name, loop = false) {
     // reset to be able to play the sound again
     sound.currentTime = 0
     sound.loop = loop
-    
+
     sound.play().catch(() => {
       console.warn(`Audio playback blocked or failed for: ${name}`)
     })
@@ -45,7 +45,7 @@ export function playSound(name, loop = false) {
 
 /**
  * Stop a specific sound or all instantiated sounds
- * @param {string|null} name 
+ * @param {string|null} name
  */
 export function stopSound(name = null) {
   if (name) {

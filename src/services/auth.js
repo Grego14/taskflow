@@ -1,17 +1,17 @@
-import {
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  updateProfile,
-  sendEmailVerification,
-  signInWithPopup,
-  GoogleAuthProvider,
-  GithubAuthProvider,
-  updateEmail,
-  verifyBeforeUpdateEmail,
-  signOut
-} from 'firebase/auth'
 import { auth } from '@/firebase/firebase-config'
 import userService from '@services/user'
+import {
+  GithubAuthProvider,
+  GoogleAuthProvider,
+  createUserWithEmailAndPassword,
+  sendEmailVerification,
+  signInWithEmailAndPassword,
+  signInWithPopup,
+  signOut,
+  updateEmail,
+  updateProfile,
+  verifyBeforeUpdateEmail
+} from 'firebase/auth'
 import notificationService from './notification'
 
 const providers = {
@@ -23,13 +23,10 @@ providers.google.addScope('email')
 providers.github.addScope('email')
 
 export const login = async ({ email, password }) => {
-  try {
-    const { user } = await signInWithEmailAndPassword(auth, email, password)
+  const { user } = await signInWithEmailAndPassword(auth, email, password)
+  if (user) return user
 
-    return user
-  } catch (err) {
-    throw err
-  }
+  throw Error("Couldn't login using email and password!")
 }
 
 export const loginWithProvider = async (providerId, preferences) => {
@@ -66,23 +63,21 @@ export const loginWithProvider = async (providerId, preferences) => {
 }
 
 export const signup = async ({ email, password, username, preferences }) => {
-  try {
-    const { user } = await createUserWithEmailAndPassword(auth, email, password)
+  const { user } = await createUserWithEmailAndPassword(auth, email, password)
 
-    await updateProfile(user, { displayName: username })
+  await updateProfile(user, { displayName: username })
 
-    await sendEmailVerification(user)
+  await sendEmailVerification(user)
 
-    // create user db document
-    const { locale, ...otherPrefs } = preferences
-    await userService.create({ ...user, email }, otherPrefs)
+  // create user db document
+  const { locale, ...otherPrefs } = preferences
+  await userService.create({ ...user, email }, otherPrefs)
 
-    await notificationService.sendWelcome(user.uid)
+  await notificationService.sendWelcome(user.uid)
 
-    return user
-  } catch (err) {
-    throw err
-  }
+  if (user) return user
+
+  throw Error("Couldn't signup using email and password!")
 }
 
 export const resendVerification = async () => {
@@ -105,11 +100,7 @@ export const resendVerification = async () => {
     }
   }
 
-  try {
-    return await sendEmailVerification(user)
-  } catch (err) {
-    throw err
-  }
+  return await sendEmailVerification(user)
 }
 
 export const logout = async () => {

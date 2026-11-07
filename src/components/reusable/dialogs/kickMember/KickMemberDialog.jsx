@@ -9,9 +9,7 @@ export default function KickMemberDialog(props) {
   const { username, ...other } = props
 
   return (
-    <Dialog
-      {...other}
-      title={t('kickMember.title')}>
+    <Dialog {...other} title={t('kickMember.title')}>
       <Box className='flex flex-column flex-center'>
         <Typography className='text-center' variant='body2' component='span'>
           {t('kickMember.text1')}

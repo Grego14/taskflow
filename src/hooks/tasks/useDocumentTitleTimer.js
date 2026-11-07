@@ -1,14 +1,14 @@
-import { useEffect, useRef } from 'preact/hooks'
-import formatTimer from '@utils/formatTimer'
-import { 
-  globalClock, 
-  activeTaskData, 
-  isWorking, 
-  targetTime,
-  pomoStart,
+import {
+  activeTaskData,
+  currentSessionSeconds,
+  globalClock,
   isAlarmRinging,
-  currentSessionSeconds
+  isWorking,
+  pomoStart,
+  targetTime
 } from '@stores/task'
+import formatTimer from '@utils/formatTimer'
+import { useEffect, useRef } from 'preact/hooks'
 
 export default function useDocumentTitleTimer() {
   const originalTitle = useRef(document.title)
@@ -17,12 +17,12 @@ export default function useDocumentTitleTimer() {
 
   useEffect(() => {
     // reset the title when the user stops working
-    if (!isWorking.value || !task) {
+    if (!isWorking.value || !task?.title) {
       document.title = originalTitle.current
       return
     }
 
-    let time = formatTimer(currentSessionSeconds)
+    const time = formatTimer(currentSessionSeconds)
     const taskTitle = task.title
 
     document.title = `• ${time} - ${taskTitle}`
@@ -30,5 +30,5 @@ export default function useDocumentTitleTimer() {
     return () => {
       document.title = originalTitle.current
     }
-  }, [globalClock.value, isWorking.value])
+  }, [task.title])
 }

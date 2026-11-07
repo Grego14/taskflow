@@ -1,15 +1,15 @@
 import Typography from '@mui/material/Typography'
 
+import { useGSAP } from '@gsap/react'
 import useAuth from '@hooks/useAuth'
 import useUser from '@hooks/useUser'
+import { useTheme } from '@mui/material/styles'
 import { memo, useRef } from 'preact/compat'
 import { useTranslation } from 'react-i18next'
-import { useGSAP } from '@gsap/react'
-import { useTheme } from '@mui/material/styles'
 
+import formatTimeAgo from '@utils/formatTimeAgo'
 import gsap from 'gsap'
 import { SplitText } from 'gsap/SplitText'
-import formatTimeAgo from '@utils/formatTimeAgo'
 
 gsap.registerPlugin(SplitText)
 
@@ -21,25 +21,29 @@ export default memo(function ProfileMetadata() {
   const containerRef = useRef(null)
   const theme = useTheme()
 
-  useGSAP(() => {
-    if (!currentUser?.metadata) return
+  useGSAP(
+    () => {
+      if (!currentUser?.metadata) return
 
-    const targets = gsap.utils.toArray('.metadata-text', containerRef.current)
-    const split = new SplitText(targets, { type: 'chars, words' })
+      const targets = gsap.utils.toArray('.metadata-text', containerRef.current)
+      const split = new SplitText(targets, { type: 'chars, words' })
 
-    gsap.from(split.chars, {
-      opacity: 0,
-      textShadow: `0 0 8px ${theme.palette.secondary.main}`,
-      y: 10,
-      rotateX: -90,
-      rotateZ: -45,
-      stagger: 0.02,
-      ease: 'expo.out',
-      delay: 0.8
-    })
-  }, { scope: containerRef, 
-      dependencies: [currentUser?.metadata, theme.palette.mode] 
-    })
+      gsap.from(split.chars, {
+        opacity: 0,
+        textShadow: `0 0 8px ${theme.palette.secondary.main}`,
+        y: 10,
+        rotateX: -90,
+        rotateZ: -45,
+        stagger: 0.02,
+        ease: 'expo.out',
+        delay: 0.8
+      })
+    },
+    {
+      scope: containerRef,
+      dependencies: [currentUser?.metadata, theme.palette.mode]
+    }
+  )
 
   if (!currentUser?.metadata) return null
 
@@ -53,13 +57,15 @@ export default memo(function ProfileMetadata() {
       <Typography variant='body2'>
         {t('accountCreated')}
         <span className='metadata-text'>
-          {' '}{formatTimeAgo(createdDate, locale)}
+          {' '}
+          {formatTimeAgo(createdDate, locale)}
         </span>
       </Typography>
       <Typography variant='body2'>
         {t('lastLogin')}
         <span className='metadata-text'>
-          {' '}{formatTimeAgo(lastLogin, locale)}
+          {' '}
+          {formatTimeAgo(lastLogin, locale)}
         </span>
       </Typography>
     </div>

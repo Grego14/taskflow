@@ -1,12 +1,12 @@
-import Checkbox from '@mui/material/Checkbox'
+import AppTooltip from '@components/reusable/AppTooltip'
 import CloseIcon from '@mui/icons-material/Close'
 import DoneIcon from '@mui/icons-material/Done'
 import Box from '@mui/material/Box'
-import AppTooltip from '@components/reusable/AppTooltip'
+import Checkbox from '@mui/material/Checkbox'
 
-import { useRef, useMemo } from 'preact/hooks'
 import useProject from '@hooks/useProject'
 import useTasks from '@hooks/useTasks'
+import { useMemo, useRef } from 'preact/hooks'
 import { useTranslation } from 'react-i18next'
 
 import { useGSAP } from '@gsap/react'
@@ -39,13 +39,14 @@ export default function CompleteButton({ id, insideTask }) {
   const { contextSafe } = useGSAP({ scope: btnRef })
 
   const animateIn = contextSafe(() => {
-    gsap.fromTo(btnRef.current, 
+    gsap.fromTo(
+      btnRef.current,
       { scale: 0.4, opacity: 0, rotate: -20 },
-      { 
-        scale: 1, 
-        opacity: 1, 
-        rotate: 0, 
-        duration: 0.5, 
+      {
+        scale: 1,
+        opacity: 1,
+        rotate: 0,
+        duration: 0.5,
         ease: 'elastic.out(1.2, 0.5)',
         clearProps: 'all'
       }
@@ -59,13 +60,13 @@ export default function CompleteButton({ id, insideTask }) {
     const isKeyEvent = e.type === 'keydown'
     const isEnterKey = e.key === 'Enter'
 
-    if (isKeyEvent && !isEnterKey || isArchived) return
+    if ((isKeyEvent && !isEnterKey) || isArchived) return
 
     e.stopPropagation()
 
     const nextStatus = STATUS_CYCLE[status] || 'todo'
 
-    if(actualAnim.current?.isActive?.()) return
+    if (actualAnim.current?.isActive?.()) return
 
     const tl = gsap.timeline({
       onComplete: () => actions.updateStatus({ id, parentId, nextStatus })
@@ -75,13 +76,12 @@ export default function CompleteButton({ id, insideTask }) {
       scale: 1.3,
       duration: 0.1,
       ease: 'power2.out'
+    }).to(btnRef.current, {
+      scale: 0,
+      opacity: 0,
+      duration: 0.2,
+      ease: 'elastic.out(1, 0.75)'
     })
-      .to(btnRef.current, {
-        scale: 0,
-        opacity: 0,
-        duration: 0.2,
-        ease: 'elastic.out(1, 0.75)'
-      })
 
     actualAnim.current = tl
   })
@@ -104,10 +104,11 @@ export default function CompleteButton({ id, insideTask }) {
         className='task-complete-checkbox'
         checkedIcon={
           <div className='flex'>
-            {status === 'done'
-              ? <DoneIcon fontSize={btnIconSize} color='success' />
-              : <CloseIcon fontSize={btnIconSize} color='error' />
-            }
+            {status === 'done' ? (
+              <DoneIcon fontSize={btnIconSize} color='success' />
+            ) : (
+              <CloseIcon fontSize={btnIconSize} color='error' />
+            )}
           </div>
         }
       />

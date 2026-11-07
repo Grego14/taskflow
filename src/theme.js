@@ -1,11 +1,11 @@
+import Zoom from '@mui/material/Zoom'
+import { grey } from '@mui/material/colors'
 import {
   createTheme,
-  responsiveFontSizes,
   darken,
-  lighten
+  lighten,
+  responsiveFontSizes
 } from '@mui/material/styles'
-import { grey } from '@mui/material/colors'
-import Zoom from '@mui/material/Zoom'
 import { APPBAR_HEIGHT } from './constants'
 
 // same breakpoints used on the vite postcss config
@@ -51,7 +51,7 @@ const baseTheme = createTheme({
     // used on floating elements inside the zenOverlay (minimize btn tooltip,
     // drawer)
     zenPriority: 13000,
-    globalAlert: 14000 
+    globalAlert: 14000
   },
   colorSchemes: {
     light: {
@@ -76,7 +76,7 @@ const baseTheme = createTheme({
             rgba(var(--mui-palette-secondary-mainChannel) / 0.03),
             rgba(var(--mui-palette-primary-mainChannel) / 0.45))`,
 
-          // the top style matchs with the drawer 
+          // the top style matchs with the drawer
           // (appbar is on top on laptop/desktop devices, when the drawer is
           // temporary)
           appbarTop: `linear-gradient(45deg, 
@@ -117,7 +117,8 @@ const baseTheme = createTheme({
               4px 0 12px -3px rgba(var(--mui-palette-primary-mainChannel) / 0.08)`,
             withAppbar: `0 ${APPBAR_HEIGHT.other} 15px -5px rgba(0, 0, 0, 0.1)`
           },
-          appbar: `0 2px 10px -3px rgba(var(--mui-palette-primary-mainChannel) / 0.1)`
+          appbar:
+            '0 2px 10px -3px rgba(var(--mui-palette-primary-mainChannel) / 0.1)'
         }
       }
     },
@@ -144,7 +145,7 @@ const baseTheme = createTheme({
           drawer: `linear-gradient(
             rgba(var(--mui-palette-secondary-mainChannel) / 0.1),
             rgba(var(--mui-palette-primary-mainChannel) / 0.18))`,
-          
+
           appbarTop: `linear-gradient(45deg, 
             rgba(var(--mui-palette-secondary-mainChannel) / 0.1), 
             rgba(var(--mui-palette-primary-mainChannel) / 0.18))`,
@@ -182,10 +183,10 @@ const baseTheme = createTheme({
         error: { main: darkColors.error },
         shadows: {
           drawer: {
-            solo: `0 0 2px rgba(0, 0, 0, 0.5), 8px 0 20px -10px rgba(0, 0, 0, 0.8)`,
+            solo: '0 0 2px rgba(0, 0, 0, 0.5), 8px 0 20px -10px rgba(0, 0, 0, 0.8)',
             withAppbar: `0 ${APPBAR_HEIGHT.other} 20px -8px rgba(0, 0, 0, 0.9)`
           },
-          appbar: `0 4px 12px -5px rgba(0, 0, 0, 0.8)`
+          appbar: '0 4px 12px -5px rgba(0, 0, 0, 0.8)'
         }
       }
     }

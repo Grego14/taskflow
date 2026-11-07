@@ -1,18 +1,18 @@
-import { memo, Suspense, lazy } from 'preact/compat'
-import FormControl from '@mui/material/FormControl'
-import InputLabel from '@mui/material/InputLabel'
-import Select from '@mui/material/Select'
-import MenuItem from '@mui/material/MenuItem'
 import Avatar from '@mui/material/Avatar'
 import Chip from '@mui/material/Chip'
+import FormControl from '@mui/material/FormControl'
+import InputLabel from '@mui/material/InputLabel'
 import ListItemButton from '@mui/material/ListItemButton'
 import ListItemText from '@mui/material/ListItemText'
+import MenuItem from '@mui/material/MenuItem'
+import Select from '@mui/material/Select'
+import { Suspense, lazy, memo } from 'preact/compat'
 
 const Autocomplete = lazy(() => import('@mui/material/Autocomplete'))
 const TextField = lazy(() => import('@mui/material/TextField'))
 
-import useProjectMetrics from '@hooks/useProjectMetrics'
 import useProject from '@hooks/useProject'
+import useProjectMetrics from '@hooks/useProjectMetrics'
 import { useTranslation } from 'react-i18next'
 
 const DATE_OPTIONS = [
@@ -22,7 +22,7 @@ const DATE_OPTIONS = [
   { value: 'month', labelKey: 'lastMonth' }
 ]
 
-const calculateStartDate = (value) => {
+const calculateStartDate = value => {
   const now = new Date()
 
   if (value === 'today') return new Date(now.setHours(0, 0, 0, 0))
@@ -33,7 +33,7 @@ const calculateStartDate = (value) => {
 }
 
 function Item(props) {
-  const { label, onDelete, ...other } = props;
+  const { label, onDelete, ...other } = props
   return (
     <div {...other}>
       <span>{label}</span>
@@ -45,13 +45,10 @@ function Item(props) {
 const MetricsFilters = memo(({ preview }) => {
   const { t } = useTranslation('metrics')
   const { projectMembers = [] } = useProject()
-  const {
-    updateRange,
-    selectedMembers,
-    setSelectedMembers
-  } = useProjectMetrics()
+  const { updateRange, selectedMembers, setSelectedMembers } =
+    useProjectMetrics()
 
-  const handleDateChange = (e) => {
+  const handleDateChange = e => {
     const start = calculateStartDate(e.target.value)
     updateRange(start, null)
   }
@@ -99,18 +96,20 @@ const MetricsFilters = memo(({ preview }) => {
                 </ListItemButton>
               )
             }}
-            getOptionLabel={(option) => option.username || ''}
+            getOptionLabel={option => option.username || ''}
             // find selected objects from IDs
             value={projectMembers.filter(m => selectedMembers.includes(m.id))}
             onChange={(_, newValue) =>
-              setSelectedMembers(newValue.map(m => m.id))}
+              setSelectedMembers(newValue.map(m => m.id))
+            }
             renderValue={(value, getItemProps) => (
-              <Chip 
-                label={value?.[0]?.username} 
-                {...getItemProps()} 
-                className='member-filter-chip' />
+              <Chip
+                label={value?.[0]?.username}
+                {...getItemProps()}
+                className='member-filter-chip'
+              />
             )}
-            renderInput={(params) => (
+            renderInput={params => (
               <TextField
                 {...params}
                 label={t('filterMembers')}

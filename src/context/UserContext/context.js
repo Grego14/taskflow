@@ -18,12 +18,12 @@ const UserContext = createContext({
     avatar: '',
     email: ''
   },
-  update: () => { },
-  setUser: () => { },
+  update: () => {},
+  setUser: () => {},
   userLoaded: false,
-  setUserLoaded: () => { },
+  setUserLoaded: () => {},
   uid: '',
-  setUpdateImplementation: () => { }
+  setUpdateImplementation: () => {}
 })
 
 export default UserContext

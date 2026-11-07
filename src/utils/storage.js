@@ -1,8 +1,7 @@
 export function setItem(item, value) {
   try {
     // check against undefined to allow falsy values
-    if (!value === undefined)
-      throw Error("value can't be undefined")
+    if (!value === undefined) throw Error("value can't be undefined")
 
     localStorage.setItem(item, JSON.stringify(value))
   } catch (err) {

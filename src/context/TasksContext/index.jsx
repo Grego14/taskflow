@@ -14,21 +14,22 @@ export default memo(function TasksProvider({ children }) {
   } = useProject()
 
   const { isLoading, error, retry } = useProjectTasks(
-    projectData?.createdBy, 
-    projectId, 
+    projectData?.createdBy,
+    projectId,
     hasAccess
   )
 
   const ownerId = projectData?.createdBy
   const taskRefs = useRef({}) // { [taskId]: DOMElement }
 
-  const scrollIntoTask = (taskId) => {
+  const scrollIntoTask = taskId => {
     const element = taskRefs.current[taskId]
 
-    if (element) element.scrollIntoView({
-      behavior: 'smooth',
-      block: 'center'
-    })
+    if (element)
+      element.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center'
+      })
   }
 
   return (

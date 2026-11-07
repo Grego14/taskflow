@@ -1,17 +1,17 @@
 .app-bar {
   justify-content: space-between;
   padding-inline: calc(var(--mui-spacing) * 2);
-  transition: width var(--mui-transitions-duration-shorter) 
+  transition: width var(--mui-transitions-duration-shorter)
     var(--mui-transitions-easing-easeInOut);
   height: var(--appbar-height-mobile);
   box-shadow: var(--appbar-shadow);
   transform: translateY(var(--appbar-translate-from, 0));
-  align-items: center
+  align-items: center;
 }
 
 .app-bar--with-drawer {
   border-left-width: 0;
-  border-top-width: 0 
+  border-top-width: 0;
 }
 
 /* mobile styles (default bottom bar)*/
@@ -29,8 +29,12 @@
   position: relative;
 }
 
-@media (--tablet) { 
-  .app-bar:not(.app-bar--mobile) { position: relative }
+@media (--tablet) {
+  .app-bar:not(.app-bar--mobile) {
+    position: relative;
+  }
 
-  .app-bar { height: var(--appbar-height-other) }
+  .app-bar {
+    height: var(--appbar-height-other);
+  }
 }

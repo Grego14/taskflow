@@ -1,10 +1,10 @@
 import useAuth from '@hooks/useAuth'
 import { useColorScheme } from '@mui/material/styles'
-import { useEffect, useMemo, useState, useCallback, useRef } from 'preact/hooks'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'preact/hooks'
 import { useTranslation } from 'react-i18next'
 
-import { getItem } from '@utils/storage'
 import getLocale from '@utils/getLocale'
+import { getItem } from '@utils/storage'
 import UserContext from './context.js'
 
 export default function UserProvider({ children }) {
@@ -74,7 +74,7 @@ export default function UserProvider({ children }) {
 
     if (theme && theme !== userTheme) setMode(theme)
     if (lang && lang !== i18n.language) i18n.changeLanguage(lang)
-  }, [user?.preferences, setMode, i18n, userId, userTheme])
+  }, [user?.preferences, setMode, i18n, userTheme])
 
   const value = useMemo(
     () => ({

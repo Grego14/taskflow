@@ -1,8 +1,8 @@
+import AppTooltip from '@components/reusable/AppTooltip'
 import Avatar from '@mui/material/Avatar'
 import Box from '@mui/material/Box'
 import IconButton from '@mui/material/IconButton'
 import Paper from '@mui/material/Paper'
-import AppTooltip from '@components/reusable/AppTooltip'
 import Typography from '@mui/material/Typography'
 
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos'
@@ -27,9 +27,7 @@ export default function ProjectMember({
   const { t } = useTranslation('projects')
 
   return (
-    <Paper
-      className='flex'
-      sx={containerStyles}>
+    <Paper className='flex' sx={containerStyles}>
       <Box className='flex flex-center' gap={2}>
         <Avatar src={data?.avatar} />
         <Box className='flex flex-column' gap={1}>

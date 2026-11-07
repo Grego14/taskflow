@@ -1,9 +1,9 @@
 import StatCard from './StatCard'
 
-import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 import CancelIcon from '@mui/icons-material/Cancel'
-import PendingActionsIcon from '@mui/icons-material/PendingActions'
+import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 import ErrorIcon from '@mui/icons-material/Error'
+import PendingActionsIcon from '@mui/icons-material/PendingActions'
 import TimerIcon from '@mui/icons-material/Timer'
 import Box from '@mui/material/Box'
 

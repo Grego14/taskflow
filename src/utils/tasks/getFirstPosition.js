@@ -1,5 +1,5 @@
-import sortTasks from './sortTasks'
 import getNewPosition from './getNewPosition'
+import sortTasks from './sortTasks'
 
 export default function getFirstPosition(list) {
   if (!list || list.length === 0) return getNewPosition(null, null)

@@ -1,17 +1,17 @@
 export default function preparePromotedSubtask(
-  subtaskData, 
-  position, 
+  subtaskData,
+  position,
   timestamp
 ) {
-  const { 
+  const {
     id: _id,
     ref: _ref,
     status: _status,
     subtask: _subtask,
-    parentId: _parentId, 
+    parentId: _parentId,
     createdAt: _createdAt,
     updatedAt: _updatedAt,
-    ...other 
+    ...other
   } = subtaskData
 
   return {

@@ -1,14 +1,14 @@
-import Typography from '@mui/material/Typography'
+import HourglassBottomIcon from '@mui/icons-material/HourglassBottom'
 import Button from '@mui/material/Button'
-import Dialog from '../Dialog'
+import Typography from '@mui/material/Typography'
 import { keyframes } from '@mui/material/styles'
 import { Suspense, lazy } from 'react'
-import HourglassBottomIcon from '@mui/icons-material/HourglassBottom'
+import Dialog from '../Dialog'
 
+import useAuth from '@hooks/useAuth'
 import useLoadResources from '@hooks/useLoadResources'
 import useUser from '@hooks/useUser'
 import { useTranslation } from 'react-i18next'
-import useAuth from '@hooks/useAuth'
 
 const PasswordInput = lazy(
   () => import('@components/reusable/inputs/PasswordInput')

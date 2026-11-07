@@ -1,20 +1,20 @@
-import Button from '@mui/material/Button'
-import PlayIcon from '@mui/icons-material/PlayArrow'
-import PauseIcon from '@mui/icons-material/Pause'
 import AppTooltip from '@components/reusable/AppTooltip'
+import PauseIcon from '@mui/icons-material/Pause'
+import PlayIcon from '@mui/icons-material/PlayArrow'
+import Button from '@mui/material/Button'
 
-import { useTranslation } from 'react-i18next'
 import useTasks from '@hooks/useTasks'
 import { useTheme } from '@mui/material/styles'
+import { useTranslation } from 'react-i18next'
 
-import formatTimer from '@utils/formatTimer'
 import { playSound, stopSound } from '@services/audio'
+import formatTimer from '@utils/formatTimer'
 import getDueDateLabel from '@utils/tasks/getDueDateLabel'
 
-import { 
-  activeTaskData, 
-  isAlarmRinging, 
+import {
+  activeTaskData,
   currentSessionSeconds,
+  isAlarmRinging,
   taskRegistry
 } from '@stores/task'
 import { useCallback, useMemo } from 'preact/hooks'
@@ -37,42 +37,46 @@ export default function SmartActionLabel({ id, insideTask }) {
   const isThisTaskWorking = activeTaskData.value?.id === id
   const { label, isOverdue, isToday } = getDueDateLabel(taskData.dueDate)
 
-  const handleToggle = useCallback((e) => {
-    e.stopPropagation()
+  const handleToggle = useCallback(
+    e => {
+      e.stopPropagation()
 
-    if (isAlarmRinging.value) {
-      isAlarmRinging.value = false
-      stopSound('endSessionGoal')
-    }
+      if (isAlarmRinging.value) {
+        isAlarmRinging.value = false
+        stopSound('endSessionGoal')
+      }
 
-    const currentActive = activeTaskData.value
-    const willStart = !currentActive || currentActive.id !== id
+      const currentActive = activeTaskData.value
+      const willStart = !currentActive || currentActive.id !== id
 
-    playSound(willStart ? 'startSession' : 'endSession')
+      playSound(willStart ? 'startSession' : 'endSession')
 
-    // if working on this task pass nul to stop it, otherwise send the data
-    toggleWorkingTask(willStart ? taskData : null)
-  }, [id])
+      // if working on this task pass nul to stop it, otherwise send the data
+      toggleWorkingTask(willStart ? taskData : null)
+    },
+    [id, toggleWorkingTask, taskData]
+  )
 
   const dynamicStyles = useMemo(() => {
     const hasDate = !!taskData.dueDate
     const canPlayDirectly = isToday || isThisTaskWorking
 
-    const colorVar = isOverdue 
-      ? 'var(--mui-palette-error-main)' 
-      : isToday 
-        ? 'var(--mui-palette-primary-main)' 
+    const colorVar = isOverdue
+      ? 'var(--mui-palette-error-main)'
+      : isToday
+        ? 'var(--mui-palette-primary-main)'
         : 'var(--mui-palette-text-secondary)'
 
-    const finalColor = hasDate || isThisTaskWorking 
-      ? colorVar 
-      : 'var(--mui-palette-text-secondary)'
+    const finalColor =
+      hasDate || isThisTaskWorking
+        ? colorVar
+        : 'var(--mui-palette-text-secondary)'
 
     return {
       '--btn-color': finalColor,
       '--bg-hover': `color-mix(in srgb, ${finalColor}, transparent 85%)`,
       '--btn-size': !insideTask ? '40px' : '36px',
-      '--font-weight': (isOverdue || isToday) ? 600 : 400,
+      '--font-weight': isOverdue || isToday ? 600 : 400,
       '--play-opacity': canPlayDirectly || !hasDate ? 0.6 : 0
     }
   }, [isOverdue, isToday, taskData.dueDate, isThisTaskWorking, insideTask])
@@ -82,16 +86,17 @@ export default function SmartActionLabel({ id, insideTask }) {
   return (
     <AppTooltip
       title={isThisTaskWorking ? t('tasks:pauseTask') : t('tasks:workOnTask')}>
-      <Button 
-        onClick={handleToggle} 
-        style={dynamicStyles} 
+      <Button
+        onClick={handleToggle}
+        style={dynamicStyles}
         className='smart-action-btn'>
         {isThisTaskWorking ? (
           <PauseIcon className='smart-action-icon' />
         ) : (
-          <PlayIcon className='smart-action-icon' />)}
+          <PlayIcon className='smart-action-icon' />
+        )}
 
-        {isThisTaskWorking ? <LiveTimer /> : (hasDate ? label : null)}
+        {isThisTaskWorking ? <LiveTimer /> : hasDate ? label : null}
       </Button>
     </AppTooltip>
   )

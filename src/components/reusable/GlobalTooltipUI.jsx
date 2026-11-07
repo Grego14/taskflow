@@ -1,13 +1,13 @@
-import Popper from '@mui/material/Popper'
-import Paper from '@mui/material/Paper'
 import Grow from '@mui/material/Grow'
+import Paper from '@mui/material/Paper'
+import Popper from '@mui/material/Popper'
 
-import { 
+import {
   tooltipIsWarm,
-  tooltipProps,
   tooltipOpen,
-  tooltipTitle,
-  tooltipTarget
+  tooltipProps,
+  tooltipTarget,
+  tooltipTitle
 } from '@stores/ui'
 
 const modifiers = [
@@ -39,20 +39,21 @@ export default function GlobalTooltipUI() {
       modifiers={modifiers}>
       {({ TransitionProps, placement }) => {
         return (
-          <Grow 
-            {...TransitionProps} 
+          <Grow
+            {...TransitionProps}
             timeout={isWarm ? 50 : 200}
             style={{
               transformOrigin: `center ${origins[placement] || 'top'}`,
-              transitionTimingFunction: isWarm 
-                ? 'cubic-bezier(0, 0, 0.2, 1)' 
+              transitionTimingFunction: isWarm
+                ? 'cubic-bezier(0, 0, 0.2, 1)'
                 : 'ease-out'
             }}>
             <Paper className='app-tooltip' elevation={0}>
               {title}
             </Paper>
           </Grow>
-        )}}
+        )
+      }}
     </Popper>
   ) : null
 }

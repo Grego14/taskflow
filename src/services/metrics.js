@@ -1,7 +1,7 @@
 import i18n from '@/i18n'
-import { dbAdapter } from './dbAdapter'
 import { getFriendlyErrorFormatted } from '@utils/getFriendlyAuthError'
 import orderSubtasks from '@utils/tasks/orderSubtasks'
+import { dbAdapter } from './dbAdapter'
 
 const metricsService = {
   getProjectTasksForMetrics: async ({
@@ -11,7 +11,8 @@ const metricsService = {
     startDate = null,
     endDate = null
   }) => {
-    if (!project || !owner) throw Error('getProjectTasksForMetrics: Invalid params')
+    if (!project || !owner)
+      throw Error('getProjectTasksForMetrics: Invalid params')
 
     const filters = [
       ['projectId', '==', project],

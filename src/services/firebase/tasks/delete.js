@@ -1,11 +1,11 @@
 import { dbAdapter } from '@services/dbAdapter'
 import getTaskPath from '@utils/tasks/getTaskPath'
 
-export default async function deleteRemoteTask({ 
-  ownerId, 
-  projectId, 
-  taskId, 
-  parentId, 
+export default async function deleteRemoteTask({
+  ownerId,
+  projectId,
+  taskId,
+  parentId,
   deleteSubtasks
 }) {
   if (!ownerId || !projectId || !taskId) throw Error('deleteTask: Missing IDs')

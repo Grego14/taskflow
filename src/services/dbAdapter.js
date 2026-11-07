@@ -1,26 +1,26 @@
 import db from '@/db'
 import {
   addDoc,
-  collection,
-  serverTimestamp,
-  doc,
-  writeBatch,
-  arrayUnion,
-  deleteDoc,
-  updateDoc,
-  setDoc,
-  onSnapshot,
   arrayRemove,
-  query,
+  arrayUnion,
+  collection,
   collectionGroup,
-  where,
-  getDocs,
+  deleteDoc,
+  doc,
   documentId,
   getDoc,
-  limit
+  getDocs,
+  limit,
+  onSnapshot,
+  query,
+  serverTimestamp,
+  setDoc,
+  updateDoc,
+  where,
+  writeBatch
 } from 'firebase/firestore'
 
-const getFilters = (filters) => filters?.map(filter => where(...filter))
+const getFilters = filters => filters?.map(filter => where(...filter))
 
 export const dbAdapter = {
   getServerTimestamp: () => serverTimestamp(),
@@ -41,14 +41,15 @@ export const dbAdapter = {
   },
 
   getQuery: (q, ...filters) => query(q, ...getFilters(filters)),
-  getGroupQuery: (q, ...filters) => query(collectionGroup(db, q), ...getFilters(filters)),
-  getDocs: (col) => getDocs(col),
-  getDoc: (doc) => getDoc(doc),
+  getGroupQuery: (q, ...filters) =>
+    query(collectionGroup(db, q), ...getFilters(filters)),
+  getDocs: col => getDocs(col),
+  getDoc: doc => getDoc(doc),
 
   add: async (colRef, data) => await addDoc(colRef, data),
   update: async (docRef, data) => await updateDoc(docRef, data),
   set: async (docRef, data) => await setDoc(docRef, data),
-  remove: async (docRef) => await deleteDoc(docRef),
+  remove: async docRef => await deleteDoc(docRef),
 
   listen: (query, onNext, onError) => onSnapshot(query, onNext, onError),
 

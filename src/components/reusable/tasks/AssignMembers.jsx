@@ -1,12 +1,12 @@
+import PersonAddIcon from '@mui/icons-material/PersonAdd'
+import Avatar from '@mui/material/Avatar'
+import Box from '@mui/material/Box'
+import Checkbox from '@mui/material/Checkbox'
 import List from '@mui/material/List'
 import ListItem from '@mui/material/ListItem'
 import ListItemAvatar from '@mui/material/ListItemAvatar'
 import ListItemText from '@mui/material/ListItemText'
-import Avatar from '@mui/material/Avatar'
 import Typography from '@mui/material/Typography'
-import Checkbox from '@mui/material/Checkbox'
-import PersonAddIcon from '@mui/icons-material/PersonAdd'
-import Box from '@mui/material/Box'
 
 import DropdownMenu from '@components/reusable/DropdownMenu'
 import useProject from '@hooks/useProject'
@@ -17,7 +17,7 @@ import '@styles/components/buttons/assignMembers.css'
 
 const itemTextSlotProps = { primary: { variant: 'body2', noWrap: true } }
 
-const renderMembersList = (props) => {
+const renderMembersList = props => {
   const { projectMembers, taskMembers, onToggle, triggerExit } = props
   const items = []
 
@@ -52,9 +52,7 @@ const renderMembersList = (props) => {
     )
   }
 
-  return <List className='assign-members-list'>
-    {items}
-  </List>
+  return <List className='assign-members-list'>{items}</List>
 }
 
 export default function AssignMembers({
@@ -69,14 +67,14 @@ export default function AssignMembers({
   const { projectMembers } = useProject()
   const { actions } = useTasks()
 
-  const handleToggleMember = async (memberId) => {
+  const handleToggleMember = async memberId => {
     const isAssigned = taskMembers.includes(memberId)
     const newMembers = isAssigned
       ? taskMembers.filter(id => id !== memberId)
       : [...taskMembers, memberId]
 
     // this component is used on both updating an existing task and when
-    // creating a task on the NewTaskDialog 
+    // creating a task on the NewTaskDialog
 
     if (!creatingTask) {
       await actions.updateTask({
@@ -91,14 +89,18 @@ export default function AssignMembers({
   }
 
   const label = t('actions.assignMembers')
-  const icon = <PersonAddIcon fontSize='small' className='assign-members-icon' />
+  const icon = (
+    <PersonAddIcon fontSize='small' className='assign-members-icon' />
+  )
 
-  const menuText = <Box className='flex flex-center' gap={1}>
-    {icon}
-    <Typography variant='body2' className='assign-members-label'>
-      {label}
-    </Typography>
-  </Box>
+  const menuText = (
+    <Box className='flex flex-center' gap={1}>
+      {icon}
+      <Typography variant='body2' className='assign-members-label'>
+        {label}
+      </Typography>
+    </Box>
+  )
 
   const rootClassName = `
     assign-members-trigger 
@@ -118,12 +120,14 @@ export default function AssignMembers({
         },
         paper: { className: 'assign-members-menu-paper' }
       }}>
-      {(_, triggerExit) => renderMembersList({
-        projectMembers,
-        taskMembers,
-        triggerExit,
-        onToggle: handleToggleMember
-      })}
+      {(_, triggerExit) =>
+        renderMembersList({
+          projectMembers,
+          taskMembers,
+          triggerExit,
+          onToggle: handleToggleMember
+        })
+      }
     </DropdownMenu>
   )
 }

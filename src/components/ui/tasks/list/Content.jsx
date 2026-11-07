@@ -3,18 +3,18 @@ import CardContent from '@mui/material/CardContent'
 import Chip from '@mui/material/Chip'
 import ParentTaskLink from './ParentTaskLink'
 
+import useLayout from '@hooks/useLayout'
 import useProject from '@hooks/useProject'
 import { useTranslation } from 'react-i18next'
-import useLayout from '@hooks/useLayout'
 
-import taskIsPending from '@utils/tasks/taskIsPending'
-import taskIsOverdue from '@utils/tasks/taskIsOverdue'
 import { taskRegistry } from '@stores/task'
+import taskIsOverdue from '@utils/tasks/taskIsOverdue'
+import taskIsPending from '@utils/tasks/taskIsPending'
 
 export default function OverdueContent({ id }) {
   const { t } = useTranslation('ui')
   const { filter } = useLayout()
-  
+
   const taskData = taskRegistry.value.get(id)
 
   if (!taskData) return null
@@ -28,17 +28,16 @@ export default function OverdueContent({ id }) {
   const isOverdue = taskIsOverdue(taskData)
   const isDefaultFilter = filter === 'default'
 
-  const isParentOverdue = typeof (parentTask 
-    ? taskIsOverdue(parentTask) 
-    : null) === 'boolean'
+  const isParentOverdue =
+    typeof (parentTask ? taskIsOverdue(parentTask) : null) === 'boolean'
   const isParentCancelled = parentTask?.status === 'cancelled'
 
-  const showParentLink = (
-    (isParentOverdue && !isDefaultFilter) || 
-      (isPending && isDefaultFilter)
-  ) && parentId && !isParentCancelled
+  const showParentLink =
+    ((isParentOverdue && !isDefaultFilter) || (isPending && isDefaultFilter)) &&
+    parentId &&
+    !isParentCancelled
 
-  if(!showParentLink) return null
+  if (!showParentLink) return null
 
   return (
     <CardContent
@@ -50,9 +49,7 @@ export default function OverdueContent({ id }) {
         '&:last-child': { pb: 0 }
       }}>
       <Box className='flex' gap={2}>
-        {showParentLink ? (
-          <ParentTaskLink parentTask={parentId} />
-        ) : null}
+        {showParentLink ? <ParentTaskLink parentTask={parentId} /> : null}
       </Box>
     </CardContent>
   )

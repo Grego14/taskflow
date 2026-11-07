@@ -1,17 +1,17 @@
+import Dialog from '@components/reusable/dialogs/Dialog'
+import CloseIcon from '@mui/icons-material/Close'
+import RocketLaunchIcon from '@mui/icons-material/RocketLaunch'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
-import Typography from '@mui/material/Typography'
-import RocketLaunchIcon from '@mui/icons-material/RocketLaunch'
-import CloseIcon from '@mui/icons-material/Close'
 import IconButton from '@mui/material/IconButton'
-import Dialog from '@components/reusable/dialogs/Dialog'
+import Typography from '@mui/material/Typography'
 
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 
 const getContextConfig = (key, t) => {
   const configs = {
-    'profile': {
+    profile: {
       title: t('preview:upsell.profile.title'),
       desc: t('preview:upsell.profile.desc')
     },
@@ -27,7 +27,7 @@ const getContextConfig = (key, t) => {
       title: t('preview:upsell.add-members.title'),
       desc: t('preview:upsell.add-members.desc')
     },
-    'archive': {
+    archive: {
       title: t('preview:upsell.archive.title'),
       desc: t('preview:upsell.archive.desc')
     }
@@ -56,14 +56,15 @@ export default function UpsellDialog({ open, setOpen, upsellKey }) {
           <CloseIcon />
         </IconButton>
 
-        <Box sx={{
-          mb: 3,
-          display: 'inline-flex',
-          p: 2,
-          borderRadius: '50%',
-          bgcolor: 'primary.main',
-          color: 'white'
-        }}>
+        <Box
+          sx={{
+            mb: 3,
+            display: 'inline-flex',
+            p: 2,
+            borderRadius: '50%',
+            bgcolor: 'primary.main',
+            color: 'white'
+          }}>
           <RocketLaunchIcon fontSize='large' />
         </Box>
 

@@ -1,16 +1,16 @@
-import { Suspense, lazy, useState, useRef, useTransition } from 'preact/compat'
+import { Suspense, lazy, useRef, useState, useTransition } from 'preact/compat'
 
+import CircleLoader from '@components/reusable/loaders/CircleLoader'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
-import CircleLoader from '@components/reusable/loaders/CircleLoader'
-import MetricsTabs from './components/MetricsTabs'
 import MetricsFilters from './components/MetricsFilters'
+import MetricsTabs from './components/MetricsTabs'
 
 const Metrics = lazy(() => import('./components/Metrics'))
 const MembersMetrics = lazy(() => import('./components/MembersMetrics'))
 
-import { gsap } from 'gsap'
 import { useGSAP } from '@gsap/react'
+import { gsap } from 'gsap'
 
 import useApp from '@hooks/useApp'
 import useLoadResources from '@hooks/useLoadResources'
@@ -26,8 +26,9 @@ export default function ProjectMetrics() {
   const { t } = useTranslation(['metrics', 'common'])
   const loadingResources = useLoadResources('metrics')
 
-  const [preview, setPreview] = useState(metadata?.lastUsedMetricFilter ||
-    'project')
+  const [preview, setPreview] = useState(
+    metadata?.lastUsedMetricFilter || 'project'
+  )
   const { loading, projectMetrics, membersMetrics, dateRange } =
     useProjectMetrics()
 
@@ -36,39 +37,49 @@ export default function ProjectMetrics() {
 
   const { contextSafe } = useGSAP({ scope: containerRef })
 
-  useGSAP(() => {
-    if (loadingResources) return
+  useGSAP(
+    () => {
+      if (loadingResources) return
 
-    const tl = gsap.timeline({ defaults: { ease: 'power3.out' } })
+      const tl = gsap.timeline({ defaults: { ease: 'power3.out' } })
 
-    tl.from('.metrics-header', {
-      y: -50,
-      opacity: 0,
-      duration: 0.6
-    })
-      .from('.metrics-content', {
-        y: 75,
+      tl.from('.metrics-header', {
+        y: -50,
         opacity: 0,
-        duration: 0.8
-      }, '-=0.4')
-  }, { dependencies: [loadingResources], scope: containerRef })
-
-  useGSAP(() => {
-    if (!loading && !loadingResources) {
-      gsap.fromTo('.metrics-data-wrapper',
-        { opacity: 0, scale: 0.7 },
+        duration: 0.6
+      }).from(
+        '.metrics-content',
         {
-          opacity: 1,
-          scale: 1,
-          duration: 1,
-          ease: 'back.out(1.2)',
-          clearProps: 'all'
-        }
+          y: 75,
+          opacity: 0,
+          duration: 0.8
+        },
+        '-=0.4'
       )
-    }
-  }, { dependencies: [loading, loadingResources, preview], scope: containerRef })
+    },
+    { dependencies: [loadingResources], scope: containerRef }
+  )
 
-  const updatePreview = contextSafe((newPreview) => {
+  useGSAP(
+    () => {
+      if (!loading && !loadingResources) {
+        gsap.fromTo(
+          '.metrics-data-wrapper',
+          { opacity: 0, scale: 0.7 },
+          {
+            opacity: 1,
+            scale: 1,
+            duration: 1,
+            ease: 'back.out(1.2)',
+            clearProps: 'all'
+          }
+        )
+      }
+    },
+    { dependencies: [loading, loadingResources, preview], scope: containerRef }
+  )
+
+  const updatePreview = contextSafe(newPreview => {
     gsap.to('.metrics-data-wrapper', {
       opacity: 0,
       scale: 0.9,
@@ -76,8 +87,7 @@ export default function ProjectMetrics() {
       ease: 'power2.in',
       onComplete: () => {
         updateUser({ lastUsedMetricFilter: newPreview })
-        startTransition(() => setPreview(newPreview)
-        )
+        startTransition(() => setPreview(newPreview))
       }
     })
   })
@@ -91,8 +101,8 @@ export default function ProjectMetrics() {
     )
   }
 
-  const hasNoData = !Object.keys(projectMetrics).length &&
-    !membersMetrics.length
+  const hasNoData =
+    !Object.keys(projectMetrics).length && !membersMetrics.length
   const isUsingRange = dateRange.start || dateRange.end
 
   const metricsWrapperStyle = {
@@ -102,9 +112,9 @@ export default function ProjectMetrics() {
   }
 
   return (
-    <div 
-      ref={containerRef} 
-      className='flex flex-column metrics-container' 
+    <div
+      ref={containerRef}
+      className='flex flex-column metrics-container'
       style={metricsWrapperStyle}>
       <div className='metrics-header flex flex-center flex-column'>
         <MetricsTabs preview={preview} setPreview={updatePreview} />

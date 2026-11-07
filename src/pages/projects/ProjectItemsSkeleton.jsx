@@ -1,5 +1,5 @@
-import Skeleton from '@mui/material/Skeleton'
 import List from '@mui/material/List'
+import Skeleton from '@mui/material/Skeleton'
 
 import useApp from '@hooks/useApp'
 

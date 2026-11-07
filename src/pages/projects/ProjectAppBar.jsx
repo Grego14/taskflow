@@ -1,9 +1,11 @@
-import { Suspense, lazy, useState, useMemo, useEffect } from 'preact/compat'
+import { Suspense, lazy, useEffect, useMemo, useState } from 'preact/compat'
 
 import ProjectItemsSkeleton from './ProjectItemsSkeleton'
 
 const ProjectItems = lazy(() => import('./ProjectItems'))
-const ToggleProjectDrawer = lazy(() => import('@components/ui/projects/ToggleProjectDrawer'))
+const ToggleProjectDrawer = lazy(
+  () => import('@components/ui/projects/ToggleProjectDrawer')
+)
 
 import AppBar from '@components/ui/appbar/AppBar'
 import Box from '@mui/material/Box'
@@ -44,16 +46,15 @@ export default function ProjectAppBar() {
 
     // trigger the appbar animation manually as the ToggleProjectDrawer isn't
     // rendered on this condition
-    if(isProjectSubRoute && !isMobile) setIsReady(true)
-  }, [pathname, isMobile, isProjectSubRoute])
+    if (isProjectSubRoute && !isMobile) setIsReady(true)
+  }, [isMobile, isProjectSubRoute, action])
 
   const actionContainerClass = [
     'project-action-container',
     `${isMobile ? 'flex flex-column' : 'flex flex-center'}`
   ].join(' ')
 
-  const appBarClass = 
-    `project-appbar ${isProjectSubRoute ? 'is-project-subrute' : ''}`
+  const appBarClass = `project-appbar ${isProjectSubRoute ? 'is-project-subrute' : ''}`
 
   return (
     <AppBar

@@ -2,15 +2,15 @@ import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 
 import RegisterComponent from '@components/reusable/RegisterComponent'
+import PasswordInput from '@components/reusable/inputs/PasswordInput'
 import AuthButtons from './AuthButtons'
 import AuthInput from './AuthInput'
-import PasswordInput from '@components/reusable/inputs/PasswordInput'
 
-import { useState, useMemo, useEffect } from 'react'
+import useUser from '@hooks/useUser'
+import { useEffect, useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
-import useUser from '@hooks/useUser'
 
 import * as authService from '@services/auth'
 
@@ -55,12 +55,15 @@ export default function AuthForm({ isSignup = false, type }) {
     mode: 'onTouched'
   })
 
+  const currentType = isSignup ? 'signup' : 'login'
+  const lastType = useRef(isSignup ? 'signup' : 'login')
+
   // reset when the type changes
   useEffect(() => {
-    reset()
-  }, [isSignup, reset])
+    if (lastType !== currentType) reset()
+  }, [reset, lastType, currentType])
 
-  const onSubmit = async (data) => {
+  const onSubmit = async data => {
     setLoading(true)
     setFormError('')
 
@@ -158,8 +161,8 @@ export default function AuthForm({ isSignup = false, type }) {
               setFormError('')
               if (errors[field.name]) clearErrors(field.name)
             }}
-          />)
-        )}
+          />
+        ))}
       </Box>
 
       <AuthButtons

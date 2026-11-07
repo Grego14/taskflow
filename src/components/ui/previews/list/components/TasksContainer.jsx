@@ -1,32 +1,21 @@
-import { 
-  Suspense, 
-  lazy, 
-  memo, 
-  useMemo, 
-  useRef
-} from 'preact/compat'
 import TasksWrapper from '@components/ui/previews/list/components/TasksWrapper'
 import Box from '@mui/material/Box'
+import { Suspense, lazy, memo, useMemo, useRef } from 'preact/compat'
 
 const NoTodayTasks = lazy(() => import('./NoTodayTasks'))
-const TaskContextMenu = lazy(() => 
-  import('@components/ui/tasks/TaskContextMenu')
+const TaskContextMenu = lazy(
+  () => import('@components/ui/tasks/TaskContextMenu')
 )
 
-import { useTranslation } from 'react-i18next'
-import useLayout from '@hooks/useLayout'
-import useTasksDnDManager from '@hooks/tasks/useTasksDnDManager'
 import useTasksContextMenu from '@hooks/tasks/useTasksContextMenu'
+import useTasksDnDManager from '@hooks/tasks/useTasksDnDManager'
+import useLayout from '@hooks/useLayout'
+import { useTranslation } from 'react-i18next'
 
 const TASKS_DROP_ID = 'todayTasks'
 
 export default memo(function TasksContainer(props) {
-  const { 
-    taskIds = [], 
-    overdueIds = [], 
-    toArchiveIds = [],
-    error
-  } = props
+  const { taskIds = [], overdueIds = [], toArchiveIds = [], error } = props
 
   const { t } = useTranslation('tasks')
   const { filter } = useLayout()
@@ -56,14 +45,18 @@ export default memo(function TasksContainer(props) {
 
   const todayTitle = t(titleKey, { count: taskIds.length, filter })
 
-  const containerStyles = useMemo(() => (
-    !hasTodayTasks ? {
-      mt: showOverdueTasks ? 8 : 'auto',
-      mb: showOverdueTasks ? 6 : 'auto'
-    } : null
-  ), [hasTodayTasks, showOverdueTasks])
+  const containerStyles = useMemo(
+    () =>
+      !hasTodayTasks
+        ? {
+            mt: showOverdueTasks ? 8 : 'auto',
+            mb: showOverdueTasks ? 6 : 'auto'
+          }
+        : null,
+    [hasTodayTasks, showOverdueTasks]
+  )
 
-  if(error) return null
+  if (error) return null
 
   return (
     <Box ref={containerRef} onContextMenu={onContextMenu}>
@@ -75,7 +68,7 @@ export default memo(function TasksContainer(props) {
         expand={true}
         divider={showOverdueTasks}
         containerStyles={containerStyles}>
-        {(!hasTodayTasks && isDefaultFilter) ? (
+        {!hasTodayTasks && isDefaultFilter ? (
           <Suspense fallback={null}>
             <NoTodayTasks />
           </Suspense>

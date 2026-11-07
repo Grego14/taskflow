@@ -5,7 +5,7 @@ const TasksContext = createContext({
   actions: {},
   error: false,
   loading: true,
-  scrollIntoTask: () => { }
+  scrollIntoTask: () => {}
 })
 
 export default TasksContext

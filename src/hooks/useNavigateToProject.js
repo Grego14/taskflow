@@ -5,8 +5,7 @@ export default function useNavigateToProject() {
   const { navigateTo } = useRoute()
 
   const navigateFunc = useCallback(
-    (id, owner) =>
-      navigateTo(`/projects/${owner}/${id}`),
+    (id, owner) => navigateTo(`/projects/${owner}/${id}`),
     [navigateTo]
   )
 

@@ -1,12 +1,10 @@
-import { useState, useEffect } from 'preact/hooks'
 import projectService from '@services/project'
+import { useEffect, useState } from 'preact/hooks'
 
 export default function useProjectMembers(members, enabled) {
   const [projectMembers, setProjectMembers] = useState([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
-
-  const membersKey = (members || [])?.join(',')
 
   useEffect(() => {
     if (!enabled || !members?.length) return
@@ -25,7 +23,7 @@ export default function useProjectMembers(members, enabled) {
     }
 
     fetchMembers()
-  }, [membersKey, enabled])
+  }, [enabled, members, members.length])
 
   return { loading, projectMembers, projectMembersError: error }
 }

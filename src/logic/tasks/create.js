@@ -1,4 +1,4 @@
-import { setItem, getItem } from '@utils/storage'
+import { getItem, setItem } from '@utils/storage'
 
 export default async function createTaskAction(params) {
   const { task, isPreview, ownerId, projectId } = params
@@ -8,15 +8,17 @@ export default async function createTaskAction(params) {
     const localData = getItem('preview') || {}
     const tasks = localData.tasks || []
 
-    setItem('preview', { 
-      ...localData, 
-      tasks: [...tasks, task] 
+    setItem('preview', {
+      ...localData,
+      tasks: [...tasks, task]
     })
     return task
   }
 
   try {
-    const { default: createRemoteTask } = await import('@services/firebase/tasks/create')
+    const { default: createRemoteTask } = await import(
+      '@services/firebase/tasks/create'
+    )
     await createRemoteTask({
       ownerId,
       projectId,

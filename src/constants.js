@@ -1,21 +1,21 @@
 import {
-  red,
-  orange,
-  purple,
   blue,
   blueGrey,
+  green,
   grey,
   lightBlue,
-  yellow,
   lightGreen,
-  green
+  orange,
+  purple,
+  red,
+  yellow
 } from '@mui/material/colors'
 
 export const priorities = ['urgent', 'high', 'medium', 'low', 'none']
 export const statuses = ['todo', 'done', 'doing', 'cancelled']
 
 export const priorityColors = (() => {
-  const getColor = (color) => [color[200], color[50]]
+  const getColor = color => [color[200], color[50]]
 
   return {
     urgent: getColor(red),
@@ -46,11 +46,7 @@ export const FILTERS = [
   'assignedToMe'
 ]
 
-export const DATE_FILTERS = [
-  'allTasks',
-  'today',
-  'upcoming'
-]
+export const DATE_FILTERS = ['allTasks', 'today', 'upcoming']
 
 export const DATES = [
   'nodate',

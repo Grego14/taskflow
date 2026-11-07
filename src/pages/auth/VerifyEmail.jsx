@@ -1,16 +1,16 @@
 import Box from '@mui/material/Box'
-import Typography from '@mui/material/Typography'
 import Button from '@mui/material/Button'
 import CircularProgress from '@mui/material/CircularProgress'
+import Typography from '@mui/material/Typography'
 
-import { useState, useEffect, useRef } from 'react'
-import { useTranslation } from 'react-i18next'
-import { useNavigate, useLocation } from 'react-router-dom'
 import useAuth from '@hooks/useAuth'
+import { useEffect, useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { useLocation, useNavigate } from 'react-router-dom'
 
-import * as authService from '@services/auth'
 import { auth } from '@/firebase/firebase-config'
 import useUser from '@hooks/useUser'
+import * as authService from '@services/auth'
 
 import { setGlobalAlert } from '@stores/ui'
 
@@ -28,20 +28,22 @@ export default function VerifyEmail() {
   const location = useLocation()
   const emailFromSignup = location.state?.email
 
-  useEffect(() => () => {
-    if (timerRef.current) clearInterval(timerRef.current)
-  }, [])
+  useEffect(
+    () => () => {
+      if (timerRef.current) clearInterval(timerRef.current)
+    },
+    []
+  )
 
   // if the user is already verified, send him home
   useEffect(() => {
-    if (currentUser?.emailVerified)
-      navigate('/home', { replace: true })
+    if (currentUser?.emailVerified) navigate('/home', { replace: true })
   }, [currentUser, navigate])
 
   const startCountdown = () => {
     setCountdown(60)
     timerRef.current = setInterval(() => {
-      setCountdown((prev) => {
+      setCountdown(prev => {
         if (prev <= 1) {
           clearInterval(timerRef.current)
           return 0
@@ -96,8 +98,8 @@ export default function VerifyEmail() {
         color='text.secondary'
         maxWidth='400px'>
         {t('verify.description', {
-          ns: 'auth', email:
-            currentUser?.email || emailFromSignup
+          ns: 'auth',
+          email: currentUser?.email || emailFromSignup
         })}
       </Typography>
 
@@ -114,11 +116,11 @@ export default function VerifyEmail() {
           variant='text'
           onClick={handleResend}
           disabled={resending || countdown > 0}>
-          {resending ? t('common:loading') :
-            countdown > 0
-              ? `${t('verify.resend', { ns: 'auth' })} (${countdown}s)` :
-              t('verify.resend', { ns: 'auth' })
-          }
+          {resending
+            ? t('common:loading')
+            : countdown > 0
+              ? `${t('verify.resend', { ns: 'auth' })} (${countdown}s)`
+              : t('verify.resend', { ns: 'auth' })}
         </Button>
         <Button
           sx={{ maxWidth: 'fit-content', mx: 'auto' }}

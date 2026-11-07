@@ -1,17 +1,17 @@
 import {
-  useState,
-  useMemo,
+  startTransition,
   useCallback,
   useEffect,
-  startTransition
+  useMemo,
+  useState
 } from 'preact/compat'
 import { Outlet } from 'react-router-dom'
 import ProjectMetricsContext from './context'
 
 import useProject from '@hooks/useProject'
 
-import getMetrics from './getMetrics'
 import getMembersMetrics from './getMembersMetrics'
+import getMetrics from './getMetrics'
 
 import metricsService from '@services/metrics'
 

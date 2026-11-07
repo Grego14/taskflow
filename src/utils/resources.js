@@ -34,8 +34,9 @@ export async function loadResources(lng, resources = ['common']) {
             )
           )
       )
+    ).catch(err =>
+      console.error("Couldn't get all the resources:", resourceList)
     )
-      .catch(err => console.error("Couldn't get all the resources:", resourceList))
 
     // add the resources
     for (const [index, result] of Object.entries(loadedResources)) {

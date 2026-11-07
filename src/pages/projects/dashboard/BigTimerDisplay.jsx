@@ -1,7 +1,7 @@
-import Typography from '@mui/material/Typography'
 import useTasks from '@hooks/useTasks'
-import formatTimer from '@utils/formatTimer'
+import Typography from '@mui/material/Typography'
 import { currentSessionSeconds } from '@stores/task'
+import formatTimer from '@utils/formatTimer'
 
 export default function BigTimerDisplay() {
   return (
@@ -12,4 +12,3 @@ export default function BigTimerDisplay() {
     />
   )
 }
-

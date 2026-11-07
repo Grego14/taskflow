@@ -1,20 +1,15 @@
-import {
-  useMemo,
-  useState,
-  lazy,
-  Suspense,
-  useEffect
-} from 'preact/compat'
 import { useColorScheme } from '@mui/material/styles'
+import { Suspense, lazy, useEffect, useMemo, useState } from 'preact/compat'
 
-import UserProvider from '@context/UserContext'
-import AppContext from './context'
 import AppRoutes from '@/AppRoutes.jsx'
 import GlobalTooltipHandler from '@components/reusable/GlobalTooltipHandler'
+import UserProvider from '@context/UserContext'
+import AppContext from './context'
 
 const GlobalAlert = lazy(() => import('@components/ui/alert/GlobalAlert'))
-const GlobalTooltipUI = 
-  lazy(() => import('@components/reusable/GlobalTooltipUI'))
+const GlobalTooltipUI = lazy(
+  () => import('@components/reusable/GlobalTooltipUI')
+)
 
 import { BREAKPOINTS } from '@/theme'
 import { globalAlert, setGlobalAlert, tooltipTarget } from '@stores/ui'
@@ -28,7 +23,7 @@ export default function AppProvider({ children }) {
     isOnlyMobile: window.innerWidth < BREAKPOINTS.mobile
   })
 
-  // use own logic to calculate the breakpoints so we can add a 
+  // use own logic to calculate the breakpoints so we can add a
   // debounce of 150ms
   useEffect(() => {
     let timeoutId = null
@@ -53,11 +48,14 @@ export default function AppProvider({ children }) {
     }
   }, [])
 
-  const contextValue = useMemo(() => ({
-    ...layout,
-    isOffline,
-    setIsOffline
-  }), [isOffline, layout])
+  const contextValue = useMemo(
+    () => ({
+      ...layout,
+      isOffline,
+      setIsOffline
+    }),
+    [isOffline, layout]
+  )
 
   if (!mode) return null
 
@@ -72,7 +70,7 @@ export default function AppProvider({ children }) {
         </div>
       </UserProvider>
 
-      <GlobalTooltipHandler/>
+      <GlobalTooltipHandler />
 
       {tooltipTarget.value && (
         <Suspense fallback={null}>

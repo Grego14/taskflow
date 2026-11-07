@@ -1,18 +1,18 @@
-import CalendarIcon from '@mui/icons-material/CalendarMonth'
 import DropdownMenu from '@components/reusable/DropdownMenu'
+import CalendarIcon from '@mui/icons-material/CalendarMonth'
 import Skeleton from '@mui/material/Skeleton'
 
-import { Suspense, lazy } from 'preact/compat'
-import { useTranslation } from 'react-i18next'
 import useLoadResources from '@hooks/useLoadResources'
 import useProject from '@hooks/useProject'
+import { Suspense, lazy } from 'preact/compat'
+import { useTranslation } from 'react-i18next'
 
 const DateItems = lazy(() => import('@components/reusable/tasks/DateItems'))
 
-export default function TaskCalendar({ 
-  rawDate, 
-  taskId, 
-  parentId, 
+export default function TaskCalendar({
+  rawDate,
+  taskId,
+  parentId,
   insideTask,
   onDateChange
 }) {

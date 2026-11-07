@@ -1,14 +1,14 @@
-import { setItem, getItem } from '@utils/storage'
+import { getItem, setItem } from '@utils/storage'
 
 export default async function reorderTaskAction(params) {
-  const { 
-    ownerId, 
-    projectId, 
-    taskId, 
-    parentId, 
-    newPosition, 
-    newStatus, 
-    isPreview 
+  const {
+    ownerId,
+    projectId,
+    taskId,
+    parentId,
+    newPosition,
+    newStatus,
+    isPreview
   } = params
 
   if (isPreview) {
@@ -20,9 +20,9 @@ export default async function reorderTaskAction(params) {
       if (task.id !== taskId) return task
 
       const updates = {
-        ...task, 
-        position: newPosition, 
-        updatedAt: timestamp 
+        ...task,
+        position: newPosition,
+        updatedAt: timestamp
       }
 
       if (newStatus) {
@@ -43,9 +43,10 @@ export default async function reorderTaskAction(params) {
   }
 
   try {
-    const { default: reorderService } = 
-      await import('@services/firebase/tasks/reorder')
-    
+    const { default: reorderService } = await import(
+      '@services/firebase/tasks/reorder'
+    )
+
     return await reorderService({
       ownerId,
       projectId,

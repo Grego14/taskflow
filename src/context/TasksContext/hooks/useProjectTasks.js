@@ -1,8 +1,8 @@
 import useAuth from '@hooks/useAuth'
 import subscribeToProjectTasks from '@services/task/subscribeToProjectTasks'
 
-import { useEffect, useState, useCallback } from 'preact/hooks'
 import { signal } from '@preact/signals'
+import { useCallback, useEffect, useState } from 'preact/hooks'
 
 import { taskRegistry } from '@stores/task'
 import sortTasks from '@utils/tasks/sortTasks'
@@ -28,8 +28,8 @@ export default function useProjectTasks(user, project, hasAccess) {
     const unsubscribe = subscribeToProjectTasks({
       user,
       project,
-      onError: (err) => setError(err),
-      onUpdate: (flatData) => {
+      onError: err => setError(err),
+      onUpdate: flatData => {
         const currentMap = taskRegistry.peek()
         const newMap = new Map()
         let hasRegistryChanged = false
@@ -56,7 +56,9 @@ export default function useProjectTasks(user, project, hasAccess) {
           }
         }
 
-        if (currentMap.size !== newMap.size) { hasRegistryChanged = true }
+        if (currentMap.size !== newMap.size) {
+          hasRegistryChanged = true
+        }
 
         // add the subtasks to their respective parent
         for (const task of flatData) {
@@ -77,8 +79,8 @@ export default function useProjectTasks(user, project, hasAccess) {
 
           if (data.subtasks.length > 0) {
             const subtaskObjects = data.subtasks
-            .map(sid => newMap.get(sid)?.peek())
-            .filter(Boolean)
+              .map(sid => newMap.get(sid)?.peek())
+              .filter(Boolean)
 
             const sortedIds = sortTasks(subtaskObjects).map(t => t.id)
 
@@ -89,7 +91,9 @@ export default function useProjectTasks(user, project, hasAccess) {
           }
         }
 
-        if (hasRegistryChanged) { taskRegistry.value = newMap }
+        if (hasRegistryChanged) {
+          taskRegistry.value = newMap
+        }
 
         setIsLoading(false)
         setError(null)

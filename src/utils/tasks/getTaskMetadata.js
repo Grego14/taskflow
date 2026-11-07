@@ -8,8 +8,7 @@ export default function getTaskMetadata(element) {
     if (closest?.taskId) return closest
 
     const qS = element.querySelector(selector)?.dataset
-    if (qS?.taskId)
-      return qS
+    if (qS?.taskId) return qS
 
     return {}
   })()

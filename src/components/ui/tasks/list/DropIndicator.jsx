@@ -14,11 +14,11 @@ export default function DropIndicator({ maxWidth, isTop, isSubtask }) {
         backgroundColor: 'primary.main',
         borderRadius: 1,
         pointerEvents: 'none',
-        maxWidth: !isSubtask 
-          ? `calc(var(--mui-ui-taskCardMaxWidth) - 5rem)` 
+        maxWidth: !isSubtask
+          ? 'calc(var(--mui-ui-taskCardMaxWidth) - 5rem)'
           : '100%'
       }}
-      role='none'
+      role='presentation'
     />
   )
 }

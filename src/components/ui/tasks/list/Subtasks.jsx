@@ -1,34 +1,29 @@
 import {
-  lazy,
   Suspense,
-  memo,
-  useRef,
   forwardRef,
-  useLayoutEffect
+  lazy,
+  memo,
+  useLayoutEffect,
+  useRef
 } from 'preact/compat'
 
 import Box from '@mui/material/Box'
 import Card from '@mui/material/Card'
 import CompleteButton from './CompleteButton'
-import Header from './Header'
 import DropIndicator from './DropIndicator'
+import Header from './Header'
 
-import taskIsOverdue from '@utils/tasks/taskIsOverdue'
 import { priorityColors } from '@/constants'
+import taskIsOverdue from '@utils/tasks/taskIsOverdue'
 
-import useTasks from '@hooks/useTasks'
-import useLayout from '@hooks/useLayout'
 import useTaskAnimations from '@hooks/tasks/useTaskAnimations'
+import useLayout from '@hooks/useLayout'
+import useTasks from '@hooks/useTasks'
 
-import { taskRegistry, activeDropIndicator } from '@stores/task'
+import { activeDropIndicator, taskRegistry } from '@stores/task'
 
 const SubtaskItem = forwardRef(function SubtaskItem(props, ref) {
-  const { 
-    id, 
-    isParentChecked, 
-    isParentOverdue, 
-    listIds
-  } = props
+  const { id, isParentChecked, isParentOverdue, listIds } = props
 
   const { animateItemEntrance } = useTaskAnimations()
 
@@ -48,14 +43,15 @@ const SubtaskItem = forwardRef(function SubtaskItem(props, ref) {
   useLayoutEffect(() => {
     if (!hasData || !data.createdAt) return
 
-    const createdTime = typeof data.createdAt === 'number' 
-      ? data.createdAt 
-      : data.createdAt.seconds * 1000
+    const createdTime =
+      typeof data.createdAt === 'number'
+        ? data.createdAt
+        : data.createdAt.seconds * 1000
 
     const isNew = Math.abs(Date.now() - createdTime) < 5000
 
     if (isNew) animateItemEntrance(id)
-  }, [hasData])
+  }, [hasData, id, data.createdAt, animateItemEntrance])
 
   if (!hasData) return null
 
@@ -63,22 +59,25 @@ const SubtaskItem = forwardRef(function SubtaskItem(props, ref) {
 
   const dynamicStyles = {
     '--task-priority-color': priorityColor,
-    opacity: isChecked 
-      ? 0.6 
-      : (showIndicator || (isOverdue && !isParentOverdue) ? 0.4 : 1)
+    opacity: isChecked
+      ? 0.6
+      : showIndicator || (isOverdue && !isParentOverdue)
+        ? 0.4
+        : 1
   }
 
   return (
-    <Box className='relative'
+    <Box
+      className='relative'
       data-task-id={id}
       data-type='subtask'
       data-parent-id={parentId}
       data-is-overdue={isOverdue}>
       <Suspense fallback={null}>
         {showIndicator && (
-          <DropIndicator 
-            maxWidth='100%' 
-            isTop={indicatorEdge === 'top'} 
+          <DropIndicator
+            maxWidth='100%'
+            isTop={indicatorEdge === 'top'}
             isSubtask
           />
         )}
@@ -99,11 +98,7 @@ const SubtaskItem = forwardRef(function SubtaskItem(props, ref) {
 })
 
 export default memo(function Subtasks(props) {
-  const {
-    subtaskIds = [], 
-    isParentOverdue, 
-    isParentChecked 
-  } = props
+  const { subtaskIds = [], isParentOverdue, isParentChecked } = props
 
   const wrapperRef = useRef(null)
   const { setTaskRef } = useTasks()
@@ -111,9 +106,9 @@ export default memo(function Subtasks(props) {
   const { animateEntrance } = useTaskAnimations()
 
   useLayoutEffect(() => {
-    if (subtaskIds.length > 0) 
+    if (subtaskIds.length > 0)
       animateEntrance(wrapperRef, subtaskIds, { subtasks: true })
-  }, [filter, subtaskIds.length])
+  }, [subtaskIds, animateEntrance])
 
   if (!subtaskIds.length) return null
 

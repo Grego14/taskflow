@@ -1,7 +1,7 @@
 import useApp from '@hooks/useApp'
 
 import { Suspense, lazy } from 'react'
-import { Route, Routes, BrowserRouter as Router } from 'react-router-dom'
+import { Route, BrowserRouter as Router, Routes } from 'react-router-dom'
 
 import Landing from '@pages/landing/Landing'
 import RouteProvider from './context/RouteContext'
@@ -27,11 +27,14 @@ export default function AppRoutes() {
               }
             />
 
-            <Route path='/*' element={
-              <Suspense fallback={null}>
-                <AuthenticatedApp />
-              </Suspense>
-            } />
+            <Route
+              path='/*'
+              element={
+                <Suspense fallback={null}>
+                  <AuthenticatedApp />
+                </Suspense>
+              }
+            />
           </Route>
         </Routes>
       </Suspense>

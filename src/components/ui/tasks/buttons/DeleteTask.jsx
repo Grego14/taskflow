@@ -5,19 +5,14 @@ import DeleteIcon from '@mui/icons-material/Delete'
 
 const ContainSubtasks = lazy(() => import('./ContainSubtasks'))
 
-import useUser from '@hooks/useUser'
-import useTasks from '@hooks/useTasks'
-import { useTranslation } from 'react-i18next'
 import useProject from '@hooks/useProject'
+import useTasks from '@hooks/useTasks'
+import useUser from '@hooks/useUser'
+import { useTranslation } from 'react-i18next'
 
 import { taskRegistry } from '@stores/task'
 
-export default function DeleteTask({
-  id,
-  parentId,
-  subtaskIds,
-  showMenu
-}) {
+export default function DeleteTask({ id, parentId, subtaskIds, showMenu }) {
   const { actions } = useTasks()
   const { t } = useTranslation('common')
   const { preferences } = useUser()
@@ -27,7 +22,7 @@ export default function DeleteTask({
   const owner = data?.createdBy
   const projectId = data?.id
 
-  const handleConfirmDelete = async (deleteAll) => {
+  const handleConfirmDelete = async deleteAll => {
     setOpenConfirm(false)
 
     if (deleteAll) {
@@ -41,12 +36,14 @@ export default function DeleteTask({
   const handleDelete = async () => {
     const registry = taskRegistry.value
 
-    const hasPendingSubtasks = !parentId && subtaskIds?.some(sId => {
-      const subtask = registry.get(sId).peek()
-      if (!subtask) return false
+    const hasPendingSubtasks =
+      !parentId &&
+      subtaskIds?.some(sId => {
+        const subtask = registry.get(sId).peek()
+        if (!subtask) return false
 
-      return subtask.status !== 'done' && subtask.status !== 'cancelled'
-    })
+        return subtask.status !== 'done' && subtask.status !== 'cancelled'
+      })
 
     if (hasPendingSubtasks) {
       setOpenConfirm(true)

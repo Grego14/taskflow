@@ -1,8 +1,8 @@
 import Dialog from '@components/reusable/dialogs/Dialog'
 import useLoadResources from '@hooks/useLoadResources'
+import useUser from '@hooks/useUser'
 import projectService from '@services/project'
 import { useTranslation } from 'react-i18next'
-import useUser from '@hooks/useUser'
 
 import { setGlobalAlert } from '@stores/ui'
 

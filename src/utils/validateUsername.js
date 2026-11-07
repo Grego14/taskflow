@@ -1,5 +1,4 @@
-const usernameInvalidCharsRegex =
-  /[<>\*\(\)\[\]\{\};:,\?_\+\\=¿¡!@#$%&\|~`"^]/g
+const usernameInvalidCharsRegex = /[<>\*\(\)\[\]\{\};:,\?_\+\\=¿¡!@#$%&\|~`"^]/g
 
 // returns a key from the translation object
 // empty and short/long validations are made using react-hook-form

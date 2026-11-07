@@ -1,9 +1,9 @@
-import { useState, useMemo, useCallback, useEffect } from 'preact/hooks'
-import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 import useUser from '@hooks/useUser'
+import { useCallback, useEffect, useMemo, useState } from 'preact/hooks'
+import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 
-import RouteContext from './context'
 import { getItem, setItem } from '@utils/storage'
+import RouteContext from './context'
 
 export default function RouteProvider() {
   const { uid } = useUser()
@@ -11,12 +11,15 @@ export default function RouteProvider() {
   const { pathname } = useLocation()
   const navigate = useNavigate()
 
-  const handleNavigation = useCallback(rute => {
-    setLastRute(pathname)
-    setItem('lastRute', pathname)
+  const handleNavigation = useCallback(
+    rute => {
+      setLastRute(pathname)
+      setItem('lastRute', pathname)
 
-    navigate(rute)
-  }, [navigate, pathname])
+      navigate(rute)
+    },
+    [navigate, pathname]
+  )
 
   useEffect(() => {
     const defaultRute = uid ? '/home' : '/'
@@ -26,14 +29,15 @@ export default function RouteProvider() {
     // without triggering the handleNavigation function
     if (pathname?.match(lastRute)?.[0] && lastRute !== defaultRute)
       setLastRute(defaultRute)
-  }, [lastRute, pathname])
+  }, [lastRute, pathname, uid])
 
-  const value = useMemo(() => (
-    {
+  const value = useMemo(
+    () => ({
       navigateTo: handleNavigation,
       lastRute
     }),
-    [lastRute, handleNavigation])
+    [lastRute, handleNavigation]
+  )
 
   return (
     <RouteContext.Provider value={value}>

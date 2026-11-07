@@ -1,4 +1,4 @@
-import { signal, computed, effect } from '@preact/signals'
+import { computed, effect, signal } from '@preact/signals'
 import { playSound } from '@services/audio'
 import sortTasks from '@utils/tasks/sortTasks'
 
@@ -23,10 +23,10 @@ export const tasksToArchiveIds = computed(() => {
 
   // subscribe to task deletions (in case the user deletes a task to archive)
   const registry = taskRegistry.value
-  const _version = taskVersion.value  // subscribe to some specific app changes
+  const _version = taskVersion.value // subscribe to some specific app changes
 
   for (const taskSignal of registry.values()) {
-    const task = taskSignal.peek() 
+    const task = taskSignal.peek()
     if (!task) continue
 
     const { status, isArchived, id, parentId } = task
@@ -34,10 +34,9 @@ export const tasksToArchiveIds = computed(() => {
 
     if (!parentId && !isArchived && isProcessable) toArchive.push(id)
   }
-  
+
   return toArchive
 })
-
 
 export const activeDropIndicator = signal({
   sourceId: null,
@@ -49,7 +48,7 @@ export const updateTaskLocal = (id, data) => {
   const registry = taskRegistry.peek()
   const taskSignal = registry.get(id)
 
-  if(!taskSignal) return
+  if (!taskSignal) return
 
   const previousTask = taskSignal.peek()
   taskSignal.value = { ...previousTask, ...data }
@@ -78,7 +77,7 @@ export const deleteTaskLocal = (id, parentId, deleteSubtasks) => {
   taskRegistry.value = newMap
 }
 
-export const createTaskLocal = (task) => {
+export const createTaskLocal = task => {
   const newMap = new Map(taskRegistry.peek())
 
   const taskData = { ...task, subtasks: task.subtasks || [] }
@@ -92,8 +91,8 @@ export const createTaskLocal = (task) => {
     const parentData = parentSignal.peek()
 
     const currentSubtasks = (parentData.subtasks || [])
-    .map(id => newMap.get(id)?.peek())
-    .filter(Boolean)
+      .map(id => newMap.get(id)?.peek())
+      .filter(Boolean)
 
     currentSubtasks.push(taskData)
 
@@ -106,7 +105,7 @@ export const createTaskLocal = (task) => {
   taskRegistry.value = newMap
 }
 
-export const archiveTasksLocal = (taskIds) => {
+export const archiveTasksLocal = taskIds => {
   const registry = taskRegistry.peek()
 
   for (const id of taskIds) {
@@ -117,12 +116,7 @@ export const archiveTasksLocal = (taskIds) => {
   }
 }
 
-export const moveSubtasksLocal = (
-  taskId, 
-  subtaskIds, 
-  position, 
-  timestamp
-) => {
+export const moveSubtasksLocal = (taskId, subtaskIds, position, timestamp) => {
   const currentMap = taskRegistry.peek()
   const newMap = new Map(currentMap)
 
@@ -155,7 +149,7 @@ export const reorderTaskLocal = (id, newPosition, newStatus) => {
 
   const now = Date.now()
   const currentTask = taskSignal.peek()
-  
+
   const updates = { ...currentTask, position: newPosition }
 
   if (newStatus) {
@@ -179,8 +173,8 @@ export const reorderTaskLocal = (id, newPosition, newStatus) => {
 
     // update parent with a new array reference to trigger the filteredSubtaskIds
     parentSignal.value = {
-      ...parentData, 
-      subtasks: sortTasks(siblings).map(t => t.id) 
+      ...parentData,
+      subtasks: sortTasks(siblings).map(t => t.id)
     }
   }
 
@@ -222,12 +216,12 @@ export const currentSessionSeconds = computed(() => {
   const ringing = isAlarmRinging.value
   const target = targetTime.value
   const clock = globalClock.value
-  
+
   const referenceTime = ringing && target ? target : clock
   const startReference = target > 0 ? pomoStart.value : task.startTime
 
   const elapsed = Math.floor((referenceTime - startReference) / 1000)
-  
+
   // returns this session work (doesn't count task timeWorked value)
   return elapsed >= 0 ? elapsed : 0
 })

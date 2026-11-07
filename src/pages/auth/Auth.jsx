@@ -1,18 +1,18 @@
 import { useEffect, useState } from 'react'
 
-import Box from '@mui/material/Box'
 import CircleLoader from '@components/reusable/loaders/CircleLoader'
+import Box from '@mui/material/Box'
 import AuthForm from './components/AuthForm'
 import AuthTexts from './components/AuthTexts'
 import Footer from './components/Footer'
 
+import useLoadResources from '@hooks/useLoadResources'
 import useUser from '@hooks/useUser'
 import { useTranslation } from 'react-i18next'
 import { useLocation, useNavigate } from 'react-router-dom'
-import useLoadResources from '@hooks/useLoadResources'
 
-import setPageTitle from '@utils/setPageTitle'
 import { Typography } from '@mui/material'
+import setPageTitle from '@utils/setPageTitle'
 
 const resources = ['validations', 'auth', 'common']
 
@@ -30,13 +30,13 @@ export default function Auth({ type = 'login' }) {
 
   useEffect(() => {
     if (uid) navigate('/home')
-  }, [uid])
+  }, [uid, navigate])
 
   useEffect(() => {
     setPageTitle(t(localType, { ns: 'common' }))
   }, [t, localType])
 
-  const navigateToRoute = (route) => {
+  const navigateToRoute = route => {
     navigate(route)
     setIsSignup(route === '/signup')
   }
@@ -49,21 +49,13 @@ export default function Auth({ type = 'login' }) {
 
   return (
     <Box className='flex flex-column flex-center' gap={2} py={6} my='auto'>
-      {sesionExpired && (
-        <Typography color='error'>
-          {sesionExpired}
-        </Typography>
-      )}
+      {sesionExpired && <Typography color='error'>{sesionExpired}</Typography>}
 
       <AuthTexts type={localType} />
 
       <AuthForm type={localType} isSignup={isSignup} />
 
-      <Footer
-        type={localType}
-        isSignup={isSignup}
-        navigate={navigateToRoute}
-      />
+      <Footer type={localType} isSignup={isSignup} navigate={navigateToRoute} />
     </Box>
   )
 }

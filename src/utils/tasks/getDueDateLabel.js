@@ -1,8 +1,16 @@
 import { ONE_DAY_MS } from '@/constants'
-import formatTimestamp from '@utils/formatTimestamp'
 import i18n from '@/i18n'
+import formatTimestamp from '@utils/formatTimestamp'
 
-const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday']
+const days = [
+  'sunday',
+  'monday',
+  'tuesday',
+  'wednesday',
+  'thursday',
+  'friday',
+  'saturday'
+]
 
 /**
  * Gets a human-readable label and status for a due date
@@ -12,7 +20,8 @@ const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 
 export default function getDueDateLabel(dueDate) {
   const t = i18n.getFixedT(i18n.language)
 
-  if (!dueDate) return { label: '', isOverdue: false, isToday: false, diffInDays: null }
+  if (!dueDate)
+    return { label: '', isOverdue: false, isToday: false, diffInDays: null }
 
   const targetDate = dueDate?.seconds
     ? formatTimestamp(dueDate).raw

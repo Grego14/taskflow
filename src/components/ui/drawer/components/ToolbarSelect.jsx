@@ -1,17 +1,17 @@
-import { useEffect, useState, useMemo, useCallback } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
-import { useTranslation } from 'react-i18next'
-import useUser from '@hooks/useUser'
 import useLayout from '@hooks/useLayout'
+import useUser from '@hooks/useUser'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { useNavigate, useParams } from 'react-router-dom'
 
+import FolderOpen from '@mui/icons-material/FolderOpen'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
 import FormControl from '@mui/material/FormControl'
 import InputLabel from '@mui/material/InputLabel'
 import MenuItem from '@mui/material/MenuItem'
 import Select from '@mui/material/Select'
-import Button from '@mui/material/Button'
 import Typography from '@mui/material/Typography'
-import FolderOpen from '@mui/icons-material/FolderOpen'
-import Box from '@mui/material/Box'
 
 export default function ToolbarSelect() {
   const { uid, metadata } = useUser()
@@ -33,10 +33,11 @@ export default function ToolbarSelect() {
 
     const getProjectsDrawerData = async () => {
       const { default: projectService } = await import('@services/project')
-      const { userProjects, externalProjects } = projectService.getDrawerQueries(uid)
+      const { userProjects, externalProjects } =
+        projectService.getDrawerQueries(uid)
       const projectMap = new Map()
 
-      const updateProjects = (snap) => {
+      const updateProjects = snap => {
         for (const change of snap.docChanges()) {
           const { id } = change.doc
 
@@ -64,7 +65,7 @@ export default function ToolbarSelect() {
       unsubUser?.()
       unsubExternal?.()
     }
-  }, [uid])
+  }, [uid, isPreview])
 
   const actualProject = useMemo(() => {
     // Intentamos buscar por el ID de la URL o por el último editado
@@ -76,14 +77,17 @@ export default function ToolbarSelect() {
     return { ...found, isLast: !projectId }
   }, [projects, projectId, metadata?.lastEditedProject])
 
-  const handleProjectChange = useCallback((e) => {
-    const project = projects.find(p => p.id === e.target.value)
+  const handleProjectChange = useCallback(
+    e => {
+      const project = projects.find(p => p.id === e.target.value)
 
-    if (project) {
-      const cleanId = project.id.replace('_drawer', '')
-      navigate(`/projects/${project.owner}/${cleanId}`)
-    }
-  }, [projects])
+      if (project) {
+        const cleanId = project.id.replace('_drawer', '')
+        navigate(`/projects/${project.owner}/${cleanId}`)
+      }
+    },
+    [projects, navigate]
+  )
 
   const hasProjects = projects.length > 0
   const toolbarKey = actualProject?.isLast ? 'lastProject' : 'actualProject'
@@ -103,7 +107,6 @@ export default function ToolbarSelect() {
       navigate('/projects/new')
       toggleDrawer(false)
       return
-
     }
 
     triggerUpsell('new-project')
@@ -111,7 +114,7 @@ export default function ToolbarSelect() {
 
   return (
     <div className='hide-element toolbar-select flex'>
-      {(actualProject || hasProjects) ? (
+      {actualProject || hasProjects ? (
         <FormControl className='toolbar-select-form'>
           <InputLabel
             id='select-project'
@@ -137,12 +140,10 @@ export default function ToolbarSelect() {
           </Select>
         </FormControl>
       ) : (
-          <Button 
-            onClick={handleNewProject} 
-            className='toolbar-new-project-btn'>
-            {t('ui:drawer.toolbar.newProject')}
-          </Button>
-        )}
+        <Button onClick={handleNewProject} className='toolbar-new-project-btn'>
+          {t('ui:drawer.toolbar.newProject')}
+        </Button>
+      )}
     </div>
   )
 }

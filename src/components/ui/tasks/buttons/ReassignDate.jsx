@@ -1,11 +1,11 @@
+import DropdownMenu from '@components/reusable/DropdownMenu'
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
-import DropdownMenu from '@components/reusable/DropdownMenu'
 
 import useLoadResources from '@hooks/useLoadResources'
+import { Suspense, lazy } from 'preact/compat'
 import { useTranslation } from 'react-i18next'
-import { lazy, Suspense } from 'preact/compat'
 
 const DateItems = lazy(() => import('@components/reusable/tasks/DateItems'))
 
@@ -16,7 +16,7 @@ export default function ReassignDate({ rawDate, id, parentId, onDateChange }) {
   if (loading) return null
 
   // find current label to show in the "Select" button
-  const currentLabel = t(`dialogs:newtask.dates.${rawDate}`, { 
+  const currentLabel = t(`dialogs:newtask.dates.${rawDate}`, {
     defaultValue: rawDate
   })
 
@@ -37,7 +37,7 @@ export default function ReassignDate({ rawDate, id, parentId, onDateChange }) {
               color: 'secondary.dark',
               '& .MuiButton-startIcon': { order: 2, ml: 1, mr: 0 },
               ...theme.typography.body2,
-              ...(theme.applyStyles('dark', { color: 'secondary.light' }))
+              ...theme.applyStyles('dark', { color: 'secondary.light' })
             })
           }
         }}>

@@ -1,20 +1,20 @@
+import CircleLoader from '@components/reusable/loaders/CircleLoader'
+import CreateFromTemplate from '@components/reusable/projects/CreateFromTemplate'
+import DescriptionInput from '@components/reusable/projects/DescriptionInput'
+import NameInput from '@components/reusable/projects/NameInput'
+import AnimatedTitle from '@components/reusable/texts/AnimatedTitle'
+import AddMembers from '@components/ui/projects/AddMembers'
 import Box from '@mui/material/Box'
 import Paper from '@mui/material/Paper'
 import Typography from '@mui/material/Typography'
-import DescriptionInput from '@components/reusable/projects/DescriptionInput'
-import NameInput from '@components/reusable/projects/NameInput'
-import AddMembers from '@components/ui/projects/AddMembers'
 import CreateProject from './components/CreateProject'
 import MakeTemplate from './components/MakeTemplate'
-import CircleLoader from '@components/reusable/loaders/CircleLoader'
-import CreateFromTemplate from '@components/reusable/projects/CreateFromTemplate'
-import AnimatedTitle from '@components/reusable/texts/AnimatedTitle'
 
+import { useGSAP } from '@gsap/react'
+import useLoadResources from '@hooks/useLoadResources'
+import { useRef } from 'preact/hooks'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import useLoadResources from '@hooks/useLoadResources'
-import { useGSAP } from '@gsap/react'
-import { useRef } from 'preact/hooks'
 
 import gsap from 'gsap'
 import { SplitText } from 'gsap/SplitText'
@@ -52,11 +52,11 @@ const formStaticStyles = {
   maxWidth: 'fit-content'
 }
 
-const getDynamicFormStyles = (theme) => ({
+const getDynamicFormStyles = theme => ({
   ...formStaticStyles,
   backgroundImage: `linear-gradient(180deg, 
     ${theme.alpha(theme.palette.background.paper, 0.15)}, 
-    ${theme.alpha(theme.palette.primary.main, 0.075)})`,
+    ${theme.alpha(theme.palette.primary.main, 0.075)})`
 })
 
 const usedResources = ['projects', 'common']
@@ -81,22 +81,25 @@ export default function NewProject() {
     setForm(prev => ({ ...prev, [field]: value }))
   }
 
-  useGSAP(() => {
-    if (loadingResources || !animateForm) return
+  useGSAP(
+    () => {
+      if (loadingResources || !animateForm) return
 
-    gsap.set('#newProjectForm', { x: -300 })
-    gsap.set('#newProjectCreate', { y: 75 })
+      gsap.set('#newProjectForm', { x: -300 })
+      gsap.set('#newProjectCreate', { y: 75 })
 
-    const tl = gsap.timeline()
+      const tl = gsap.timeline()
 
-    tl.fromTo('#newProjectForm',
-      { rotateX: -35 },
-      { autoAlpha: 1, x: 0, ease: 'power4.out', rotateX: 0 })
-      .to('#newProjectCreate', { autoAlpha: 1, y: 0 })
-  }, { scope: containerRef, dependencies: [loadingResources, animateForm] })
+      tl.fromTo(
+        '#newProjectForm',
+        { rotateX: -35 },
+        { autoAlpha: 1, x: 0, ease: 'power4.out', rotateX: 0 }
+      ).to('#newProjectCreate', { autoAlpha: 1, y: 0 })
+    },
+    { scope: containerRef, dependencies: [loadingResources, animateForm] }
+  )
 
-  if (loadingResources)
-    return <CircleLoader text={t('common:loading')} />
+  if (loadingResources) return <CircleLoader text={t('common:loading')} />
 
   return (
     <Box
@@ -112,9 +115,9 @@ export default function NewProject() {
           {t('projects:createProject')}
         </AnimatedTitle>
 
-        <Paper 
-          className='flex flex-column hide-element' 
-          variant='outlined' 
+        <Paper
+          className='flex flex-column hide-element'
+          variant='outlined'
           sx={getDynamicFormStyles}
           id='newProjectForm'>
           <Box className='flex flex-grow flex-column' gap='inherit'>
@@ -149,7 +152,8 @@ export default function NewProject() {
           </Box>
         </Paper>
 
-        <Box className='flex flex-column hide-element'
+        <Box
+          className='flex flex-column hide-element'
           sx={btnsContainerStyles}
           id='newProjectCreate'>
           <CreateProject {...form} errors={errors} sx={{ m: 0 }} />

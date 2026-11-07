@@ -6,22 +6,24 @@ import CreateFromTemplate from '@components/reusable/projects/CreateFromTemplate
 import AnimatedTitle from '@components/reusable/texts/AnimatedTitle'
 import CreateProject from '@components/ui/buttons/CreateProject'
 
-import { 
-  useEffect, 
-  useState, 
-  useMemo, 
-  Suspense, 
-  lazy, 
-  useRef 
+import {
+  Suspense,
+  lazy,
+  useEffect,
+  useMemo,
+  useRef,
+  useState
 } from 'preact/compat'
 
-import { useTranslation } from 'react-i18next'
-import useUser from '@hooks/useUser'
-import useLoadResources from '@hooks/useLoadResources'
 import { useGSAP } from '@gsap/react'
 import useCounterAnimation from '@hooks/animations/useCounterAnimation'
+import useLoadResources from '@hooks/useLoadResources'
+import useUser from '@hooks/useUser'
+import { useTranslation } from 'react-i18next'
 
-const ProjectsCards = lazy(() => import('@components/ui/projectcard/ProjectsCards'))
+const ProjectsCards = lazy(
+  () => import('@components/ui/projectcard/ProjectsCards')
+)
 
 import { dbAdapter } from '@services/dbAdapter'
 import projectService from '@services/project'
@@ -35,7 +37,7 @@ const containerStyles = {
   width: '100%',
   flexGrow: 1,
   py: 2,
-  px: { xs: 2, mobile: 3, tablet: 4 },
+  px: { xs: 2, mobile: 3, tablet: 4 }
 }
 
 const noProjectsStyles = { my: 'auto' }
@@ -47,9 +49,9 @@ const btnsContainerStyles = {
   }
 }
 
-const btnStyles = { 
-  hasProjects: { alignSelf: 'start'}, 
-  noProjects: { alignSelf: 'center'} 
+const btnStyles = {
+  hasProjects: { alignSelf: 'start' },
+  noProjects: { alignSelf: 'center' }
 }
 
 export default function Projects() {
@@ -67,10 +69,10 @@ export default function Projects() {
     if (!uid) return
 
     const { userProjects, externalProjects } =
-    projectService.getProjectsQueries(uid)
+      projectService.getProjectsQueries(uid)
     const projectMap = new Map()
 
-    const handleSnapshot = (snap) => {
+    const handleSnapshot = snap => {
       for (const change of snap.docChanges()) {
         const { id } = change.doc
 
@@ -123,9 +125,7 @@ export default function Projects() {
       {hasProjects ? (
         <Box>
           <Box className='flex' gap={1}>
-            <AnimatedTitle
-              id='projects-title'
-              textAlign='start'>
+            <AnimatedTitle id='projects-title' textAlign='start'>
               {t('text')}
             </AnimatedTitle>
             <Typography component='span' variant='h4' fontWeight={700}>
@@ -140,37 +140,37 @@ export default function Projects() {
             />
           </Suspense>
 
-          <Box className='flex hide-element' sx={btnsContainerStyles}
+          <Box
+            className='flex hide-element'
+            sx={btnsContainerStyles}
             gap={2}
             mt={4}
             id='project-buttons'>
-            <CreateProject sx={hasProjects 
-              ? btnStyles.hasProjects 
-              : btnStyles.noProjects} 
+            <CreateProject
+              sx={hasProjects ? btnStyles.hasProjects : btnStyles.noProjects}
             />
             <CreateFromTemplate sx={{ flexDirection: 'row' }} />
           </Box>
         </Box>
-      ): (
-          <Box sx={noProjectsStyles}>
-            <Box>
-              <Typography variant='h5' textAlign='center'>
-                {t('errors.empty')}
-              </Typography>
-              <Box
-                className='flex flex-center flex-column hide-element'
-                gap={2}
-                mt={4}
-                id='project-buttons'>
-                <CreateProject sx={hasProjects 
-                  ? btnStyles.hasProjects 
-                  : btnStyles.noProjects} 
-                />
-                <CreateFromTemplate />
-              </Box>
+      ) : (
+        <Box sx={noProjectsStyles}>
+          <Box>
+            <Typography variant='h5' textAlign='center'>
+              {t('errors.empty')}
+            </Typography>
+            <Box
+              className='flex flex-center flex-column hide-element'
+              gap={2}
+              mt={4}
+              id='project-buttons'>
+              <CreateProject
+                sx={hasProjects ? btnStyles.hasProjects : btnStyles.noProjects}
+              />
+              <CreateFromTemplate />
             </Box>
           </Box>
-        )}
+        </Box>
+      )}
     </Box>
   )
 }

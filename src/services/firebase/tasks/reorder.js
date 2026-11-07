@@ -1,13 +1,13 @@
 import { dbAdapter } from '@services/dbAdapter'
 import getTaskPath from '@utils/tasks/getTaskPath'
 
-export default async function reorderRemoteTask({ 
-  ownerId, 
-  projectId, 
-  taskId, 
-  parentId, 
+export default async function reorderRemoteTask({
+  ownerId,
+  projectId,
+  taskId,
+  parentId,
   newPosition,
-  newStatus 
+  newStatus
 }) {
   const path = getTaskPath(ownerId, projectId, parentId)
   const ref = dbAdapter.getDocRef(path, taskId)

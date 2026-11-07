@@ -17,7 +17,9 @@ export default function AbandoneProjectDialog({
   const loadingResources = useLoadResources('dialogs')
 
   async function handleProjectQuit() {
-    const { default: abandoneProject } =  await import('@services/abandoneProject')
+    const { default: abandoneProject } = await import(
+      '@services/abandoneProject'
+    )
     await abandoneProject(uid, projectId, projectOwner)
 
     setGlobalAlert({ message: t('notifications.projectAbandoned') })

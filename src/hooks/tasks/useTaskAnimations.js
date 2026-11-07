@@ -1,10 +1,10 @@
 import { useGSAP } from '@gsap/react'
-import useTasks from '@hooks/useTasks'
 import useLayout from '@hooks/useLayout'
+import useTasks from '@hooks/useTasks'
+import { taskRegistry } from '@stores/task'
 import getTaskRef from '@utils/tasks/getTaskRef'
 import gsap from 'gsap'
 import { useRef } from 'preact/hooks'
-import { taskRegistry } from '@stores/task'
 
 export default function useTaskAnimations() {
   const { taskRefs } = useTasks()
@@ -14,22 +14,19 @@ export default function useTaskAnimations() {
   const animatedFilter = useRef(null)
 
   // --- items entrance on wrappers/filter change ---
-  const animateEntrance = contextSafe((
-    wrapperRef,
-    itemIds,
-    { addDelay = false, subtasks = false } = {}
-  ) => {
+  const animateEntrance = contextSafe(
+    (wrapperRef, itemIds, { addDelay = false, subtasks = false } = {}) => {
       if (!itemIds?.length || !wrapperRef.current) return
       if (animatedFilter.current === filter) return
 
       const targets = itemIds
-      .map(id => {
-        const taskData = taskRegistry.value.get(id)
-        if (!taskData) return null
+        .map(id => {
+          const taskData = taskRegistry.value.get(id)
+          if (!taskData) return null
 
-        return getTaskRef(taskRefs, id)?.parentElement
-      })
-      .filter(Boolean)
+          return getTaskRef(taskRefs, id)?.parentElement
+        })
+        .filter(Boolean)
 
       if (targets.length === 0) return
 
@@ -47,36 +44,45 @@ export default function useTaskAnimations() {
       const startDelay = addDelay || subtasks ? 0.3 : 0
 
       const icons = targets
-      .map(t => t.querySelector('.MuiCardHeader-action'))
-      .filter(Boolean)
+        .map(t => t.querySelector('.MuiCardHeader-action'))
+        .filter(Boolean)
 
       gsap.killTweensOf(targets)
 
-      tl.fromTo(targets, {
-        autoAlpha: 0,
-        y: -10,
-        x: -25,
-        force3D: true
-      }, {
+      tl.fromTo(
+        targets,
+        {
+          autoAlpha: 0,
+          y: -10,
+          x: -25,
+          force3D: true
+        },
+        {
           autoAlpha: 1,
           y: 0,
           x: 0,
           delay: startDelay,
           ease: 'power2.out',
           overwrite: 'auto'
-        })
-        .fromTo(icons, {
+        }
+      ).fromTo(
+        icons,
+        {
           autoAlpha: 0,
           x: 15,
           ease: 'expo.out'
-        }, {
-            autoAlpha: 1,
-            x: 0
-          }, '-=0.3')
-    })
+        },
+        {
+          autoAlpha: 1,
+          x: 0
+        },
+        '-=0.3'
+      )
+    }
+  )
 
   // --- individual entrance (new task/task promotion) ---
-  const animateItemEntrance = contextSafe((id) => {
+  const animateItemEntrance = contextSafe(id => {
     const el = getTaskRef(taskRefs, id)?.parentElement
 
     if (!el) return
@@ -84,7 +90,8 @@ export default function useTaskAnimations() {
     gsap.set(el, { willChange: 'transform, opacity' })
 
     setTimeout(() => {
-      gsap.fromTo(el,
+      gsap.fromTo(
+        el,
         { autoAlpha: 0, y: -25, scale: 0.95, x: -50 },
         {
           autoAlpha: 1,
@@ -102,7 +109,7 @@ export default function useTaskAnimations() {
 
   // --- exit (archive/delete) ---
   const animateOut = contextSafe((elements, type = 'delete') => {
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       const targets = Array.isArray(elements) ? elements : [elements]
       const validTargets = targets.filter(Boolean)
 
@@ -110,12 +117,14 @@ export default function useTaskAnimations() {
 
       const config = {
         archive: { x: 100, y: -20, rotate: 5, scale: 0.9 },
-        delete: { x: 120, scale: 0.8, rotate: -5 },
+        delete: { x: 120, scale: 0.8, rotate: -5 }
       }
 
       const settings = config[type] || config.delete
 
-      validTargets.forEach(t => t.classList.add('removing'))
+      for (const target of validTargets) {
+        target.classList.add('removing')
+      }
 
       gsap.to(validTargets, {
         ...settings,

@@ -1,6 +1,6 @@
+import { useGSAP } from '@gsap/react'
 import useApp from '@hooks/useApp'
 import { useParams } from 'react-router-dom'
-import { useGSAP } from '@gsap/react'
 
 import { DRAWER_CONFIG } from '@/constants'
 import { setItem } from '@utils/storage'
@@ -14,7 +14,7 @@ export default function useDrawerAnimation(drawerRef, { onStart, onComplete }) {
   const { projectId } = useParams()
   const { isMobile } = useApp()
 
-  const animateDrawer = contextSafe((isOpening) => {
+  const animateDrawer = contextSafe(isOpening => {
     if (!drawerRef.current) return
 
     const width = DRAWER_CONFIG[isOpening ? 'widthOpen' : 'widthClosed']
@@ -37,10 +37,11 @@ export default function useDrawerAnimation(drawerRef, { onStart, onComplete }) {
     })
 
     const widthDuration = isOpening ? 0.25 : 0.3
-    tl.fromTo(drawerRef.current,
+    tl.fromTo(
+      drawerRef.current,
       {
         x: `-${width}px`,
-        width: currentWidth,
+        width: currentWidth
       },
       {
         transition: `width ${widthDuration}s ease-in-out`,
@@ -51,39 +52,52 @@ export default function useDrawerAnimation(drawerRef, { onStart, onComplete }) {
         onStart,
 
         // avoid the scrollbar on the initial animation
-        onComplete: () => gsap.set(drawerRef.current, { overflowX: 'hidden' }),
-      }, 'start')
+        onComplete: () => gsap.set(drawerRef.current, { overflowX: 'hidden' })
+      },
+      'start'
+    )
 
     if (isOpening) {
       tl.fromTo(
         [
           ...icons,
-          // we only animate this button on enter 
+          // we only animate this button on enter
           toolbarSelect
         ],
         { autoAlpha: 0, x: -20, scale: 0.8, width: 0 },
-        { 
-          autoAlpha: 1, 
-          x: 0, 
-          scale: 1, 
-          stagger: 0.05, 
-          width: 'auto', 
-          clearProps: 'transform' 
+        {
+          autoAlpha: 1,
+          x: 0,
+          scale: 1,
+          stagger: 0.05,
+          width: 'auto',
+          clearProps: 'transform'
         },
-        'start+=0.4')
-        .fromTo(labels,
-          { x: -15, autoAlpha: 0 },
-          { x: 0, autoAlpha: 1, stagger: 0.075, onComplete }, '<0.25')
+        'start+=0.4'
+      ).fromTo(
+        labels,
+        { x: -15, autoAlpha: 0 },
+        { x: 0, autoAlpha: 1, stagger: 0.075, onComplete },
+        '<0.25'
+      )
     } else {
-      tl.to(labels,
-        { autoAlpha: 0, x: -15, duration: 0.15, stagger: 0.03 }, 'start')
-        .to(toolbarSelect, {
-          width: 0,
-          autoAlpha: 0,
-          scale: 0.8,
-          x: -100
-        }, 'start')
-        .fromTo(icons,
+      tl.to(
+        labels,
+        { autoAlpha: 0, x: -15, duration: 0.15, stagger: 0.03 },
+        'start'
+      )
+        .to(
+          toolbarSelect,
+          {
+            width: 0,
+            autoAlpha: 0,
+            scale: 0.8,
+            x: -100
+          },
+          'start'
+        )
+        .fromTo(
+          icons,
           { autoAlpha: 0, scale: 0.8, y: 20 },
           {
             y: 0,

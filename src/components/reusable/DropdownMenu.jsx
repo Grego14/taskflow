@@ -1,9 +1,9 @@
-import { memo, useState } from 'preact/compat'
+import AnimatedMenu from '@components/reusable/animated/AnimatedMenu'
 import Button from '@mui/material/Button'
 import IconButton from '@mui/material/IconButton'
 import Menu from '@mui/material/Menu'
+import { memo, useState } from 'preact/compat'
 import AppTooltip from './AppTooltip'
-import AnimatedMenu from '@components/reusable/animated/AnimatedMenu'
 import ButtonListItem from './buttons/ButtonListItem'
 
 export default memo(function DropdownMenu(props) {
@@ -40,7 +40,7 @@ export default memo(function DropdownMenu(props) {
 
   const RootButton = slots.root || (!text ? IconButton : Button)
   const TooltipComponent = slots.tooltip || AppTooltip
-  
+
   const tooltipTitle = typeof label === 'function' ? label(isMenuOpen) : label
   const buttonContent = text || icon
 
@@ -68,27 +68,25 @@ export default memo(function DropdownMenu(props) {
       list: {
         sx: { overflow: 'hidden' },
         ...slotProps.menu?.slotProps?.list
-      },
-    },
+      }
+    }
   }
-  
+
   const renderButton = () => {
     const trigger = asListItem ? (
-      <ButtonListItem 
-        component={RootButton} 
-        btnProps={rootProps} 
-        children={buttonContent} 
-      />
+      <ButtonListItem component={RootButton} btnProps={rootProps}>
+        {buttonContent}
+      </ButtonListItem>
     ) : (
-        <RootButton {...rootProps} />
-      )
+      <RootButton {...rootProps} />
+    )
 
     if (disableTooltip) return trigger
 
     return (
-      <TooltipComponent 
-        title={tooltipTitle} 
-        placement={tooltipPosition} 
+      <TooltipComponent
+        title={tooltipTitle}
+        placement={tooltipPosition}
         {...slotProps.tooltip}>
         {trigger}
       </TooltipComponent>

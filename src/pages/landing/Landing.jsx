@@ -1,4 +1,4 @@
-import { useEffect, useState, Suspense, lazy } from 'react'
+import { Suspense, lazy, useEffect, useState } from 'react'
 
 import Box from '@mui/material/Box'
 import MainText from './components/MainText'
@@ -9,18 +9,18 @@ const LoginSection = lazy(() => import('./components/LoginSection'))
 const FaqSection = lazy(() => import('./components/FaqSection'))
 const ContactSection = lazy(() => import('./components/ContactSection'))
 
-import useLoadResources from '@hooks/useLoadResources'
-import { useTranslation } from 'react-i18next'
 import { useGSAP } from '@gsap/react'
-import gsap from 'gsap'
-import { useTheme } from '@mui/material/styles'
 import useApp from '@hooks/useApp'
 import useAuth from '@hooks/useAuth'
+import useLoadResources from '@hooks/useLoadResources'
+import { useTheme } from '@mui/material/styles'
+import gsap from 'gsap'
+import { useTranslation } from 'react-i18next'
 
 import { SplitText } from 'gsap/SplitText'
 
-import setPageTitle from '@utils/setPageTitle'
 import { APPBAR_HEIGHT } from '@/constants'
+import setPageTitle from '@utils/setPageTitle'
 
 import '@styles/pages/landing.css'
 
@@ -101,7 +101,8 @@ export default function Landing() {
   const appBarHeight = APPBAR_HEIGHT[isMobile ? 'mobile' : 'other']
 
   return (
-    <Box style={{ '--appbar-height': appBarHeight }}
+    <Box
+      style={{ '--appbar-height': appBarHeight }}
       sx={{
         backgroundImage: `
         radial-gradient(circle at 15% 25%, ${theme.palette.primary.main}18 0%, transparent 60%),
@@ -111,11 +112,11 @@ export default function Landing() {
         transition: 'background 0.5s ease'
       }}
       component='main'>
-      {showAppBar &&
+      {showAppBar && (
         <Suspense fallback={null}>
           <LandingAppBar />
         </Suspense>
-      }
+      )}
 
       <ScreenWrapper>
         <MainText
@@ -148,11 +149,7 @@ export default function Landing() {
       </ScreenWrapper>
 
       <ScreenWrapper sx={bgColor} height='115dvh'>
-        {contactEnded &&
-          <LoginSection
-            prefetchAuth={handlePrefetch}
-          />
-        }
+        {contactEnded && <LoginSection prefetchAuth={handlePrefetch} />}
       </ScreenWrapper>
     </Box>
   )
@@ -160,16 +157,15 @@ export default function Landing() {
 
 function ScreenWrapper({ children, height = '100dvh', sx }) {
   return (
-    <Box sx={{
-      minHeight: height,
-      display: 'flex',
-      minWidth: '100dvw',
-      flexDirection: 'column',
-      ...sx
-    }}>
-      <Suspense fallback={null}>
-        {children}
-      </Suspense>
+    <Box
+      sx={{
+        minHeight: height,
+        display: 'flex',
+        minWidth: '100dvw',
+        flexDirection: 'column',
+        ...sx
+      }}>
+      <Suspense fallback={null}>{children}</Suspense>
     </Box>
   )
 }

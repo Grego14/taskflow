@@ -3,14 +3,14 @@ import { getItem } from '@utils/storage'
 
 export const globalAlert = signal(null)
 
-export const setGlobalAlert = (payload) => {
+export const setGlobalAlert = payload => {
   if (!payload) {
     globalAlert.value = null
     return
   }
 
   const { message, status = 'success', open, ...rest } = payload
-  
+
   globalAlert.value = {
     ...rest,
     message,
@@ -20,7 +20,7 @@ export const setGlobalAlert = (payload) => {
 }
 
 export const closeGlobalAlert = () => {
-  if (!globalAlert.value) return 
+  if (!globalAlert.value) return
 
   globalAlert.value = { ...globalAlert.value, open: false }
 }

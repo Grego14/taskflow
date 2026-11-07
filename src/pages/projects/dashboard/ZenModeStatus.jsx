@@ -1,15 +1,15 @@
-import Button from '@mui/material/Button'
 import OpenInFullIcon from '@mui/icons-material/OpenInFull'
+import Button from '@mui/material/Button'
 
-import { useTranslation } from 'react-i18next'
 import { useMemo } from 'preact/hooks'
+import { useTranslation } from 'react-i18next'
 
-import formatTimer from '@utils/formatTimer'
 import { priorityColors } from '@/constants'
+import formatTimer from '@utils/formatTimer'
 
-import { 
-  currentSessionSeconds, 
-  activeTaskData, 
+import {
+  activeTaskData,
+  currentSessionSeconds,
   showOverlay
 } from '@stores/task'
 
@@ -35,7 +35,7 @@ export default function ZenModeStatus() {
     const priority = task.priority || 'none'
     const [fgColor, bgColor] = priorityColors[priority]
 
-    return { 
+    return {
       '--fg-priority': fgColor,
       '--bg-priority': bgColor
     }
@@ -45,7 +45,9 @@ export default function ZenModeStatus() {
     <Button
       variant='outlined'
       size='small'
-      onClick={() => (showOverlay.value = true)}
+      onClick={() => {
+        showOverlay.value = true
+      }}
       startIcon={<OpenInFullIcon />}
       className='zen-status-btn'
       style={dynamicStyles}>

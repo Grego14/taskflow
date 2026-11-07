@@ -1,8 +1,8 @@
 import MenuAction from '@components/reusable/MenuAction'
-import ArchiveProjectDialog from './ArchiveProjectDialog'
 import ArchiveIcon from '@mui/icons-material/Inventory'
-import Button from '@mui/material/Button'
 import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import ArchiveProjectDialog from './ArchiveProjectDialog'
 
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'

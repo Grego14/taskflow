@@ -10,9 +10,9 @@ const KanbanPreview = lazy(
   () => import('@components/ui/previews/kanban/KanbanPreview')
 )
 
-import { useTranslation } from 'react-i18next'
 import useTasks from '@hooks/useTasks'
 import useUser from '@hooks/useUser'
+import { useTranslation } from 'react-i18next'
 
 export default function TasksPreviewer() {
   const { t } = useTranslation('tasks')
@@ -27,9 +27,7 @@ export default function TasksPreviewer() {
 
       <Suspense fallback={null}>
         {!loading &&
-          (actualPreview === 'kanban'
-            ? <KanbanPreview />
-            : <ListPreview />)}
+          (actualPreview === 'kanban' ? <KanbanPreview /> : <ListPreview />)}
       </Suspense>
     </Box>
   )

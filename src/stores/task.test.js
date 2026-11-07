@@ -1,12 +1,12 @@
-import { 
-  rootTaskIds,
-  taskRegistry, 
-  createTaskLocal, 
-  deleteTaskLocal, 
-  updateTaskLocal,
-  archiveTasksLocal
-} from './task'
 import resolveTaskStatusUpdate from '@utils/tasks/taskStatusResolver'
+import {
+  archiveTasksLocal,
+  createTaskLocal,
+  deleteTaskLocal,
+  rootTaskIds,
+  taskRegistry,
+  updateTaskLocal
+} from './task'
 
 describe('Task Store', () => {
   it('Should initialize with an empty Map', () => {
@@ -30,13 +30,15 @@ describe('Task Store', () => {
 
 // *** task/subtask deletion and task cascade deletion ***
 describe('Task Store - Deletion', () => {
-  beforeEach(() => { taskRegistry.value = new Map() })
+  beforeEach(() => {
+    taskRegistry.value = new Map()
+  })
 
   it('should remove a single task by ID', () => {
     const id = 'task-1'
     createTaskLocal({ id, title: 'Single Task' })
     deleteTaskLocal(id)
-    
+
     expect(taskRegistry.peek().has(id)).toBe(false)
   })
 
@@ -76,18 +78,20 @@ describe('Task Store - Deletion', () => {
 
 // *** task partial update ***
 describe('Task Store - Updates', () => {
-  beforeEach(() => { taskRegistry.value = new Map() })
+  beforeEach(() => {
+    taskRegistry.value = new Map()
+  })
 
   it('should update task data partially without losing existing properties', () => {
     const id = 'task-1'
     const priority = 'high'
     const timeWorked = 0
 
-    createTaskLocal({ 
-      id, 
-      title: 'Initial Title', 
+    createTaskLocal({
+      id,
+      title: 'Initial Title',
       priority,
-      timeWorked 
+      timeWorked
     })
 
     const updatedTitle = 'Updated Title'
@@ -111,7 +115,9 @@ describe('Task Store - Updates', () => {
 
 // *** check Task Registry and Root Indexing ***
 describe('Task Store - Atomic Registry', () => {
-  beforeEach(() => { taskRegistry.value = new Map() })
+  beforeEach(() => {
+    taskRegistry.value = new Map()
+  })
 
   it('taskRegistry should store tasks flat and rootTaskIds should index only parents', () => {
     const parentId = '1'
@@ -133,7 +139,7 @@ describe('Task Store - Atomic Registry', () => {
     // rootTaskIds should only have the id of the parent
     expect(roots.length).toBe(1)
     expect(roots[0]).toBe(parentId)
-    
+
     // the parent task should have the subtask id inside his subtasks field
     expect(parentTask.subtasks).toContain(subtaskId)
   })
@@ -145,7 +151,7 @@ describe('Task Store - Atomic Registry', () => {
 
     createTaskLocal({ id, title: 'Old Title', status: 'todo' })
     updateTaskLocal(id, { title: newTitle, status: newStatus })
-    
+
     const registry = taskRegistry.peek()
     const task = registry.get(id).peek()
 
@@ -159,9 +165,9 @@ it('should mark multiple tasks as archived in the Map', () => {
   createTaskLocal({ id: 't1', isArchived: false })
   createTaskLocal({ id: 't2', isArchived: false })
   createTaskLocal({ id: 't3', isArchived: false })
-  
+
   archiveTasksLocal(['t1', 't2'])
-  
+
   const registry = taskRegistry.peek()
   expect(registry.get('t1').peek().isArchived).toBe(true)
   expect(registry.get('t2').peek().isArchived).toBe(true)
@@ -176,19 +182,19 @@ describe('Status Resolver Metrics', () => {
   it('should mark wasOnTime as true if task is completed before dueDate', () => {
     const tomorrow = new Date()
     tomorrow.setDate(tomorrow.getDate() + 1)
-    
+
     const taskData = { dueDate: tomorrow }
 
     // isPreview = false
     const fields = resolveTaskStatusUpdate(taskData, status, uid, false)
-    
+
     expect(fields.wasOnTime).toBe(true)
   })
 
   it('should mark wasOnTime as false if task is completed after dueDate', () => {
     const yesterday = new Date()
     yesterday.setDate(yesterday.getDate() - 1)
-    
+
     const taskData = { dueDate: yesterday }
     const fields = resolveTaskStatusUpdate(taskData, status, uid, false)
 
@@ -203,4 +209,3 @@ describe('Status Resolver Metrics', () => {
     expect(fields.wasOnTime).toBe(null)
   })
 })
-

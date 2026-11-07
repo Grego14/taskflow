@@ -1,10 +1,10 @@
 import {
   Suspense,
+  forwardRef,
   lazy,
   memo,
-  useMemo,
   useLayoutEffect,
-  forwardRef
+  useMemo
 } from 'preact/compat'
 
 import Box from '@mui/material/Box'
@@ -16,15 +16,15 @@ import Subtasks from './Subtasks'
 const Content = lazy(() => import('./Content'))
 const DropIndicator = lazy(() => import('./DropIndicator'))
 
-import useLayout from '@hooks/useLayout'
-import useTaskAnimations from '@hooks/tasks/useTaskAnimations'
 import useTask from '@hooks/tasks/useTask'
+import useTaskAnimations from '@hooks/tasks/useTaskAnimations'
+import useLayout from '@hooks/useLayout'
 
-import taskIsOverdue from '@utils/tasks/taskIsOverdue'
 import { priorityColors } from '@/constants'
 import sortTasks from '@utils/tasks/sortTasks'
+import taskIsOverdue from '@utils/tasks/taskIsOverdue'
 
-import { taskRegistry, activeDropIndicator } from '@stores/task'
+import { activeDropIndicator, taskRegistry } from '@stores/task'
 
 import '@styles/components/ui/tasks/taskElements.css'
 
@@ -49,9 +49,9 @@ const ListTask = forwardRef(({ id, isPromoted = false }, ref) => {
 
   const parentSignal = taskRegistry.peek().get(parentId)
   const parentData = parentSignal?.value // subscribe to the parent
-  
-  const isParentChecked = parentData?.status === 'done' || 
-    parentData?.status === 'cancelled'
+
+  const isParentChecked =
+    parentData?.status === 'done' || parentData?.status === 'cancelled'
 
   const isOverdue = taskIsOverdue(data)
   const isChecked = status === 'done' || status === 'cancelled'
@@ -71,7 +71,7 @@ const ListTask = forwardRef(({ id, isPromoted = false }, ref) => {
       if (!subtaskData) continue
 
       // if parent is overdue, show only overdue subtasks if not, show all
-      if (!isOverdue || taskIsOverdue(subtaskData)) 
+      if (!isOverdue || taskIsOverdue(subtaskData))
         validSubtasks.push(subtaskData)
     }
 
@@ -81,34 +81,34 @@ const ListTask = forwardRef(({ id, isPromoted = false }, ref) => {
   useLayoutEffect(() => {
     if (!hasData || !data.createdAt) return
 
-    const createdTime = typeof data.createdAt === 'number' 
-      ? data.createdAt 
-      : data.createdAt.seconds * 1000
+    const createdTime =
+      typeof data.createdAt === 'number'
+        ? data.createdAt
+        : data.createdAt.seconds * 1000
 
     const isNew = Math.abs(Date.now() - createdTime) < 5000
 
     if (isNew) animateItemEntrance(id)
-  }, [hasData])
+  }, [hasData, id, data.createdAt, animateItemEntrance])
 
   const [priorityColor] = priorityColors[priority]
   const opacity = getCardOpacity(
-    showIndicator, 
-    isOverdue, 
-    status, 
+    showIndicator,
+    isOverdue,
+    status,
     filter === 'default'
   )
 
   const dynamicVars = {
     '--task-priority-color': priorityColor,
     '--task-opacity': opacity,
-    '--task-bg-color': 
+    '--task-bg-color':
       'color-mix(in srgb, var(--mui-palette-grey-50), transparent 92.5%)'
   }
 
   if (!data) return null
 
-  const containerClass = 
-    `task-wrapper relative flex flex-center flex-column hide-element
+  const containerClass = `task-wrapper relative flex flex-center flex-column hide-element
     ${isOverdue ? 'is-overdue' : ''}`
 
   return (
@@ -119,7 +119,7 @@ const ListTask = forwardRef(({ id, isPromoted = false }, ref) => {
       data-parent-id={parentId}
       data-is-overdue={isOverdue}>
       <Suspense fallback={null}>
-        {showIndicator && (<DropIndicator isTop={indicatorEdge === 'top'} />)}
+        {showIndicator && <DropIndicator isTop={indicatorEdge === 'top'} />}
       </Suspense>
 
       <Card
@@ -134,7 +134,9 @@ const ListTask = forwardRef(({ id, isPromoted = false }, ref) => {
           </div>
 
           <Suspense fallback={null}>
-            {(isOverdue || isParentChecked || isPromoted) && <Content id={id} />}
+            {(isOverdue || isParentChecked || isPromoted) && (
+              <Content id={id} />
+            )}
           </Suspense>
         </div>
 

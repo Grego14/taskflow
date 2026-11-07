@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'preact/hooks'
-import { gsap } from 'gsap'
 import { useGSAP } from '@gsap/react'
+import { gsap } from 'gsap'
+import { useEffect, useState } from 'preact/hooks'
 
 const ANIM_CONFIG = {
   duration: 0.25,
@@ -9,13 +9,13 @@ const ANIM_CONFIG = {
 }
 
 // calculate speed based on item count
-const getDynamicStagger = (count) => {
+const getDynamicStagger = count => {
   if (count <= 3) return 0.12
   if (count <= 7) return 0.08
   return 0.05
 }
 
-const getAnimatableItems = (root) => {
+const getAnimatableItems = root => {
   if (!root) return []
 
   const selector = `
@@ -64,43 +64,48 @@ export default function AnimatedMenu({ children, open, onExitComplete }) {
       ease: 'power2.in'
     })
 
-    tl.to(menuElement, {
-      opacity: 0,
-      duration: 0.15,
-      ease: 'power1.in'
-    }, '<0.1')
-  })
-
-  useGSAP(() => {
-    if (!menuElement || !open) return
-
-    const targets = getAnimatableItems(menuElement)
-
-    if (!targets?.length) return
-
-    const stagger = getDynamicStagger(targets.length)
-    const tl = gsap.timeline()
-
-    tl.fromTo(menuElement,
-      { autoAlpha: 0 },
-      { autoAlpha: 1, duration: 0.3 }
-    )
-
-    tl.fromTo(targets,
-      { autoAlpha: 0, y: 15, scale: 0.8 },
+    tl.to(
+      menuElement,
       {
-        ...ANIM_CONFIG,
-        autoAlpha: 1,
-        y: 0,
-        scale: 1,
-        ease: 'back.out(2)',
-        stagger,
-        overwrite: 'auto',
-        clearProps: 'transform'
+        opacity: 0,
+        duration: 0.15,
+        ease: 'power1.in'
       },
       '<0.1'
     )
-  }, { scope: menuElement, dependencies: [open, menuElement] })
+  })
+
+  useGSAP(
+    () => {
+      if (!menuElement || !open) return
+
+      const targets = getAnimatableItems(menuElement)
+
+      if (!targets?.length) return
+
+      const stagger = getDynamicStagger(targets.length)
+      const tl = gsap.timeline()
+
+      tl.fromTo(menuElement, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.3 })
+
+      tl.fromTo(
+        targets,
+        { autoAlpha: 0, y: 15, scale: 0.8 },
+        {
+          ...ANIM_CONFIG,
+          autoAlpha: 1,
+          y: 0,
+          scale: 1,
+          ease: 'back.out(2)',
+          stagger,
+          overwrite: 'auto',
+          clearProps: 'transform'
+        },
+        '<0.1'
+      )
+    },
+    { scope: menuElement, dependencies: [open, menuElement] }
+  )
 
   return children(shouldRender, setMenuElement, triggerExit)
 }

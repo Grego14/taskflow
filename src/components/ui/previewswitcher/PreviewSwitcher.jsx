@@ -1,22 +1,22 @@
-import { Suspense, lazy, memo, useMemo, useEffect } from 'preact/compat'
+import { Suspense, lazy, memo, useEffect, useMemo } from 'preact/compat'
 
 import useApp from '@hooks/useApp'
 import useUser from '@hooks/useUser'
 
-import Box from '@mui/material/Box'
+import DropdownMenu from '@components/reusable/DropdownMenu'
 import ViewKanbanIcon from '@mui/icons-material/ViewKanban'
 import ViewListIcon from '@mui/icons-material/ViewList'
+import VisibilityIcon from '@mui/icons-material/Visibility'
+import Box from '@mui/material/Box'
+import Skeleton from '@mui/material/Skeleton'
 import Tab from '@mui/material/Tab'
 import Tabs from '@mui/material/Tabs'
-import VisibilityIcon from '@mui/icons-material/Visibility'
-import DropdownMenu from '@components/reusable/DropdownMenu'
-import Skeleton from '@mui/material/Skeleton'
 
 const MenuAction = lazy(() => import('@components/reusable/MenuAction'))
 
+import useLayout from '@hooks/useLayout'
 import getMenuLabel from '@utils/getMenuLabel'
 import { useTranslation } from 'react-i18next'
-import useLayout from '@hooks/useLayout'
 
 const OPTIONS = [
   {
@@ -58,7 +58,9 @@ export default memo(function PreviewSwitcher() {
           icon={<VisibilityIcon fontSize='medium' />}
           label={state => getMenuLabel(state, 'buttons.previewLabel', 'ui')}
           tooltipPosition='top'
-          slotProps={{ root: { className: 'project-action-btn hide-element' } }}>
+          slotProps={{
+            root: { className: 'project-action-btn hide-element' }
+          }}>
           <Suspense fallback={<PreviewSwitcherMenuSkeleton />}>
             {OPTIONS.map(opt => (
               <MenuAction

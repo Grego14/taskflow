@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, useCallback } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import AuthContext from './context'
 
@@ -43,9 +43,8 @@ export default function AuthProvider({ children }) {
   useEffect(() => {
     if (!shouldInit) return
 
-    let unsubscribe;
-
-    (async () => {
+    let unsubscribe
+    ;(async () => {
       try {
         const { auth } = await import('@/firebase/firebase-config.js')
         const { onAuthStateChanged } = await import('firebase/auth')
@@ -62,12 +61,15 @@ export default function AuthProvider({ children }) {
     return () => unsubscribe?.()
   }, [shouldInit])
 
-  const value = useMemo(() => ({
-    currentUser,
-    initAuth: () => setShouldInit(true),
-    refreshUser,
-    initialized
-  }), [currentUser, initialized])
+  const value = useMemo(
+    () => ({
+      currentUser,
+      initAuth: () => setShouldInit(true),
+      refreshUser,
+      initialized
+    }),
+    [currentUser, initialized, refreshUser]
+  )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }

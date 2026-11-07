@@ -15,15 +15,18 @@ const createBaseNotification = (type, extraData = {}) => ({
 })
 
 const notificationService = {
-  getNotificationsQuery: (uid) => dbAdapter.getColRef('users', uid, 'notifications'),
-  getNotifRef: (uid, id) => dbAdapter.getDocRef('users', uid, 'notifications', id),
+  getNotificationsQuery: uid =>
+    dbAdapter.getColRef('users', uid, 'notifications'),
+  getNotifRef: (uid, id) =>
+    dbAdapter.getDocRef('users', uid, 'notifications', id),
 
   // --- Create ---
-  sendWelcome: async (uid) => {
+  sendWelcome: async uid => {
     try {
       const data = createBaseNotification('welcome')
       return await dbAdapter.add(
-        dbAdapter.getColRef('users', uid, 'notifications'), data
+        dbAdapter.getColRef('users', uid, 'notifications'),
+        data
       )
     } catch (err) {
       handleError('sendWelcomeNotification', err)
@@ -34,7 +37,8 @@ const notificationService = {
     try {
       const data = createBaseNotification('kicked', { kickedBy, projectName })
       return await dbAdapter.add(
-        dbAdapter.getColRef('users', uid, 'notifications'), data
+        dbAdapter.getColRef('users', uid, 'notifications'),
+        data
       )
     } catch (err) {
       handleError('sendKickedNotification', err)
@@ -69,8 +73,12 @@ const notificationService = {
 
       const notifRef = notificationService.getNotifRef(user, notification)
 
-      const projectRef =
-        dbAdapter.getDocRef('users', projectOwner, 'projects', projectId)
+      const projectRef = dbAdapter.getDocRef(
+        'users',
+        projectOwner,
+        'projects',
+        projectId
+      )
 
       const project = await dbAdapter.getDoc(projectRef)
       const projectExists = project.exists()
@@ -79,7 +87,10 @@ const notificationService = {
         // if the user accepts, add to project and project drawer members
         if (isAccept) {
           const drawerRef = dbAdapter.getDocRef(
-            'users', projectOwner, 'projects', `${projectId}_drawer`
+            'users',
+            projectOwner,
+            'projects',
+            `${projectId}_drawer`
           )
           const memberData = { members: dbAdapter.union(user) }
 

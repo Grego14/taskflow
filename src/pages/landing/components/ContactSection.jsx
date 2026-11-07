@@ -1,12 +1,12 @@
-import Typography from '@mui/material/Typography'
+import EmailIcon from '@mui/icons-material/Email'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
-import EmailIcon from '@mui/icons-material/Email'
 import Container from '@mui/material/Container'
+import Typography from '@mui/material/Typography'
 
 import { useGSAP } from '@gsap/react'
-import { useTranslation } from 'react-i18next'
 import gsap from 'gsap'
+import { useTranslation } from 'react-i18next'
 
 export default function ContactSection({ setAnimationEnded }) {
   const { t } = useTranslation('landing')
@@ -36,9 +36,7 @@ export default function ContactSection({ setAnimationEnded }) {
 
   return (
     <Container className='text-center contact-container' maxWidth='tablet'>
-      <div
-        className='flex flex-column contact-box'
-        id='contact-box'>
+      <div className='flex flex-column contact-box' id='contact-box'>
         <Typography variant='h5' className='contact-title'>
           {t('contact.title')}
         </Typography>

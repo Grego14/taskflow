@@ -1,23 +1,23 @@
-import { useState, Suspense, lazy, useEffect } from 'preact/compat'
 import Box from '@mui/material/Box'
-import Typography from '@mui/material/Typography'
 import Button from '@mui/material/Button'
+import Typography from '@mui/material/Typography'
+import { Suspense, lazy, useEffect, useState } from 'preact/compat'
 
 import CircleLoader from '@components/reusable/loaders/CircleLoader'
 import AnimatedTitle from '@components/reusable/texts/AnimatedTitle'
 
 const DemoWrapper = lazy(() => import('./DemoDashboard'))
 
-import { useTranslation } from 'react-i18next'
-import useLoadResources from '@hooks/useLoadResources'
 import { useGSAP } from '@gsap/react'
+import useLoadResources from '@hooks/useLoadResources'
+import { useTranslation } from 'react-i18next'
 
+import { userId, username } from '@context/MockContext/utils'
+import useAuth from '@hooks/useAuth'
+import useUser from '@hooks/useUser'
 import { getItem, setItem } from '@utils/storage'
 import gsap from 'gsap'
-import { username, userId } from '@context/MockContext/utils'
-import useAuth from '@hooks/useAuth'
 import { useNavigate } from 'react-router-dom'
-import useUser from '@hooks/useUser'
 
 const bulletPoints = [
   'localStorageInfo',
@@ -25,7 +25,7 @@ const bulletPoints = [
   'limitedFeatures',
   'privateData'
 ]
-const usedResources = [ 'preview', 'tasks', 'projects', 'ui' ]
+const usedResources = ['preview', 'tasks', 'projects', 'ui']
 
 export default function Preview() {
   const { t } = useTranslation(['common', 'preview'])
@@ -36,7 +36,8 @@ export default function Preview() {
   const previewData = getItem('preview', { playInitialAnim: true })
 
   const [showIntro, setShowIntro] = useState(
-    previewData.playInitialAnim === true)
+    previewData.playInitialAnim === true
+  )
   const [titleDone, setTitleDone] = useState(!showIntro)
 
   const loadingResources = useLoadResources(usedResources)
@@ -44,39 +45,45 @@ export default function Preview() {
   // do not allow users with account enter this page
   useEffect(() => {
     if (currentUser?.uid) navigate('/home')
-  }, [currentUser?.uid])
+  }, [currentUser?.uid, navigate])
 
-  useGSAP(() => {
-    if (!titleDone || !showIntro) return
+  useGSAP(
+    () => {
+      if (!titleDone || !showIntro) return
 
-    const tl = gsap.timeline()
+      const tl = gsap.timeline()
 
-    gsap.set('.preview-bullet', { x: -20, y: 20 })
-    gsap.set('#start-demo-btn', { y: 10 })
+      gsap.set('.preview-bullet', { x: -20, y: 20 })
+      gsap.set('#start-demo-btn', { y: 10 })
 
-    tl.to('.preview-bullet', {
-      opacity: 1,
-      x: 0,
-      y: 0,
-      stagger: 0.15,
-      ease: 'power2.out'
-    })
-      .to('#start-demo-btn', {
+      tl.to('.preview-bullet', {
         opacity: 1,
+        x: 0,
         y: 0,
-        duration: 0.5,
-        ease: 'back.out(1.7)'
-      }, '-=0.2')
-  }, { dependencies: [titleDone] })
-
-  if (loadingResources)
-    return <CircleLoader text={t('common:loading')} />
-
-  if (!showIntro) return (
-    <Suspense fallback={null}>
-      <DemoWrapper />
-    </Suspense>
+        stagger: 0.15,
+        ease: 'power2.out'
+      }).to(
+        '#start-demo-btn',
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.5,
+          ease: 'back.out(1.7)'
+        },
+        '-=0.2'
+      )
+    },
+    { dependencies: [titleDone] }
   )
+
+  if (loadingResources) return <CircleLoader text={t('common:loading')} />
+
+  if (!showIntro)
+    return (
+      <Suspense fallback={null}>
+        <DemoWrapper />
+      </Suspense>
+    )
 
   const handleStart = () => {
     const projectId = 'demo-project-id'
@@ -85,23 +92,25 @@ export default function Preview() {
       uid: userId,
       preferences,
       profile: { ...profile, username },
-      metadata: { 
-        ...metadata, 
+      metadata: {
+        ...metadata,
         lastEditedProject: projectId,
-        lastEditedProjectOwner: username 
+        lastEditedProjectOwner: username
       }
     }
 
     setItem('preview', {
       playInitialAnim: false,
       tasks: [],
-      projects: [{
-        id: projectId,
-        name: 'My Project (Demo)',
-        members: [{ id: userId, username, avatar: '', email: null }],
-        isArchived: false,
-        createdBy: userId
-      }],
+      projects: [
+        {
+          id: projectId,
+          name: 'My Project (Demo)',
+          members: [{ id: userId, username, avatar: '', email: null }],
+          isArchived: false,
+          createdBy: userId
+        }
+      ],
       user: fullUserDemo
     })
 
@@ -115,7 +124,6 @@ export default function Preview() {
       className='flex flex-column flex-center'
       sx={{ px: 3, gap: 3 }}
       height='100dvh'>
-
       {showIntro && (
         <AnimatedTitle
           id='preview-title'
@@ -125,7 +133,8 @@ export default function Preview() {
         </AnimatedTitle>
       )}
 
-      <Box className='flex flex-column flex-center text-center'
+      <Box
+        className='flex flex-column flex-center text-center'
         sx={{ gap: 2, minHeight: '160px', mx: 'auto' }}>
         {bulletPoints.map(point => (
           <Typography

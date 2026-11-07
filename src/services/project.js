@@ -1,8 +1,8 @@
-import { dbAdapter } from './dbAdapter'
 import { getFriendlyErrorFormatted } from '@utils/getFriendlyAuthError'
+import { dbAdapter } from './dbAdapter'
 
 const projectService = {
-  getDrawerQueries: (uid) => ({
+  getDrawerQueries: uid => ({
     userProjects: dbAdapter.getQuery(
       dbAdapter.getColRef('users', uid, 'projects'),
       ['drawerData', '==', true]
@@ -15,7 +15,7 @@ const projectService = {
   }),
 
   // used on the drawer toolbar
-  formatDrawerProject: (doc) => {
+  formatDrawerProject: doc => {
     const data = doc.data()
     return {
       id: doc.id,
@@ -24,7 +24,7 @@ const projectService = {
     }
   },
 
-  getProjectsQueries: (uid) => ({
+  getProjectsQueries: uid => ({
     userProjects: dbAdapter.getGroupQuery(
       'projects',
       ['createdBy', '==', uid],
@@ -39,7 +39,7 @@ const projectService = {
   }),
 
   // used /projects
-  formatProject: (doc) => ({
+  formatProject: doc => ({
     id: doc.id,
     ...doc.data()
   }),
@@ -64,8 +64,9 @@ const projectService = {
 
       // get tasks
       await onProgress({ stage: 'tasks' })
-      const tasksSnapshot =
-        await dbAdapter.getDocs(dbAdapter.getColRef(projectRef, 'tasks'))
+      const tasksSnapshot = await dbAdapter.getDocs(
+        dbAdapter.getColRef(projectRef, 'tasks')
+      )
       const totalTasks = tasksSnapshot.size
       let totalSubtasks = 0
 
@@ -75,8 +76,9 @@ const projectService = {
         batch.delete(taskDoc.ref)
 
         // get subtasks
-        const subtasksSnap =
-          await dbAdapter.getDocs(dbAdapter.getColRef(taskDoc.ref, 'subtasks'))
+        const subtasksSnap = await dbAdapter.getDocs(
+          dbAdapter.getColRef(taskDoc.ref, 'subtasks')
+        )
         totalSubtasks += subtasksSnap.size
 
         for (const subtaskDoc of subtasksSnap.docs) {
@@ -103,7 +105,12 @@ const projectService = {
     if (!uid || !projectId) throw new Error('archiveProject: Missing params')
 
     try {
-      const projectRef = dbAdapter.getDocRef('users', uid, 'projects', projectId)
+      const projectRef = dbAdapter.getDocRef(
+        'users',
+        uid,
+        'projects',
+        projectId
+      )
 
       await dbAdapter.update(projectRef, {
         isArchived: true,
@@ -118,11 +125,17 @@ const projectService = {
   },
 
   abandonProject: async (uid, projectId, ownerId) => {
-    if (!uid || !projectId || !ownerId) throw new Error('abandonProject: Missing params')
+    if (!uid || !projectId || !ownerId)
+      throw new Error('abandonProject: Missing params')
 
     try {
       const batch = dbAdapter.createBatch()
-      const projectRef = dbAdapter.getDocRef('users', ownerId, 'projects', projectId)
+      const projectRef = dbAdapter.getDocRef(
+        'users',
+        ownerId,
+        'projects',
+        projectId
+      )
       const projectDrawerRef = dbAdapter.getDocRef(
         'users',
         ownerId,
@@ -143,14 +156,15 @@ const projectService = {
   },
 
   // fetch members profile data
-  getProjectMembers: async (membersIds) => {
+  getProjectMembers: async membersIds => {
     if (!membersIds || membersIds.length === 0) return null
 
     try {
-      const q = dbAdapter.getQuery(
-        dbAdapter.getColRef('users'),
-        [dbAdapter.documentId(), 'in', membersIds]
-      )
+      const q = dbAdapter.getQuery(dbAdapter.getColRef('users'), [
+        dbAdapter.documentId(),
+        'in',
+        membersIds
+      ])
 
       const snapshot = await dbAdapter.getDocs(q)
 
@@ -168,9 +182,14 @@ const projectService = {
 
   // listen to a single project and verify access
   listenProject: (ownerId, projectId, callback) => {
-    const projectRef = dbAdapter.getDocRef('users', ownerId, 'projects', projectId)
+    const projectRef = dbAdapter.getDocRef(
+      'users',
+      ownerId,
+      'projects',
+      projectId
+    )
 
-    return dbAdapter.listen(projectRef, (snap) => {
+    return dbAdapter.listen(projectRef, snap => {
       if (snap.exists()) {
         callback({ id: snap.id, ...snap.data(), exists: true })
       } else {
@@ -181,7 +200,8 @@ const projectService = {
 
   updateProject: async (uid, projectId, data = {}) => {
     if (!uid || !projectId) throw new Error('updateProject: Missing params')
-    if (Object.keys(data).length < 1) throw new Error('updateProject: Data is empty')
+    if (Object.keys(data).length < 1)
+      throw new Error('updateProject: Data is empty')
 
     // protected fields check
     if (data.owner || data.createdAt) {
@@ -190,11 +210,21 @@ const projectService = {
 
     try {
       const batch = dbAdapter.createBatch()
-      const projectRef = dbAdapter.getDocRef('users', uid, 'projects', projectId)
+      const projectRef = dbAdapter.getDocRef(
+        'users',
+        uid,
+        'projects',
+        projectId
+      )
 
       // sync members with drawer if updated
       if (data.members) {
-        const drawerRef = dbAdapter.getDocRef('users', uid, 'projects', `${projectId}_drawer`)
+        const drawerRef = dbAdapter.getDocRef(
+          'users',
+          uid,
+          'projects',
+          `${projectId}_drawer`
+        )
         batch.update(drawerRef, { members: data.members })
       }
 
@@ -238,7 +268,10 @@ const projectService = {
       batch.update(projectRef, { id: projectRef.id })
 
       // create the simplified drawer document for performance
-      const drawerRef = dbAdapter.getDocRef(projectCol, `${projectRef.id}_drawer`)
+      const drawerRef = dbAdapter.getDocRef(
+        projectCol,
+        `${projectRef.id}_drawer`
+      )
 
       batch.set(drawerRef, {
         id: projectRef.id,

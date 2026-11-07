@@ -1,12 +1,12 @@
-import Typography from '@mui/material/Typography'
 import Avatar from '@mui/material/Avatar'
 import Paper from '@mui/material/Paper'
+import Typography from '@mui/material/Typography'
 import MetricGauge from './MetricGauge'
 
-import { useRef } from 'preact/compat'
-import { alpha, useTheme } from '@mui/material/styles'
 import useCounterAnimation from '@hooks/animations/useCounterAnimation'
 import useProject from '@hooks/useProject'
+import { alpha, useTheme } from '@mui/material/styles'
+import { useRef } from 'preact/compat'
 import { useTranslation } from 'react-i18next'
 
 const MetricRow = ({ count, text, color }) => {
@@ -30,17 +30,24 @@ export default function MemberStatCard({ member, metrics }) {
 
   const { completedTasks, assignedTasks, completedOnTime } = metrics
 
-  const efficiency = completedTasks.total > 0
-    ? (completedOnTime.total / completedTasks.total) * 100
-    : 0
+  const efficiency =
+    completedTasks.total > 0
+      ? (completedOnTime.total / completedTasks.total) * 100
+      : 0
 
-  const animatedCompleted = useCounterAnimation(completedTasks.total, { trigger: cardRef })
-  const animatedPending = useCounterAnimation(assignedTasks.pending, { trigger: cardRef })
-  const animatedOverdue = useCounterAnimation(assignedTasks.overdue, { trigger: cardRef })
+  const animatedCompleted = useCounterAnimation(completedTasks.total, {
+    trigger: cardRef
+  })
+  const animatedPending = useCounterAnimation(assignedTasks.pending, {
+    trigger: cardRef
+  })
+  const animatedOverdue = useCounterAnimation(assignedTasks.overdue, {
+    trigger: cardRef
+  })
 
   const isOwner = member?.id === data?.createdBy
 
-  if(!member) return null
+  if (!member) return null
 
   return (
     <Paper
@@ -65,15 +72,18 @@ export default function MemberStatCard({ member, metrics }) {
         <MetricRow
           count={animatedCompleted}
           text={t('metrics.completed')}
-          color='success' />
+          color='success'
+        />
         <MetricRow
           count={animatedPending}
           text={t('metrics.pending')}
-          color='info' />
+          color='info'
+        />
         <MetricRow
           count={animatedOverdue}
           text={t('metrics.overdue')}
-          color='error' />
+          color='error'
+        />
       </div>
 
       <div className='gauge-container-wrapper flex'>

@@ -1,19 +1,19 @@
-import Box from '@mui/material/Box'
-import Typography from '@mui/material/Typography'
-import Button from '@mui/material/Button'
-import IconButton from '@mui/material/IconButton'
-import DeleteIcon from '@mui/icons-material/DeleteOutline'
+import ArrowForwardIcon from '@mui/icons-material/ArrowForwardIos'
 import CheckIcon from '@mui/icons-material/CheckCircleOutline'
+import DeleteIcon from '@mui/icons-material/DeleteOutline'
 import ClearIcon from '@mui/icons-material/HighlightOff'
 import ErrorIcon from '@mui/icons-material/ReportProblemOutlined'
-import ArrowForwardIcon from '@mui/icons-material/ArrowForwardIos'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import IconButton from '@mui/material/IconButton'
+import Typography from '@mui/material/Typography'
 
-import { useTranslation } from 'react-i18next'
 import { useRef } from 'preact/compat'
+import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 
-import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
+import gsap from 'gsap'
 
 const itemStyles = theme => ({
   display: 'flex',
@@ -43,17 +43,17 @@ const missingProjectTextStyles = { fontWeight: 600 }
 
 const btnsContainerStyles = { display: 'flex', gap: 1 }
 const declineBtnStyles = { borderRadius: '8px', textTransform: 'none' }
-const acceptBtnStyles = { 
-  borderRadius: '8px', 
-  textTransform: 'none', 
+const acceptBtnStyles = {
+  borderRadius: '8px',
+  textTransform: 'none',
   boxShadow: 'none'
 }
 
 const declinedStatusStyles = { fontStyle: 'italic', opacity: 0.6 }
 
-const notifHeaderStyles = { 
-  justifyContent: 'space-between', 
-  alignItems: 'flex-start' 
+const notifHeaderStyles = {
+  justifyContent: 'space-between',
+  alignItems: 'flex-start'
 }
 const notifTypeStyles = {
   fontWeight: 800,
@@ -110,12 +110,12 @@ export default function NotificationItem({
       gsap.fromTo(
         cardRef.current,
         { x: -4 },
-        { 
-          x: 0, 
-          duration: 0.1, 
-          repeat: 3, 
-          yoyo: true, 
-          ease: 'linear', 
+        {
+          x: 0,
+          duration: 0.1,
+          repeat: 3,
+          yoyo: true,
+          ease: 'linear',
           clearProps: 'x'
         }
       )
@@ -135,10 +135,7 @@ export default function NotificationItem({
       className='notification-card'
       sx={itemStyles}>
       <Box className='flex' sx={notifHeaderStyles}>
-        <Typography
-          variant='caption'
-          color='primary'
-          sx={notifTypeStyles}>
+        <Typography variant='caption' color='primary' sx={notifTypeStyles}>
           {t(`types.${type}.title`)}
         </Typography>
         <IconButton
@@ -187,9 +184,7 @@ export default function NotificationItem({
       )}
 
       {declined && (
-        <Typography
-          variant='caption'
-          sx={declinedStatusStyles}>
+        <Typography variant='caption' sx={declinedStatusStyles}>
           {t('status.declined')}
         </Typography>
       )}

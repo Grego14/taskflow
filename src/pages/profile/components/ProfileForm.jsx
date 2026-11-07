@@ -2,7 +2,6 @@ import ProfileFields from './ProfileFields'
 
 import useAuth from '@hooks/useAuth'
 import useUser from '@hooks/useUser'
-import { useColorScheme } from '@mui/material/styles'
 import { useCallback, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
@@ -23,7 +22,6 @@ export default function ProfileForm({ setSaveBtnDisabled, fields }) {
   const { preferences, profile, setUser, update, uid } = useUser()
   const { currentUser } = useAuth()
   const { t, i18n } = useTranslation('ui')
-  const { setMode } = useColorScheme()
 
   const [initialValues, setInitialValues] = useState({
     theme: preferences?.theme || 'light',
@@ -66,8 +64,9 @@ export default function ProfileForm({ setSaveBtnDisabled, fields }) {
       const { theme, lang, username, avatar } = data
 
       // load the function only when is going to be used
-      const {default: validateProfileFields} = 
-        await import('@pages/profile/validateProfileFields')
+      const { default: validateProfileFields } = await import(
+        '@pages/profile/validateProfileFields'
+      )
 
       const status = await validateProfileFields({
         initial: initialValues,
@@ -92,8 +91,9 @@ export default function ProfileForm({ setSaveBtnDisabled, fields }) {
 
       if (invalidFields) return
 
-      setUser((prev) => ({
-        ...prev, preferences: {
+      setUser(prev => ({
+        ...prev,
+        preferences: {
           ...prev.preferences,
           theme,
           lang
@@ -121,15 +121,14 @@ export default function ProfileForm({ setSaveBtnDisabled, fields }) {
       }
     },
     [
-      currentUser,
       errors?.avatar,
-      i18n.changeLanguage,
       initialValues,
       setError,
       t,
-      setMode,
       updateAvatar,
-      setSaveBtnDisabled
+      setSaveBtnDisabled,
+      update,
+      setUser
     ]
   )
 

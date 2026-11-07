@@ -12,29 +12,29 @@
   gap: calc(var(--mui-spacing) * 0.5);
   cursor: pointer;
   user-select: none;
-  
+
   font: var(--mui-font-caption);
   font-weight: var(--font-weight);
-  
+
   font-variant-numeric: tabular-nums;
   min-width: var(--btn-size);
   min-height: var(--btn-size);
   text-transform: none;
 
-  transition: background-color 
-    var(--mui-transitions-duration-shortest) 
+  transition: background-color var(--mui-transitions-duration-shortest)
     var(--mui-transitions-easing-easeInOut);
 
   &:hover {
     background-color: var(--bg-hover);
 
-    .smart-action-icon { opacity: 1 }
+    .smart-action-icon {
+      opacity: 1;
+    }
   }
 
   .smart-action-icon {
     font-size: 12px;
-    transition: opacity 
-      var(--mui-transitions-duration-shorter) 
+    transition: opacity var(--mui-transitions-duration-shorter)
       var(--mui-transitions-easing-easeInOut);
     opacity: var(--play-opacity);
   }

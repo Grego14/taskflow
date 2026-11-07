@@ -4,9 +4,9 @@ import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Typography from '@mui/material/Typography'
 
+import useUser from '@hooks/useUser'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import useUser from '@hooks/useUser'
 import { useNavigate } from 'react-router-dom'
 
 import * as authService from '@services/auth'

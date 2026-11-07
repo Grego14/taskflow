@@ -1,12 +1,11 @@
-import { forwardRef } from 'preact/compat'
 import Box from '@mui/material/Box'
+import { forwardRef } from 'preact/compat'
 
 const ButtonListItem = forwardRef(function ButtonListItem(props, ref) {
   const {
     children,
     component: Button,
-    'aria-label':
-    label,
+    'aria-label': label,
     btnProps,
     ...otherProps
   } = props
@@ -14,7 +13,9 @@ const ButtonListItem = forwardRef(function ButtonListItem(props, ref) {
   return (
     // otherProps can be Tooltip/container props
     <Box component='li' {...otherProps} ref={ref}>
-      <Button aria-label={label} {...btnProps}>{children}</Button>
+      <Button aria-label={label} {...btnProps}>
+        {children}
+      </Button>
     </Box>
   )
 })

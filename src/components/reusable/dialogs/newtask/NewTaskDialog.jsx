@@ -2,16 +2,17 @@ import Box from '@mui/material/Box'
 import Grow from '@mui/material/Grow'
 import Typography from '@mui/material/Typography'
 
+import AssignMembers from '@components/reusable/tasks/AssignMembers'
 import Dialog from '../Dialog'
+import AssignedMembers from './components/AssignedMembers'
 import TaskDate from './components/TaskDate'
 import TaskLabels from './components/TaskLabels'
 import TaskPriority from './components/TaskPriority'
 import TaskTitle from './components/TaskTitle'
-import AssignMembers from '@components/reusable/tasks/AssignMembers'
-import AssignedMembers from './components/AssignedMembers'
 
 import useAuth from '@hooks/useAuth'
 import useProject from '@hooks/useProject'
+import useTasks from '@hooks/useTasks'
 import useUser from '@hooks/useUser'
 import {
   memo,
@@ -22,7 +23,6 @@ import {
   useState
 } from 'react'
 import { useTranslation } from 'react-i18next'
-import useTasks from '@hooks/useTasks'
 
 import { priorities } from '@/constants'
 import {
@@ -30,8 +30,8 @@ import {
   getFriendlyErrorFormatted
 } from '@utils/getFriendlyAuthError.js'
 
-import { initialValue, tasksReducer } from './tasksReducer.js'
 import { setGlobalAlert } from '@stores/ui'
+import { initialValue, tasksReducer } from './tasksReducer.js'
 
 const TITLE_REGEX = /^[\p{L}\d_()\s!@#%^&*+|\]\[;,.<>:?¿-]{3,}/u
 
@@ -72,7 +72,7 @@ export default memo(function NewTaskDialog({
   const [titleError, setTitleError] = useState(null)
   const [task, dispatch] = useReducer(tasksReducer, initialValue)
 
-  const updateField = (field) => (payload) => dispatch({ type: field, payload })
+  const updateField = field => payload => dispatch({ type: field, payload })
 
   const handleAccept = useCallback(async () => {
     if (!TITLE_REGEX.test(task.title)) {
@@ -81,7 +81,7 @@ export default memo(function NewTaskDialog({
     }
 
     const passNonPreviewValidations = id && projectData?.createdBy && !isOffline
-    if (!isPreview && (!passNonPreviewValidations)) return
+    if (!isPreview && !passNonPreviewValidations) return
 
     try {
       const taskDataFormatted = await formatTaskData(task, subtask, taskId)
@@ -109,10 +109,14 @@ export default memo(function NewTaskDialog({
     task,
     taskId,
     actions,
-    t
+    t,
+    isPreview,
+    setOpen,
+    preferences.lang,
+    onCreate
   ])
 
-  const handleMemberRemoval = (memberId) => {
+  const handleMemberRemoval = memberId => {
     const newMembers = task.members.filter(id => id !== memberId)
     updateField('members')(newMembers)
   }
@@ -160,7 +164,7 @@ export default memo(function NewTaskDialog({
           className='flex'
           gap={1}
           alignItems={task.members.length <= 0 ? 'center' : 'start'}
-          justifyContent='space-between' >
+          justifyContent='space-between'>
           <Box className='flex flex-column' gap={1.5}>
             {task.members.length > 0 && (
               <Typography variant='subtitle1'>

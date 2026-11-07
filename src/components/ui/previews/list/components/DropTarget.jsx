@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from 'react'
 import { dropTargetForElements } from '@atlaskit/pragmatic-drag-and-drop/element/adapter'
+import { useEffect, useRef, useState } from 'react'
 
 export default function DropTarget({ dropId, render, canMove, onMove }) {
   const [dropState, setDropState] = useState('idle')
@@ -14,7 +14,7 @@ export default function DropTarget({ dropId, render, canMove, onMove }) {
       canDrop: ({ source }) => canMove(dropId, source),
       onDragEnter: () => setDropState('is-over'),
       onDragLeave: () => setDropState('idle'),
-      onDrop: (args) => {
+      onDrop: args => {
         setDropState('idle')
         onMove(args)
       }

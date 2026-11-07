@@ -1,6 +1,6 @@
-import { Suspense, lazy, useCallback, useState } from 'react'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
+import { Suspense, lazy, useCallback, useState } from 'react'
 import ProjectMember from './ProjectMember'
 import ProjectMemberSkeleton from './ProjectMemberSkeleton'
 
@@ -12,8 +12,9 @@ import notificationService from '@services/notification'
 
 import { setGlobalAlert } from '@stores/ui'
 
-const KickMemberDialog = lazy(() => 
-  import('@components/reusable/dialogs/kickMember/KickMemberDialog'))
+const KickMemberDialog = lazy(
+  () => import('@components/reusable/dialogs/kickMember/KickMemberDialog')
+)
 
 export default function ProjectMembers() {
   const { uid, profile } = useUser()
@@ -26,7 +27,7 @@ export default function ProjectMembers() {
   const isOwner = data?.createdBy === uid
   const isArchived = data?.isArchived
 
-  const handleOpenDialog = (e) => {
+  const handleOpenDialog = e => {
     const id = e.currentTarget?.dataset?.memberId
 
     if (!projectMembers.some(m => m.id === id)) return
@@ -37,11 +38,16 @@ export default function ProjectMembers() {
 
   const removeMember = async () => {
     try {
-      const { default: removeUserAssignments } = 
-        await import('@services/project/removeUserAssignments')
+      const { default: removeUserAssignments } = await import(
+        '@services/project/removeUserAssignments'
+      )
 
       await removeUserAssignments(memberId, data.createdBy, data.id)
-      await notificationService.sendKicked(memberId, profile.username, data.name)
+      await notificationService.sendKicked(
+        memberId,
+        profile.username,
+        data.name
+      )
 
       setGlobalAlert({ message: t('notifications.memberKicked') })
       setOpen(false)
@@ -59,23 +65,22 @@ export default function ProjectMembers() {
         {t('settings.membersLabel')}
       </Typography>
 
-      {Array.isArray(projectMembers) ? (
-        projectMembers.map(pMember => (
-          pMember?.id && (
-            <ProjectMember
-              key={pMember.id}
-              data={pMember}
-              isOwner={isOwner}
-              isArchived={isArchived}
-              isUser={pMember.id === uid}
-              removeMember={handleOpenDialog}
-              owner={data?.createdBy}
-            />
+      {Array.isArray(projectMembers)
+        ? projectMembers.map(
+            pMember =>
+              pMember?.id && (
+                <ProjectMember
+                  key={pMember.id}
+                  data={pMember}
+                  isOwner={isOwner}
+                  isArchived={isArchived}
+                  isUser={pMember.id === uid}
+                  removeMember={handleOpenDialog}
+                  owner={data?.createdBy}
+                />
+              )
           )
-        ))
-      ) : (
-        data?.members?.map(mId => <ProjectMemberSkeleton key={mId} />)
-      )}
+        : data?.members?.map(mId => <ProjectMemberSkeleton key={mId} />)}
 
       {open && (
         <Suspense fallback={null}>

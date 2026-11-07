@@ -1,11 +1,11 @@
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 
+import useCounterAnimation from '@hooks/animations/useCounterAnimation'
 import useApp from '@hooks/useApp'
 import useProject from '@hooks/useProject'
-import { useTranslation } from 'react-i18next'
-import useCounterAnimation from '@hooks/animations/useCounterAnimation'
 import { useRef } from 'preact/hooks'
+import { useTranslation } from 'react-i18next'
 
 export default function ProjectPercentage() {
   const { t } = useTranslation('projects')

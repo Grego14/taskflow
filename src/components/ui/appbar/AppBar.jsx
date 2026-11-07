@@ -1,9 +1,9 @@
 import MUIAppBar from '@mui/material/AppBar'
 
-import useApp from '@hooks/useApp'
-import { forwardRef, useRef } from 'preact/compat'
-import useLayout from '@hooks/useLayout'
 import useAppBarAnimation from '@hooks/animations/useAppBarAnimation'
+import useApp from '@hooks/useApp'
+import useLayout from '@hooks/useLayout'
+import { forwardRef, useRef } from 'preact/compat'
 
 import { APPBAR_HEIGHT } from '@/constants'
 
@@ -32,9 +32,9 @@ const AppBar = forwardRef((props, ref) => {
     noRotate,
     top,
     animateY,
-    // bar doesn't contain texts so we don't try to animate them (avoid 
+    // bar doesn't contain texts so we don't try to animate them (avoid
     // gsap warning)
-    noTexts 
+    noTexts
   })
 
   const classNames = [
@@ -43,7 +43,9 @@ const AppBar = forwardRef((props, ref) => {
     top ? 'app-bar--top' : '',
     withDrawer ? 'app-bar--with-drawer' : '',
     className
-  ].filter(Boolean).join(' ')
+  ]
+    .filter(Boolean)
+    .join(' ')
 
   const translateFrom = `${top ? '-' : ''}${height}`
 
@@ -54,7 +56,7 @@ const AppBar = forwardRef((props, ref) => {
       variant='outlined'
       elevation={0}
       className={classNames}
-      style={{ 
+      style={{
         '--appbar-shadow': shadow,
         '--appbar-translate-from': translateFrom,
         ...style

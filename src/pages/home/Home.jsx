@@ -1,4 +1,4 @@
-import { useRef, useMemo } from 'preact/hooks'
+import { useMemo, useRef } from 'preact/hooks'
 
 import Link from '@components/reusable/Link'
 import Box from '@mui/material/Box'
@@ -64,44 +64,54 @@ export default function Home() {
   const links = useMemo(() => {
     return HOME_LINKS_SCHEMA.map(link => {
       if (link.to === 'DYNAMIC_LAST_EDITED') {
-        return lastEdited 
-          ? { ...link, to: `/projects/${owner}/${lastEdited}` } 
-          : null 
+        return lastEdited
+          ? { ...link, to: `/projects/${owner}/${lastEdited}` }
+          : null
       }
       return link
     })
   }, [owner, lastEdited])
 
-  useGSAP(() => {
-    if (!userLoaded || !username) return
+  useGSAP(
+    () => {
+      if (!userLoaded || !username) return
 
-    document.fonts.ready.then(() => {
-      const tl = gsap.timeline()
+      document.fonts.ready.then(() => {
+        const tl = gsap.timeline()
 
-      tl.to('#welcome', { autoAlpha: 1 })
-        .to('#username', {
-          duration: 1.2,
-          autoAlpha: 1,
-          scrambleText: {
-            text: username,
-            chars: 'upperCase',
-            speed: 0.4,
-            revealDelay: 0.2
+        tl.to('#welcome', { autoAlpha: 1 }).to(
+          '#username',
+          {
+            duration: 1.2,
+            autoAlpha: 1,
+            scrambleText: {
+              text: username,
+              chars: 'upperCase',
+              speed: 0.4,
+              revealDelay: 0.2
+            },
+            clearProps: 'all'
           },
-          clearProps: 'all'
-        }, '<')
+          '<'
+        )
 
-      tl.fromTo('.home-link', { y: 15 },
-        {
-          y: 0,
-          autoAlpha: 1,
-          duration: 0.6,
-          stagger: 0.15,
-          ease: 'expo.out',
-          clearProps: 'transform'
-        }, '<0.25')
-    })
-  }, { dependencies: [username, userLoaded], scope: containerRef })
+        tl.fromTo(
+          '.home-link',
+          { y: 15 },
+          {
+            y: 0,
+            autoAlpha: 1,
+            duration: 0.6,
+            stagger: 0.15,
+            ease: 'expo.out',
+            clearProps: 'transform'
+          },
+          '<0.25'
+        )
+      })
+    },
+    { dependencies: [username, userLoaded], scope: containerRef }
+  )
 
   return (
     <Box
@@ -114,31 +124,29 @@ export default function Home() {
         id='welcome'
         aria-hidden='true'>
         {t('common:welcome')}{' '}
-        <Typography
-          component='span'
-          sx={getUsernameStyles}
-          id='username'>
+        <Typography component='span' sx={getUsernameStyles} id='username'>
           {username}
         </Typography>
       </Typography>
 
       <span className='sr-only'>
-        {t('common:welcome')}{' '}{username}
+        {t('common:welcome')} {username}
       </span>
 
       <Box className='flex flex-column flex-center' gap={2} mt={3}>
-        {links.map((link) => link && (
-          <Link
-            key={link.to}
-            to={link.to}
-            className='home-link hide-element'
-            sx={linkStaticStyles}
-            color='primary.contrast'>
-            <Typography>
-              {t(`home.${link.key}`)}
-            </Typography>
-          </Link>
-        ))}
+        {links.map(
+          link =>
+            link && (
+              <Link
+                key={link.to}
+                to={link.to}
+                className='home-link hide-element'
+                sx={linkStaticStyles}
+                color='primary.contrast'>
+                <Typography>{t(`home.${link.key}`)}</Typography>
+              </Link>
+            )
+        )}
       </Box>
     </Box>
   )

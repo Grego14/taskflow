@@ -3,8 +3,8 @@ import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 
 import useTasks from '@hooks/useTasks'
-import { useTranslation } from 'react-i18next'
 import { taskRegistry } from '@stores/task'
+import { useTranslation } from 'react-i18next'
 
 export default function ParentTaskLink({ parentTask }) {
   const { t } = useTranslation('tasks')

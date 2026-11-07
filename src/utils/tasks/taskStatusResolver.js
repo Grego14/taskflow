@@ -1,7 +1,7 @@
 export default function resolveTaskStatusUpdate(
-  taskData, 
-  nextStatus, 
-  uid, 
+  taskData,
+  nextStatus,
+  uid,
   isPreview
 ) {
   const isDone = nextStatus === 'done'
@@ -13,10 +13,10 @@ export default function resolveTaskStatusUpdate(
   // wasOnTime metric logic (not used on the app demo)
   let wasOnTime = null
   if (!isPreview && nextStatus === 'done' && taskData?.dueDate) {
-    const dueDate = taskData.dueDate?.seconds 
-      ? new Date(taskData.dueDate.seconds * 1000) 
+    const dueDate = taskData.dueDate?.seconds
+      ? new Date(taskData.dueDate.seconds * 1000)
       : new Date(taskData.dueDate)
-    
+
     wasOnTime = now <= dueDate
   }
 

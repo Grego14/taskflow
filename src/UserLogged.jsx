@@ -1,5 +1,5 @@
+import { Suspense, lazy, useCallback, useEffect, useRef } from 'react'
 import { Outlet } from 'react-router-dom'
-import { lazy, useEffect, useRef, Suspense, useCallback } from 'react'
 
 import useApp from '@hooks/useApp'
 import useAuth from '@hooks/useAuth'

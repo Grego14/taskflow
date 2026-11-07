@@ -16,7 +16,7 @@ export default function ProjectDescription({
   const { t } = useTranslation('projects')
   const [error, setError] = useState('')
 
-  const handleValidation = (e) => {
+  const handleValidation = e => {
     const { hasError, errorMsg } = validateProjectField(e.target.value, {
       t,
       type: 'description'

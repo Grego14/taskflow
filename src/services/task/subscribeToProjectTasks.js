@@ -1,6 +1,6 @@
 import { dbAdapter } from '../dbAdapter.js'
 
-/** 
+/**
  * @param {string} user - project owner id
  * @param {string} project - project id
  * @param {string} onUpdate - called on the initial load and when there's a change
@@ -9,12 +9,12 @@ import { dbAdapter } from '../dbAdapter.js'
  * document change
  *
  * subscribe to a project task and subtasks documents
-*/
-export default function subscribeToProjectTasks({ 
-  user, 
-  project, 
-  onUpdate, 
-  onError, 
+ */
+export default function subscribeToProjectTasks({
+  user,
+  project,
+  onUpdate,
+  onError,
   onChange
 }) {
   if (!user || !project) return null
@@ -36,35 +36,39 @@ export default function subscribeToProjectTasks({
   ]
 
   const unsubTasks = dbAdapter.listen(
-    dbAdapter.getGroupQuery('tasks', ...filters), 
-    (snap) => {
+    dbAdapter.getGroupQuery('tasks', ...filters),
+    snap => {
+      if (tasksLoaded && onChange) onChange('tasks', snap.docChanges())
 
-    if (tasksLoaded && onChange) onChange('tasks', snap.docChanges())
+      for (const doc of snap.docs) {
+        const data = doc.data()
+        rawRegistry.set(doc.id, { ...data, id: doc.id })
+      }
 
-    for (const doc of snap.docs) {
-      const data = doc.data()
-      rawRegistry.set(doc.id, { ...data, id: doc.id })
-    }
-
-    tasksLoaded = true
-    emit()
-  }, onError)
+      tasksLoaded = true
+      emit()
+    },
+    onError
+  )
 
   const unsubSubtasks = dbAdapter.listen(
-    dbAdapter.getGroupQuery('subtasks', ...filters), 
-    (snap) => {
+    dbAdapter.getGroupQuery('subtasks', ...filters),
+    snap => {
+      if (subtasksLoaded && onChange) onChange('subtasks', snap.docChanges())
 
-    if (subtasksLoaded && onChange)
-      onChange('subtasks', snap.docChanges())
+      for (const doc of snap.docs) {
+        const parentId = doc.ref.parent.parent.id
+        rawRegistry.set(doc.id, { ...doc.data(), id: doc.id, parentId })
+      }
 
-    for (const doc of snap.docs) {
-      const parentId = doc.ref.parent.parent.id
-      rawRegistry.set(doc.id, { ...doc.data(), id: doc.id, parentId })
-    }
+      subtasksLoaded = true
+      emit()
+    },
+    onError
+  )
 
-    subtasksLoaded = true
-    emit()
-  }, onError)
-
-  return () => { unsubTasks(); unsubSubtasks() }
+  return () => {
+    unsubTasks()
+    unsubSubtasks()
+  }
 }

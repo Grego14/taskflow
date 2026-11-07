@@ -1,10 +1,10 @@
 import { lazy } from 'preact/compat'
-import { Routes, Route, Outlet } from 'react-router-dom'
+import { Outlet, Route, Routes } from 'react-router-dom'
 
-import UserLogged from './UserLogged'
+import LayoutManager from '@components/ui/layoutmanager/LayoutManager'
 import LayoutProvider from '@context/LayoutContext'
 import NotificationsProvider from '@context/NotificationsContext'
-import LayoutManager from '@components/ui/layoutmanager/LayoutManager'
+import UserLogged from './UserLogged'
 
 const Verify = lazy(() => import('@pages/auth/VerifyEmail'))
 const NotFound = lazy(() => import('@pages/notfound/NotFound'))
@@ -17,10 +17,18 @@ const Profile = lazy(() => import('@pages/profile/Profile'))
 
 const Project = lazy(() => import('@pages/projects/Project'))
 const NewProject = lazy(() => import('@pages/newproject/NewProject'))
-const ProjectDashBoard = lazy(() => import('@pages/projects/dashboard/ProjectDashboard'))
-const ProjectSettings = lazy(() => import('@pages/projects/settings/ProjectSettings'))
-const ProjectMetricsProvider = lazy(() => import('@context/ProjectMetricsContext'))
-const ProjectMetrics = lazy(() => import('@pages/projects/metrics/ProjectMetrics'))
+const ProjectDashBoard = lazy(
+  () => import('@pages/projects/dashboard/ProjectDashboard')
+)
+const ProjectSettings = lazy(
+  () => import('@pages/projects/settings/ProjectSettings')
+)
+const ProjectMetricsProvider = lazy(
+  () => import('@context/ProjectMetricsContext')
+)
+const ProjectMetrics = lazy(
+  () => import('@pages/projects/metrics/ProjectMetrics')
+)
 
 const AppLayout = () => (
   <LayoutProvider>
@@ -39,32 +47,30 @@ export default function AuthenticatedApp() {
 
         <Route path='/verify' element={<Verify />} />
 
-        <Route element={<UserLogged />}>
-          <Route path='/profile' element={<Profile />} />
+        <Route path='/profile' element={<Profile />} />
 
-          <Route element={<AppLayout />}>
-            <Route path='/home' element={<Home />} />
-            <Route path='/templates' element={<Templates />} />
-            <Route path='/notifications' element={<Notifications />} />
+        <Route element={<AppLayout />}>
+          <Route path='/home' element={<Home />} />
+          <Route path='/templates' element={<Templates />} />
+          <Route path='/notifications' element={<Notifications />} />
 
-            <Route path='/projects'>
-              <Route index element={<Projects />} />
-              <Route path='new' element={<NewProject />} />
+          <Route path='/projects'>
+            <Route index element={<Projects />} />
+            <Route path='new' element={<NewProject />} />
 
-              <Route path=':projectOwner/:projectId' element={<Project />}>
-                <Route index element={<ProjectDashBoard />} />
-                <Route path='settings' element={<ProjectSettings />} />
+            <Route path=':projectOwner/:projectId' element={<Project />}>
+              <Route index element={<ProjectDashBoard />} />
+              <Route path='settings' element={<ProjectSettings />} />
 
-                <Route element={<ProjectMetricsProvider />}>
-                  <Route path='metrics' element={<ProjectMetrics />} />
-                </Route>
+              <Route element={<ProjectMetricsProvider />}>
+                <Route path='metrics' element={<ProjectMetrics />} />
               </Route>
             </Route>
           </Route>
         </Route>
-
-        <Route path='*' element={<NotFound />} />
       </Route>
+
+      <Route path='*' element={<NotFound />} />
     </Routes>
   )
 }

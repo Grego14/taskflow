@@ -1,4 +1,4 @@
-import { setItem, getItem } from '@utils/storage'
+import { getItem, setItem } from '@utils/storage'
 
 export default async function updateTaskAction(params) {
   const { id, data, isPreview, ownerId, projectId, parentId } = params
@@ -21,9 +21,9 @@ export default async function updateTaskAction(params) {
     const localData = getItem('preview', {})
     const tasks = localData.tasks || []
 
-    const updatedTasks = tasks.map(task => task.id === id 
-      ? { ...task, ...payload } 
-      : task)
+    const updatedTasks = tasks.map(task =>
+      task.id === id ? { ...task, ...payload } : task
+    )
 
     setItem('preview', {
       ...localData,
@@ -31,24 +31,25 @@ export default async function updateTaskAction(params) {
     })
 
     return payload
-  } else {
-    try {
-      const { default: updateRemoteTask } = 
-        await import('@services/firebase/tasks/update')
+  }
 
-      await updateRemoteTask({ 
-        ownerId, 
-        projectId, 
-        taskId: id, 
-        parentId, 
-        data: data
-      })
+  try {
+    const { default: updateRemoteTask } = await import(
+      '@services/firebase/tasks/update'
+    )
 
-      // use Date.now() until firebase updates the timestamp
-      return { ...data, updatedAt: Date.now() }
-    } catch (e) {
-      console.error('Task Service (update):', e)
-      throw e
-    }
+    await updateRemoteTask({
+      ownerId,
+      projectId,
+      taskId: id,
+      parentId,
+      data: data
+    })
+
+    // use Date.now() until firebase updates the timestamp
+    return { ...data, updatedAt: Date.now() }
+  } catch (e) {
+    console.error('Task Service (update):', e)
+    throw e
   }
 }

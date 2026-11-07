@@ -1,19 +1,19 @@
-import { memo, useRef, useMemo } from 'preact/compat'
+import { memo, useMemo, useRef } from 'preact/compat'
 
-import AppBar from '@components/ui/appbar/AppBar'
-import Box from '@mui/material/Box'
 import NavAction from '@components/reusable/NavAction'
 import ProfileButton from '@components/reusable/buttons/ProfileButton'
+import AppBar from '@components/ui/appbar/AppBar'
+import Box from '@mui/material/Box'
 
-import { useTranslation } from 'react-i18next'
-import useApp from '@hooks/useApp'
 import { useGSAP } from '@gsap/react'
+import useApp from '@hooks/useApp'
 import useLoadResources from '@hooks/useLoadResources'
-import { useLocation } from 'react-router-dom'
 import { useTheme } from '@mui/material/styles'
+import { useTranslation } from 'react-i18next'
+import { useLocation } from 'react-router-dom'
 
-import { NAV_LINKS } from '@constants/navigation'
 import { BREAKPOINTS } from '@/theme'
+import { NAV_LINKS } from '@constants/navigation'
 import gsap from 'gsap'
 
 import '@styles/components/ui/appbar/layoutAppBar.css'
@@ -28,24 +28,27 @@ const LayoutAppBar = memo(function LayoutAppBar() {
   const loadingResources = useLoadResources('ui')
   const { contextSafe } = useGSAP({ scope: appBarRef })
 
-  const handleLinkClick = contextSafe((e) => {
+  const handleLinkClick = contextSafe(e => {
     if (window.innerWidth > BREAKPOINTS.tablet) return
 
     const tl = gsap.timeline()
 
     tl.to('.nav-action', {
-      scale: 1, 
+      scale: 1,
       rotate: 0,
       y: 0,
-      duration: 0.4, 
+      duration: 0.4,
       ease: 'power2.out'
-    }).fromTo(e.currentTarget, 
-        { scale: 0.75, rotate: -20 },
-        { 
-          scale: 1.1, 
-          rotate: 0,
-          ease: 'elastic.out(1.5, 0.5)'
-        }, '<0.1')
+    }).fromTo(
+      e.currentTarget,
+      { scale: 0.75, rotate: -20 },
+      {
+        scale: 1.1,
+        rotate: 0,
+        ease: 'elastic.out(1.5, 0.5)'
+      },
+      '<0.1'
+    )
   })
 
   const dynamicStyles = useMemo(() => {
@@ -54,11 +57,16 @@ const LayoutAppBar = memo(function LayoutAppBar() {
 
     return {
       '--layout-ab-bg': theme.alpha(bgColor, 0.8),
-      '--layout-ab-img': theme.palette.background[isMobile 
-        ? 'appbarBottom' 
-        : 'appbarTop']
+      '--layout-ab-img':
+        theme.palette.background[isMobile ? 'appbarBottom' : 'appbarTop']
     }
-  }, [theme.palette.mode, isMobile])
+  }, [
+    theme.palette.mode,
+    isMobile,
+    theme.palette.grey,
+    theme.palette.background,
+    theme.alpha
+  ])
 
   if (!isMobile || loadingResources) return null
 

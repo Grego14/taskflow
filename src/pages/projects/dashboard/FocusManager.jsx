@@ -1,5 +1,5 @@
-import { createPortal, lazy, Suspense } from 'preact/compat'
 import useApp from '@hooks/useApp'
+import { Suspense, createPortal, lazy } from 'preact/compat'
 
 import useDocumentTitleTimer from '@hooks/tasks/useDocumentTitleTimer'
 import useFocusSession from '@hooks/tasks/useFocusSession'
@@ -23,16 +23,17 @@ function ActiveFocusSession() {
     <Suspense fallback={null}>
       <LazyOverlay />
 
-      {!showOverlay.value && (
-        isMobile
-          ? <LazyFab />
-          : (zenRoot
-            ? createPortal(
-              <Suspense fallback={null}>
-                <LazyZenStatus />
-              </Suspense>, zenRoot)
-            : null)
-      )}
+      {!showOverlay.value &&
+        (isMobile ? (
+          <LazyFab />
+        ) : zenRoot ? (
+          createPortal(
+            <Suspense fallback={null}>
+              <LazyZenStatus />
+            </Suspense>,
+            zenRoot
+          )
+        ) : null)}
     </Suspense>
   )
 }

@@ -1,6 +1,6 @@
-import { useMemo, useRef, useCallback, useEffect } from 'preact/hooks'
 import useProject from '@hooks/useProject'
 import useUser from '@hooks/useUser'
+import { useCallback, useEffect, useMemo, useRef } from 'preact/hooks'
 
 import getTaskRef from '@utils/tasks/getTaskRef'
 
@@ -18,46 +18,51 @@ export default function TasksBaseProvider({
 }) {
   const timeout = useRef(null)
 
-  const scrollIntoTask = useCallback((taskId) => {
-    const element = getTaskRef(taskRefs, taskId)
+  const scrollIntoTask = useCallback(
+    taskId => {
+      const element = getTaskRef(taskRefs, taskId)
 
-    if (element) {
-      element.scrollIntoView({
-        behavior: 'smooth',
-        block: 'center'
-      })
+      if (element) {
+        element.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center'
+        })
 
-      clearTimeout(timeout.current)
-      element.setAttribute('data-focused', true)
-      timeout.current = setTimeout(() => {
-        element.removeAttribute('data-focused')
-      }, 1500)
-    }
-  }, [])
+        clearTimeout(timeout.current)
+        element.setAttribute('data-focused', true)
+        timeout.current = setTimeout(() => {
+          element.removeAttribute('data-focused')
+        }, 1500)
+      }
+    },
+    [taskRefs]
+  )
 
-  const setTaskRef = useCallback((id, el) => {
-    if (el) taskRefs.current[id] = el
-    else delete taskRefs.current[id]
-  }, [])
+  const setTaskRef = useCallback(
+    (id, el) => {
+      if (el) taskRefs.current[id] = el
+      else delete taskRefs.current[id]
+    },
+    [taskRefs]
+  )
 
   useEffect(() => () => clearTimeout(timeout.current), [])
 
   const actions = useTaskActions(taskRefs)
 
-  const value = useMemo(() => ({
-    actions, 
-    loading,
-    error,
-    taskRefs,
-    scrollIntoTask,
-    toggleWorkingTask: actions.toggleWorkingTask,
-    setTaskRef,
-    retry
-  }), [actions, loading, error, scrollIntoTask])
-
-  return (
-    <TasksContext.Provider value={value}>
-      {children}
-    </TasksContext.Provider>
+  const value = useMemo(
+    () => ({
+      actions,
+      loading,
+      error,
+      taskRefs,
+      scrollIntoTask,
+      toggleWorkingTask: actions.toggleWorkingTask,
+      setTaskRef,
+      retry
+    }),
+    [actions, loading, error, scrollIntoTask, taskRefs, setTaskRef, retry]
   )
+
+  return <TasksContext.Provider value={value}>{children}</TasksContext.Provider>
 }

@@ -1,6 +1,6 @@
 import useAuth from '@hooks/useAuth'
-import { dbAdapter } from '@services/dbAdapter'
 import useUser from '@hooks/useUser'
+import { dbAdapter } from '@services/dbAdapter'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -25,7 +25,7 @@ export default function useGetUserFromDb() {
 
         if (!userLoaded) setUserLoaded(true)
       },
-      (err) => {
+      err => {
         console.error('useGetUserFromDb:', err)
         if (isOffline) {
           setGlobalAlert({

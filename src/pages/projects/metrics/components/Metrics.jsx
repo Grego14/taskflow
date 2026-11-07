@@ -1,9 +1,9 @@
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import MetricGauge from './MetricGauge'
+import MetricPaper from './MetricPaper'
 import ProjectDistribution from './ProjectDistribution'
 import ProjectTotals from './ProjectTotals'
-import MetricPaper from './MetricPaper'
 
 import useProjectMetrics from '@hooks/useProjectMetrics'
 import { useTranslation } from 'react-i18next'
@@ -22,9 +22,9 @@ export default function Metrics({ filter }) {
 
   return (
     <Box className='flex flex-center' flexWrap='wrap' gap={8}>
-      <MetricGauge 
-        value={averageCompletedOnTime} 
-        title={t('averageCompletedOnTime')} 
+      <MetricGauge
+        value={averageCompletedOnTime}
+        title={t('averageCompletedOnTime')}
       />
 
       <ProjectTotals />

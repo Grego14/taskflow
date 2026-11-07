@@ -1,19 +1,19 @@
+import BarChart from '@mui/icons-material/BarChart'
 import Cloud from '@mui/icons-material/Cloud'
 import ListAlt from '@mui/icons-material/ListAlt'
-import People from '@mui/icons-material/People'
 import Lock from '@mui/icons-material/Lock'
+import People from '@mui/icons-material/People'
 import Public from '@mui/icons-material/Public'
-import BarChart from '@mui/icons-material/BarChart'
+import Box from '@mui/material/Box'
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
 import CardHeader from '@mui/material/CardHeader'
 import Typography from '@mui/material/Typography'
-import Box from '@mui/material/Box'
 import Section from './Section'
 
 import { useGSAP } from '@gsap/react'
-import { useTranslation } from 'react-i18next'
 import useApp from '@hooks/useApp'
+import { useTranslation } from 'react-i18next'
 
 import gsap from 'gsap'
 
@@ -50,7 +50,12 @@ const CARDS_DATA = [
   }
 ]
 
-export default function Cards({ setAnimationEnded, bg, showAppBar, pluginsReady }) {
+export default function Cards({
+  setAnimationEnded,
+  bg,
+  showAppBar,
+  pluginsReady
+}) {
   const { t } = useTranslation('landing')
   const { isMobile } = useApp()
 

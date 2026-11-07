@@ -1,15 +1,8 @@
-import { setItem, getItem } from '@utils/storage'
+import { getItem, setItem } from '@utils/storage'
 import preparePromotedSubtask from './utils/preparePromotedSubtask'
 
 export default async function moveSubtasksAction(params) {
-  const { 
-    taskId, 
-    subtaskIds, 
-    isPreview, 
-    ownerId, 
-    projectId, 
-    position
-  } = params
+  const { taskId, subtaskIds, isPreview, ownerId, projectId, position } = params
 
   if (isPreview) {
     const timestamp = Date.now()
@@ -44,9 +37,10 @@ export default async function moveSubtasksAction(params) {
   }
 
   try {
-    const { default: moveSubtasksService } = 
-      await import('@services/firebase/tasks/moveSubtasks')
-    
+    const { default: moveSubtasksService } = await import(
+      '@services/firebase/tasks/moveSubtasks'
+    )
+
     return await moveSubtasksService({
       user: ownerId,
       project: projectId,

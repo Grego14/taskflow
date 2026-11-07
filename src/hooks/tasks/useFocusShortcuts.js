@@ -1,21 +1,20 @@
-import { useEffect } from 'preact/hooks'
 import useTasks from '@hooks/useTasks'
-import { showOverlay, activeTaskData } from '@stores/task'
+import { activeTaskData, showOverlay } from '@stores/task'
+import { useEffect } from 'preact/hooks'
 
 export default function useFocusShortcuts() {
   const { toggleWorkingTask } = useTasks()
 
   useEffect(() => {
-    const handleKeyDown = (e) => {
-      const isTyping = ['INPUT', 'TEXTAREA']
-        .includes(document.activeElement.tagName) ||
+    const handleKeyDown = e => {
+      const isTyping =
+        ['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName) ||
         document.activeElement.isContentEditable
 
       const isButton = document.activeElement.tagName === 'BUTTON'
       const isSpace = e.code === 'Space'
 
       // do not allow the use of the space key if the user is focusing a button
-      // (buttons have onClick events that could be fired)
       if (isTyping || (isButton && isSpace)) return
 
       if (isSpace) {
@@ -34,5 +33,5 @@ export default function useFocusShortcuts() {
 
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [activeTaskData.value, showOverlay.value])
+  }, [toggleWorkingTask])
 }

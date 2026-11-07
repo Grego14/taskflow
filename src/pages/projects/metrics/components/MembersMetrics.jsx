@@ -1,6 +1,6 @@
 import CircleLoader from '@components/reusable/loaders/CircleLoader'
-import MemberStatCard from './MemberStatCard'
 import Box from '@mui/material/Box'
+import MemberStatCard from './MemberStatCard'
 
 import useProjectMembers from '@context/ProjectsContext/useProjectMembers'
 import useProjectMetrics from '@hooks/useProjectMetrics'
@@ -13,14 +13,15 @@ export default function MembersMetrics() {
   const { membersMetrics } = useProjectMetrics()
 
   const { loading, projectMembersError, projectMembers } = useProjectMembers(
-    membersMetrics?.map(member => member.id) || [], 
-    true)
+    membersMetrics?.map(member => member.id) || [],
+    true
+  )
 
   if (loading) return <CircleLoader text={t('loadingMembers')} />
 
   return (
     <div className='members-metrics-container'>
-      {membersMetrics.map((metrics) => {
+      {membersMetrics.map(metrics => {
         const memberInfo = projectMembers.find(m => m.id === metrics.id)
 
         return (

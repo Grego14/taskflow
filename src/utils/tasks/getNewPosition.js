@@ -8,13 +8,19 @@ export default function getNewPosition(prevPos = 0, nextPos = 0) {
   // moving to the top of the list
   if (prevPos === null && nextPos !== null) {
     // if there's enough space on the top substract the gap
-    if (nextPos > DEFAULT_GAP) { pos = nextPos - DEFAULT_GAP } 
+    if (nextPos > DEFAULT_GAP) {
+      pos = nextPos - DEFAULT_GAP
+    }
 
     // if the space is small but > 1, bisect
-    else if (nextPos > MIN_THRESHOLD) { pos = nextPos / 2 }
+    else if (nextPos > MIN_THRESHOLD) {
+      pos = nextPos / 2
+    }
 
     // if we are close to 0 substract a fixed value
-    else { pos = nextPos - 0.1 }
+    else {
+      pos = nextPos - 0.1
+    }
   }
 
   // moving to the bottom of the list

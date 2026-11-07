@@ -1,16 +1,20 @@
+import AppTooltip from '@components/reusable/AppTooltip'
 import Avatar from '@mui/material/Avatar'
 import Box from '@mui/material/Box'
-import AppTooltip from '@components/reusable/AppTooltip'
 
-import { useMemo } from 'react'
 import useProject from '@hooks/useProject'
+import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { taskRegistry } from '@stores/task'
 
 const avatarSlotProps = { img: { fetchPriority: 'high' } }
 
-export default function TaskMembers({ assignedTo = [], subtaskIds = [], insideTask }) {
+export default function TaskMembers({
+  assignedTo = [],
+  subtaskIds = [],
+  insideTask
+}) {
   const { t } = useTranslation('tasks')
   const { projectMembers } = useProject()
 
@@ -36,10 +40,10 @@ export default function TaskMembers({ assignedTo = [], subtaskIds = [], insideTa
     let members = ''
 
     const l = taskMembers.length
-    for(let i = 0; i < l; i++){
+    for (let i = 0; i < l; i++) {
       const member = projectMembers.find(pm => pm.id === taskMembers[i])
 
-      if(!member) continue
+      if (!member) continue
 
       const template = member.username
       const isNotLast = i !== l - 1
@@ -48,7 +52,7 @@ export default function TaskMembers({ assignedTo = [], subtaskIds = [], insideTa
     }
 
     return members
-  }, [taskMembers])
+  }, [taskMembers, projectMembers])
 
   const firstMember = projectMembers?.find(m => m.id === taskMembers[0])
 

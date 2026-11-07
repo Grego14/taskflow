@@ -1,10 +1,10 @@
 import { dbAdapter } from '@services/dbAdapter'
 import getTaskPath from '@utils/tasks/getTaskPath'
 
-export default async function createRemoteTask({ 
-  ownerId, 
-  projectId, 
-  parentId, 
+export default async function createRemoteTask({
+  ownerId,
+  projectId,
+  parentId,
   task
 }) {
   if (!ownerId || !projectId || !task) throw Error('createTask: Missing params')

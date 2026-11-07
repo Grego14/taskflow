@@ -3,11 +3,11 @@
   "vcs": {
     "enabled": false,
     "clientKind": "git",
-    "useIgnoreFile": false
+    "useIgnoreFile": true
   },
   "files": {
     "ignoreUnknown": false,
-    "ignore": []
+    "ignore": ["dist"]
   },
   "formatter": {
     "enabled": true,
@@ -20,9 +20,11 @@
   "linter": {
     "enabled": true,
     "rules": {
-      "recommended": true,
       "style": {
         "noParameterAssign": "error"
+      },
+      "correctness": {
+        "noUnknownMediaFeatureName": "off"
       }
     }
   },

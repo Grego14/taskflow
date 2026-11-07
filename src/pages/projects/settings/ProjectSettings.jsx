@@ -12,11 +12,11 @@ import SaveProject from './components/SaveProject'
 import useApp from '@hooks/useApp'
 import useProject from '@hooks/useProject'
 import useUser from '@hooks/useUser'
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
+import gsap from 'gsap'
 
 const BOX_STYLING = {
   display: 'flex',
@@ -45,15 +45,18 @@ export default function ProjectSettings() {
   const [errors, setErrors] = useState(null)
   const [disableBtn, setDisableBtn] = useState(true)
 
-  useGSAP(() => {
-    gsap.to(settingsRef.current, {
-      opacity: 1,
-      x: 0,
-      duration: 0.75,
-      ease: 'back.out(2)',
-      delay: 0.1
-    })
-  }, { scope: settingsRef })
+  useGSAP(
+    () => {
+      gsap.to(settingsRef.current, {
+        opacity: 1,
+        x: 0,
+        duration: 0.75,
+        ease: 'back.out(2)',
+        delay: 0.1
+      })
+    },
+    { scope: settingsRef }
+  )
 
   useEffect(() => {
     if (data) {
@@ -96,11 +99,7 @@ export default function ProjectSettings() {
         </Typography>
       )}
 
-      <ProjectName
-        name={name}
-        setName={setName}
-        {...commonProps}
-      />
+      <ProjectName name={name} setName={setName} {...commonProps} />
 
       <ProjectDescription
         description={description}

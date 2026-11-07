@@ -1,14 +1,14 @@
 import { useRef } from 'preact/hooks'
 
-import { Gauge } from '@mui/x-charts/Gauge'
-import Box from '@mui/material/Box'
 import AppTooltip from '@components/reusable/AppTooltip'
+import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
+import { Gauge } from '@mui/x-charts/Gauge'
 import MetricPaper from './MetricPaper'
 
 import useCounterAnimation from '@hooks/animations/useCounterAnimation'
 
-const getArcColor = (value) => {
+const getArcColor = value => {
   if (value > 70) return '#4caf50'
   if (value > 40) return '#ff9800'
 
@@ -32,8 +32,7 @@ export default function MetricGauge({
 
   return (
     <AppTooltip title={hideTitle && title}>
-      <MetricPaper 
-        className='flex flex-column flex-center relative metric-gauge-paper'>
+      <MetricPaper className='flex flex-column flex-center relative metric-gauge-paper'>
         <Gauge
           width={size}
           height={size}
@@ -57,7 +56,7 @@ export default function MetricGauge({
         {/*     fill: theme.palette.action.hover */}
         {/*   } */}
         {/* })} */}
-        {(!hideTitle && title) && (
+        {!hideTitle && title && (
           <Typography
             variant='caption'
             color='textSecondary'

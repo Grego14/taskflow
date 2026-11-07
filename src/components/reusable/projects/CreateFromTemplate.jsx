@@ -1,6 +1,6 @@
+import Link from '@components/reusable/Link'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
-import Link from '@components/reusable/Link'
 
 import { useTranslation } from 'react-i18next'
 

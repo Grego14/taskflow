@@ -1,13 +1,13 @@
-import Typography from '@mui/material/Typography'
-import Stack from '@mui/material/Stack'
-import TimeIcon from '@mui/icons-material/AccessTime'
 import AppTooltip from '@components/reusable/AppTooltip'
+import TimeIcon from '@mui/icons-material/AccessTime'
+import Stack from '@mui/material/Stack'
+import Typography from '@mui/material/Typography'
 
 import { useMemo } from 'preact/hooks'
 import { useTranslation } from 'react-i18next'
 
-import formatTimer from '@utils/formatTimer'
 import { taskRegistry } from '@stores/task'
+import formatTimer from '@utils/formatTimer'
 
 export default function TaskTotalTime({ id }) {
   const { t } = useTranslation('tasks')
@@ -18,16 +18,15 @@ export default function TaskTotalTime({ id }) {
 
   const totalSeconds = useMemo(() => {
     const parentTime = timeWorked
-    const subtasksTime =
-    subtasks.reduce((acc, sub) => {
+    const subtasksTime = subtasks.reduce((acc, sub) => {
       const subtaskSignal = registry.get(sub).peek()
       return acc + (subtaskSignal?.timeWorked || 0)
     }, 0)
 
     return parentTime + subtasksTime
-  }, [timeWorked, subtasks])
+  }, [timeWorked, subtasks, registry])
 
-  if(!taskData || totalSeconds === 0) return null
+  if (!taskData || totalSeconds === 0) return null
 
   return (
     <AppTooltip title={t('totalAccumulatedTime')}>

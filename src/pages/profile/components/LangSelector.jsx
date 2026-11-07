@@ -16,10 +16,7 @@ export default function LangSelector(props) {
   return (
     <FormControl>
       <InputLabel id='select-lang'>{t('labels.lang')}</InputLabel>
-      <Select
-        {...props}
-        labelId='select-lang'
-        label={t('labels.lang')}>
+      <Select {...props} labelId='select-lang' label={t('labels.lang')}>
         {Object.entries(languages).map(lang => (
           <MenuItem key={lang[0]} value={lang[0]}>
             {lang[1]}

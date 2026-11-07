@@ -6,17 +6,17 @@ import List from '@mui/material/List'
 import ListItemButton from '@mui/material/ListItemButton'
 import Typography from '@mui/material/Typography'
 
+import useLayout from '@hooks/useLayout'
 import useUser from '@hooks/useUser'
 import { getItem } from '@utils/storage.js'
-import { useCallback, useState, useEffect } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import useLayout from '@hooks/useLayout'
 
 import i18n from '@/i18n'
 import getMenuLabel from '@utils/getMenuLabel'
 import upperCaseInitialLetter from '@utils/upperCaseInitialLetter'
 
-import { FILTERS, DATE_FILTERS } from '@/constants'
+import { DATE_FILTERS, FILTERS } from '@/constants'
 
 const getFilterLabel = (label, t) => {
   return upperCaseInitialLetter(
@@ -39,17 +39,20 @@ export default function FilterButton() {
   useEffect(() => {
     if (lastUsed && lastUsed !== selected && FILTERS.includes(lastUsed))
       setSelected(lastUsed)
-  }, [lastUsed])
+  }, [lastUsed, selected])
 
-  const changeSelectedOption = useCallback((value, triggerExit) => {
-    triggerExit?.()
+  const changeSelectedOption = useCallback(
+    (value, triggerExit) => {
+      triggerExit?.()
 
-    setSelected(value)
-    setFilter(value)
+      setSelected(value)
+      setFilter(value)
 
-    // update the LocalStorage/firestore
-    updateFilter(value)
-  }, [updateFilter, setFilter])
+      // update the LocalStorage/firestore
+      updateFilter(value)
+    },
+    [updateFilter, setFilter]
+  )
 
   const priorityFilterOptions = FILTERS.map(f => ({
     label: getFilterLabel(f, t),
@@ -68,42 +71,48 @@ export default function FilterButton() {
       tooltipPosition='bottom'
       asListItem
       slotProps={slotProps}>
-      {(open, triggerExit) => open && (
-        <div className='filter-menu-container flex'>
-        <div className='filter-menu-left'>
-          <Typography 
-            variant='body2' 
-            color='textSecondary' 
-            className='filter-menu-help-text'>
-            {t('buttons.filterHelpText1')}
-          </Typography>
-          {dateFilterOptions.map(filter => (
-            <MenuAction
-              key={filter.label}
-              text={filter.label}
-              selected={filter.value === selected}
-              handler={() => changeSelectedOption(filter.value, triggerExit)}
-            />
-          ))}
-        </div>
-        <div>
-          <Typography 
-            variant='body2' 
-            color='textSecondary' 
-            className='filter-menu-help-text'>
-            {t('buttons.filterHelpText2')}
-          </Typography>
-            {priorityFilterOptions.map(filter => (
-              <MenuAction
-                key={filter.label}
-                text={filter.label}
-                selected={filter.value === selected}
-                handler={() => changeSelectedOption(filter.value, triggerExit)}
-              />
-            ))}
+      {(open, triggerExit) =>
+        open && (
+          <div className='filter-menu-container flex'>
+            <div className='filter-menu-left'>
+              <Typography
+                variant='body2'
+                color='textSecondary'
+                className='filter-menu-help-text'>
+                {t('buttons.filterHelpText1')}
+              </Typography>
+              {dateFilterOptions.map(filter => (
+                <MenuAction
+                  key={filter.label}
+                  text={filter.label}
+                  selected={filter.value === selected}
+                  handler={() =>
+                    changeSelectedOption(filter.value, triggerExit)
+                  }
+                />
+              ))}
+            </div>
+            <div>
+              <Typography
+                variant='body2'
+                color='textSecondary'
+                className='filter-menu-help-text'>
+                {t('buttons.filterHelpText2')}
+              </Typography>
+              {priorityFilterOptions.map(filter => (
+                <MenuAction
+                  key={filter.label}
+                  text={filter.label}
+                  selected={filter.value === selected}
+                  handler={() =>
+                    changeSelectedOption(filter.value, triggerExit)
+                  }
+                />
+              ))}
+            </div>
           </div>
-        </div>
-      )}
+        )
+      }
     </DropdownMenu>
   )
 }

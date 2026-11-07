@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, memo, useMemo } from 'preact/compat'
+import { Suspense, lazy, memo, useEffect, useMemo } from 'preact/compat'
 
 import Link from '@components/reusable/Link'
 import CircleLoader from '@components/reusable/loaders/CircleLoader'
@@ -10,15 +10,17 @@ import Chip from '@mui/material/Chip'
 import Typography from '@mui/material/Typography'
 import FocusManager from './FocusManager'
 
-const ArchiveButton = lazy(() => import('@components/ui/tasks/buttons/ArchiveButton'))
+const ArchiveButton = lazy(
+  () => import('@components/ui/tasks/buttons/ArchiveButton')
+)
 
-import useProject from '@hooks/useProject'
-import { useTranslation } from 'react-i18next'
-import useLoadResources from '@hooks/useLoadResources'
+import { useGSAP } from '@gsap/react'
+import useTaskMetrics from '@hooks/tasks/useTaskMetrics'
 import useApp from '@hooks/useApp'
 import useLayout from '@hooks/useLayout'
-import useTaskMetrics from '@hooks/tasks/useTaskMetrics'
-import { useGSAP } from '@gsap/react'
+import useLoadResources from '@hooks/useLoadResources'
+import useProject from '@hooks/useProject'
+import { useTranslation } from 'react-i18next'
 
 import gsap from 'gsap'
 import ScrollTrigger from 'gsap/ScrollTrigger'
@@ -31,15 +33,18 @@ const ProjectHeader = memo(({ projectName, isArchived }) => {
   const { t } = useTranslation('projects')
   const { isPreview } = useLayout()
 
-  const containerStyles = useMemo(() => ({
-    display: 'flex',
-    flexDirection: { xs: 'column', tablet: 'row' },
-    gap: 2,
-    alignItems: 'center',
-    mt: 2,
-    px: { xs: 0, tablet: 2 },
-    justifyContent: { xs: 'center', tablet: 'start' }
-  }), [])
+  const containerStyles = useMemo(
+    () => ({
+      display: 'flex',
+      flexDirection: { xs: 'column', tablet: 'row' },
+      gap: 2,
+      alignItems: 'center',
+      mt: 2,
+      px: { xs: 0, tablet: 2 },
+      justifyContent: { xs: 'center', tablet: 'start' }
+    }),
+    []
+  )
 
   return (
     <Box sx={containerStyles}>
@@ -90,24 +95,25 @@ export default function ProjectDashBoard() {
   const registrySize = taskRegistry.value.size
   const loadingResources = useLoadResources('tasks')
 
-  useGSAP(() => {
-    // only refresh if we have actual tasks to avoid useless calculations
-    if (registrySize > 0) {
-      const timer = setTimeout(() => {
-        ScrollTrigger.refresh()
-      }, 150)
+  useGSAP(
+    () => {
+      // only refresh if we have actual tasks to avoid useless calculations
+      if (registrySize > 0) {
+        const timer = setTimeout(() => {
+          ScrollTrigger.refresh()
+        }, 150)
 
-      return () => clearTimeout(timer)
-    }
-  }, { dependencies: [registrySize] })
+        return () => clearTimeout(timer)
+      }
+    },
+    { dependencies: [registrySize] }
+  )
 
   useTaskMetrics()
 
   if (!data || loadingResources) {
     return (
-      <Box
-        className='flex flex-center flex-grow'
-        width='100%'>
+      <Box className='flex flex-center flex-grow' width='100%'>
         <CircleLoader text={t('loadingProject')} />
       </Box>
     )

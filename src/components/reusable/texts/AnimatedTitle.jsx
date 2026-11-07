@@ -1,7 +1,7 @@
-import { memo } from 'preact/compat'
-import Typography from '@mui/material/Typography'
-import Box from '@mui/material/Box'
 import useTitleAnimation from '@hooks/animations/useTitleAnimation'
+import Box from '@mui/material/Box'
+import Typography from '@mui/material/Typography'
+import { memo } from 'preact/compat'
 
 export default memo(function AnimatedTitle({
   children,
@@ -11,7 +11,6 @@ export default memo(function AnimatedTitle({
   onComplete,
   ...otherProps
 }) {
-
   useTitleAnimation(id, {
     loading: typeof loading === 'boolean' ? loading : false,
     onComplete

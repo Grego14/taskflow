@@ -4,7 +4,10 @@ import { TEXT_REGEX } from '@constants/regex'
  * Validates project fields based on value and rules
  * Returns { hasError: boolean, errorMsg: string }
  */
-export default function validateProjectField(value, { t, isRequired = false, type }) {
+export default function validateProjectField(
+  value,
+  { t, isRequired = false, type }
+) {
   const trimmedValue = value?.trim()
 
   if (isRequired && !trimmedValue) {

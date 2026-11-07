@@ -1,7 +1,7 @@
-import { doc, writeBatch } from 'firebase/firestore'
 import db from '@/db'
 import i18n from '@/i18n'
 import { getFriendlyErrorFormatted } from '@utils/getFriendlyAuthError'
+import { doc, writeBatch } from 'firebase/firestore'
 
 export default async function markNotificationsAsRead({ user, notifications }) {
   try {
@@ -14,6 +14,12 @@ export default async function markNotificationsAsRead({ user, notifications }) {
 
     await batch.commit()
   } catch (err) {
-    console.error(getFriendlyErrorFormatted('markNotificationsAsRead', err.message, i18n.language))
+    console.error(
+      getFriendlyErrorFormatted(
+        'markNotificationsAsRead',
+        err.message,
+        i18n.language
+      )
+    )
   }
 }

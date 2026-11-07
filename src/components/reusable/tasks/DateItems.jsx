@@ -6,7 +6,7 @@ import { DATES } from '@/constants'
 import i18n from '@/i18n'
 import upperCaseInitialLetter from '@utils/upperCaseInitialLetter.js'
 
-const getTranslatedText = (date) => {
+const getTranslatedText = date => {
   const t = i18n.getFixedT(i18n.language, 'dialogs')
   return upperCaseInitialLetter(t(`newtask.dates.${date}`))
 }
@@ -25,17 +25,16 @@ export default function DateItems({
 
     if (isList) {
       return (
-        <ListItemButton
-          key={date}
-          onClick={handleClick}
-          selected={isSelected}>
+        <ListItemButton key={date} onClick={handleClick} selected={isSelected}>
           <ListItemText
             slotProps={{
               primary: {
-                sx: [theme => ({
-                  ...theme.typography.body2,
-                  color
-                })]
+                sx: [
+                  theme => ({
+                    ...theme.typography.body2,
+                    color
+                  })
+                ]
               }
             }}>
             {text}

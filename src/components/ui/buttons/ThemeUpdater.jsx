@@ -21,7 +21,7 @@ export default function ThemeUpdater() {
     }))
 
     if (uid) update({ theme: newTheme })
-  }, [userTheme, setMode, update, uid])
+  }, [userTheme, setMode, update, uid, setUser])
 
   return (
     <IconButton

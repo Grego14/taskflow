@@ -1,3 +1,4 @@
+import ProjectInput from '@components/reusable/projects/Input'
 import SearchIcon from '@mui/icons-material/Search'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
@@ -5,7 +6,6 @@ import CircularProgress from '@mui/material/CircularProgress'
 import Skeleton from '@mui/material/Skeleton'
 import Typography from '@mui/material/Typography'
 import AddMembersPreview from './AddMembersPreview'
-import ProjectInput from '@components/reusable/projects/Input'
 
 import useApp from '@hooks/useApp'
 import useAuth from '@hooks/useAuth'
@@ -13,10 +13,10 @@ import useLoadResources from '@hooks/useLoadResources'
 import { memo, useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import useUser from '@hooks/useUser'
+import userService from '@services/user'
 import getInteraction from '@utils/getInteraction'
 import validateEmail from '@utils/validateEmail.js'
-import userService from '@services/user'
-import useUser from '@hooks/useUser'
 
 export default memo(function AddMembers({ members, setMembers, isOwner }) {
   const { t } = useTranslation(['projects', 'validations'])
@@ -44,8 +44,7 @@ export default memo(function AddMembers({ members, setMembers, isOwner }) {
     if (emailValidation.error)
       return setError(t(`email.${emailValidation.key}`, { ns: 'validations' }))
 
-    if (value === userEmail)
-      return setError(t('projects:addMembers.sameUser'))
+    if (value === userEmail) return setError(t('projects:addMembers.sameUser'))
 
     try {
       setLoading(true)
@@ -56,17 +55,16 @@ export default memo(function AddMembers({ members, setMembers, isOwner }) {
       if (!newMember?.username) {
         setError(t('projects:addMembers.userNotFound'))
         return
-      } else {
-
-        // check for duplicates
-        if (members?.some(m => m.email === value)) {
-          setError(t('projects:addMembers.alreadyAdded'))
-          return
-        }
-
-        setMembers([...(members || []), newMember])
-        setEmail('')
       }
+
+      // check for duplicates
+      if (members?.some(m => m.email === value)) {
+        setError(t('projects:addMembers.alreadyAdded'))
+        return
+      }
+
+      setMembers([...(members || []), newMember])
+      setEmail('')
     } catch (err) {
       setError(t('projects:addMembers.couldNotGetTheUser'))
     } finally {
@@ -74,17 +72,18 @@ export default memo(function AddMembers({ members, setMembers, isOwner }) {
     }
   }, [members, userEmail, t, setMembers, email])
 
-  const handleKeyDown = (e) => {
+  const handleKeyDown = e => {
     const { isEnter } = getInteraction(e)
     if (isEnter) handleSearch()
   }
 
-  if (loadingResources) return (
-    <Box>
-      <Skeleton width='25%' />
-      <Skeleton width='55%' height='4rem' />
-    </Box>
-  )
+  if (loadingResources)
+    return (
+      <Box>
+        <Skeleton width='25%' />
+        <Skeleton width='55%' height='4rem' />
+      </Box>
+    )
 
   return (
     <div>
@@ -110,7 +109,9 @@ export default memo(function AddMembers({ members, setMembers, isOwner }) {
           slotProps={{
             input: {
               startAdornment: <SearchIcon fontSize='small' sx={{ mr: 1 }} />,
-              endAdornment: loading && <CircularProgress color='inherit' size={20} />
+              endAdornment: loading && (
+                <CircularProgress color='inherit' size={20} />
+              )
             }
           }}
           sx={{ mt: 1 }}

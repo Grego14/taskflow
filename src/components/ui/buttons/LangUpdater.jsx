@@ -30,7 +30,7 @@ export default function LangUpdater({ longText = true }) {
     }))
 
     if (uid) update({ lang: newLang })
-  }, [update, uid, i18n, lang])
+  }, [update, uid, i18n, lang, setUser])
 
   return (
     <Button

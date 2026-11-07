@@ -2,7 +2,7 @@ import Alert from '@mui/material/Alert'
 import Slide from '@mui/material/Slide'
 import Snackbar from '@mui/material/Snackbar'
 
-import { globalAlert, closeGlobalAlert } from '@stores/ui'
+import { closeGlobalAlert, globalAlert } from '@stores/ui'
 
 export default function GlobalAlert() {
   const notification = globalAlert.value
@@ -11,10 +11,10 @@ export default function GlobalAlert() {
 
   return (
     <Snackbar
-      sx={{ 
-        width: 'fit-content', 
-        ml: 'auto', 
-        zIndex: t => t.zIndex.globalAlert 
+      sx={{
+        width: 'fit-content',
+        ml: 'auto',
+        zIndex: t => t.zIndex.globalAlert
       }}
       anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
       open={notification.open}

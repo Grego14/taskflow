@@ -1,19 +1,24 @@
-import { dbAdapter } from '../dbAdapter'
 import { getFriendlyErrorFormatted } from '@utils/getFriendlyAuthError'
+import { dbAdapter } from '../dbAdapter'
 
-/** 
+/**
  * @param {string} uid
  * @param {string} ownerId
  * @param {string} projectId
  *
- * removes a user from all assigned tasks within a specific project 
-*/
+ * removes a user from all assigned tasks within a specific project
+ */
 export default async function removeUserAssignments(uid, ownerId, projectId) {
-  if (!uid || !ownerId || !projectId) 
+  if (!uid || !ownerId || !projectId)
     throw Error('removeUserAssignments: Missing params')
 
   try {
-    const projectRef = dbAdapter.getDocRef('users', ownerId, 'projects', projectId)
+    const projectRef = dbAdapter.getDocRef(
+      'users',
+      ownerId,
+      'projects',
+      projectId
+    )
     const tasksRef = dbAdapter.getColRef(projectRef, 'tasks')
 
     const tasksSnapshot = await dbAdapter.getDocs(tasksRef)

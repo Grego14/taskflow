@@ -4,8 +4,8 @@ import { Suspense, lazy, useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import useAuth from '@hooks/useAuth'
-import useUser from '@hooks/useUser'
 import useReauthenticate from '@hooks/useReauthenticate'
+import useUser from '@hooks/useUser'
 
 import { setGlobalAlert } from '@stores/ui'
 

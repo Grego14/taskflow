@@ -1,11 +1,11 @@
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 
-import { useTranslation } from 'react-i18next'
 import { useGSAP } from '@gsap/react'
+import { useTranslation } from 'react-i18next'
 
-import gsap from 'gsap'
 import useUser from '@hooks/useUser'
+import gsap from 'gsap'
 
 const containerStyles = {
   width: '100%',
@@ -61,8 +61,7 @@ export default function LogoLoader() {
       <Typography
         variant='overline'
         className='text-loading'
-        sx={{ fontWeight: 600, letterSpacing: 2 }}
-      >
+        sx={{ fontWeight: 600, letterSpacing: 2 }}>
         {t('loading')}
       </Typography>
     </Box>

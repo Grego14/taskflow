@@ -1,9 +1,9 @@
 import AssignMembers from '@components/reusable/tasks/AssignMembers'
+import Box from '@mui/material/Box'
 import CreateSubtask from './CreateSubtask'
 import DeleteTask from './DeleteTask'
 import ReassignDate from './ReassignDate'
 import UpdatePriority from './UpdatePriority'
-import Box from '@mui/material/Box'
 
 export default function TaskActions({
   id,
@@ -32,9 +32,9 @@ export default function TaskActions({
 
       <AssignMembers id={id} members={members} parentId={parentId} />
 
-      <ReassignDate 
-        id={id} 
-        parentId={parentId} 
+      <ReassignDate
+        id={id}
+        parentId={parentId}
         rawDate={rawDate}
         onDateChange={onDateChange}
       />
@@ -43,7 +43,7 @@ export default function TaskActions({
         id={id}
         parentId={parentId}
         subtaskIds={subtaskIds}
-        showMenu={menuHandler} 
+        showMenu={menuHandler}
       />
     </>
   )

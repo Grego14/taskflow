@@ -1,10 +1,10 @@
 import path from 'node:path'
+import postcssGlobalData from '@csstools/postcss-global-data'
 import preact from '@preact/preset-vite'
-import { defineConfig } from 'vite'
-import { visualizer } from 'rollup-plugin-visualizer'
-import tsconfigPaths from 'vite-tsconfig-paths'
-import postcssGlobalData from '@csstools/postcss-global-data';
 import postcssCustomMedia from 'postcss-custom-media'
+import { visualizer } from 'rollup-plugin-visualizer'
+import { defineConfig } from 'vite'
+import tsconfigPaths from 'vite-tsconfig-paths'
 
 export default defineConfig({
   plugins: [
@@ -20,8 +20,8 @@ export default defineConfig({
   css: {
     postcss: {
       plugins: [
-        postcssGlobalData({ 
-          files: [ './src/styles/global/media-queries.css' ]
+        postcssGlobalData({
+          files: ['./src/styles/global/media-queries.css']
         }),
         postcssCustomMedia()
       ]
@@ -42,7 +42,7 @@ export default defineConfig({
       '@test': path.resolve(__dirname, './src/test'),
       '@styles': path.resolve(__dirname, './src/styles'),
       '@': path.resolve(__dirname, './src'),
-      'react': 'preact/compat',
+      react: 'preact/compat',
       'react-dom/test-utils': 'preact/compat/test-utils',
       'react-dom': 'preact/compat',
       'react/jsx-runtime': 'preact/jsx-runtime'

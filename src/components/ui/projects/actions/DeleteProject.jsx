@@ -1,22 +1,28 @@
-import Dialog from '@components/reusable/dialogs/Dialog'
-import Typography from '@mui/material/Typography'
-import Box from '@mui/material/Box'
-import Delete from '@mui/icons-material/Delete'
 import MenuAction from '@components/reusable/MenuAction'
+import Dialog from '@components/reusable/dialogs/Dialog'
+import Delete from '@mui/icons-material/Delete'
+import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
+import Typography from '@mui/material/Typography'
 
-import { useState, useRef } from 'preact/compat'
-import { useTranslation } from 'react-i18next'
 import { useGSAP } from '@gsap/react'
-import useUser from '@hooks/useUser'
 import useLoadResources from '@hooks/useLoadResources'
+import useUser from '@hooks/useUser'
+import { useRef, useState } from 'preact/compat'
+import { useTranslation } from 'react-i18next'
 
 import projectService from '@services/project'
 import gsap from 'gsap'
 
 import { setGlobalAlert } from '@stores/ui'
 
-export default function DeleteProject({ id, owner, asButton, disabled, onDelete }) {
+export default function DeleteProject({
+  id,
+  owner,
+  asButton,
+  disabled,
+  onDelete
+}) {
   const { uid, update, metadata } = useUser()
   const { t } = useTranslation(['dialogs', 'ui', 'projects'])
 
@@ -33,11 +39,13 @@ export default function DeleteProject({ id, owner, asButton, disabled, onDelete 
   const loadingResources = useLoadResources('dialogs')
   const { contextSafe } = useGSAP({ scope: container })
 
-  const animateStatusChange = contextSafe(async (newStatus) => {
-    const tl = gsap.timeline()
+  const animateStatusChange = contextSafe(async newStatus => {
+    const tl = gsap
+      .timeline()
       .to(textRef.current, { y: -10, opacity: 0, duration: 0.3 })
       .call(() => setStatus(newStatus))
-      .fromTo(textRef.current,
+      .fromTo(
+        textRef.current,
         { y: 10, opacity: 0 },
         { y: 0, opacity: 1, duration: 0.4 }
       )
@@ -46,7 +54,11 @@ export default function DeleteProject({ id, owner, asButton, disabled, onDelete 
 
   const handleProjectRemoval = async () => {
     try {
-      const results = await projectService.removeProject(uid, id, animateStatusChange)
+      const results = await projectService.removeProject(
+        uid,
+        id,
+        animateStatusChange
+      )
 
       setGlobalAlert({
         message: t('alerts.projects.projectDeleted', {
@@ -58,7 +70,10 @@ export default function DeleteProject({ id, owner, asButton, disabled, onDelete 
 
       setOpen(false)
 
-      if (id === metadata.lastEditedProject && owner === metadata.lastEditedProjectOwner) {
+      if (
+        id === metadata.lastEditedProject &&
+        owner === metadata.lastEditedProjectOwner
+      ) {
         await update({ lastEditedProject: '', lastEditedProjectOwner: '' })
       }
 
@@ -68,21 +83,29 @@ export default function DeleteProject({ id, owner, asButton, disabled, onDelete 
         message: t('alerts.projects.errorDeleting', { ns: 'ui' }),
         status: 'error'
       })
-      animateStatusChange({ stage: '', count: 0, totalTasks: 0, totalSubtasks: 0 })
+      animateStatusChange({
+        stage: '',
+        count: 0,
+        totalTasks: 0,
+        totalSubtasks: 0
+      })
     }
   }
 
   const getStatusMessage = () => {
     const { stage, count, totalTasks, totalSubtasks } = status
     if (stage === 'tasks') return t('projects.status.tasks', { ns: 'dialogs' })
-    if (stage === 'subtasks') return t('projects.status.subtasks', { ns: 'dialogs', count })
+    if (stage === 'subtasks')
+      return t('projects.status.subtasks', { ns: 'dialogs', count })
 
-    if (stage === 'deleting') return t('projects.deleting', {
-      ns: 'dialogs',
-      count: totalTasks + totalSubtasks
-    })
+    if (stage === 'deleting')
+      return t('projects.deleting', {
+        ns: 'dialogs',
+        count: totalTasks + totalSubtasks
+      })
 
-    if (stage === 'project') return t('projects.status.project', { ns: 'dialogs' })
+    if (stage === 'project')
+      return t('projects.status.project', { ns: 'dialogs' })
     return t('projects.status.idle', { ns: 'dialogs' })
   }
 
@@ -115,8 +138,10 @@ export default function DeleteProject({ id, owner, asButton, disabled, onDelete 
           onClose={() => !status.stage && setOpen(false)}
           onAccept={handleProjectRemoval}
           open={open}
-          acceptTitle={status.stage ? t('projects.deleting', { ns: 'dialogs' }) : 'Delete'}
-          disableButtons={!!status.stage} >
+          acceptTitle={
+            status.stage ? t('projects.deleting', { ns: 'dialogs' }) : 'Delete'
+          }
+          disableButtons={!!status.stage}>
           <Box className='dialog-status-container flex flex-center'>
             <Typography
               ref={textRef}

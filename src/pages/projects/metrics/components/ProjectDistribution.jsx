@@ -1,10 +1,10 @@
-import { PieChart } from '@mui/x-charts/PieChart'
 import Typography from '@mui/material/Typography'
+import { PieChart } from '@mui/x-charts/PieChart'
 
-import { useRef } from 'preact/hooks'
-import useProjectMetrics from '@hooks/useProjectMetrics'
-import { useTranslation } from 'react-i18next'
 import useApp from '@hooks/useApp'
+import useProjectMetrics from '@hooks/useProjectMetrics'
+import { useRef } from 'preact/hooks'
+import { useTranslation } from 'react-i18next'
 
 import useCounterAnimation from '@hooks/animations/useCounterAnimation'
 
@@ -59,20 +59,21 @@ export default function ProjectDistribution() {
   const distributionStyle = { '--chart-cx': isOnlyMobile ? '50%' : '140px' }
 
   return (
-      <div 
-      ref={ref} 
-      className='pie-chart-container relative' 
+    <div
+      ref={ref}
+      className='pie-chart-container relative'
       style={distributionStyle}>
       <PieChart
-        series={[{
-          data,
-          innerRadius: 75,
-          outerRadius: 100,
-          paddingAngle: 3,
-          cornerRadius: 10,
-          cx: isOnlyMobile ? '50%' : 140,
-          highlightScope: { fade: 'global', highlight: 'item' }
-        }
+        series={[
+          {
+            data,
+            innerRadius: 75,
+            outerRadius: 100,
+            paddingAngle: 3,
+            cornerRadius: 10,
+            cx: isOnlyMobile ? '50%' : 140,
+            highlightScope: { fade: 'global', highlight: 'item' }
+          }
         ]}
         height={300}
         slotProps={{
@@ -90,9 +91,9 @@ export default function ProjectDistribution() {
         className='distribution-pie-chart'
       />
       <div className='pie-chart-center-label absolute text-center'>
-        <Typography 
-          variant='h4' 
-          fontWeight={800} 
+        <Typography
+          variant='h4'
+          fontWeight={800}
           className='pie-chart-total-text'>
           {displayTotal}
         </Typography>

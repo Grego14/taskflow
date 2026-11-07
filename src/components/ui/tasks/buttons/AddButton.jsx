@@ -1,9 +1,9 @@
 import { Suspense, lazy, useState } from 'react'
 
-import AddIcon from '@mui/icons-material/Add'
-import IconButton from '@mui/material/IconButton'
 import AppTooltip from '@components/reusable/AppTooltip'
 import ButtonListItem from '@components/reusable/buttons/ButtonListItem'
+import AddIcon from '@mui/icons-material/Add'
+import IconButton from '@mui/material/IconButton'
 
 import useApp from '@hooks/useApp'
 import useProject from '@hooks/useProject'

@@ -1,11 +1,11 @@
-import IconButton from '@mui/material/IconButton'
-import GridViewIcon from '@mui/icons-material/GridView'
 import AppTooltip from '@components/reusable/AppTooltip'
 import ButtonListItem from '@components/reusable/buttons/ButtonListItem'
+import GridViewIcon from '@mui/icons-material/GridView'
+import IconButton from '@mui/material/IconButton'
 
+import useLayout from '@hooks/useLayout'
 import { useEffect } from 'preact/hooks'
 import { useTranslation } from 'react-i18next'
-import useLayout from '@hooks/useLayout'
 
 import { isDrawerOpen } from '@stores/ui'
 
@@ -36,11 +36,12 @@ export default function ToggleProjectDrawer({ onMount, onList = true }) {
     }
   }
 
-  if (!onList) return (
-    <IconButton {...btnProps}>
-      <GridViewIcon fontSize='medium' />
-    </IconButton>
-  )
+  if (!onList)
+    return (
+      <IconButton {...btnProps}>
+        <GridViewIcon fontSize='medium' />
+      </IconButton>
+    )
 
   return (
     <AppTooltip title={label}>

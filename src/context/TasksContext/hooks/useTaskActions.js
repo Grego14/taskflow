@@ -1,34 +1,34 @@
 import { useCallback, useMemo } from 'preact/hooks'
 
-import { playSound } from '@services/audio'
-import getContainers from '@utils/tasks/getContainers'
-import resolveTaskStatusUpdate from '@utils/tasks/taskStatusResolver'
-import taskIsOverdue from '@utils/tasks/taskIsOverdue'
-import getFirstPosition from '@utils/tasks/getFirstPosition'
 import actionHandler from '@logic/tasks/actionHandler'
 import prepareNewTask from '@logic/tasks/utils/prepareNewTask'
+import { playSound } from '@services/audio'
+import getContainers from '@utils/tasks/getContainers'
+import getFirstPosition from '@utils/tasks/getFirstPosition'
+import taskIsOverdue from '@utils/tasks/taskIsOverdue'
+import resolveTaskStatusUpdate from '@utils/tasks/taskStatusResolver'
 
-import useLayout from '@hooks/useLayout'
-import useProject from '@hooks/useProject'
 import useTaskAnimations from '@hooks/tasks/useTaskAnimations'
 import useReorder from '@hooks/tasks/useTaskReorder'
+import useLayout from '@hooks/useLayout'
+import useProject from '@hooks/useProject'
 
-import { 
-  updateTaskLocal, 
-  deleteTaskLocal, 
-  createTaskLocal, 
-  archiveTasksLocal,
-  taskRegistry,
+import {
   activeTaskData,
-  targetTime,
-  showOverlay,
+  archiveTasksLocal,
   clearFocusGoals,
+  createTaskLocal,
   currentMinutes,
-  pomoStart,
-  showResetPrompt,
-  rootTaskIds,
+  deleteTaskLocal,
   moveSubtasksLocal,
-  reorderTaskLocal
+  pomoStart,
+  reorderTaskLocal,
+  rootTaskIds,
+  showOverlay,
+  showResetPrompt,
+  targetTime,
+  taskRegistry,
+  updateTaskLocal
 } from '@stores/task'
 
 const calculateSessionUpdate = (task, sessionDuration, now, target) => {
@@ -53,7 +53,7 @@ const findTaskById = (tasks, id, parentId) => {
 
 const executeReorder = async (params, context) => {
   const { ownerId, projectId, isPreview } = context
-  
+
   const { taskId, newPosition, newStatus } = params
   reorderTaskLocal(taskId, newPosition, newStatus)
 
@@ -73,9 +73,11 @@ export default function useTaskActions(taskRefs) {
 
   const { animateOut } = useTaskAnimations()
 
-  const onPositionCalculated = useCallback(async (params) => 
-    await executeReorder(params, { ownerId, projectId, isPreview })
-    ,[ownerId, projectId, isPreview])
+  const onPositionCalculated = useCallback(
+    async params =>
+      await executeReorder(params, { ownerId, projectId, isPreview }),
+    [ownerId, projectId, isPreview]
+  )
 
   const handleReorderLogic = useReorder(onPositionCalculated)
 
@@ -83,7 +85,7 @@ export default function useTaskActions(taskRefs) {
     const registry = {}
 
     // get task data without subscription
-    const getTaskData = (id) => taskRegistry.peek().get(id)?.peek()
+    const getTaskData = id => taskRegistry.peek().get(id)?.peek()
 
     registry.updateTask = ({ id, data, parentId }) => {
       const snapshot = new Map(taskRegistry.peek())
@@ -97,12 +99,12 @@ export default function useTaskActions(taskRefs) {
       return actionHandler(async () => {
         const { default: updateTaskAction } = await updatePromise
 
-        return updateTaskAction({ 
-          id, 
-          data, 
-          parentId, 
-          isPreview, 
-          ownerId, 
+        return updateTaskAction({
+          id,
+          data,
+          parentId,
+          isPreview,
+          ownerId,
           projectId
         })
       }, snapshot)
@@ -118,16 +120,17 @@ export default function useTaskActions(taskRefs) {
       deleteTaskLocal(id, parentId, deleteSubtasks)
 
       return actionHandler(async () => {
-        const { default: deleteTaskAction } = 
-          await import('@logic/tasks/delete')
+        const { default: deleteTaskAction } = await import(
+          '@logic/tasks/delete'
+        )
 
-        return deleteTaskAction({ 
-          id, 
-          parentId, 
-          deleteSubtasks, 
-          isPreview, 
-          ownerId, 
-          projectId 
+        return deleteTaskAction({
+          id,
+          parentId,
+          deleteSubtasks,
+          isPreview,
+          ownerId,
+          projectId
         })
       }, snapshot)
     }
@@ -137,17 +140,17 @@ export default function useTaskActions(taskRefs) {
       const id = crypto.randomUUID()
 
       const parentData = parentId ? getTaskData(parentId) : null
-      const listIds = parentId ? (parentData?.subtasks || []) : rootTaskIds.value
+      const listIds = parentId ? parentData?.subtasks || [] : rootTaskIds.value
 
       const taskList = listIds.map(tid => getTaskData(tid)).filter(Boolean)
       const position = getFirstPosition(taskList)
 
-      const newTask = prepareNewTask({ 
-        data, 
-        id, 
-        position, 
-        parentId, 
-        ownerId, 
+      const newTask = prepareNewTask({
+        data,
+        id,
+        position,
+        parentId,
+        ownerId,
         projectId
       })
 
@@ -155,8 +158,9 @@ export default function useTaskActions(taskRefs) {
       // playSound('create')
 
       return actionHandler(async () => {
-        const { default: createTaskAction } = 
-          await import('@logic/tasks/create')
+        const { default: createTaskAction } = await import(
+          '@logic/tasks/create'
+        )
 
         return createTaskAction({
           task: newTask,
@@ -167,8 +171,8 @@ export default function useTaskActions(taskRefs) {
       }, snapshot)
     }
 
-    registry.archiveTasks = async (taskIds) => {
-      if(isPreview) return triggerUpsell('archive')
+    registry.archiveTasks = async taskIds => {
+      if (isPreview) return triggerUpsell('archive')
 
       const snapshot = new Map(taskRegistry.peek())
       const ids = Array.isArray(taskIds) ? taskIds : [taskIds]
@@ -180,8 +184,9 @@ export default function useTaskActions(taskRefs) {
       archiveTasksLocal(ids)
 
       return actionHandler(async () => {
-        const { default: archiveTasksAction } = 
-          await import('@logic/tasks/archive')
+        const { default: archiveTasksAction } = await import(
+          '@logic/tasks/archive'
+        )
 
         return archiveTasksAction({
           taskIds: ids,
@@ -192,11 +197,11 @@ export default function useTaskActions(taskRefs) {
       }, snapshot)
     }
 
-    registry.saveWorkingTime = ({ 
-      id, 
-      parentId, 
-      startTime, 
-      initialSeconds, 
+    registry.saveWorkingTime = ({
+      id,
+      parentId,
+      startTime,
+      initialSeconds,
       isFocusGuard
     }) => {
       const now = Date.now()
@@ -205,14 +210,14 @@ export default function useTaskActions(taskRefs) {
 
       if (!currentTask) return
 
-      const endTime = target && (now > target) ? target : now
+      const endTime = target && now > target ? target : now
       const sessionDuration = Math.floor((endTime - startTime) / 1000)
 
       let updateData = { timeWorked: initialSeconds + sessionDuration }
 
       if (!isFocusGuard) {
-        updateData = { 
-          ...updateData, 
+        updateData = {
+          ...updateData,
           ...calculateSessionUpdate(currentTask, sessionDuration, now, target)
         }
 
@@ -226,11 +231,11 @@ export default function useTaskActions(taskRefs) {
       const active = activeTaskData.value
 
       if (active) {
-        registry.saveWorkingTime({ 
-          id: active.id, 
-          parentId: active.parentId, 
-          startTime: active.startTime, 
-          initialSeconds: active.initialSeconds 
+        registry.saveWorkingTime({
+          id: active.id,
+          parentId: active.parentId,
+          startTime: active.startTime,
+          initialSeconds: active.initialSeconds
         })
 
         if (!taskData?.id || active.id === taskData.id) {
@@ -253,7 +258,11 @@ export default function useTaskActions(taskRefs) {
         }
 
         activeTaskData.value = {
-          id, title, priority, parentId, parentTitle,
+          id,
+          title,
+          priority,
+          parentId,
+          parentTitle,
           startTime: Date.now(),
           initialSeconds: timeWorked || 0
         }
@@ -266,9 +275,9 @@ export default function useTaskActions(taskRefs) {
       if (!taskData) return
 
       const statusFields = resolveTaskStatusUpdate(
-        taskData, 
-        nextStatus, 
-        ownerId, 
+        taskData,
+        nextStatus,
+        ownerId,
         isPreview
       )
 
@@ -291,16 +300,18 @@ export default function useTaskActions(taskRefs) {
       const sessionElapsed = Math.floor((now - active.startTime) / 1000)
 
       // get time to restore (that the Focus Guard added)
-      const restoredTotal = Math.max(0, 
-        (targetTask?.timeWorked || 0) - sessionElapsed)
+      const restoredTotal = Math.max(
+        0,
+        (targetTask?.timeWorked || 0) - sessionElapsed
+      )
 
-      activeTaskData.value = { 
-        ...active, 
-        startTime: now, 
+      activeTaskData.value = {
+        ...active,
+        startTime: now,
         initialSeconds: restoredTotal
       }
       pomoStart.value = now
-      targetTime.value = now + (currentMinutes.value * 60 * 1000)
+      targetTime.value = now + currentMinutes.value * 60 * 1000
       showResetPrompt.value = false
 
       registry.updateTask({
@@ -315,16 +326,17 @@ export default function useTaskActions(taskRefs) {
       const timestamp = Date.now()
 
       const list = rootTaskIds.value
-      .map(id => getTaskData(id))
-      .filter(t => t && !taskIsOverdue(t))
+        .map(id => getTaskData(id))
+        .filter(t => t && !taskIsOverdue(t))
 
       const position = getFirstPosition(list)
 
       moveSubtasksLocal(taskId, subtaskIds, position, timestamp)
 
       return actionHandler(async () => {
-        const { default: moveSubtasksLogic } = 
-          await import('@logic/tasks/moveSubtasks')
+        const { default: moveSubtasksLogic } = await import(
+          '@logic/tasks/moveSubtasks'
+        )
 
         return moveSubtasksLogic({
           taskId,
@@ -337,11 +349,19 @@ export default function useTaskActions(taskRefs) {
       }, snapshot)
     }
 
-    registry.handleReorder = (source, targetId, edge, newStatus) => 
+    registry.handleReorder = (source, targetId, edge, newStatus) =>
       actionHandler(() => handleReorderLogic(source, targetId, edge, newStatus))
 
     return registry
-  }, [isPreview, ownerId, projectId])
+  }, [
+    isPreview,
+    ownerId,
+    projectId,
+    animateOut,
+    handleReorderLogic,
+    taskRefs,
+    triggerUpsell
+  ])
 
   return actions
 }

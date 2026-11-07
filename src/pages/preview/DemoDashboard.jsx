@@ -1,7 +1,7 @@
-import { useState, Suspense, lazy, useCallback } from 'preact/compat'
+import { Suspense, lazy, useCallback, useState } from 'preact/compat'
 
-import LayoutProvider from '@context/LayoutContext'
 import LayoutManager from '@components/ui/layoutmanager/LayoutManager'
+import LayoutProvider from '@context/LayoutContext'
 
 import ProjectAppBar from '../projects/ProjectAppBar'
 import ProjectDashBoard from '../projects/dashboard/ProjectDashboard'
@@ -23,7 +23,7 @@ export default function DemoWrapper() {
   const [showUpsell, setShowUpsell] = useState(false)
   const [upsellContext, setUpsellContext] = useState('')
 
-  const triggerUpsell = useCallback((reason) => {
+  const triggerUpsell = useCallback(reason => {
     setUpsellContext(reason)
     setShowUpsell(true)
   }, [])

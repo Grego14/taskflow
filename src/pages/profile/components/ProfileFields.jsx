@@ -4,10 +4,10 @@ import LangSelector from './LangSelector'
 import ThemeSelector from './ThemeSelector'
 import UsernameInput from './UsernameInput'
 
-import { useCallback, useMemo, useRef } from 'react'
-import { useTranslation } from 'react-i18next'
 import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
+import { useCallback, useMemo, useRef } from 'react'
+import { useTranslation } from 'react-i18next'
 
 const FIELDS_CONFIG = [
   { name: 'avatar', component: AvatarUploader },
@@ -44,18 +44,21 @@ export default function ProfileFields({
   const { t } = useTranslation('validations')
   const containerRef = useRef(null)
 
-  useGSAP(() => {
-    const fields = containerRef.current.children
+  useGSAP(
+    () => {
+      const fields = containerRef.current.children
 
-    gsap.from(fields, {
-      y: 30,
-      opacity: 0,
-      duration: 0.8,
-      stagger: 0.1,
-      ease: 'power3.out',
-      clearProps: 'all'
-    })
-  }, { scope: containerRef })
+      gsap.from(fields, {
+        y: 30,
+        opacity: 0,
+        duration: 0.8,
+        stagger: 0.1,
+        ease: 'power3.out',
+        clearProps: 'all'
+      })
+    },
+    { scope: containerRef }
+  )
 
   const handleAvatarChange = async e => {
     const file = e.target.files[0]
@@ -64,8 +67,9 @@ export default function ProfileFields({
 
     clearErrors('avatar')
 
-    const { default: validateAvatarFile } =
-      await import('@pages/profile/validateAvatar')
+    const { default: validateAvatarFile } = await import(
+      '@pages/profile/validateAvatar'
+    )
     const validation = await validateAvatarFile(file)
 
     if (validation?.error) {
@@ -91,14 +95,17 @@ export default function ProfileFields({
 
         return (
           <RegisterComponent
+            key={field.name}
             {...defaultProps}
             rules={getTranslatedRules(field.rules, t)}
-            handler={isAvatar
-              ? handleAvatarChange
-              : () => {
-                clearErrors(field.name)
-                setSaveBtnDisabled(false)
-              }}
+            handler={
+              isAvatar
+                ? handleAvatarChange
+                : () => {
+                    clearErrors(field.name)
+                    setSaveBtnDisabled(false)
+                  }
+            }
           />
         )
       })}

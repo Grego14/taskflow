@@ -1,11 +1,11 @@
-export default function prepareNewTask({ 
-  data, 
-  id, 
-  position, 
+export default function prepareNewTask({
+  data,
+  id,
+  position,
   parentId,
   ownerId,
   projectId
-}){
+}) {
   const { subtask: _subtask, ...task } = data
   // the firebase service will override this timestamp and use it's own
   // Timestamp object

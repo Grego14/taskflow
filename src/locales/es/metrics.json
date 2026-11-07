@@ -31,7 +31,7 @@
   },
   "filterMembers": "Filtrar por miembros",
   "emptyMetricsPeriod": "No hay datos para mostrar en este periodo",
-  "loadingMetrics": "Cargando estadísticas..." ,
+  "loadingMetrics": "Cargando estadísticas...",
   "ownerLabel": "Dueño del proyecto",
   "memberLabel": "Miembro"
 }

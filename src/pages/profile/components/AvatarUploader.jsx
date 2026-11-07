@@ -7,11 +7,11 @@ import CircularProgress from '@mui/material/CircularProgress'
 import IconButton from '@mui/material/IconButton'
 import Typography from '@mui/material/Typography'
 
+import { useGSAP } from '@gsap/react'
 import useAuth from '@hooks/useAuth'
 import useUser from '@hooks/useUser'
 import { memo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useGSAP } from '@gsap/react'
 
 import gsap from 'gsap'
 
@@ -34,29 +34,37 @@ export default memo(function AvatarUploader({ error, onChange, value }) {
 
   const containerRef = useRef(null)
 
-  useGSAP(() => {
-    const tl = gsap.timeline()
+  useGSAP(
+    () => {
+      const tl = gsap.timeline()
 
-    tl.fromTo('#avatar-container',
-      {
-        scale: 0.8,
-        autoAlpha: 0,
-        duration: 1,
-        ease: 'back.out(1.7)',
-        filter: 'blur(10px)'
-      },
-      {
-        autoAlpha: 1,
-        scale: 1,
-        clearProps: 'filter',
-      })
-      .from('#camera-button', {
-        scale: 0,
-        duration: 0.5,
-        delay: 0.6,
-        ease: 'back.out(2)'
-      }, '<0.2')
-  }, { scope: containerRef })
+      tl.fromTo(
+        '#avatar-container',
+        {
+          scale: 0.8,
+          autoAlpha: 0,
+          duration: 1,
+          ease: 'back.out(1.7)',
+          filter: 'blur(10px)'
+        },
+        {
+          autoAlpha: 1,
+          scale: 1,
+          clearProps: 'filter'
+        }
+      ).from(
+        '#camera-button',
+        {
+          scale: 0,
+          duration: 0.5,
+          delay: 0.6,
+          ease: 'back.out(2)'
+        },
+        '<0.2'
+      )
+    },
+    { scope: containerRef }
+  )
 
   function handleInputClick() {
     fileInputRef.current.click()

@@ -1,6 +1,6 @@
 .app-popper {
   z-index: 15000;
-  pointer-events: none
+  pointer-events: none;
 }
 
 .app-tooltip.app-tooltip {
@@ -17,18 +17,20 @@
   border: 1px solid rgba(var(--mui-palette-primary-mainChannel) / 0.15);
 
   background: linear-gradient(
-    rgba(var(--mui-palette-primary-mainChannel) / 0.9),
-    rgba(var(--mui-palette-primary-mainChannel) / 0.6)
-  ) padding-box;
-  will-change: transform, opacity
+      rgba(var(--mui-palette-primary-mainChannel) / 0.9),
+      rgba(var(--mui-palette-primary-mainChannel) / 0.6)
+    )
+    padding-box;
+  will-change: transform, opacity;
 }
 
 .dark .app-tooltip.app-tooltip {
   border: 1px solid var(--mui-palette-divider);
-  
+
   background: linear-gradient(
-    135deg, 
-    rgba(var(--mui-palette-primary-mainChannel) / 0.75), 
-    rgba(var(--mui-palette-secondary-mainChannel) / 0.65)
-  ) padding-box
+      135deg,
+      rgba(var(--mui-palette-primary-mainChannel) / 0.75),
+      rgba(var(--mui-palette-secondary-mainChannel) / 0.65)
+    )
+    padding-box;
 }

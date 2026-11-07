@@ -1,4 +1,4 @@
-import { lazy, Suspense } from 'preact/compat'
+import { Suspense, lazy } from 'preact/compat'
 
 import DropdownMenu from '@components/reusable/DropdownMenu'
 import CalendarIcon from '@mui/icons-material/CalendarMonth'
@@ -7,8 +7,8 @@ import Typography from '@mui/material/Typography'
 
 const DateItems = lazy(() => import('@components/reusable/tasks/DateItems'))
 
-import { useTranslation } from 'react-i18next'
 import useApp from '@hooks/useApp'
+import { useTranslation } from 'react-i18next'
 
 import { DATES } from '@/constants'
 import upperCaseInitialLetter from '@utils/upperCaseInitialLetter'
@@ -16,12 +16,12 @@ import upperCaseInitialLetter from '@utils/upperCaseInitialLetter'
 const getDate = date => (!DATES.includes(date) ? 'nodate' : date)
 
 const containerProps = {
-  className:'flex',
+  className: 'flex',
   sx: {
     gap: 2,
     width: '100%',
     alignItems: 'center',
-    justifyContent:{
+    justifyContent: {
       xs: 'center',
       mobile: 'initial'
     }

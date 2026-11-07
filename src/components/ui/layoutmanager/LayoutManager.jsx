@@ -1,15 +1,15 @@
+import Box from '@mui/material/Box'
 import { Suspense, lazy, memo } from 'react'
 import { Outlet, useParams } from 'react-router-dom'
-import Box from '@mui/material/Box'
 
 const LayoutAppBar = lazy(() => import('./components/LayoutAppBar'))
 const AppDrawer = lazy(() => import('@components/ui/drawer/AppDrawer'))
 
 import useApp from '@hooks/useApp'
-import useLoadResources from '@hooks/useLoadResources'
 import useLayout from '@hooks/useLayout'
+import useLoadResources from '@hooks/useLoadResources'
 
-import { DRAWER_CONFIG, APPBAR_HEIGHT } from '@/constants'
+import { APPBAR_HEIGHT, DRAWER_CONFIG } from '@/constants'
 
 export default memo(function LayoutManager({ children }) {
   const { isMobile } = useApp()
@@ -22,12 +22,10 @@ export default memo(function LayoutManager({ children }) {
   return (
     <Box>
       <Suspense fallback={null}>
-        {(!projectId && !isPreview) && <LayoutAppBar />}
+        {!projectId && !isPreview && <LayoutAppBar />}
       </Suspense>
 
-      <Suspense fallback={null}>
-        {showDrawer && <AppDrawer />}
-      </Suspense>
+      <Suspense fallback={null}>{showDrawer && <AppDrawer />}</Suspense>
 
       <Box
         component='main'

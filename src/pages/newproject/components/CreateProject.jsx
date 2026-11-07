@@ -1,8 +1,8 @@
 import useUser from '@hooks/useUser'
 import Button from '@mui/material/Button'
+import projectService from '@services/project'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
-import projectService from '@services/project'
 
 // errors field only manages the errors of the name and description values
 export default function CreateProject({

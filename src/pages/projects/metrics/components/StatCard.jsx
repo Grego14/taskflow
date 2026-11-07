@@ -4,8 +4,8 @@ import Typography from '@mui/material/Typography'
 import MetricPaper from './MetricPaper'
 
 import { useGSAP } from '@gsap/react'
-import gsap from 'gsap'
 import useCounterAnimation from '@hooks/animations/useCounterAnimation'
+import gsap from 'gsap'
 
 export default function StatCard({
   icon,
@@ -17,18 +17,21 @@ export default function StatCard({
   const cardRef = useRef(null)
   const animatedCount = useCounterAnimation(total, { trigger: cardRef })
 
-  useGSAP(() => {
-    if (pulse && total > 0) {
-      gsap.to(cardRef.current, {
-        boxShadow: `0px 0px 15px var(--stat-color-alpha-40)`,
-        borderColor: 'var(--stat-color-alpha-80)',
-        duration: 1.5,
-        repeat: -1,
-        yoyo: true,
-        ease: 'sine.inOut'
-      })
-    }
-  }, { dependencies: [total, pulse], scope: cardRef })
+  useGSAP(
+    () => {
+      if (pulse && total > 0) {
+        gsap.to(cardRef.current, {
+          boxShadow: '0px 0px 15px var(--stat-color-alpha-40)',
+          borderColor: 'var(--stat-color-alpha-80)',
+          duration: 1.5,
+          repeat: -1,
+          yoyo: true,
+          ease: 'sine.inOut'
+        })
+      }
+    },
+    { dependencies: [total, pulse], scope: cardRef }
+  )
 
   const dynamicColorStyle = {
     '--stat-color-main': `var(--mui-palette-${color}-main)`,
@@ -44,9 +47,7 @@ export default function StatCard({
       ref={cardRef}
       style={dynamicColorStyle}
       elevation={0}>
-      <div className='flex stat-card-icon-box'>
-        {icon}
-      </div>
+      <div className='flex stat-card-icon-box'>{icon}</div>
       <Typography variant='h4' fontWeight={700}>
         {animatedCount}
       </Typography>

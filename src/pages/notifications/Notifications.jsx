@@ -1,18 +1,18 @@
-import Typography from '@mui/material/Typography'
 import LogoLoader from '@components/reusable/loaders/LogoLoader'
-import Container from '@mui/material/Container'
-import Box from '@mui/material/Box'
-import NotificationItem from './NotificationItem'
 import AnimatedTitle from '@components/reusable/texts/AnimatedTitle'
+import Box from '@mui/material/Box'
+import Container from '@mui/material/Container'
+import Typography from '@mui/material/Typography'
+import NotificationItem from './NotificationItem'
 
-import useNotifications from '@hooks/useNotifications'
-import useLoadResources from '@hooks/useLoadResources'
-import { useTranslation } from 'react-i18next'
 import { useGSAP } from '@gsap/react'
+import useLoadResources from '@hooks/useLoadResources'
+import useNotifications from '@hooks/useNotifications'
 import { useEffect, useMemo } from 'preact/hooks'
+import { useTranslation } from 'react-i18next'
 
-import gsap from 'gsap'
 import formatTimestamp from '@utils/formatTimestamp'
+import gsap from 'gsap'
 
 const containerStyles = { pt: 6, flexGrow: 1 }
 
@@ -32,9 +32,8 @@ export default function Notifications() {
 
   // mark as read when data is ready
   useEffect(() => {
-    const isDataReady = !loading 
-      && !loadingResources 
-      && notifications.length > 0
+    const isDataReady =
+      !loading && !loadingResources && notifications.length > 0
 
     if (isDataReady) {
       const unreadIds = []
@@ -62,7 +61,7 @@ export default function Notifications() {
   }, [loading, loadingResources])
 
   // exit animation
-  const handleDelete = contextSafe((id) => {
+  const handleDelete = contextSafe(id => {
     gsap.to(`#notif-${id}`, {
       opacity: 0,
       x: 50,
@@ -107,10 +106,7 @@ export default function Notifications() {
   const hasNotifications = notifications.length > 0
 
   return (
-    <Container
-      className='flex flex-column'
-      maxWidth='sm'
-      sx={containerStyles}>
+    <Container className='flex flex-column' maxWidth='sm' sx={containerStyles}>
       <AnimatedTitle
         id='notifications-title'
         textAlign='center'
@@ -130,9 +126,7 @@ export default function Notifications() {
           {t('empty')}
         </Typography>
       ) : (
-        <Box className='flex flex-column flex-center'>
-          {items}
-        </Box>
+        <Box className='flex flex-column flex-center'>{items}</Box>
       )}
     </Container>
   )

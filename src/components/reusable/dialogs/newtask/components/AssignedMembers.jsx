@@ -4,10 +4,10 @@ import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Typography from '@mui/material/Typography'
 
-import { useTranslation } from 'react-i18next'
-import useProject from '@hooks/useProject'
 import { useGSAP } from '@gsap/react'
+import useProject from '@hooks/useProject'
 import { useRef } from 'preact/hooks'
+import { useTranslation } from 'react-i18next'
 
 import gsap from 'gsap'
 
@@ -22,16 +22,19 @@ const AssignedMember = ({ id, removeMember }) => {
 
   const { contextSafe } = useGSAP({ scope: memberRef })
 
-  useGSAP(() => {
-    gsap.from(memberRef.current, {
-      autoAlpha: 0,
-      y: 25,
-      x: -25,
-      ease: 'back.out(1.5)'
-    })
-  }, { scope: memberRef })
+  useGSAP(
+    () => {
+      gsap.from(memberRef.current, {
+        autoAlpha: 0,
+        y: 25,
+        x: -25,
+        ease: 'back.out(1.5)'
+      })
+    },
+    { scope: memberRef }
+  )
 
-  const handleDeletion = (id) => {
+  const handleDeletion = id => {
     gsap.to(memberRef.current, {
       autoAlpha: 0,
       y: 25,
@@ -65,11 +68,12 @@ const AssignedMember = ({ id, removeMember }) => {
             transition: 'background-color 0.3s ease-in-out',
             borderRadius: 50,
             '&:hover': {
-              backgroundColor: theme.palette.action.hover,
+              backgroundColor: theme.palette.action.hover
             }
           })}>
           <RemoveIcon fontSize='small' color='action' />
-        </Box>}
+        </Box>
+      }
       onClick={() => handleDeletion(id)}
       aria-label={t('tasks:buttons.removeMember_member', {
         member: username
@@ -95,9 +99,7 @@ const AssignedMember = ({ id, removeMember }) => {
           ]}>
           {username}
         </Typography>
-        <Typography variant='caption'>
-          {email}
-        </Typography>
+        <Typography variant='caption'>{email}</Typography>
       </Box>
     </Button>
   )
@@ -106,11 +108,12 @@ const AssignedMember = ({ id, removeMember }) => {
 export default function AssignedMembers({ actualMembers = [], removeMember }) {
   const { t } = useTranslation('dialogs')
 
-  if (actualMembers.length < 1) return (
-    <Typography variant='body2' color='textSecondary'>
-      {t('newtask.noMembers')}
-    </Typography>
-  )
+  if (actualMembers.length < 1)
+    return (
+      <Typography variant='body2' color='textSecondary'>
+        {t('newtask.noMembers')}
+      </Typography>
+    )
 
   return (
     <Box
@@ -119,9 +122,9 @@ export default function AssignedMembers({ actualMembers = [], removeMember }) {
       justifyContent={{ xs: 'start', tablet: 'space-between' }}
       alignItems={{ xs: 'start', tablet: 'center' }}
       sx={{ maxWidth: 'max-content' }}>
-      {actualMembers.map(member =>
-        (<AssignedMember id={member} removeMember={removeMember} />)
-      )}
+      {actualMembers.map(member => (
+        <AssignedMember key={member} id={member} removeMember={removeMember} />
+      ))}
     </Box>
   )
 }
